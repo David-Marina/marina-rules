@@ -191,13 +191,20 @@ China A-share fills only: a Hong Kong or US row is reported as `MARKET_UNSUPPORT
 
 - `prev_close` must be on the same basis as `price`: unadjusted; on an ex-rights day the exchange's ex-rights
   reference price. Never an adjusted close. `hints` in the output names codes whose rows look off by a constant factor.
+  Optional `day_high` / `day_low` (same basis as `price`) add `PRICE_OUTSIDE_DAY_RANGE` — a data-consistency check,
+  not an exchange rule — which catches a mismatch that stays inside a wide band.
 - Scope: `--list-scopes` lists every accepted scope. Or leave `scope` empty and give `board`, `st`,
   `listing_day_index` (+ `issue_regime` / `delisting_day_index` where relevant); the scope is chosen from the
   registry's asserts (`marina_rules.equity.pick_scope`), and a row that fits none or several is `SCOPE_UNDETERMINED`.
   `board_for_code` fills a missing board from the code prefix (A-share stocks only; a convenience, not a record).
+  No listing index: `list_date` (past every listing window when > 60 calendar days earlier; inside 60 days it stays
+  undetermined), or `--assume-seasoned` (a relaxation; `assumed_seasoned` counts the rows that relied on it).
 - Model prices (quote ± slippage): `--no-tick`, `--band-tolerance-pct X`. A relaxed run never gets a stamp; say
-  which options you used. `counts` counts findings (`LIMIT_*` ⊂ `PRICE_OUTSIDE_BAND`); `rows_with_findings`,
-  `summary` (by scope / year / side) and `--rows` (`row_status`, one per input row) count rows.
+  which options you used. The tolerance also hides small price-basis errors: read `hints` and `summary.by_code` too.
+  `counts` counts findings (`LIMIT_*` ⊂ `PRICE_OUTSIDE_BAND`); `rows_with_findings`, `summary` (by scope / year /
+  side / code) and `--rows` (`row_status`, one per input row) count rows.
+- Exit 0 = no findings under the options used, 1 = findings, 2 = usage error. Read `relaxed`, `within_tolerance` and
+  `assumed_seasoned` from the JSON; exit 0 from a relaxed run is not a verification.
 
 ## What this skill never does
 

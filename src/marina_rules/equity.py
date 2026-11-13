@@ -17,6 +17,7 @@ A shares). Suitability-only scopes (no price-limit record) are not candidates.
 """
 from __future__ import annotations
 
+import datetime as _dt
 import re
 from functools import lru_cache
 
@@ -160,6 +161,71 @@ def pick_scope(trade_date: str, board: str | None = None, st_status: bool | None
                    reason=f"no scope fits {ctx} on {date}" +
                           ("; would need " + "; ".join(f"{s}: {m}" for s, m in needs.items()) if needs else ""))
     return out
+
+
+# --- listing windows without a trading calendar ---------------------------------------------------------------------
+
+LIST_DATE_MARGIN_DAYS = 60
+"""Calendar days after ``list_date`` beyond which a row is treated as past every listing window.
+
+Marina has no trading calendar, so it never computes a trading-day index from ``list_date``. The largest
+``listing_day_index`` bound any candidate scope asserts is 6 today (ordinary from day 6, after the first five trading
+days of a registration-regime IPO), so every listing window ends within 5 trading days and
+``seasoned_listing_day_index()`` is 7. Five trading days span at most 5 weekdays, the
+weekends between them and any market-wide closure. A-share holiday closures (Spring Festival, National Day) last
+about one to two weeks; even allowing three weeks of closure, 5 trading days + 21 closed days + weekends stay under
+35 calendar days, so 60 leaves ample room. It does NOT cover a stock suspended for weeks during its own first five trading
+days; for such a stock give ``listing_day_index``."""
+
+
+@lru_cache(maxsize=None)
+def seasoned_listing_day_index() -> int:
+    """A ``listing_day_index`` past every listing window in the registry: 1 + the largest bound (eq / in / min / max)
+    any candidate scope asserts on ``listing_day_index``. It satisfies every ``min`` assertion (post-window scopes)
+    and violates every ``max`` / ``eq`` one (in-window scopes), so it selects no listing-window scope. Derived from
+    the registry, not hard-coded."""
+    bound = 1
+    for s in equity_scopes():
+        spec = (_registry()[s].get("asserts") or {}).get("listing_day_index")
+        if spec is None:
+            continue
+        for e in _entries(spec):
+            for v in [e.get(op) for op in ("eq", "min", "max")] + list(e.get("in") or ()):
+                if isinstance(v, int) and not isinstance(v, bool):
+                    bound = max(bound, v)
+    return bound + 1
+
+
+def _iso(text) -> str | None:
+    t = "" if text is None else str(text).strip()
+    if re.fullmatch(r"\d{8}", t):
+        t = f"{t[:4]}-{t[4:6]}-{t[6:]}"
+    t = t[:10]
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", t):
+        return None
+    try:
+        _dt.date.fromisoformat(t)
+    except ValueError:
+        return None
+    return t
+
+
+def listing_index_from_list_date(trade_date: str, list_date) -> tuple:
+    """(listing_day_index or None, reason) from a listing date, without a trading calendar.
+
+    More than ``LIST_DATE_MARGIN_DAYS`` calendar days after ``list_date`` → ``seasoned_listing_day_index()`` (past
+    every listing window). Within the margin → None: the trading-day index is unknown, give ``listing_day_index``.
+    ``list_date`` accepts YYYY-MM-DD or YYYYMMDD; an unparsable one or a trade before listing → None."""
+    ld, td = _iso(list_date), _iso(trade_date)
+    if ld is None or td is None:
+        return None, f"list_date {list_date!r} / trade date {trade_date!r} is not a date (YYYY-MM-DD or YYYYMMDD)"
+    days = (_dt.date.fromisoformat(td) - _dt.date.fromisoformat(ld)).days
+    if days < 0:
+        return None, f"trade date {td} is before list_date {ld}"
+    if days > LIST_DATE_MARGIN_DAYS:
+        return seasoned_listing_day_index(), f"{days} calendar days after list_date {ld} (> {LIST_DATE_MARGIN_DAYS})"
+    return None, (f"only {days} calendar days after list_date {ld} (≤ {LIST_DATE_MARGIN_DAYS}): the trading-day index "
+                  "is unknown without a calendar — give listing_day_index")
 
 
 # --- board from code: a convenience, NOT a sourced record ---------------------------------------------------------
