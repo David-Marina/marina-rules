@@ -66,12 +66,28 @@ Put `mr.citation()` in every result you publish. A result without it cannot be r
 ### Check a fill log
 
 ```bash
-python -m marina_rules.check fills.csv [--strict]
+python -m marina_rules.check fills.csv [--strict] [--no-tick] [--band-tolerance-pct X] [--rows]
+python -m marina_rules.check --list-scopes
 ```
 
 Verifies each fill against the rules in force that day — no buys above limit-up, no sells below limit-down, prices on the tick in force, fees not below the statutory floor — and emits a `rules-verified@<version>:<hash>` stamp when clean. The stamp is recomputable by anyone holding the same log and the same rules version, and commits to every column a check used (date, code, side, price, prev_close, scope, market, decimals, fee, turnover — canonical row format in the `marina_rules.check` docstring).
 
-Findings: `ROW_INVALID` (missing field, or price / prev_close not a finite number — also for unlimited scopes), `PRICE_OFF_TICK` (price not a multiple of the instrument family's `tick_size` that day, exact decimal comparison), `LIMIT_BUY_ABOVE_UP`, `LIMIT_SELL_BELOW_DOWN`, `PRICE_OUTSIDE_BAND`, `FEE_BELOW_STATUTORY`, `RULE_MISSING`, `MARKET_REQUIRED`, `MARKET_UNSUPPORTED` (the checks are China A-share only: a Hong Kong or US row — market `XHKG`, `XNYS`, `XNAS` or scope `hk_stock` / `hk_etf` / `us_stock` / `us_etf` — is reported, not checked).
+Findings: `ROW_INVALID` (missing field, or price / prev_close not a finite number — also for unlimited scopes), `PRICE_OFF_TICK` (price not a multiple of the instrument family's `tick_size` that day, exact decimal comparison), `LIMIT_BUY_ABOVE_UP`, `LIMIT_SELL_BELOW_DOWN`, `PRICE_OUTSIDE_BAND`, `FEE_BELOW_STATUTORY`, `RULE_MISSING`, `MARKET_REQUIRED`, `MARKET_UNSUPPORTED` (the checks are China A-share only: a Hong Kong or US row — market `XHKG`, `XNYS`, `XNAS` or scope `hk_stock` / `hk_etf` / `us_stock` / `us_etf` — is reported, not checked), `SCOPE_UNDETERMINED`.
+
+**`prev_close` must be on the same price basis as `price`** — both unadjusted, as traded. On an ex-rights / ex-dividend day it is the exchange's ex-rights reference price, never a back- or forward-adjusted close. A log that mixes bases is off by a constant factor per stock; the output's `hints` list such codes (at least 3 rows of one code beyond the band by ≥ 5% of the limit, same side, price / prev_close ratios within a factor 1.5 of each other — a hint, not a finding).
+
+**Scope.** `python -m marina_rules.check --list-scopes` prints every A-share scope the checker accepts, from the registry. Instead of a `scope` you may leave the cell empty and give context columns named like the registry keys — `board`, `st` (or `st_status`), `listing_day_index`, and `issue_regime` / `delisting_day_index` where they matter; the scope is then chosen from the registry's own asserts (`marina_rules.equity.pick_scope`) and a row that fits no scope, or several, gets `SCOPE_UNDETERMINED` (never a guess). Without a `board` cell the board comes from `marina_rules.equity.board_for_code(code)` — a convenience based on the exchanges' code-allocation conventions for A-share stocks, not a sourced record and not part of the dataset digest.
+
+**Model-price logs.** Backtest fills are quote ± slippage, not exchange prices. `--no-tick` skips `PRICE_OFF_TICK`; `--band-tolerance-pct X` lets a fill outside the band by at most X % of the violated limit pass, counted in `within_tolerance`. Either makes the run *relaxed*: `options` records what was used and **no stamp is issued** (`stamp_withheld` says why) — a stamp only ever certifies a strict run. Exit code 0 then means "no findings under these options" (`clean`).
+
+**Reading the output.** `counts` counts findings: an out-of-band buy above limit-up is both `LIMIT_BUY_ABOVE_UP` and `PRICE_OUTSIDE_BAND` (the `LIMIT_*` rows are a subset). `rows_with_findings` counts rows; `summary` breaks rows, rows with findings and findings down by scope, year and side; band findings carry `limit_up`, `limit_down`, `violated_limit`, `excess` and `excess_pct` as numbers. `--rows` adds `row_status`, one entry per input row in order (`row`, `scope`, `status`: ok / within_tolerance / findings + `checks`), to join back to the log.
+
+```json
+{"options": {"strict": false, "tick": false, "band_tolerance_pct": 0.5}, "relaxed": true, "clean": false,
+ "rules_verified": false, "stamp": null, "rows_with_findings": 1, "within_tolerance": 1,
+ "row_status": [{"row": 1, "scope": "chinext", "status": "within_tolerance", "within_tolerance": {"limit_up": 12.0, "excess_pct": 0.333333}},
+                {"row": 2, "scope": "main_board", "status": "findings", "checks": ["LIMIT_BUY_ABOVE_UP", "PRICE_OUTSIDE_BAND"]}]}
+```
 
 **What the stamp does not mean:** it says nothing about look-ahead bias, survivorship, capacity, or statistical validity. It says only that the fills respected the rules in this dataset. Name it accordingly.
 

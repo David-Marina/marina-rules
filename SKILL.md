@@ -180,7 +180,7 @@ you computed. Keep both citations (old and new) in the re-run report.
 ## Verify a finished fill log
 
 ```bash
-python -m marina_rules.check fills.csv --strict
+python -m marina_rules.check fills.csv --strict      # [--no-tick] [--band-tolerance-pct X] [--rows] | --list-scopes
 ```
 
 Emits `rules-verified@<version>:<hash>` when every fill respects the price band, the tick in force
@@ -188,6 +188,16 @@ Emits `rules-verified@<version>:<hash>` when every fill respects the price band,
 commits to every input column (date, code, side, price, prev_close, scope, market, decimals, fee,
 turnover; canonical form in `marina_rules/check.py`). The stamp says nothing about look-ahead, survivorship, or statistics.
 China A-share fills only: a Hong Kong or US row is reported as `MARKET_UNSUPPORTED` and not checked.
+
+- `prev_close` must be on the same basis as `price`: unadjusted; on an ex-rights day the exchange's ex-rights
+  reference price. Never an adjusted close. `hints` in the output names codes whose rows look off by a constant factor.
+- Scope: `--list-scopes` lists every accepted scope. Or leave `scope` empty and give `board`, `st`,
+  `listing_day_index` (+ `issue_regime` / `delisting_day_index` where relevant); the scope is chosen from the
+  registry's asserts (`marina_rules.equity.pick_scope`), and a row that fits none or several is `SCOPE_UNDETERMINED`.
+  `board_for_code` fills a missing board from the code prefix (A-share stocks only; a convenience, not a record).
+- Model prices (quote ± slippage): `--no-tick`, `--band-tolerance-pct X`. A relaxed run never gets a stamp; say
+  which options you used. `counts` counts findings (`LIMIT_*` ⊂ `PRICE_OUTSIDE_BAND`); `rows_with_findings`,
+  `summary` (by scope / year / side) and `--rows` (`row_status`, one per input row) count rows.
 
 ## What this skill never does
 
