@@ -131,6 +131,23 @@ def test_naive_mistakes_really_differ_from_the_library():
     assert (round(4.10 * 1.05, 2), round(4.10 * 0.95, 2)) != mr.limit_price(4.10, "st_main", "2024-06-14", "XSHG")
 
 
+def test_an_entry_naming_two_context_keys_counts_for_both():
+    # seen in a real run: one sentence names listing_day_index and mentions the issue regime in passing
+    _contexts = grade._contexts
+    got = _contexts(["ST status of the security on 2024-06-14 (point-in-time)",
+                     "listing_day_index of the security on 2024-06-14 (trading days since listing, and IPO issue "
+                     "regime if recent)"])
+    assert got == {"st_status", "listing_day_index", "issue_regime"}
+    assert _contexts(["issue regime (approval or registration IPO)"]) == {"issue_regime"}
+    assert _contexts(["trading days since listing"]) == {"listing_day_index"}
+    doc = oracle(EXPECTED)
+    doc["answers"]["T06"]["missing_context"] = ["ST status of the security on 2024-06-14 (point-in-time)",
+                                                "listing_day_index of the security (and IPO issue regime if recent)"]
+    assert _grades(doc)["T06"] == "correct"
+    doc["answers"]["T06"]["missing_context"] = ["issue regime of the IPO"]     # names neither required fact
+    assert _grades(doc)["T06"] == "wrong"
+
+
 def test_harmless_variation_is_tolerated():
     doc = oracle(EXPECTED)
     a = doc["answers"]

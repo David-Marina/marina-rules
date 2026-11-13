@@ -25,7 +25,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 GRADES = ("correct", "wrong", "fabricated", "missing")
 STATUSES = ("determined", "needs_context", "not_covered", "known_gap", "beyond_tracking")
 
-# Free-text names of missing facts -> the canonical context key. First match wins, order matters.
+# Free-text names of missing facts -> the canonical context key. A canonical name spelled out in the text always
+# counts; otherwise the first matching pattern wins, so order matters.
 CONTEXT_PATTERNS = (
     ("issue_regime", r"issu|regime|registration|approval"),
     ("listing_day_index", r"listing|listed|\bipo\b|days? since|new(ly)? listed|trading day index"),
@@ -108,8 +109,14 @@ def _contexts(items) -> set:
     out = set()
     for it in _list(items):
         text = str(it).lower().replace("_", " ")
+        # An entry that spells out canonical key names counts for each of them ("listing_day_index … and the issue
+        # regime if recent" names two facts); only an entry without any is matched by pattern, first match wins.
+        named = {canon for canon, _ in CONTEXT_PATTERNS if canon.replace("_", " ") in text}
+        if named:
+            out |= named
+            continue
         for canon, pat in CONTEXT_PATTERNS:
-            if canon == text.replace(" ", "_") or re.search(pat, text):
+            if re.search(pat, text):
                 out.add(canon)
                 break
     return out
