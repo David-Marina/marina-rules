@@ -15,7 +15,8 @@ a human maintainer, through the maintainer's queue. `tests/test_ops_no_github.py
 - **daily**: `scripts/audit_bars.py MARINA_BARS --complete-from-listing --use-st`. Violations are a
   finding in the report (exit 0); exit 2 means misconfigured (no `MARINA_BARS` / no bar files).
 - **weekly**: pytest, conformance vectors, release-metadata check, sample-bar audit, then
-  `scripts/source_watch.py`. It updates `watch/state.json` in place and **leaves it uncommitted**
+  `scripts/source_watch.py --no-drift` (listing-page diff only; the source re-hash is too many requests to
+  run unattended). It updates `watch/state.json` in place and **leaves it uncommitted**
   (scheduled jobs make no commits — a commit on whatever branch happens to be checked out would be a
   surprise, and pushing it is not allowed anyway). The next run diffs against the file regardless.
   Exit 1 if any step failed.

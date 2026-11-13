@@ -43,10 +43,12 @@ TAIL=2 step "tests"                 "$PY" -m pytest -q
 TAIL=3 step "conformance vectors"   "$PY" conformance/run.py
 TAIL=3 step "release metadata"      "$PY" scripts/check_release_metadata.py
 TAIL=3 step "sample-bar audit"      "$PY" scripts/audit_bars.py data/samples/cn_bars
+# Listing diff only (--no-drift). Re-hashing every cited source is ~1,000 unthrottled requests to exchange
+# websites at the current dataset size; run it by hand, throttled, before a release instead.
 if [ $DRY -eq 1 ]; then
-  TAIL=200 step "source watch"      "$PY" scripts/source_watch.py --no-save-state
+  TAIL=200 step "source watch"      "$PY" scripts/source_watch.py --no-drift --no-save-state
 else
-  TAIL=200 step "source watch"      "$PY" scripts/source_watch.py
+  TAIL=200 step "source watch"      "$PY" scripts/source_watch.py --no-drift
 fi
 
 {
