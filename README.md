@@ -179,7 +179,7 @@ tested against them in CI; the first run caught a real defect. `python conforman
 
 ## Errata
 
-When data contradicts a rule, so far the data has been wrong every time. [`errata/`](errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding). Contributions welcome under the same bar: sample + detector + the fact that settles it.
+When data contradicts a rule, so far the data has been wrong every time. [`errata/`](errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding; issuer-specific ex-rights formulas in reorganisation conversions). Contributions welcome under the same bar: sample + detector + the fact that settles it.
 
 ## Verification levels
 

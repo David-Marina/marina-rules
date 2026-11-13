@@ -12,6 +12,7 @@ series, precomputed columns — that any pipeline can exhibit, including ours (E
 |---|---|---|
 | [E-0001](E-0001.md) | a precomputed pct-change column disagrees with close/preclose beside it; limit-up counts inflate | `python errata/E-0001/reproduce.py <bars_dir>` |
 | [E-0002](E-0002.md) | forward-adjusted prices rounded to ¥0.01 below ¥1 show ±6% moves inside a 5% band | `python errata/E-0002/reproduce.py <adjusted.csv> [<unadjusted.csv>]` |
+| [E-0003](E-0003.md) | a series rebuilt with `prev_close / (1 + ratio)` sits a constant factor off traded prices before a reorganisation conversion; fake gap on the ex-date | `python errata/E-0003/reproduce.py <unadjusted.csv> <ex_date> <ratio>` |
 
 Rules of this registry: an entry needs a sample that reproduces, a detector that exits non-zero on the
 defect, and the fact that settles it (exchange prices, the exchange's rounding rule, a notice). "I
