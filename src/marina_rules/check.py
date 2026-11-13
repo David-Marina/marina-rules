@@ -129,7 +129,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
-               tracked_through, VERSION, _agreed_tick)
+               tracked_through, VERSION, _agreed_tick, statutory_fee_floor)
 from .equity import (LIST_DATE_MARGIN_DAYS, board_for_code, checkable_scopes, context_keys, equity_scopes,
                      listing_index_from_list_date, parse_context_value, pick_scope, seasoned_listing_day_index)
 
@@ -194,47 +194,6 @@ def _off_tick(price_text: str, tick: float) -> bool:
     except InvalidOperation:
         return False
     return t > 0 and p % t != 0
-
-
-def statutory_fee_floor(turnover: float, side: str, date: str, market: str | None = None, strict: bool = False) -> float:
-    """Lower bound on the statutory fees of one fill, in CNY: stamp duty of the fill's side + transfer fee on turnover.
-
-    Only TURNOVER-based rules enter: ``stamp_duty_sell`` / ``stamp_duty_buy`` and ``transfer_fee_each_side``
-    (fractions of turnover). ``transfer_fee_par_value`` (SSE A shares before 2015-08-01) is a fraction of traded
-    PAR VALUE, which a fill log does not carry; it is never multiplied by turnover. On such days the transfer
-    component is omitted, so the result stays a valid lower bound. Without ``market`` the lookup asks for a rule
-    covering both XSHG and XSHE (an exchange-specific rate never answers for a fill whose exchange is unknown).
-    For market BJSE the transfer fee is looked up under the BSE family scope ``bse_stock`` first (BSE-only rate,
-    2021-11-15..2022-04-29), then under ``stock``.
-    Raises KeyError when a turnover-based rule is missing and no par-value rule explains the gap.
-    """
-    mkt = market or "XSHG+XSHE"
-    stat = turnover * record_at("stamp_duty_sell" if side == "sell" else "stamp_duty_buy", date, "stock", mkt, strict).value
-    try:
-        stat += turnover * _transfer_fee_record(date, mkt, strict).value
-    except KeyError:
-        if not _par_value_fee_in_force(date, market, strict):
-            raise
-    return stat
-
-
-def _transfer_fee_record(date: str, market: str, strict: bool):
-    """The turnover transfer-fee record for one fill: ``bse_stock`` then ``stock`` for BJSE, ``stock`` otherwise."""
-    if market == "BJSE":
-        try:
-            return record_at("transfer_fee_each_side", date, "bse_stock", market, strict)
-        except KeyError:
-            pass
-    return record_at("transfer_fee_each_side", date, "stock", market, strict)
-
-
-def _par_value_fee_in_force(date: str, market: str | None, strict: bool) -> bool:
-    """True if a par-value transfer fee is in force on ``date`` for ``market`` (any market when None)."""
-    try:
-        record_at("transfer_fee_par_value", date, "stock", market, strict)
-        return True
-    except KeyError:
-        return False
 
 
 def _row_context(r: dict) -> dict:

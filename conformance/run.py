@@ -33,7 +33,7 @@ def run():
                     got = {"status": d["status"]}
                     if d["status"] == "DETERMINED": got["value"] = d["result"]["value"]
                     # Only the keys a vector expects are compared, so additive decision keys never break old vectors.
-                    for k in ("missing_context", "known_gap_ids", "tracking", "warnings"):
+                    for k in ("missing_context", "known_gap_ids", "tracking", "warnings", "alternatives"):
                         if k in e: got[k] = d.get(k)
             except Exception as ex:
                 got = {"error": type(ex).__name__, "message": str(ex)[:120]}

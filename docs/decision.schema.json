@@ -126,6 +126,37 @@
    },
    "description": "carry-forward warnings on a DETERMINED answer from an open-ended record"
   },
+  "alternatives": {
+   "type": "object",
+   "additionalProperties": false,
+   "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the rule names the scope has, names close to the one asked, the intervals the asked rule does have, or scope names close to an unknown scope. A similar name is a different rule: read its definition before using it",
+   "properties": {
+    "scope_rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "similar_rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rule_intervals": {
+     "type": "array",
+     "items": {
+      "type": "array"
+     }
+    },
+    "similar_scopes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
   "record_id": {
    "type": [
     "string",

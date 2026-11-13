@@ -7,6 +7,10 @@
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
    "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None, require_tracked=False)",
    "tracked_through": "marina_rules.tracked_through(market, scope=None)",
+   "rules_for": "marina_rules.rules_for(scope, market=None) — rule names a scope has, with intervals",
+   "statutory_fee_floor": "marina_rules.statutory_fee_floor(turnover, side, date, market=None); statutory_fee_components(...) for the per-rule amounts and record ids",
+   "skill_text": "marina_rules.skill_text() — the usage notes shipped with the package",
+   "cli": "marina-rules | python -m marina_rules: query, rules, scopes, fees, check, capabilities, schema, skill, version",
    "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
    "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
    "check": "python -m marina_rules.check fills.csv"
@@ -29,6 +33,7 @@
   "coverage() over the whole window before any computation",
   "supply every key in scope.requires per security per day; Marina never infers them",
   "stop on any status other than DETERMINED; cite known_gap_ids when present",
+  "on OUT_OF_COVERAGE read alternatives: the scope may hold the rule under another name (scope_rules, similar_rules) — a different name is a different rule, check its definition",
   "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond the date the sources were checked, or pass require_tracked=True",
   "put citation() into every result"
  ],
@@ -2079,7 +2084,8 @@
    "st_b_share": "b_share",
    "st_bse": "bse_stock"
   },
-  "default": "stock"
+  "default": "stock",
+  "default_applies_to": "mainland securities scopes only (records on XSHG / XSHE / BJSE); a futures, Hong Kong or US scope has no tick family"
  },
  "context_vocabulary": [
   "board",

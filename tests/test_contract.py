@@ -4,7 +4,7 @@ import pytest
 from marina_rules.contract import resolve, contract_schema, capabilities, CONTRACT_VERSION
 
 STATUSES = {"DETERMINED", "MISSING_CONTEXT", "OUT_OF_COVERAGE", "CONFLICT", "UNVERIFIED"}
-ADDITIVE = {"tracking", "warnings"}   # optional in the v1 schema, always emitted since the tracking registry
+ADDITIVE = {"tracking", "warnings", "alternatives"}   # optional in the v1 schema, always emitted since the tracking registry
 
 
 def _valid(d):

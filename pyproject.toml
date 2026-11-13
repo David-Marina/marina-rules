@@ -24,6 +24,7 @@ Issues = "https://github.com/David-Marina/marina-rules/issues"
 
 [project.scripts]
 marina-check = "marina_rules.check:main"
+marina-rules = "marina_rules.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -35,5 +36,6 @@ testpaths = ["tests"]
 # The dataset is vendored into the wheel so `pip install marina-rules` is self-contained.
 # scripts/vendor_data.py copies data/ → src/marina_rules/data/ right before build; the copy is
 # git-ignored and must byte-match data/ (checked in CI and by `marina_rules.dataset_digest()`).
+# SKILL.md (the usage notes) is copied the same way and is read by `marina_rules.skill_text()`.
 [tool.setuptools.package-data]
-marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv"]
+marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv", "SKILL.md"]

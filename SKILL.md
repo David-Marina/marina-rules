@@ -20,6 +20,21 @@ and the order matters.
 6. On KeyError / RuleConflict / partial: STOP   report what is missing; do not substitute
 ```
 
+## 0. Names first: ask for what exists
+
+```python
+mr.scopes()                         # scope → description, requires   ("hk" / "us" for those registries)
+mr.rules_for("cffex_if", "CCFX")    # rule names this scope has, each with its [from, to) intervals
+```
+
+A rule is answered only under its recorded name, for a registered scope. Do not guess a name from another market:
+stocks and funds carry `price_limit_pct` (fraction of the previous close), futures carry
+`price_limit_pct_of_prev_settlement`; Hong Kong has `tick_size_table`, the US `min_quote_increment`, and neither has
+`tick_size` (nor does any futures scope — the A-share tick never answers for them). When a lookup refuses, the
+`KeyError` message and the decision's `alternatives` list what the scope does have. That is a pointer, not an answer:
+ask again under the listed name if — and only if — it is the quantity you need; "not covered" is the right answer
+only after that check. The same listing from a shell: `marina-rules rules <scope> [market]`, `marina-rules scopes`.
+
 ## 1–2. Pre-flight the window, don't discover gaps mid-run
 
 ```python
@@ -115,6 +130,11 @@ stamp = mr.rule_at("stamp_duty_sell", date)                 # fraction of sell t
   Pass `market=`. This only triggers below ≈¥0.10; ordinary prices never need it.
 - `strict=True` excludes `unverified` records. It still admits `single-source`; decide your own bar.
 
+Statutory fees of an A-share stock fill: `mr.statutory_fee_floor(turnover, side, date, market)` returns stamp duty of
+that side plus the transfer fee, in CNY; `mr.statutory_fee_components(...)` gives each amount with its record id. Use
+them instead of adding the rates yourself (0.0005 + 0.00001 is 0.00051, and the transfer fee was charged on par value
+on the SSE before 2015-08-01 — the function leaves that component out and says so). Commission is not included.
+
 ## 4c. Avoiding look-ahead on rule changes: `as_of`
 
 ```python
@@ -178,6 +198,7 @@ number. Templates:
 - "Scope `chinext` requires `st_status`; the input has no point-in-time ST column. Excluded 197 securities flagged ST today; results for them are not computed."
 - "Scope `reits` is `unsupported` in marina-rules@2026.11.13 — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
 - "Scope `unicorn` is `unsupported` and matches no known gap — Marina has no opinion on it at all. Stop."
+- "`price_limit_pct` is not a rule of `cffex_if`; the scope's daily limit is `price_limit_pct_of_prev_settlement` (0.10 of the previous settlement price on 2024-06-03). Answered under that name." — or, if that is not the quantity asked for: "not covered; nothing substituted."
 - "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-02. Not answered."
 
 `cov["known_gap_ids"]` is the difference between *we know we don't cover this* (cite the `G-xxxx`, its

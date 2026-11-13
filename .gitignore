@@ -10,6 +10,7 @@ ops/reports/
 
 # vendored copy for wheels (scripts/vendor_data.py); never commit
 src/marina_rules/data/
+src/marina_rules/SKILL.md
 dist/
 build/
 *.egg-info/

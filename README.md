@@ -49,6 +49,35 @@ mr.coverage("XSHE", "chinext", ["price_limit_pct"], "2019-01-01", "2026-10-19")
 python -m marina_rules.diff <old> <new>     # what changed, and what must be re-run; git tags or data directories
 ```
 
+### Find out what can be asked
+
+A rule is answered only under the name it is recorded with, for a scope that exists. Look the names up instead of
+guessing them — from Python or from the command line (`marina-rules` and `python -m marina_rules` are the same program):
+
+```python
+mr.scopes()                          # scope → description, and the context it requires ("hk" / "us" for those registries)
+mr.rules_for("cffex_if", "CCFX")     # {'margin_ratio': [[from, to], …], 'price_limit_pct_of_prev_settlement': […], …}
+mr.statutory_fee_floor(86420.00, "sell", "2023-08-28", "XSHG")   # 44.0742 — stamp duty + transfer fee of one fill
+mr.statutory_fee_components(86420.00, "sell", "2023-08-28", "XSHG")   # the same, per rule, with record ids
+mr.skill_text()                      # the usage notes (SKILL.md) shipped inside the package
+```
+
+```bash
+marina-rules                                   # lists the subcommands
+marina-rules scopes                            # add hk or us for those registries
+marina-rules rules cffex_if CCFX               # rule names of one scope, first / last date (--intervals for all)
+marina-rules query price_limit_pct 2024-06-14 st_main XSHE --context board=main_board,st_status=true
+marina-rules fees 86420 sell 2023-08-28 XSHG   # components, record ids and their sum
+marina-rules skill                             # the usage notes
+```
+
+When a lookup finds nothing, the refusal says what does exist: a `KeyError` message names the rules the scope has (or
+the intervals the rule has), and a decision from `resolve()` carries the same as `alternatives`
+(`scope_rules`, `similar_rules`, `rule_intervals`, `similar_scopes`). Names only, never a value — a similar name is a
+different rule (`price_limit_pct` is a fraction of the previous close; futures scopes carry
+`price_limit_pct_of_prev_settlement`), so read its definition and ask again. `tick_size` falls back to the `stock`
+family for mainland securities scopes only: a futures, Hong Kong or US scope asked for `tick_size` is refused.
+
 `coverage()` answers "can Marina serve every (rule, day) in this window for this scope?" — `complete`,
 `partial` (with the exact gaps), or `unsupported`. It also tells you what you must already know about
 each security to select the scope legitimately (`required_context`): Marina holds rules, never a
@@ -215,7 +244,7 @@ python -m marina_rules.contract --capabilities    # what can be asked, generated
 ```
 
 `resolve()` returns one dict with `status ∈ {DETERMINED, MISSING_CONTEXT, OUT_OF_COVERAGE, CONFLICT,
-UNVERIFIED, NOT_YET_PUBLISHED, UNKNOWN_PUBLICATION, BEYOND_TRACKING}` (`NOT_YET_PUBLISHED` / `UNKNOWN_PUBLICATION` only with `as_of`, `BEYOND_TRACKING` only with `require_tracked=True`), a `result` only when determined, the record and evidence refs, `known_gap_ids`, `tracking` and `warnings`, the
+UNVERIFIED, NOT_YET_PUBLISHED, UNKNOWN_PUBLICATION, BEYOND_TRACKING}` (`NOT_YET_PUBLISHED` / `UNKNOWN_PUBLICATION` only with `as_of`, `BEYOND_TRACKING` only with `require_tracked=True`), a `result` only when determined, the record and evidence refs, `known_gap_ids`, `tracking` and `warnings`, `alternatives` (what exists instead, on `OUT_OF_COVERAGE` only), the
 ruleset version and hash, and a `reason` in plain words. It is the boundary other languages, agents
 and logs should see; the Python exceptions remain for in-process use.
 

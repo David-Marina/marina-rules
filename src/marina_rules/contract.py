@@ -44,7 +44,7 @@ import json
 from functools import lru_cache
 from typing import Any
 
-from . import (VERSION, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of,
+from . import (VERSION, rules_for, similar_names, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of,
                dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, records, scopes, tracked_through,
                tracking_registry, tracking_state)
 
@@ -151,7 +151,7 @@ def _base(rule, date, scope, market) -> dict:
             "required_context": [], "missing_context": [], "context_conflicts": [],
             "known_gap_ids": [], "evidence_refs": [], "verification": None,
             "ruleset_version": VERSION, "ruleset_hash": dataset_digest(), "reason": "",
-            "tracking": {"tracked_through": None, "beyond": None}, "warnings": []}
+            "tracking": {"tracked_through": None, "beyond": None}, "warnings": [], "alternatives": {}}
 
 
 def _evidence(rec: Record) -> list[dict]:
@@ -209,6 +209,10 @@ def _resolve(rule, trade_date, scope, market, context, min_verification, market_
         kg = gaps_for(market, scope, rule, d, d + "\x00", market_prefix)  # point query: [d, d]
         out["known_gap_ids"] = sorted(g["gap_id"] for g in kg)
         out["reason"] = f"scope {scope!r} is not in the registry" + (f"; known gap(s) {out['known_gap_ids']}" if kg else "; no known gap matches — a blind spot")
+        close = similar_names(scope, scopes(market_prefix))
+        if close:
+            out["alternatives"] = {"similar_scopes": close}
+            out["reason"] += f"; closest scope name(s): {', '.join(close)}"
         return out
 
     # 1) context: required keys present (non-null), and not contradicting the scope's declared constraints.
@@ -274,7 +278,15 @@ def _resolve(rule, trade_date, scope, market, context, min_verification, market_
         d = out["trade_date"]
         kg = gaps_for(market, lscope, rule, d, d + "\x00", market_prefix, contract=contract)
         out["known_gap_ids"] = sorted(g["gap_id"] for g in kg)
-        out["reason"] = str(e).strip("'") + (f"; known gap(s) {out['known_gap_ids']}: " + " | ".join(g["reason"] for g in kg) if kg else "; no known gap matches — a blind spot")
+        msg = e.args[0] if e.args and isinstance(e.args[0], str) else str(e).strip("'")
+        out["reason"] = msg + (f"; known gap(s) {out['known_gap_ids']}: " + " | ".join(g["reason"] for g in kg) if kg else "; no known gap matches — a blind spot")
+        have = rules_for(scope, market)
+        alt = {"scope_rules": sorted(have)}
+        if rule in have:
+            alt["rule_intervals"] = have[rule]
+        else:
+            alt["similar_rules"] = similar_names(rule, have)
+        out["alternatives"] = alt
         return out
 
     # 3) evidence bar
@@ -324,6 +336,15 @@ def contract_schema() -> dict:
                                         "beyond": {"type": ["boolean", "null"]}}},
             "warnings": {"type": "array", "items": {"enum": list(WARNINGS)},
                          "description": "carry-forward warnings on a DETERMINED answer from an open-ended record"},
+            "alternatives": {"type": "object", "additionalProperties": False,
+                             "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the "
+                                            "rule names the scope has, names close to the one asked, the intervals the "
+                                            "asked rule does have, or scope names close to an unknown scope. A similar "
+                                            "name is a different rule: read its definition before using it",
+                             "properties": {"scope_rules": {"type": "array", "items": {"type": "string"}},
+                                            "similar_rules": {"type": "array", "items": {"type": "string"}},
+                                            "rule_intervals": {"type": "array", "items": {"type": "array"}},
+                                            "similar_scopes": {"type": "array", "items": {"type": "string"}}}},
             "record_id": nullable("string"),
             "required_context": {"type": "array", "items": {"type": "string"}},
             "missing_context": {"type": "array", "items": {"type": "string"}},
@@ -368,6 +389,12 @@ def capabilities(market_prefix: str = "cn") -> dict:
                        "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None, "
                                    "require_tracked=False)",
                        "tracked_through": "marina_rules.tracked_through(market, scope=None)",
+                       "rules_for": "marina_rules.rules_for(scope, market=None) — rule names a scope has, with intervals",
+                       "statutory_fee_floor": "marina_rules.statutory_fee_floor(turnover, side, date, market=None); "
+                                              "statutory_fee_components(...) for the per-rule amounts and record ids",
+                       "skill_text": "marina_rules.skill_text() — the usage notes shipped with the package",
+                       "cli": "marina-rules | python -m marina_rules: query, rules, scopes, fees, check, capabilities, "
+                              "schema, skill, version",
                        "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
                        "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
                        "check": "python -m marina_rules.check fills.csv"},
@@ -384,6 +411,8 @@ def capabilities(market_prefix: str = "cn") -> dict:
         "preflight": ["coverage() over the whole window before any computation",
                       "supply every key in scope.requires per security per day; Marina never infers them",
                       "stop on any status other than DETERMINED; cite known_gap_ids when present",
+                      "on OUT_OF_COVERAGE read alternatives: the scope may hold the rule under another name "
+                      "(scope_rules, similar_rules) — a different name is a different rule, check its definition",
                       "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond "
                       "the date the sources were checked, or pass require_tracked=True",
                       "put citation() into every result"],
@@ -405,7 +434,9 @@ def capabilities(market_prefix: str = "cn") -> dict:
                        "delivery_month {in|not_in}, months_to_delivery {min|max|in} = delivery month index minus trade "
                        "month index; docs/SCHEMA.md 'Contract selectors'"}}
            if any(r.contracts is not None for r in recs) else {}),
-        "tick_families": {"rule": "tick_size", "map": dict(sorted(_tick_map().items())), "default": "stock"},
+        "tick_families": {"rule": "tick_size", "map": dict(sorted(_tick_map().items())), "default": "stock",
+                          "default_applies_to": "mainland securities scopes only (records on XSHG / XSHE / BJSE); a "
+                                                "futures, Hong Kong or US scope has no tick family"},
         "context_vocabulary": sorted({c for v in reg.values() for c in v["requires"]}
                                      | ({"contract"} if any(r.contracts is not None for r in recs) else set())),
         "known_gaps": [{**{k: g[k] for k in ("gap_id", "market", "scope", "rule", "interval", "severity", "status")},

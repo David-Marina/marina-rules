@@ -8,6 +8,14 @@
     >>> mr.citation()
     'rules: marina-rules@<version> sha256:<16 hex>'
 
+Where to start (nothing here needs the network):
+  * ``mr.skill_text()`` — the usage notes shipped with the package (the path to follow, when to stop).
+  * ``mr.scopes()`` / ``mr.rules_for(scope, market)`` — which scopes exist and which rule names each one has.
+    Ask for a rule by the exact name listed there; a name that is absent cannot be answered.
+  * ``marina_rules.contract.resolve(...)`` — one decision dict per question, never raises for data reasons.
+  * ``mr.statutory_fee_floor(turnover, side, date, market)`` — stamp duty + transfer fee of one A-share fill.
+  * Command line: ``python -m marina_rules`` (or ``marina-rules``) lists the subcommands.
+
 Design rules (do not relax):
   * Lookups that find no effective record raise ``KeyError``. There are no defaults.
   * Every record carries a ``verification`` level; ``strict=True`` refuses ``unverified`` records.
@@ -32,7 +40,8 @@ import yaml
 __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for", "coverage", "market_prefix_for", "limit_price", "tick_size", "tick_family", "lookup_scope", "min_tick_band", "round_half_up",
            "citation", "dataset_digest", "DATA_DIR", "VERSION", "Record", "RuleConflict", "NotYetPublished",
            "PublicationUnknown", "ContractRequired", "parse_contract", "contract_matches", "tracked_through",
-           "tracking_registry", "tracking_state", "BeyondTracking"]
+           "tracking_registry", "tracking_state", "BeyondTracking", "rules_for", "statutory_fee_floor",
+           "statutory_fee_components", "skill_text"]
 
 VERSION = "2026.11.13"
 DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
@@ -1086,7 +1095,7 @@ def record_at(rule: str, date: str, scope: str = "stock", market: str | None = N
         hits = [h for h in hits if h.applies_to(contract, d)]
     if not hits:
         raise KeyError(f"no {rule}/{scope} rule in force on {d}" + (" (strict)" if strict else "")
-                       + (f" for contract {contract}" if keyed else ""))
+                       + (f" for contract {contract}" if keyed else "") + _miss_hint(rule, scope, market, d))
     if _conflicting(hits, market):
         raise RuleConflict(f"{len(hits)} records of {rule}/{scope} in force on {d}: " + ", ".join(h.id for h in hits))
     rec = _require_published(hits[0], as_of)
@@ -1254,6 +1263,153 @@ def rule_at(rule: str, date: str, scope: str = "stock", market: str | None = Non
                      require_tracked=require_tracked).value
 
 
+@lru_cache(maxsize=None)
+def _rules_recorded(scope: str, market: str | None) -> dict:
+    """rule → sorted tuple of (effective_from, effective_to) of the records stored under exactly ``scope``."""
+    out: dict = {}
+    for r in records():
+        if r.scope == scope and _market_matches(r.market, market):
+            out.setdefault(r.rule, set()).add((r.effective_from, r.effective_to))
+    return {k: tuple(sorted(v, key=lambda t: (t[0], t[1] or "9999-12-31"))) for k, v in sorted(out.items())}
+
+
+def rules_for(scope: str = "stock", market: str | None = None) -> dict:
+    """Rule names the dataset holds for ``scope`` → their intervals ``[[effective_from, effective_to], …]``
+    (``effective_to`` None = open-ended), both sorted.
+
+    ``market`` filters as in ``record_at`` (None = any market). Rules recorded per instrument family (``tick_size``)
+    are listed from the family of ``scope``, as ``tick_size()`` and ``resolve()`` look them up. An empty dict means
+    the dataset holds nothing for that scope / market — not that the instrument has no rules.
+
+    Ask for a rule by the exact name listed here: a name that is absent cannot be answered, and a similar-looking
+    name is a different rule (``price_limit_pct`` is a fraction of the previous close; futures scopes carry
+    ``price_limit_pct_of_prev_settlement``)."""
+    out = {k: [list(iv) for iv in v] for k, v in _rules_recorded(scope, market).items()}
+    for rule in _FAMILY_RULES:
+        fam = _family_scope(rule, scope, market)
+        ivs = _rules_recorded(fam, market).get(rule) if fam else None
+        if ivs:
+            out[rule] = [list(iv) for iv in ivs]
+    return dict(sorted(out.items()))
+
+
+def _family_scope(rule: str, scope: str, market: str | None) -> str | None:
+    """The family scope holding ``rule`` for ``scope`` when that is another scope, else None (see tick_family)."""
+    if rule not in _FAMILY_RULES:
+        return None
+    fam = lookup_scope(rule, scope, market)
+    return fam if fam != scope else None
+
+
+def similar_names(name: str, candidates: Iterable[str], n: int = 3) -> list:
+    """Candidates that contain ``name`` or are contained in it, then close spellings; at most ``n``."""
+    import difflib
+    cands = sorted(set(candidates) - {name})
+    hits = [c for c in cands if name in c or c in name]
+    hits += [c for c in difflib.get_close_matches(name, cands, n=n, cutoff=0.6) if c not in hits]
+    return hits[:n]
+
+
+def _miss_hint(rule: str, scope: str, market: str | None, date: str) -> str:
+    """Why a lookup found nothing, as a clause appended to the KeyError message ('' when there is nothing to add)."""
+    have = _rules_recorded(scope, market)
+    where = f"scope {scope!r}" + (f" on market {market}" if market else "")
+    if rule in have:
+        ivs = have[rule]
+        if any(a <= date and (b is None or date < b) for a, b in ivs):
+            return ""   # an interval covers the date: the miss is about strict / contract, already said
+        if len(ivs) <= 4:
+            return "; records of this rule exist for " + ", ".join(f"[{a}, {b or '∞'})" for a, b in ivs)
+        last = ivs[-1][1]
+        return f"; {len(ivs)} intervals of this rule exist between {ivs[0][0]} and {last or '∞'}, none covers {date}"
+    fam = _family_scope(rule, scope, market)
+    if fam:
+        return f"; {rule} is recorded per instrument family — ask under scope {fam!r} (tick_size() and resolve() do this)"
+    if not have:
+        return f"; the dataset holds no rule at all for {where}"
+    close = similar_names(rule, have)
+    return (f"; {where} has no rule named {rule!r}" + (f" — closest name(s): {', '.join(close)}" if close else "")
+            + f"; rules recorded for it: {', '.join(have)}")
+
+
+def _par_value_fee_record(date: str, market: str | None, strict: bool):
+    """The par-value transfer-fee record in force on ``date`` for ``market`` (any market when None), or None."""
+    try:
+        return record_at("transfer_fee_par_value", date, "stock", market, strict)
+    except KeyError:
+        return None
+
+
+def _par_value_fee_in_force(date: str, market: str | None, strict: bool) -> bool:
+    return _par_value_fee_record(date, market, strict) is not None
+
+
+def _transfer_fee_record(date: str, market: str, strict: bool):
+    """The turnover transfer-fee record for one fill: ``bse_stock`` then ``stock`` for BJSE, ``stock`` otherwise."""
+    if market == "BJSE":
+        try:
+            return record_at("transfer_fee_each_side", date, "bse_stock", market, strict)
+        except KeyError:
+            pass
+    return record_at("transfer_fee_each_side", date, "stock", market, strict)
+
+
+def statutory_fee_components(turnover: float, side: str, date: str, market: str | None = None,
+                             strict: bool = False) -> list:
+    """The statutory fees of one A-share stock fill, one dict per component, in CNY:
+    ``{"rule", "record_id", "rate", "amount", "basis"}``.
+
+    Components: stamp duty of the fill's side (``stamp_duty_sell`` for ``side == "sell"``, ``stamp_duty_buy``
+    otherwise) and the transfer fee (``transfer_fee_each_side``), both fractions of ``turnover``;
+    ``amount = turnover * rate``, unrounded. Where the transfer fee was charged on traded PAR VALUE
+    (``transfer_fee_par_value``, SSE A shares before 2015-08-01) a fill's turnover cannot give the amount: that
+    component is returned with ``amount`` None and ``basis`` "par_value", and is left out of the floor.
+    Without ``market`` the lookup asks for a rule covering both XSHG and XSHE (an exchange-specific rate never
+    answers for a fill whose exchange is unknown). For market BJSE the transfer fee is looked up under the BSE
+    family scope ``bse_stock`` first (BSE-only rate, 2021-11-15..2022-04-29), then under ``stock``.
+
+    Not included: broker commission and anything else that is contractual rather than statutory.
+    Raises KeyError when a turnover-based rule is missing and no par-value rule explains the gap."""
+    mkt = market or "XSHG+XSHE"
+    recs = [record_at("stamp_duty_sell" if side == "sell" else "stamp_duty_buy", date, "stock", mkt, strict)]
+    par = None
+    try:
+        recs.append(_transfer_fee_record(date, mkt, strict))
+    except KeyError:
+        par = _par_value_fee_record(date, market, strict)
+        if par is None:
+            raise
+    out = [{"rule": r.rule, "record_id": r.id, "rate": r.value, "amount": turnover * r.value, "basis": "turnover"}
+           for r in recs]
+    if par is not None:
+        out.append({"rule": par.rule, "record_id": par.id, "rate": par.value, "amount": None, "basis": "par_value"})
+    return out
+
+
+def statutory_fee_floor(turnover: float, side: str, date: str, market: str | None = None, strict: bool = False) -> float:
+    """Lower bound on the statutory fees of one fill, in CNY: stamp duty of the fill's side + transfer fee on turnover
+    — the sum of the turnover-based amounts of ``statutory_fee_components()`` (same arguments, same errors).
+
+    A fee below this is impossible; a fee above it is normal (commission is not included). On days when the transfer
+    fee was a fraction of traded par value the transfer component is omitted, so the result stays a valid lower bound."""
+    stat = None
+    for c in statutory_fee_components(turnover, side, date, market, strict):
+        if c["amount"] is not None:
+            stat = c["amount"] if stat is None else stat + c["amount"]
+    return stat
+
+
+def skill_text() -> str:
+    """The usage notes for assistants and backtest authors (SKILL.md), as shipped with this package."""
+    here = os.path.dirname(__file__)
+    # a source checkout reads the repository file; an installed package reads its vendored copy (as DATA_DIR does)
+    for p in (os.path.join(here, "..", "..", "SKILL.md"), os.path.join(here, "SKILL.md")):
+        if os.path.isfile(p):
+            with open(p, encoding="utf-8") as fh:
+                return fh.read()
+    raise FileNotFoundError("SKILL.md is not part of this installation")
+
+
 def round_half_up(x: float, decimals: int = 2) -> float:
     """Exchange rounding for limit prices (half away from zero), not banker's rounding."""
     f = 10.0 ** decimals
@@ -1276,9 +1432,25 @@ def _is_bjse(market: str | None) -> bool:
 def tick_family(scope: str, market: str | None = None) -> str:
     """Instrument family whose ``tick_size`` records apply to ``scope`` (stock / bse_stock / etf / b_share /
     convertible). BSE board scopes belong to ``bse_stock``; family ``stock`` asked about market BJSE is ``bse_stock``
-    too (BSE-only records live there, so a market-less ``stock`` lookup never meets a BJSE record)."""
-    fam = _TICK_SCOPE.get(scope, "stock")
+    too (BSE-only records live there, so a market-less ``stock`` lookup never meets a BJSE record).
+    A scope outside the mainland securities scopes (futures, Hong Kong, US, unknown) is its own family."""
+    fam = _TICK_SCOPE.get(scope) or ("stock" if _securities_scope(scope) else scope)
     return "bse_stock" if fam == "stock" and _is_bjse(market) else fam
+
+
+_SECURITIES_EXCHANGES = frozenset({"XSHG", "XSHE", "BJSE"})
+
+
+@lru_cache(maxsize=None)
+def _securities_scope(scope: str) -> bool:
+    """True when ``scope`` is in the mainland registry and its own records, if it has any, sit on a securities
+    exchange (XSHG / XSHE / BJSE). Only such a scope falls back to the ``stock`` tick family: a futures scope
+    (records on a futures exchange), a Hong Kong or US scope and an unknown scope have no family, so asking their
+    ``tick_size`` finds nothing instead of the A-share tick."""
+    if scope not in scopes("cn"):
+        return False
+    markets = {m for r in records() if r.scope == scope for m in r.market.split("+")}
+    return not markets or bool(markets & _SECURITIES_EXCHANGES)
 
 
 def lookup_scope(rule: str, scope: str, market: str | None = None) -> str:
