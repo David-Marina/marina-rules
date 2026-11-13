@@ -4,12 +4,15 @@ import pytest
 from marina_rules.contract import resolve, contract_schema, capabilities, CONTRACT_VERSION
 
 STATUSES = {"DETERMINED", "MISSING_CONTEXT", "OUT_OF_COVERAGE", "CONFLICT", "UNVERIFIED"}
+ADDITIVE = {"tracking", "warnings"}   # optional in the v1 schema, always emitted since the tracking registry
 
 
 def _valid(d):
     """Minimal structural validation without a jsonschema dependency."""
     sch = contract_schema()
-    assert set(d) == set(sch["required"]) | {"market"}, set(d) ^ (set(sch["required"]) | {"market"})
+    want = set(sch["required"]) | {"market"} | ADDITIVE
+    assert set(d) == want, set(d) ^ want
+    assert not ADDITIVE & set(sch["required"]), "additive keys must stay optional in the v1 schema"
     assert d["status"] in STATUSES and d["contract_version"] == CONTRACT_VERSION
     assert (d["result"] is not None) == (d["status"] == "DETERMINED")
     assert len(d["ruleset_hash"]) == 64

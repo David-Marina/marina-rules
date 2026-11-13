@@ -145,6 +145,16 @@ stock commission cap / minimum 2021-11-15 → open (no official text sets one); 
 fails on any gap not so listed. Coverage targets exist for China A-shares only; for the other markets the table above and
 each market's `known_gaps.yaml` are the statement.
 
+**Tracked through** — the last date for which the official sources were checked for rule changes
+(`data/<prefix>/tracking.yaml`; [what it means](#what-the-dates-mean-and-dont)):
+
+| Market group | `tracked_through` | Checked against |
+|---|---|---|
+| SHFE (XSGE), INE (XINE), CZCE (XZCE), GFEX | 2026-11-02 | notices and daily settlement parameters, every trading day from 2024-01-02 |
+| Hong Kong (XHKG) | 2026-11-03 | HKEX rules, circulars and fee pages; SFC and IRD notices |
+| US equities (XNYS, XNAS) | 2026-11-03 | SEC, FINRA, NYSE and Nasdaq rules, orders, notices and filings |
+| China A-share (XSHG, XSHE, BJSE), CFFEX (CCFX) | not tracked | no dated statement yet; every open-ended answer is a carry-forward |
+
 ## Scope — what Marina will and will not contain
 
 **In:** rules that change *whether an order fills, at what price, or at what cost* — price limits, trading hours and auction windows, tick size and lot size, price cages, T+N settlement, statutory fees, exchange margin requirements, trading calendars (delegated to `exchange_calendars`).
@@ -172,6 +182,26 @@ A rule published after `as_of` is `NOT_YET_PUBLISHED` / `NotYetPublished` — ne
 with `published_at: null` is `UNKNOWN_PUBLICATION` / `PublicationUnknown`. CLI: `--as-of YYYY-MM-DD`. Exact semantics
 and what is out of scope: [docs/SCHEMA.md](docs/SCHEMA.md#as_of--as-officially-published-on-2026102607).
 
+**An open end is not a forecast.** A record still in force has `effective_to: null`. Releases are monthly, and some
+markets were researched once up to a cut-off date, so an exchange may have changed a rule that Marina has not caught up
+with. `mr.tracked_through(market, scope=None)` gives the last date for which the maintainer checked the official sources
+of that market for changes (`None` = not tracked; table under [Coverage](#coverage)). On or before it, an open-ended
+record states what the sources said; after it, the value is the last checked rule **carried forward, not a finding**.
+Every `resolve()` answer carries `tracking: {tracked_through, beyond}`, and a determined answer from an open-ended record
+beyond that date (or on an untracked market) carries the warning `CARRY_FORWARD_BEYOND_TRACKED` (`CARRY_FORWARD_UNTRACKED`).
+A closed record is never flagged: its end date is sourced. To refuse carry-forwards instead, opt in:
+
+```python
+mr.tracked_through("XSGE")                                                          # '2026-11-02'
+resolve("session_schedule", "2026-11-20", "shfe_cu", "XSGE")["warnings"]             # ['CARRY_FORWARD_BEYOND_TRACKED']
+resolve("session_schedule", "2026-11-20", "shfe_cu", "XSGE", require_tracked=True)["status"]  # 'BEYOND_TRACKING'
+mr.rule_at("session_schedule", "2026-11-20", "shfe_cu", "XSGE", require_tracked=True)  # raises BeyondTracking (a KeyError)
+```
+
+`coverage()` reports `tracking` and the `beyond_tracking` ranges (`partial` only with `require_tracked=True`); `marina
+check` counts the rows dated beyond it (not findings; the stamp is unchanged). CLI: `--require-tracked`. The registry is
+not part of the dataset digest: moving a tracking date forward with no rule change does not change the citation.
+
 ## One answer shape for every language: the decision contract
 
 ```bash
@@ -181,7 +211,7 @@ python -m marina_rules.contract --capabilities    # what can be asked, generated
 ```
 
 `resolve()` returns one dict with `status ∈ {DETERMINED, MISSING_CONTEXT, OUT_OF_COVERAGE, CONFLICT,
-UNVERIFIED, NOT_YET_PUBLISHED, UNKNOWN_PUBLICATION}` (the last two only with `as_of`), a `result` only when determined, the record and evidence refs, `known_gap_ids`, the
+UNVERIFIED, NOT_YET_PUBLISHED, UNKNOWN_PUBLICATION, BEYOND_TRACKING}` (`NOT_YET_PUBLISHED` / `UNKNOWN_PUBLICATION` only with `as_of`, `BEYOND_TRACKING` only with `require_tracked=True`), a `result` only when determined, the record and evidence refs, `known_gap_ids`, `tracking` and `warnings`, the
 ruleset version and hash, and a `reason` in plain words. It is the boundary other languages, agents
 and logs should see; the Python exceptions remain for in-process use.
 

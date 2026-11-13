@@ -20,6 +20,11 @@ until someone shows the oracle was misread.
  "tags": ["regime-switch", "first-day-of-new-rule"]}
 ```
 
+Only the keys present in `expect` are compared (`status`, `value`, `missing_context`, `known_gap_ids`, `tracking`,
+`warnings`), so a decision key added later never breaks an existing vector. `query.require_tracked: true` passes the
+opt-in that refuses carry-forwards (`vectors/tracking.json`; the oracle there is the tracking registry entry plus the
+record's interval).
+
 For `limit_price` vectors `query.prev_close` is set and `expect.limit_up` / `expect.limit_down` are the
 expected prices; the oracle quotes the exchange's formula and rounding rule.
 

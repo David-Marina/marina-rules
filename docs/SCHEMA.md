@@ -1445,3 +1445,46 @@ what to do with `NOT_YET_PUBLISHED`. Also out of scope: consultations / drafts (
 final notice) are not publication; `published_at` is the final notice's date. `recorded_at` plays no role in `as_of`.
 
 **Data.** 6 of 184 records have `published_at: null` (2026.10.26.7, after the publication-date research) — the original notice was not located; under `as_of` these always yield `UNKNOWN_PUBLICATION`: the 1998 ST 5% (`st_main`, `st_b_share`), the rounding rule (`limit_price_rounding`) and the SZSE / SSE-par-value / BJSE transfer fees. Where a publication date comes from an official register or chronicle rather than the notice text itself (the 1996 band: 1996-12-13; A-share T+1: 1994-12-08), the record's notes say `published_at basis: official-register`.
+
+## Tracking registry (`data/<prefix>/tracking.yaml`)
+
+Not rules, and **not part of the dataset digest**: `_iter_files()` (and `marina_rules.diff`) skip files named
+`tracking.yaml`, so moving a tracking date forward with no rule change leaves `dataset_digest()` and every citation
+unchanged. Loaded by `tracking_registry()`; one file per market directory (`cn`, `hk`, `us`).
+
+```yaml
+schema: 1
+tracking:
+- market: XSGE                     # MIC as on records; 'XNYS+XNAS' covers each member
+  scopes: [cffex_if, cffex_t*]     # optional: scope names or 'family_*' name-prefix patterns; absent = every scope
+  tracked_through: '2026-11-02'    # last date for which the official sources were checked for rule changes
+  basis: daily settlement parameters and notices, every trading day   # how (short, English)
+  updated: '2026-11-14'            # when the entry was last written
+```
+
+**Meaning.** For a date on or before `tracked_through`, an open-ended record (`effective_to: null`) states what the
+sources said on that date. For a later date it is a **carry-forward** of the last checked rule, not a finding. A closed
+record is unaffected: its `effective_to` is itself sourced. A market or scope with no entry is **untracked** — no date is
+defaulted, and every open-ended answer on it is a carry-forward.
+
+**Validated at load** (a bad file refuses to load): exactly the keys above; both dates valid ISO dates;
+`tracked_through` ≤ `updated`; every market has records under `data/<prefix>/`; every scope (or pattern) names a scope in
+that directory's `scopes.yaml`; no two entries cover the same (market, scope).
+
+**Lookup.** `tracked_through(market, scope=None)` → ISO date or `None`. A '+' market takes the earliest of its members
+and is `None` if any member is untracked; `scope=None` takes the earliest entry of the market, or `None` if some scope with
+records has no entry; `market=None` → `None`.
+
+**Where it shows** (all additive; default return values and exceptions are unchanged):
+
+| API | without opt-in | `require_tracked=True` |
+|---|---|---|
+| `contract.resolve()` | `tracking: {tracked_through, beyond}` on every decision (`beyond` = `trade_date` > `tracked_through`; both `null` when untracked; the market is the query's, else the answering record's). `warnings`: `CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED` on a DETERMINED answer from an open-ended record beyond tracking / on an untracked market | that answer becomes status `BEYOND_TRACKING`: `result` null, `record_id` / evidence kept |
+| `record_at()` / `rule_at()` | unchanged | `BeyondTracking` (subclass of `KeyError`; `record`, `date`, `tracked_through`) in the same case |
+| `coverage()` | `tracking: {tracked_through, beyond: {from, to} \| null}` and `beyond_tracking` [{rule, from, to, record_ids}]: ranges answered by an open-ended record after `tracked_through` (anywhere when untracked); `status` unchanged | non-empty `beyond_tracking` → `partial` |
+| `marina check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked`, `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
+| capabilities | `tracking`: `entries`, `untracked_markets` | — |
+
+`scripts/check_release_metadata.py` fails on a `tracked_through` or `updated` after today (Asia/Tokyo), and with
+`--release` (the release workflow) after the date of the version's CHANGELOG heading; it prints each entry's age. An old
+date is not an error.

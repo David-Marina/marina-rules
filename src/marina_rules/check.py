@@ -84,6 +84,12 @@ Exit codes: 0 = no findings under the options used (``clean``; in a relaxed run 
 1 = findings, 2 = usage error (bad option, unreadable file). Scripts should read ``relaxed``, ``within_tolerance``
 and ``assumed_seasoned`` from the JSON rather than rely on the exit code alone.
 
+Tracking (not findings, never affect the stamp or the exit code): ``tracking`` counts the checked rows dated after
+the ``tracked_through`` date of their market and scope (``rows_beyond_tracked_through``) and the rows whose market is not
+tracked at all (``rows_untracked``; a row without a market counts here), and lists ``tracked_through`` per market seen.
+Such rows were checked against open-ended rules carried forward past the date the official sources were last checked
+for changes (docs/SCHEMA.md "Tracking registry"). Rows reported MARKET_UNSUPPORTED or SCOPE_UNDETERMINED are not counted.
+
 Hints (not findings, never affect the stamp): ``hints`` lists codes whose rows outside the band (source ``band``,
 ratio = price / prev_close) or outside the day's range (source ``day_range``, ratio = price / violated day bound)
 look like a price-basis mismatch, judged per code and source, whether the rows were flagged or tolerated:
@@ -123,7 +129,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
-               VERSION, _agreed_tick)
+               tracked_through, VERSION, _agreed_tick)
 from .equity import (LIST_DATE_MARGIN_DAYS, board_for_code, checkable_scopes, context_keys, equity_scopes,
                      listing_index_from_list_date, parse_context_value, pick_scope, seasoned_listing_day_index)
 
@@ -381,6 +387,8 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     buckets: dict = {}
     out_of_range: dict = {}
     n_flagged = n_tol = n_assumed = 0
+    trk_beyond = trk_untracked = 0
+    trk_dates: dict = {}
     head = (f"marina-check-canon/3 strict={int(bool(strict))} day_range=1\n" if day_range
             else f"marina-check-canon/{CANON_VERSION} strict={int(bool(strict))}\n")
     canon = hashlib.sha256(head.encode())
@@ -403,6 +411,16 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         excesses: list = []
         if not row_f:
             _check_one(i, c, strict, tick, tol, row_f, within, foreign, out_of_range, excesses)
+            if date and not any(f["check"] == "MARKET_UNSUPPORTED" for f in row_f):
+                mk = c["market"] or None
+                key = (mk, scope)
+                if key not in trk_dates:
+                    trk_dates[key] = tracked_through(mk, scope)
+                tt = trk_dates[key]
+                if tt is None:
+                    trk_untracked += 1
+                elif date > tt:
+                    trk_beyond += 1
         findings.extend(row_f)
         checks = [f["check"] for f in row_f]
         n_flagged += bool(checks)
@@ -460,6 +478,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         "rows_with_findings": n_flagged, "within_tolerance": n_tol, "assumed_seasoned": n_assumed,
         "summary": summary,
         "hints": _basis_hints(out_of_range, per_row),
+        "tracking": {"rows_beyond_tracked_through": trk_beyond, "rows_untracked": trk_untracked,
+                     "tracked_through": {m: tracked_through(m or None) for m in sorted({k[0] or "" for k in trk_dates})},
+                     "note": "not findings: a row dated after its market's tracked_through, or on an untracked market, may "
+                             "rest on rules carried forward past the date the official sources were last checked"},
     }
     if relaxed:
         out["stamp_withheld"] = ("relaxed run (" + ", ".join(

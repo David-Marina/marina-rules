@@ -1,0 +1,243 @@
+[
+ {
+  "id": "TRK-0001",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-11-02",
+   "scope": "shfe_cu",
+   "market": "XSGE"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "tracking": {
+    "tracked_through": "2026-11-02",
+    "beyond": false
+   },
+   "warnings": []
+  },
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). 2026-11-02 is the last checked day: the open-ended session record states what the sources said → no warning",
+  "tags": [
+   "tracking",
+   "within",
+   "last-checked-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0002",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-11-20",
+   "scope": "shfe_cu",
+   "market": "XSGE"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "tracking": {
+    "tracked_through": "2026-11-02",
+    "beyond": true
+   },
+   "warnings": [
+    "CARRY_FORWARD_BEYOND_TRACKED"
+   ]
+  },
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). 2026-11-20 > 2026-11-02 and the record has effective_to null → the answer is a carry-forward, warned",
+  "tags": [
+   "tracking",
+   "beyond",
+   "open-ended"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0003",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-11-20",
+   "scope": "shfe_cu",
+   "market": "XSGE",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "BEYOND_TRACKING"
+  },
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). same query with require_tracked=True: a carry-forward is refused, never answered",
+  "tags": [
+   "tracking",
+   "beyond",
+   "opt-in-refusal"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0004",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-04",
+   "scope": "hk_stock",
+   "market": "XHKG"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001,
+   "tracking": {
+    "tracked_through": "2026-11-03",
+    "beyond": true
+   },
+   "warnings": [
+    "CARRY_FORWARD_BEYOND_TRACKED"
+   ]
+  },
+  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-03 (research window ending before 2026-11-04; docs/SCHEMA.md Hong Kong: no reinstatement was found before 2026-11-04). Stamp duty 0.1% per side from 2023-11-17 (open-ended) → 2026-11-04 is one day beyond, value carried forward and warned",
+  "tags": [
+   "tracking",
+   "beyond",
+   "first-day-beyond"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0005",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-03",
+   "scope": "hk_stock",
+   "market": "XHKG"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001,
+   "tracking": {
+    "tracked_through": "2026-11-03",
+    "beyond": false
+   },
+   "warnings": []
+  },
+  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-03 → 2026-11-03 is within; stamp duty 0.1% per side from 2023-11-17",
+  "tags": [
+   "tracking",
+   "within"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0006",
+  "query": {
+   "rule": "finra_taf_sell",
+   "trade_date": "2026-12-01",
+   "scope": "us_stock",
+   "market": "XNYS+XNAS"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "tracking": {
+    "tracked_through": "2026-11-03",
+    "beyond": true
+   },
+   "warnings": []
+  },
+  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03. The FINRA TAF fee holiday record is closed: [2026-10-01, 2027-01-01) (SR-FINRA-2026-021: transactions from 2026-10-01 through 2026-12-31). A closed record's end is a sourced fact → beyond tracking but no warning",
+  "tags": [
+   "tracking",
+   "beyond",
+   "closed-record"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0007",
+  "query": {
+   "rule": "finra_taf_sell",
+   "trade_date": "2026-12-01",
+   "scope": "us_stock",
+   "market": "XNYS+XNAS",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "warnings": []
+  },
+  "oracle": "Same as TRK-0006 with require_tracked=True: only open-ended records are refused; the closed fee-holiday record still answers",
+  "tags": [
+   "tracking",
+   "beyond",
+   "closed-record",
+   "opt-in"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0008",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-10",
+   "scope": "stock",
+   "market": "XSHG"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005,
+   "tracking": {
+    "tracked_through": null,
+    "beyond": null
+   },
+   "warnings": [
+    "CARRY_FORWARD_UNTRACKED"
+   ]
+  },
+  "oracle": "XSHG has no entry in data/cn/tracking.yaml (untracked: no dated statement of how far the A-share sources were checked). Stamp duty 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended → value given, carry-forward warned",
+  "tags": [
+   "tracking",
+   "untracked",
+   "open-ended"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0009",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-10",
+   "scope": "stock",
+   "market": "XSHG",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "BEYOND_TRACKING"
+  },
+  "oracle": "Same as TRK-0008 with require_tracked=True: an untracked market's open-ended record is refused",
+  "tags": [
+   "tracking",
+   "untracked",
+   "opt-in-refusal"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0010",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2020-01-02",
+   "scope": "stock",
+   "market": "XSHG",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001,
+   "tracking": {
+    "tracked_through": null,
+    "beyond": null
+   },
+   "warnings": []
+  },
+  "oracle": "XSHG untracked, but on 2020-01-02 the stamp duty record [2008-09-19, 2021-11-15) is closed (0.1% on sales from 2008-09-19) → sourced fact, no warning, not refused",
+  "tags": [
+   "tracking",
+   "untracked",
+   "closed-record",
+   "opt-in"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

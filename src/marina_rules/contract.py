@@ -12,10 +12,21 @@ Returns a plain dict (JSON-serialisable, schema in ``contract_schema()``) whose 
   NOT_YET_PUBLISHED ``as_of`` given: the record in force on trade_date was published after ``as_of``
                     (record_id names it; never answered with the predecessor)
   UNKNOWN_PUBLICATION ``as_of`` given: the record in force has no ``published_at`` — unknown, not absent
+  BEYOND_TRACKING   only with ``require_tracked=True``: the answer would come from an open-ended record on a date after
+                    the market's ``tracked_through`` (or the market is untracked) — a carry-forward, refused
 
 Only DETERMINED carries a ``result``. Every status carries ``ruleset_version`` / ``ruleset_hash`` and a
-``reason`` in plain words. The Python exceptions (KeyError, RuleConflict, ValueError) remain for the
-in-process API; this module is the boundary other languages, agents and logs should see.
+``reason`` in plain words.
+
+Every decision also carries ``tracking`` = ``{tracked_through, beyond}`` (docs/SCHEMA.md "Tracking registry"):
+the last date up to which the official sources for the market were checked for rule changes, and whether
+``trade_date`` lies after it (both null when the market is untracked), and ``warnings``, a list of codes. A DETERMINED
+answer from an open-ended record (``effective_to`` null) on a date after ``tracked_through`` carries
+``CARRY_FORWARD_BEYOND_TRACKED``; on an untracked market ``CARRY_FORWARD_UNTRACKED``. The value is then the last
+checked rule carried forward, not a finding. ``require_tracked=True`` turns both into status BEYOND_TRACKING.
+
+The Python exceptions (KeyError, RuleConflict, ValueError) remain for the in-process API; this module is the boundary
+other languages, agents and logs should see.
 
 ``context`` is the caller's knowledge about the security on that date, keyed by the names in
 ``data/<market>/scopes.yaml`` ``requires`` (``board``, ``st_status``, ``listing_day_index``,
@@ -30,14 +41,20 @@ force differ by contract (a ``contracts`` selector, docs/SCHEMA.md); there, leav
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from typing import Any
 
 from . import (VERSION, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of,
-               dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, scopes)
+               dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, records, scopes, tracked_through,
+               tracking_registry, tracking_state)
 
 CONTRACT_VERSION = "1"
 STATUSES = ["DETERMINED", "MISSING_CONTEXT", "OUT_OF_COVERAGE", "CONFLICT", "UNVERIFIED", "NOT_YET_PUBLISHED",
-            "UNKNOWN_PUBLICATION"]
+            "UNKNOWN_PUBLICATION", "BEYOND_TRACKING"]
+# Warning codes in ``warnings`` (additive; a DETERMINED answer that is a carry-forward of an open-ended record).
+WARNING_BEYOND = "CARRY_FORWARD_BEYOND_TRACKED"
+WARNING_UNTRACKED = "CARRY_FORWARD_UNTRACKED"
+WARNINGS = [WARNING_BEYOND, WARNING_UNTRACKED]
 _LEVEL = {"verified": 0, "single-source": 1, "unverified": 2}
 
 _FAMILY_ONLY_RULES = {"tick_size"}   # depends on instrument family, not on the security's status that day
@@ -133,7 +150,8 @@ def _base(rule, date, scope, market) -> dict:
             "market": market, "scope": scope, "result": None, "record_id": None,
             "required_context": [], "missing_context": [], "context_conflicts": [],
             "known_gap_ids": [], "evidence_refs": [], "verification": None,
-            "ruleset_version": VERSION, "ruleset_hash": dataset_digest(), "reason": ""}
+            "ruleset_version": VERSION, "ruleset_hash": dataset_digest(), "reason": "",
+            "tracking": {"tracked_through": None, "beyond": None}, "warnings": []}
 
 
 def _evidence(rec: Record) -> list[dict]:
@@ -141,16 +159,41 @@ def _evidence(rec: Record) -> list[dict]:
              "content_sha256": s.get("content_sha256")} for s in rec.sources]
 
 
+@lru_cache(maxsize=None)
+def _by_id() -> dict:
+    return {r.id: r for r in records()}
+
+
 def resolve(rule: str, trade_date: str, scope: str = "stock", market: str | None = None,
             context: dict | None = None, min_verification: str = "single-source",
-            market_prefix: str | None = None, *, as_of: str | None = None) -> dict:
+            market_prefix: str | None = None, *, as_of: str | None = None, require_tracked: bool = False) -> dict:
     """See module docstring. Never raises for data reasons; raises only on programmer error (bad args).
 
     ``market_prefix`` (the data/<prefix>/ scope registry and known gaps) defaults to ``market_prefix_for(market)``:
     'hk' for XHKG, 'us' for XNYS / XNAS, 'cn' otherwise.
 
     ``as_of`` (ISO date): answer only from rules officially published on or before it. The output then carries
-    an ``as_of`` key; without it the output is byte-for-byte unchanged."""
+    an ``as_of`` key; without it there is no ``as_of`` key and the answer is the same.
+
+    ``tracking`` / ``warnings`` are always present (module docstring). ``require_tracked=True`` (keyword-only):
+    a carry-forward answer is refused with status BEYOND_TRACKING (``record_id`` and evidence kept, ``result`` null)."""
+    out = _resolve(rule, trade_date, scope, market, context, min_verification, market_prefix, as_of)
+    rec = _by_id().get(out["record_id"]) if out["record_id"] else None
+    trk = tracking_state(market or (rec.market if rec is not None else None), scope, out["trade_date"])
+    out["tracking"] = trk
+    if out["status"] == "DETERMINED" and rec is not None and rec.effective_to is None and trk["beyond"] is not False:
+        untracked = trk["tracked_through"] is None
+        out["warnings"] = [WARNING_UNTRACKED if untracked else WARNING_BEYOND]
+        if require_tracked:
+            out["status"] = "BEYOND_TRACKING"; out["result"] = None
+            out["reason"] = (f"{rec.id} is open-ended and {out['trade_date']} is beyond what was checked: "
+                             + (f"market {market or rec.market} is not tracked" if untracked else
+                                f"the sources were checked only through {trk['tracked_through']}")
+                             + "; the value would be a carry-forward, not a finding (require_tracked)")
+    return out
+
+
+def _resolve(rule, trade_date, scope, market, context, min_verification, market_prefix, as_of) -> dict:
     if min_verification not in _LEVEL:
         raise ValueError(f"min_verification must be one of {sorted(_LEVEL)}")
     as_of = _check_as_of(as_of)
@@ -274,6 +317,13 @@ def contract_schema() -> dict:
                 "published_at": nullable("string"), "unit": nullable("string"),
                 "contracts": {"type": "object", "description": "present only when the record covers part of the "
                               "product's contracts (docs/SCHEMA.md, Contract selectors)"}}},
+            "tracking": {"type": "object", "additionalProperties": False, "required": ["tracked_through", "beyond"],
+                         "description": "how far the official sources for the market were checked for rule changes "
+                                        "(docs/SCHEMA.md, Tracking registry); both null when the market is untracked",
+                         "properties": {"tracked_through": {"type": ["string", "null"], "pattern": r"^\d{4}-\d{2}-\d{2}$"},
+                                        "beyond": {"type": ["boolean", "null"]}}},
+            "warnings": {"type": "array", "items": {"enum": list(WARNINGS)},
+                         "description": "carry-forward warnings on a DETERMINED answer from an open-ended record"},
             "record_id": nullable("string"),
             "required_context": {"type": "array", "items": {"type": "string"}},
             "missing_context": {"type": "array", "items": {"type": "string"}},
@@ -313,8 +363,11 @@ def capabilities(market_prefix: str = "cn") -> dict:
     return {
         "capabilities_version": CONTRACT_VERSION, "ruleset_version": VERSION, "ruleset_hash": dataset_digest(),
         "entrypoints": {
-            "python": {"resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None)",
-                       "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None)",
+            "python": {"resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, "
+                                  "as_of=None, require_tracked=False)",
+                       "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None, "
+                                   "require_tracked=False)",
+                       "tracked_through": "marina_rules.tracked_through(market, scope=None)",
                        "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
                        "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
                        "check": "python -m marina_rules.check fills.csv"},
@@ -323,10 +376,16 @@ def capabilities(market_prefix: str = "cn") -> dict:
                      "rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → "
                      "UNKNOWN_PUBLICATION; never falls back to an older record",
             "decision_schema": "python -m marina_rules.contract --schema",
+            "tracking": "every decision carries tracking {tracked_through, beyond}; a DETERMINED answer from an open-ended "
+                        "record after tracked_through warns CARRY_FORWARD_BEYOND_TRACKED (untracked market: "
+                        "CARRY_FORWARD_UNTRACKED) — a carry-forward, not a finding; require_tracked=True refuses it as "
+                        "BEYOND_TRACKING (record_at / rule_at raise BeyondTracking)",
         },
         "preflight": ["coverage() over the whole window before any computation",
                       "supply every key in scope.requires per security per day; Marina never infers them",
                       "stop on any status other than DETERMINED; cite known_gap_ids when present",
+                      "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond "
+                      "the date the sources were checked, or pass require_tracked=True",
                       "put citation() into every result"],
         "rules": {k: {"scopes": sorted(v["scopes"]), "markets": sorted(v["markets"]), "earliest_effective_from": v["earliest"],
                       "has_open_interval": v["latest_open"], "records_by_verification": v["verification"],
@@ -351,6 +410,11 @@ def capabilities(market_prefix: str = "cn") -> dict:
                                      | ({"contract"} if any(r.contracts is not None for r in recs) else set())),
         "known_gaps": [{**{k: g[k] for k in ("gap_id", "market", "scope", "rule", "interval", "severity", "status")},
                         **({"contracts": g["contracts"]} if g.get("contracts") is not None else {})} for g in _gaps(market_prefix)],
+        "tracking": {"entries": tracking_registry(market_prefix),
+                     "untracked_markets": sorted(m for m in {x for r in recs for x in r.market.split("+")}
+                                                 if tracked_through(m) is None),
+                     "meaning": "tracked_through = last date the official sources were checked for rule changes; after "
+                                "it (or on an untracked market) an open-ended record is a carry-forward, not a finding"},
         "not_in_scope": ["market data", "security master", "point-in-time ST / listing histories", "matching, slippage, strategy"],
     }
 
@@ -366,7 +430,7 @@ def main(argv=None) -> int:
         print(json.dumps(capabilities(pfx), ensure_ascii=False, indent=1)); return 0
     if len(a) < 3:
         print("usage: python -m marina_rules.contract <rule> <date> <scope> [market] [--context k=v,k=v] [--min verified]"
-              " [--as-of YYYY-MM-DD]\n"
+              " [--as-of YYYY-MM-DD] [--require-tracked]\n"
               "       python -m marina_rules.contract --schema\n"
               "       python -m marina_rules.contract --capabilities [cn|hk|us]"); return 2
     rule, date, scope = a[0], a[1], a[2]
@@ -384,7 +448,7 @@ def main(argv=None) -> int:
             print("--as-of needs a date YYYY-MM-DD"); return 2
         as_of = a[i + 1]
     try:
-        d = resolve(rule, date, scope, market, ctx, mv, as_of=as_of)
+        d = resolve(rule, date, scope, market, ctx, mv, as_of=as_of, require_tracked="--require-tracked" in a)
     except ValueError as e:
         print(f"error: {e}"); return 2
     print(json.dumps(d, ensure_ascii=False, indent=1))

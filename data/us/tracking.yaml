@@ -1,0 +1,9 @@
+# Tracking registry · US equities. Not rules: excluded from the dataset digest. Format and meaning: data/cn/tracking.yaml
+# header and docs/SCHEMA.md "Tracking registry".
+schema: 1
+tracking:
+- market: XNYS+XNAS
+  tracked_through: '2026-11-03'
+  basis: SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT
+    fee alerts; researched for a window ending before 2026-11-04.
+  updated: '2026-11-14'

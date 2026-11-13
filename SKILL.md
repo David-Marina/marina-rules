@@ -58,7 +58,7 @@ Scopes that must not both be selected for one security/day are listed in `cov["e
 from marina_rules.contract import resolve
 d = resolve("price_limit_pct", "2024-06-14", "st_main", "XSHE",
             context={"board": "main_board", "st_status": True}, min_verification="single-source")
-d["status"]   # DETERMINED | MISSING_CONTEXT | OUT_OF_COVERAGE | CONFLICT | UNVERIFIED
+d["status"]   # DETERMINED | MISSING_CONTEXT | OUT_OF_COVERAGE | CONFLICT | UNVERIFIED (more opt-in ones: 4c, 4e)
 d["result"]   # only on DETERMINED: {value, effective_from, effective_to, published_at, unit}
 d["reason"]   # one sentence you can put in a log verbatim
 ```
@@ -143,6 +143,23 @@ picks a tier. Passing `contract` where nothing differs by contract is harmless, 
 `coverage(..., contract="au2510")` checks one contract; without it the contract-dependent ranges are listed under
 `contract_required`.
 
+## 4e. Dates after the tracked date: `tracking`
+
+Every `resolve()` answer carries `tracking: {tracked_through, beyond}`: the last date for which the official sources of
+the market were checked for rule changes, and whether `trade_date` is after it (both `null`: the market is not tracked).
+When `tracking.beyond` is true, or `warnings` holds `CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED`, the value
+comes from an open-ended record carried forward past what was checked — the exchange may have changed the rule since.
+Do one of two things, never neither:
+
+- tell the user, with the answer: "carried forward beyond `<tracked_through>` (not tracked: say so); not checked against
+  later notices"; or
+- opt in to refusal — `resolve(..., require_tracked=True)` answers `BEYOND_TRACKING` (a stop, like any non-DETERMINED
+  status), `rule_at` / `record_at(..., require_tracked=True)` raise `BeyondTracking` (a `KeyError`),
+  `coverage(..., require_tracked=True)` turns the `beyond_tracking` ranges into `partial`.
+
+A closed record (`effective_to` set) is not flagged: its end is sourced. Tracking dates per market are in capabilities
+(`tracking`) and `mr.tracking_registry()`.
+
 ## 5. Cite the bytes you ran against
 
 ```python
@@ -161,6 +178,7 @@ number. Templates:
 - "Scope `chinext` requires `st_status`; the input has no point-in-time ST column. Excluded 197 securities flagged ST today; results for them are not computed."
 - "Scope `reits` is `unsupported` in marina-rules@2026.11.13 — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
 - "Scope `unicorn` is `unsupported` and matches no known gap — Marina has no opinion on it at all. Stop."
+- "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-02. Not answered."
 
 `cov["known_gap_ids"]` is the difference between *we know we don't cover this* (cite the `G-xxxx`, its
 `severity` says how wrong a substitute would be) and *nobody has looked* (no id). Both stop the run;

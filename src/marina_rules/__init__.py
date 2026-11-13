@@ -15,7 +15,8 @@ Design rules (do not relax):
     of the document's extracted text for HTML, of the bytes for PDF/DOCX (see ``sourcehash``) — and a
     verbatim quote. Loading refuses a dataset that violates this; it is not advisory.
   * The dataset digest in ``citation()`` is computed over the data files only, so a result
-    that cites it can be re-run against byte-identical rules.
+    that cites it can be re-run against byte-identical rules. The tracking registries
+    (``data/<prefix>/tracking.yaml``: how far the sources were checked) are not rules and are excluded.
 """
 from __future__ import annotations
 
@@ -30,7 +31,8 @@ import yaml
 
 __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for", "coverage", "market_prefix_for", "limit_price", "tick_size", "tick_family", "lookup_scope", "min_tick_band", "round_half_up",
            "citation", "dataset_digest", "DATA_DIR", "VERSION", "Record", "RuleConflict", "NotYetPublished",
-           "PublicationUnknown", "ContractRequired", "parse_contract", "contract_matches"]
+           "PublicationUnknown", "ContractRequired", "parse_contract", "contract_matches", "tracked_through",
+           "tracking_registry", "tracking_state", "BeyondTracking"]
 
 VERSION = "2026.11.13"
 DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
@@ -70,11 +72,19 @@ class Record:
         return contract is not None and contract_matches(self.contracts, contract, date, self.scope)
 
 
-def _iter_files() -> Iterable[str]:
-    # Sorted by path relative to DATA_DIR across directories: os.walk's directory order is filesystem-dependent,
-    # and the dataset digest must not depend on it once data/ has more than one market directory.
-    paths = [os.path.join(root, f) for root, _, files in os.walk(DATA_DIR) for f in files if f.endswith((".yaml", ".yml"))]
-    yield from sorted(paths, key=lambda p: os.path.relpath(p, DATA_DIR))
+# The tracking registry (data/<prefix>/tracking.yaml, see tracking_registry()) is NOT part of the rules: it says up to
+# which date the maintainer has checked the official sources, and moving that date forward must not change the
+# dataset digest. _iter_files() therefore skips it by name; it is loaded separately.
+TRACKING_FILE = "tracking.yaml"
+
+
+def _iter_files(data_dir: str | None = None) -> Iterable[str]:
+    # Sorted by path relative to the data directory across directories: os.walk's directory order is
+    # filesystem-dependent, and the dataset digest must not depend on it once data/ has more than one market directory.
+    base = DATA_DIR if data_dir is None else data_dir
+    paths = [os.path.join(root, f) for root, _, files in os.walk(base) for f in files
+             if f.endswith((".yaml", ".yml")) and f != TRACKING_FILE]
+    yield from sorted(paths, key=lambda p: os.path.relpath(p, base))
 
 
 def _norm_date(v) -> str | None:
@@ -870,8 +880,168 @@ def gaps_for(market: str | None, scope: str, rule: str, start: str, end: str, ma
     return hits
 
 
+# ------------------------------------------------------------------------------------------------- tracking registry
+# data/<prefix>/tracking.yaml says, per market (and optionally per scope family), up to which date the maintainer has
+# checked the official sources for rule changes (docs/SCHEMA.md "Tracking registry"). For a date <= tracked_through an
+# open-ended record (effective_to: null) states what the sources said; for a later date it is a carry-forward, not a
+# finding. A market without an entry is untracked: nothing is defaulted. Not part of dataset_digest().
+TRACKING_PREFIXES = ("cn", "hk", "us")
+_TRACKING_KEYS = frozenset({"market", "scopes", "tracked_through", "basis", "updated"})
+
+
+def _strict_date(v, where: str) -> str:
+    """A YAML date or an ISO 'YYYY-MM-DD' string → ISO string; anything else → ValueError."""
+    import datetime as _dt
+    if isinstance(v, _dt.date) and not isinstance(v, _dt.datetime):
+        return v.isoformat()
+    if isinstance(v, str) and _ISO_RE.match(v):
+        try:
+            return _dt.date.fromisoformat(v).isoformat()
+        except ValueError:
+            pass
+    raise ValueError(f"{where}: need a date YYYY-MM-DD, got {v!r}")
+
+
+def _expand_scopes(patterns, prefix: str, where: str) -> frozenset:
+    """Scope names, or patterns ending in '*' (a scope family by name prefix, e.g. 'cffex_t*'), against the registry
+    of ``prefix``. Every name must exist and every pattern must match at least one scope."""
+    reg = scopes(prefix)
+    out: set = set()
+    if not isinstance(patterns, list) or not patterns or not all(isinstance(p, str) and p for p in patterns):
+        raise ValueError(f"{where}: scopes must be a non-empty list of scope names (or 'family_*' patterns)")
+    for p in patterns:
+        hit = {s for s in reg if s.startswith(p[:-1])} if p.endswith("*") else ({p} if p in reg else set())
+        if not hit:
+            raise ValueError(f"{where}: scope {p!r} is not in data/{prefix}/scopes.yaml")
+        out |= hit
+    return frozenset(out)
+
+
+def _load_tracking(path: str, prefix: str, known_markets: frozenset) -> list:
+    with open(path, encoding="utf-8") as fh:
+        doc = yaml.safe_load(fh) or {}
+    if doc.get("schema") != 1:
+        raise ValueError(f"{path}: unsupported or missing schema version (tracking registry is schema: 1)")
+    entries = doc.get("tracking")
+    if not isinstance(entries, list):
+        raise ValueError(f"{path}: 'tracking' must be a list of entries")
+    out = []
+    for i, e in enumerate(entries):
+        where = f"{path}: entry #{i}"
+        if not isinstance(e, dict) or set(e) - _TRACKING_KEYS or not {"market", "tracked_through", "basis", "updated"} <= set(e):
+            raise ValueError(f"{where}: needs market, tracked_through, basis, updated (optional scopes) and no other key")
+        mkts = str(e["market"]).split("+")
+        for m in mkts:
+            if m not in known_markets:
+                raise ValueError(f"{where}: market {m!r} has no record in data/{prefix}/")
+        tt = _strict_date(e["tracked_through"], f"{where}: tracked_through")
+        up = _strict_date(e["updated"], f"{where}: updated")
+        if tt > up:
+            raise ValueError(f"{where}: tracked_through {tt} is after updated {up} (sources cannot have been checked "
+                             "beyond the day the entry was written)")
+        if not (isinstance(e["basis"], str) and e["basis"].strip()):
+            raise ValueError(f"{where}: basis must be a non-empty string (how the sources were checked)")
+        sc = None if e.get("scopes") is None else _expand_scopes(e["scopes"], prefix, where)
+        out.append({"market": str(e["market"]), "markets": tuple(mkts), "scopes": sc,
+                    "scope_patterns": None if sc is None else tuple(e["scopes"]), "tracked_through": tt,
+                    "basis": e["basis"].strip(), "updated": up, "file": os.path.relpath(path, DATA_DIR)})
+    return out
+
+
+@lru_cache(maxsize=None)
+def _tracking_entries() -> tuple:
+    out: list = []
+    for prefix in TRACKING_PREFIXES:
+        path = os.path.join(DATA_DIR, prefix, TRACKING_FILE)
+        if not os.path.exists(path):
+            continue
+        known = frozenset(m for r in records() if r.file.startswith(prefix + "/") for m in (r.market or "").split("+"))
+        out += _load_tracking(path, prefix, known)
+    _check_tracking_overlaps(out)
+    return tuple(out)
+
+
+def _check_tracking_overlaps(entries: list) -> None:
+    """No two entries may cover the same (market, scope); an entry without ``scopes`` covers every scope."""
+    for i, a in enumerate(entries):
+        for b in entries[i + 1:]:
+            common = set(a["markets"]) & set(b["markets"])
+            if not common:
+                continue
+            if a["scopes"] is None or b["scopes"] is None or a["scopes"] & b["scopes"]:
+                both = "every scope" if a["scopes"] is None or b["scopes"] is None else sorted(a["scopes"] & b["scopes"])
+                raise ValueError(f"tracking registry: entries for {a['market']} ({a['file']}) and {b['market']} "
+                                 f"({b['file']}) both cover market {sorted(common)} / {both}")
+
+
+def tracking_registry(market_prefix: str | None = None) -> list:
+    """The tracking registry as a list of ``{market, scopes, tracked_through, basis, updated}`` (``scopes`` None = every
+    scope of the market; otherwise the scope names or ``family_*`` patterns as written). ``market_prefix`` 'cn' / 'hk' /
+    'us' limits it to one data/<prefix>/tracking.yaml. A market that appears in no entry is untracked."""
+    return [{"market": e["market"], "scopes": None if e["scope_patterns"] is None else list(e["scope_patterns"]),
+             "tracked_through": e["tracked_through"], "basis": e["basis"], "updated": e["updated"]}
+            for e in _tracking_entries() if market_prefix is None or e["file"].startswith(market_prefix + "/")]
+
+
+def _tracked_one(mic: str, scope: str | None) -> str | None:
+    es = [e for e in _tracking_entries() if mic in e["markets"]]
+    if scope is not None:
+        hit = [e for e in es if e["scopes"] is None or scope in e["scopes"]]
+        return hit[0]["tracked_through"] if hit else None
+    if not es:
+        return None
+    if any(e["scopes"] is None for e in es):
+        return next(e for e in es if e["scopes"] is None)["tracked_through"]
+    covered = frozenset().union(*(e["scopes"] for e in es))
+    needed = {r.scope for r in records() if mic in (r.market or "").split("+")}
+    return min(e["tracked_through"] for e in es) if needed <= covered else None
+
+
+def tracked_through(market: str | None, scope: str | None = None) -> str | None:
+    """Last date (ISO) up to which the official sources for ``market`` (and ``scope``) were checked for rule changes, or
+    ``None`` when untracked. A '+' market ('XNYS+XNAS') takes the earliest of its members and is untracked if any member
+    is. ``scope`` None asks about every scope of the market: the earliest date of the entries, or None if some scope with
+    records is not covered. ``market`` None → None (no market, no tracking statement)."""
+    if market is None:
+        return None
+    dates = [_tracked_one(m, scope) for m in str(market).split("+")]
+    return None if any(d is None for d in dates) else min(dates)
+
+
+def tracking_state(market: str | None, scope: str | None, date: str) -> dict:
+    """``{tracked_through, beyond}`` for a query date: ``beyond`` is True when ``date`` > tracked_through, False when on
+    or before it, None when the market (or scope) is untracked."""
+    tt = tracked_through(market, scope)
+    return {"tracked_through": tt, "beyond": None if tt is None else str(date)[:10] > tt}
+
+
+class BeyondTracking(KeyError):
+    """``require_tracked=True`` and the answer would come from an open-ended record (``effective_to`` null) on a date
+    after the market's ``tracked_through`` — or the market is untracked. The value would be a carry-forward, not a
+    checked finding. Attributes: ``record``, ``date``, ``tracked_through`` (None = untracked)."""
+
+    def __init__(self, record: "Record", date: str, tracked: str | None):
+        self.record, self.date, self.tracked_through = record, date, tracked
+        why = (f"tracked only through {tracked}" if tracked else "not tracked (no entry in data/<prefix>/tracking.yaml)")
+        super().__init__(f"{record.id} is open-ended and {date} is beyond what was checked: market {record.market} is "
+                         f"{why}; the value would be a carry-forward, not a finding")
+
+    def __str__(self):
+        return self.args[0]
+
+
+def _require_tracked(rec: "Record", date: str, market: str | None, scope: str) -> "Record":
+    if rec.effective_to is not None:
+        return rec    # a closed record's end is a sourced fact
+    tt = tracked_through(market or rec.market, scope)
+    if tt is None or date > tt:
+        raise BeyondTracking(rec, date, tt)
+    return rec
+
+
 def record_at(rule: str, date: str, scope: str = "stock", market: str | None = None,
-              strict: bool = False, *, as_of: str | None = None, contract: str | None = None) -> Record:
+              strict: bool = False, *, as_of: str | None = None, contract: str | None = None,
+              require_tracked: bool = False) -> Record:
     """The record for ``rule``/``scope`` in force on ``date``.
 
     ``market`` of None matches any market. ``strict=True`` ignores ``unverified`` records.
@@ -888,6 +1058,11 @@ def record_at(rule: str, date: str, scope: str = "stock", market: str | None = N
     ``ContractRequired`` (a ``KeyError``). Records without a selector cover every contract, so passing a contract
     is always safe for futures scopes. Its product must be the scope's (``ValueError`` otherwise).
     See docs/SCHEMA.md "Contract selectors".
+
+    ``require_tracked`` (keyword-only, default False = unchanged): refuse a carry-forward. When the record found is
+    open-ended (``effective_to`` null) and ``date`` is after ``tracked_through(market or record.market, scope)``, or that
+    market is untracked, raise ``BeyondTracking`` (a ``KeyError``). A closed record is never refused: its end is sourced.
+    See docs/SCHEMA.md "Tracking registry".
     """
     as_of = _check_as_of(as_of)
     d = str(date)[:10]
@@ -914,7 +1089,8 @@ def record_at(rule: str, date: str, scope: str = "stock", market: str | None = N
                        + (f" for contract {contract}" if keyed else ""))
     if _conflicting(hits, market):
         raise RuleConflict(f"{len(hits)} records of {rule}/{scope} in force on {d}: " + ", ".join(h.id for h in hits))
-    return _require_published(hits[0], as_of)
+    rec = _require_published(hits[0], as_of)
+    return _require_tracked(rec, d, market, scope) if require_tracked else rec
 
 
 def _conflicting(hits: list, market: str | None) -> bool:
@@ -936,7 +1112,7 @@ def _conflicting(hits: list, market: str | None) -> bool:
 
 def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str,
              strict: bool = False, market_prefix: str | None = None, *, as_of: str | None = None,
-             contract: str | None = None) -> dict:
+             contract: str | None = None, require_tracked: bool = False) -> dict:
     """Pre-flight for a backtest window: can Marina answer every (rule, day) in [start, end)?
 
     Returns a dict:
@@ -961,6 +1137,11 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
     where the answer depends on the contract are listed under ``contract_required`` ([{rule, from, to,
     record_ids}]), ``contract`` joins ``required_context`` and the status is ``partial``. Neither key appears
     when no selector is involved, so existing output is unchanged.
+    Tracking (docs/SCHEMA.md "Tracking registry"; additive keys, always present): ``tracking`` = ``{tracked_through,
+    beyond}`` for (market, scope) — ``beyond`` is the part ``{from, to}`` of the window after ``tracked_through`` (None if
+    there is none; both None when the market is untracked) — and ``beyond_tracking`` ([{rule, from, to, record_ids}]):
+    ranges answered by an open-ended record after ``tracked_through`` (or anywhere, when untracked), i.e. carry-forwards.
+    They do not change ``status`` unless ``require_tracked=True`` (keyword-only), which makes them ``partial``.
     ``complete`` means: no gaps, no conflicts, for exactly these rules, this scope, this interval.
     It says nothing about rules or scopes not asked for. ``unsupported`` means no record of any asked
     rule exists for this scope at all — the scope/market is not covered, not merely gappy.
@@ -979,6 +1160,12 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
            "scope_known": reg is not None, "dataset_digest": dataset_digest(), "citation": citation()}
     if as_of is not None:
         out.update({"as_of": as_of, "publication_unknown": [], "not_yet_published": []})
+    tt = tracked_through(market, scope)
+    tt_next = None if tt is None else _dt.date.fromisoformat(tt) + _dt.timedelta(days=1)
+    out["tracking"] = {"tracked_through": tt,
+                       "beyond": ({"from": max(s0, tt_next).isoformat(), "to": s1.isoformat()}
+                                  if tt_next is not None and tt_next < s1 else None)}
+    out["beyond_tracking"] = []
     levels = {"verified": 0, "single-source": 1, "unverified": 2}
     worst = -1
     touched: set[str] = set()
@@ -1024,11 +1211,17 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
             elif _conflicting(active, market):
                 out["conflicts"].append({"rule": rule, "from": a.isoformat(), "to": b.isoformat(),
                                          "record_ids": [r.id for r in active]})
-            elif as_of is not None:
-                for key, st in (("publication_unknown", "unknown"), ("not_yet_published", "not_yet")):
-                    ids = [r.id for r in active if publication_state(r, as_of) == st]
-                    if ids:
-                        out[key].append({"rule": rule, "from": a.isoformat(), "to": b.isoformat(), "record_ids": ids})
+            else:
+                if as_of is not None:
+                    for key, st in (("publication_unknown", "unknown"), ("not_yet_published", "not_yet")):
+                        ids = [r.id for r in active if publication_state(r, as_of) == st]
+                        if ids:
+                            out[key].append({"rule": rule, "from": a.isoformat(), "to": b.isoformat(), "record_ids": ids})
+                open_ids = [r.id for r in active if r.effective_to is None]
+                lo = a if tt_next is None else max(a, tt_next)
+                if open_ids and lo < b:
+                    out["beyond_tracking"].append({"rule": rule, "from": lo.isoformat(), "to": b.isoformat(),
+                                                   "record_ids": open_ids})
             for r in active:
                 touched.add(r.id); worst = max(worst, levels[r.verification])
     out["records"] = sorted(touched)
@@ -1048,15 +1241,17 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
     if not any_record_for_scope:
         out["status"] = "unsupported"
     elif out["gaps"] or out["conflicts"] or out.get("publication_unknown") or out.get("not_yet_published") \
-            or out.get("contract_required"):
+            or out.get("contract_required") or (require_tracked and out["beyond_tracking"]):
         out["status"] = "partial"
     return out
 
 
 def rule_at(rule: str, date: str, scope: str = "stock", market: str | None = None, strict: bool = False,
-            *, as_of: str | None = None, contract: str | None = None):
-    """Value of ``rule`` in force on ``date``. See ``record_at`` (including ``as_of`` and ``contract``)."""
-    return record_at(rule, date, scope, market, strict, as_of=as_of, contract=contract).value
+            *, as_of: str | None = None, contract: str | None = None, require_tracked: bool = False):
+    """Value of ``rule`` in force on ``date``. See ``record_at`` (including ``as_of``, ``contract`` and
+    ``require_tracked``)."""
+    return record_at(rule, date, scope, market, strict, as_of=as_of, contract=contract,
+                     require_tracked=require_tracked).value
 
 
 def round_half_up(x: float, decimals: int = 2) -> float:
@@ -1217,15 +1412,20 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
     return hi, lo
 
 
-@lru_cache(maxsize=None)
-def dataset_digest() -> str:
-    """SHA-256 over all data files (sorted by relative path). This is what a citation pins."""
+def _digest_dir(data_dir: str) -> str:
     h = hashlib.sha256()
-    for path in _iter_files():
-        h.update(os.path.relpath(path, DATA_DIR).encode())
+    for path in _iter_files(data_dir):
+        h.update(os.path.relpath(path, data_dir).encode())
         with open(path, "rb") as fh:
             h.update(fh.read())
     return h.hexdigest()
+
+
+@lru_cache(maxsize=None)
+def dataset_digest() -> str:
+    """SHA-256 over all data files (sorted by relative path). This is what a citation pins. The tracking registries
+    (``data/<prefix>/tracking.yaml``) are excluded: they record how far the sources were checked, not a rule."""
+    return _digest_dir(DATA_DIR)
 
 
 def citation(short: bool = True) -> str:

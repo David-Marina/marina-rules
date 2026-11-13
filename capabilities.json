@@ -4,8 +4,9 @@
  "ruleset_hash": "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e",
  "entrypoints": {
   "python": {
-   "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None)",
-   "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None)",
+   "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
+   "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None, require_tracked=False)",
+   "tracked_through": "marina_rules.tracked_through(market, scope=None)",
    "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
    "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
    "check": "python -m marina_rules.check fills.csv"
@@ -17,15 +18,18 @@
    "CONFLICT",
    "UNVERIFIED",
    "NOT_YET_PUBLISHED",
-   "UNKNOWN_PUBLICATION"
+   "UNKNOWN_PUBLICATION",
+   "BEYOND_TRACKING"
   ],
   "as_of": "optional ISO date on record_at/rule_at/coverage/resolve/limit_price/tick_size: answer only from rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → UNKNOWN_PUBLICATION; never falls back to an older record",
-  "decision_schema": "python -m marina_rules.contract --schema"
+  "decision_schema": "python -m marina_rules.contract --schema",
+  "tracking": "every decision carries tracking {tracked_through, beyond}; a DETERMINED answer from an open-ended record after tracked_through warns CARRY_FORWARD_BEYOND_TRACKED (untracked market: CARRY_FORWARD_UNTRACKED) — a carry-forward, not a finding; require_tracked=True refuses it as BEYOND_TRACKING (record_at / rule_at raise BeyondTracking)"
  },
  "preflight": [
   "coverage() over the whole window before any computation",
   "supply every key in scope.requires per security per day; Marina never infers them",
   "stop on any status other than DETERMINED; cite known_gap_ids when present",
+  "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond the date the sources were checked, or pass require_tracked=True",
   "put citation() into every result"
  ],
  "rules": {
@@ -9692,6 +9696,45 @@
    "status": "open"
   }
  ],
+ "tracking": {
+  "entries": [
+   {
+    "market": "XSGE",
+    "scopes": null,
+    "tracked_through": "2026-11-02",
+    "basis": "SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.",
+    "updated": "2026-11-14"
+   },
+   {
+    "market": "XINE",
+    "scopes": null,
+    "tracked_through": "2026-11-02",
+    "basis": "INE notices and daily settlement-parameter / trade-argument files, every trading day from 2024-01-02 to 2026-11-02.",
+    "updated": "2026-11-14"
+   },
+   {
+    "market": "XZCE",
+    "scopes": null,
+    "tracked_through": "2026-11-02",
+    "basis": "CZCE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.",
+    "updated": "2026-11-14"
+   },
+   {
+    "market": "GFEX",
+    "scopes": null,
+    "tracked_through": "2026-11-02",
+    "basis": "GFEX notices and daily settlement parameters, every trading day from 2024-01-02 to 2026-11-02.",
+    "updated": "2026-11-14"
+   }
+  ],
+  "untracked_markets": [
+   "BJSE",
+   "CCFX",
+   "XSHE",
+   "XSHG"
+  ],
+  "meaning": "tracked_through = last date the official sources were checked for rule changes; after it (or on an untracked market) an open-ended record is a carry-forward, not a finding"
+ },
  "not_in_scope": [
   "market data",
   "security master",
