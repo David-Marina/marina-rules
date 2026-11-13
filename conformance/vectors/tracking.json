@@ -172,7 +172,7 @@
    "rule": "stamp_duty_sell",
    "trade_date": "2026-11-10",
    "scope": "stock",
-   "market": "XSHG"
+   "market": "BJSE"
   },
   "expect": {
    "status": "DETERMINED",
@@ -185,7 +185,7 @@
     "CARRY_FORWARD_UNTRACKED"
    ]
   },
-  "oracle": "XSHG has no entry in data/cn/tracking.yaml (untracked: no dated statement of how far the A-share sources were checked). Stamp duty 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended → value given, carry-forward warned",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. Query market BJSE: untracked → value given, carry-forward warned",
   "tags": [
    "tracking",
    "untracked",
@@ -199,7 +199,7 @@
    "rule": "stamp_duty_sell",
    "trade_date": "2026-11-10",
    "scope": "stock",
-   "market": "XSHG",
+   "market": "BJSE",
    "require_tracked": true
   },
   "expect": {
@@ -217,9 +217,9 @@
   "id": "TRK-0010",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2020-01-02",
+   "trade_date": "2022-01-04",
    "scope": "stock",
-   "market": "XSHG",
+   "market": "BJSE",
    "require_tracked": true
   },
   "expect": {
@@ -231,12 +231,114 @@
    },
    "warnings": []
   },
-  "oracle": "XSHG untracked, but on 2020-01-02 the stamp duty record [2008-09-19, 2021-11-15) is closed (0.1% on sales from 2008-09-19) → sourced fact, no warning, not refused",
+  "oracle": "BJSE untracked, but on 2022-01-04 the stamp duty record cn.fee.stamp_duty_sell.2021-11-15 [2021-11-15, 2023-08-28) (XSHG+XSHE+BJSE, 0.1% on sales) is closed → sourced fact, no warning, not refused",
   "tags": [
    "tracking",
    "untracked",
    "closed-record",
    "opt-in"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0011",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-10",
+   "scope": "stock",
+   "market": "XSHE",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005,
+   "tracking": {
+    "tracked_through": "2026-11-13",
+    "beyond": false
+   },
+   "warnings": []
+  },
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. Query market XSHE on 2026-11-10 ≤ 2026-11-13: within tracking, answered even with require_tracked=True",
+  "tags": [
+   "tracking",
+   "within",
+   "a-share",
+   "opt-in"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0012",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-20",
+   "scope": "stock",
+   "market": "XSHG"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005,
+   "tracking": {
+    "tracked_through": "2026-11-13",
+    "beyond": true
+   },
+   "warnings": [
+    "CARRY_FORWARD_BEYOND_TRACKED"
+   ]
+  },
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. Query market XSHG on 2026-11-20 > 2026-11-13: carry-forward, warned",
+  "tags": [
+   "tracking",
+   "beyond",
+   "a-share"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0013",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-20",
+   "scope": "stock",
+   "market": "XSHG",
+   "require_tracked": true
+  },
+  "expect": {
+   "status": "BEYOND_TRACKING"
+  },
+  "oracle": "Same as TRK-0012 with require_tracked=True: refused",
+  "tags": [
+   "tracking",
+   "beyond",
+   "a-share",
+   "opt-in-refusal"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TRK-0014",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2026-11-10",
+   "scope": "stock"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005,
+   "tracking": {
+    "tracked_through": null,
+    "beyond": null
+   },
+   "warnings": [
+    "CARRY_FORWARD_UNTRACKED"
+   ]
+  },
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. No market in the query: tracking is read for the answering record's market XSHG+XSHE+BJSE, whose member BJSE is untracked → untracked, warned (Marina does not pick an exchange)",
+  "tags": [
+   "tracking",
+   "untracked",
+   "mixed-market",
+   "no-market"
   ],
   "ruleset_version_min": "2026.11.13"
  }

@@ -62,10 +62,11 @@ def test_diff_digest_ignores_tracking_files():
 
 def test_registry_contents():
     reg = {e["market"]: e for e in mr.tracking_registry()}
-    assert set(reg) == {"XSGE", "XINE", "XZCE", "GFEX", "XHKG", "XNYS+XNAS"}
+    assert set(reg) == {"XSHG+XSHE", "XSGE", "XINE", "XZCE", "GFEX", "XHKG", "XNYS+XNAS"}
+    assert mr.tracked_through("XSHG") == mr.tracked_through("XSHE") == mr.tracked_through("XSHG+XSHE") == "2026-11-13"
     assert all(e["tracked_through"] <= e["updated"] for e in reg.values())
     assert {e["market"] for e in mr.tracking_registry("hk")} == {"XHKG"}
-    for m in ("XSHG", "XSHE", "BJSE", "CCFX"):    # no evidence in the repo: untracked, never defaulted
+    for m in ("BJSE", "CCFX", "XSHG+XSHE+BJSE"):  # not on the watch list: untracked, never defaulted
         assert mr.tracked_through(m) is None
 
 
@@ -119,11 +120,12 @@ def test_tracked_through_lookup():
     assert mr.tracked_through("XNYS") == mr.tracked_through("XNAS", "us_etf") == "2026-11-03"
     assert mr.tracked_through("XNYS+XNAS") == "2026-11-03"
     assert mr.tracked_through("XNYS+XSGE") == "2026-11-02"         # earliest member
-    assert mr.tracked_through("XSHG+XSGE") is None                 # one member untracked
+    assert mr.tracked_through("XSHG+XSGE") == "2026-11-02"
+    assert mr.tracked_through("BJSE+XSGE") is None                 # one member untracked
     assert mr.tracked_through(None) is None
     assert mr.tracking_state("XSGE", "shfe_cu", "2026-11-03") == {"tracked_through": "2026-11-02", "beyond": True}
     assert mr.tracking_state("XSGE", "shfe_cu", "2026-11-02") == {"tracked_through": "2026-11-02", "beyond": False}
-    assert mr.tracking_state("XSHG", "stock", "2026-11-02") == {"tracked_through": None, "beyond": None}
+    assert mr.tracking_state("BJSE", "stock", "2026-11-02") == {"tracked_through": None, "beyond": None}
 
 
 def test_scope_families(registry):
@@ -157,17 +159,29 @@ def test_resolve_within_beyond_closed_untracked():
     assert d["status"] == "DETERMINED" and d["result"] is not None and d["warnings"] == [WARNING_BEYOND]
     d = _schema_ok(resolve("finra_taf_sell", "2026-12-01", "us_stock", "XNYS+XNAS"))
     assert d["tracking"]["beyond"] is True and d["result"]["effective_to"] == "2027-01-01" and d["warnings"] == []
-    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "XSHG"))
+    d = _schema_ok(resolve("margin_ratio", "2026-11-10", "cffex_if", "CCFX"))
     assert d["tracking"] == {"tracked_through": None, "beyond": None} and d["warnings"] == [WARNING_UNTRACKED]
-    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock"))            # no market: the record's market
-    assert d["warnings"] == [WARNING_UNTRACKED]
+
+
+def test_a_share_tracking_and_the_mixed_market_record():
+    """cn.fee.stamp_duty_sell.2023-08-28 is XSHG+XSHE+BJSE and open-ended; XSHG / XSHE are tracked, BJSE is not."""
+    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "XSHE"))
+    assert d["tracking"] == {"tracked_through": "2026-11-13", "beyond": False} and d["warnings"] == []
+    assert resolve("stamp_duty_sell", "2026-11-10", "stock", "XSHE", require_tracked=True)["status"] == "DETERMINED"
+    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-20", "stock", "XSHG"))
+    assert d["tracking"]["beyond"] is True and d["warnings"] == [WARNING_BEYOND]
+    assert resolve("stamp_duty_sell", "2026-11-20", "stock", "XSHG", require_tracked=True)["status"] == "BEYOND_TRACKING"
+    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "BJSE"))
+    assert d["tracking"] == {"tracked_through": None, "beyond": None} and d["warnings"] == [WARNING_UNTRACKED]
+    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock"))            # no market: the record's market,
+    assert d["tracking"]["tracked_through"] is None and d["warnings"] == [WARNING_UNTRACKED]   # which includes BJSE
     d = _schema_ok(resolve("stamp_duty_sell", "2026-11-04", "hk_stock", "XHKG"))
     assert d["warnings"] == [WARNING_BEYOND] and d["result"]["value"] == 0.001
 
 
 def test_non_determined_statuses_carry_tracking_but_no_warning():
-    d = _schema_ok(resolve("price_limit_pct", "2026-11-10", "main_board", "XSHE"))
-    assert d["status"] == "MISSING_CONTEXT" and d["warnings"] == [] and d["tracking"]["tracked_through"] is None
+    d = _schema_ok(resolve("price_limit_pct", "2026-11-20", "main_board", "XSHE"))
+    assert d["status"] == "MISSING_CONTEXT" and d["warnings"] == [] and d["tracking"]["beyond"] is True
     d = _schema_ok(resolve("margin_ratio", "2026-11-20", "shfe_xx", "XSGE"))
     assert d["status"] == "OUT_OF_COVERAGE" and d["tracking"]["beyond"] is True and d["warnings"] == []
 
@@ -177,10 +191,10 @@ def test_require_tracked_refuses_only_carry_forwards():
     assert d["status"] == "BEYOND_TRACKING" and d["result"] is None
     assert d["record_id"] == "cn.futures.session_schedule.shfe_cu.2024-01-01" and d["evidence_refs"]
     assert "2026-11-02" in d["reason"] and d["warnings"] == [WARNING_BEYOND]
-    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "XSHG", require_tracked=True))
+    d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "BJSE", require_tracked=True))
     assert d["status"] == "BEYOND_TRACKING" and "not tracked" in d["reason"]
     for q in (("session_schedule", "2026-11-02", "shfe_cu", "XSGE"), ("finra_taf_sell", "2026-12-01", "us_stock", "XNYS+XNAS"),
-              ("stamp_duty_sell", "2020-01-02", "stock", "XSHG")):
+              ("stamp_duty_sell", "2022-01-04", "stock", "BJSE")):
         assert resolve(*q, require_tracked=True) == resolve(*q)
 
 
@@ -205,11 +219,11 @@ def test_schema_and_capabilities():
     assert "tracking" not in sch["required"] and "warnings" not in sch["required"]
     with open(os.path.join(ROOT, "docs", "decision.schema.json"), encoding="utf-8") as fh:
         assert json.load(fh) == json.loads(json.dumps(sch))
-    for pfx, markets in (("cn", {"XSGE", "XINE", "XZCE", "GFEX"}), ("hk", {"XHKG"}), ("us", {"XNYS+XNAS"})):
+    for pfx, markets in (("cn", {"XSHG+XSHE", "XSGE", "XINE", "XZCE", "GFEX"}), ("hk", {"XHKG"}), ("us", {"XNYS+XNAS"})):
         c = capabilities(pfx)
         assert {e["market"] for e in c["tracking"]["entries"]} == markets
         assert "BEYOND_TRACKING" in c["entrypoints"]["statuses"]
-    assert capabilities()["tracking"]["untracked_markets"] == ["BJSE", "CCFX", "XSHE", "XSHG"]
+    assert capabilities()["tracking"]["untracked_markets"] == ["BJSE", "CCFX"]
     assert capabilities("us")["tracking"]["untracked_markets"] == []
 
 
@@ -230,9 +244,10 @@ def test_record_at_opt_in_raises_beyond_tracking():
     assert isinstance(ei.value, KeyError) and ei.value.tracked_through == "2026-11-02"
     assert ei.value.record.id == "cn.futures.session_schedule.shfe_cu.2024-01-01" and ei.value.date == "2026-11-20"
     with pytest.raises(KeyError):
-        mr.record_at("stamp_duty_sell", "2026-11-10", "stock", "XSHG", require_tracked=True)
+        mr.record_at("stamp_duty_sell", "2026-11-10", "stock", "BJSE", require_tracked=True)
+    assert mr.rule_at("stamp_duty_sell", "2026-11-10", "stock", "XSHE", require_tracked=True) == 0.0005
     assert mr.rule_at("session_schedule", "2026-11-02", "shfe_cu", "XSGE", require_tracked=True)
-    assert mr.rule_at("stamp_duty_sell", "2020-01-02", "stock", "XSHG", require_tracked=True) == 0.001   # closed record
+    assert mr.rule_at("stamp_duty_sell", "2022-01-04", "stock", "BJSE", require_tracked=True) == 0.001   # closed record
     assert mr.record_at("finra_taf_sell", "2026-12-01", "us_stock", "XNYS+XNAS", require_tracked=True).effective_to
 
 
@@ -248,7 +263,7 @@ def test_coverage_reports_tracking_without_changing_status():
     assert b["status"] == "partial" and b["beyond_tracking"] == a["beyond_tracking"]
     c = mr.coverage("XSGE", "shfe_cu", ["session_schedule"], "2026-10-01", "2026-11-03", require_tracked=True)
     assert c["status"] == "complete" and c["tracking"]["beyond"] is None and c["beyond_tracking"] == []
-    u = mr.coverage("XSHG", "stock", ["stamp_duty_sell"], "2020-01-01", "2026-12-01")
+    u = mr.coverage("BJSE", "stock", ["stamp_duty_sell"], "2022-01-01", "2026-12-01")
     assert u["status"] == "complete" and u["tracking"] == {"tracked_through": None, "beyond": None}
     assert u["beyond_tracking"] == [{"rule": "stamp_duty_sell", "from": "2023-08-28", "to": "2026-12-01",
                                      "record_ids": ["cn.fee.stamp_duty_sell.2023-08-28"]}]   # closed records are facts
@@ -266,17 +281,19 @@ def _rows(*lines):
 
 
 def test_check_counts_rows_beyond_tracking_without_touching_the_stamp(registry):
-    rows = _rows("2026-11-02,000001,buy,10.00,10.00,main_board,XSHE", "2026-11-05,000001,buy,10.00,10.00,main_board,XSHE",
-                 "2026-11-05,600000,buy,10.00,10.00,main_board,XSHG")
+    rows = _rows("2026-11-13,000001,buy,10.00,10.00,main_board,XSHE", "2026-11-20,000001,buy,10.00,10.00,main_board,XSHE",
+                 "2026-11-20,600000,buy,10.00,10.00,main_board,", "2026-11-05,600000,buy,10.00,10.00,main_board,XSHG")
     for r in rows:
         r.update(board="main_board", st="false", listing_day_index="1000")
         r["scope"] = ""
     plain = chk.check_rows(rows, strict=True)
-    assert plain["tracking"]["rows_untracked"] == 3 and plain["tracking"]["rows_beyond_tracked_through"] == 0
-    assert plain["tracking"]["tracked_through"] == {"XSHE": None, "XSHG": None}
+    # a row without a market has no tracking statement (BJSE is untracked, and the checker never picks an exchange)
+    assert plain["tracking"]["rows_beyond_tracked_through"] == 1 and plain["tracking"]["rows_untracked"] == 1
+    assert plain["tracking"]["tracked_through"] == {"": None, "XSHE": "2026-11-13", "XSHG": "2026-11-13"}
     registry(_entry("XSHE", "2026-11-02"))
     tracked = chk.check_rows(rows, strict=True)
-    assert tracked["tracking"]["rows_beyond_tracked_through"] == 1 and tracked["tracking"]["rows_untracked"] == 1
+    # registry replaced by XSHE through 2026-11-02 only: both XSHE rows beyond; XSHG and the market-less row untracked
+    assert tracked["tracking"]["rows_beyond_tracked_through"] == 2 and tracked["tracking"]["rows_untracked"] == 2
     assert tracked["stamp"] == plain["stamp"] and tracked["findings"] == plain["findings"] == []
 
 
@@ -285,7 +302,9 @@ def test_check_example_stamp_unchanged():
     with open(os.path.join(ROOT, "examples", "fills_ok.csv"), newline="", encoding="utf-8") as fh:
         out = chk.check_rows(list(csv.DictReader(fh)), strict=True)
     assert out["stamp"].endswith("d2abe94da19e5306b55a1ed38cfafb7a")
-    assert out["tracking"]["rows_untracked"] == out["rows"]
+    # every example row has a market (XSHG / XSHE, tracked) and a date before 2026-11-13
+    assert out["tracking"]["rows_untracked"] == out["tracking"]["rows_beyond_tracked_through"] == 0
+    assert out["tracking"]["tracked_through"] == {"XSHE": "2026-11-13", "XSHG": "2026-11-13"}
 
 
 # --- release guard ----------------------------------------------------------------------------------------------------

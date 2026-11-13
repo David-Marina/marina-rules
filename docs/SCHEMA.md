@@ -1473,7 +1473,12 @@ that directory's `scopes.yaml`; no two entries cover the same (market, scope).
 
 **Lookup.** `tracked_through(market, scope=None)` → ISO date or `None`. A '+' market takes the earliest of its members
 and is `None` if any member is untracked; `scope=None` takes the earliest entry of the market, or `None` if some scope with
-records has no entry; `market=None` → `None`.
+records has no entry; `market=None` → `None`. In `resolve()` without a market the answering record's market is used, so
+an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry) but tracked for a query with market `XSHG` or `XSHE`.
+
+**Entries (2026-11-14).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
+rule keywords reviewed by title, not every notice read); `XSGE`, `XINE`, `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-03;
+`XNYS+XNAS` 2026-11-03. Untracked: `BJSE`, `CCFX`.
 
 **Where it shows** (all additive; default return values and exceptions are unchanged):
 
@@ -1482,7 +1487,7 @@ records has no entry; `market=None` → `None`.
 | `contract.resolve()` | `tracking: {tracked_through, beyond}` on every decision (`beyond` = `trade_date` > `tracked_through`; both `null` when untracked; the market is the query's, else the answering record's). `warnings`: `CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED` on a DETERMINED answer from an open-ended record beyond tracking / on an untracked market | that answer becomes status `BEYOND_TRACKING`: `result` null, `record_id` / evidence kept |
 | `record_at()` / `rule_at()` | unchanged | `BeyondTracking` (subclass of `KeyError`; `record`, `date`, `tracked_through`) in the same case |
 | `coverage()` | `tracking: {tracked_through, beyond: {from, to} \| null}` and `beyond_tracking` [{rule, from, to, record_ids}]: ranges answered by an open-ended record after `tracked_through` (anywhere when untracked); `status` unchanged | non-empty `beyond_tracking` → `partial` |
-| `marina check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked`, `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
+| `marina check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked` (a row without a market counts as untracked), `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
 | capabilities | `tracking`: `entries`, `untracked_markets` | — |
 
 `scripts/check_release_metadata.py` fails on a `tracked_through` or `updated` after today (Asia/Tokyo), and with

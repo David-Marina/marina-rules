@@ -9699,6 +9699,13 @@
  "tracking": {
   "entries": [
    {
+    "market": "XSHG+XSHE",
+    "scopes": null,
+    "tracked_through": "2026-11-13",
+    "basis": "Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.",
+    "updated": "2026-11-14"
+   },
+   {
     "market": "XSGE",
     "scopes": null,
     "tracked_through": "2026-11-02",
@@ -9729,9 +9736,7 @@
   ],
   "untracked_markets": [
    "BJSE",
-   "CCFX",
-   "XSHE",
-   "XSHG"
+   "CCFX"
   ],
   "meaning": "tracked_through = last date the official sources were checked for rule changes; after it (or on an untracked market) an open-ended record is a carry-forward, not a finding"
  },

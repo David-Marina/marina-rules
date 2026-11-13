@@ -150,10 +150,14 @@ each market's `known_gaps.yaml` are the statement.
 
 | Market group | `tracked_through` | Checked against |
 |---|---|---|
+| China A-share (XSHG, XSHE) | 2026-11-13 | listing pages of SSE, SZSE, CSDC and MOF rules and notices, diffed weekly; new titles matching rule keywords reviewed by title |
 | SHFE (XSGE), INE (XINE), CZCE (XZCE), GFEX | 2026-11-02 | notices and daily settlement parameters, every trading day from 2024-01-02 |
 | Hong Kong (XHKG) | 2026-11-03 | HKEX rules, circulars and fee pages; SFC and IRD notices |
 | US equities (XNYS, XNAS) | 2026-11-03 | SEC, FINRA, NYSE and Nasdaq rules, orders, notices and filings |
-| China A-share (XSHG, XSHE, BJSE), CFFEX (CCFX) | not tracked | no dated statement yet; every open-ended answer is a carry-forward |
+| BJSE, CFFEX (CCFX) | not tracked | not on the watch list; every open-ended answer is a carry-forward |
+
+A record whose market includes BJSE (e.g. the `XSHG+XSHE+BJSE` stamp duty) is tracked for a query with market `XSHG` or
+`XSHE`, and untracked for `BJSE` or for a query without a market.
 
 ## Scope — what Marina will and will not contain
 
