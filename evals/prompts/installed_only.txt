@@ -1,0 +1,13 @@
+The Python package `marina-rules` is installed in this Python interpreter:
+
+    {PYTHON}
+
+Do the tasks in tasks.json in this directory. Write your answers to answers.json in this directory, in the format
+described in ANSWER_FORMAT.md.
+
+Rules for this session:
+- Work only inside this directory. Do not read, list or search any other directory, except what the interpreter
+  itself loads when you run it.
+- Do not search the web or fetch anything from the network.
+- Use only that interpreter for Python, and do not install anything.
+- When you are done, answers.json must exist and be valid JSON.

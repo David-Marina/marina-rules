@@ -1,0 +1,9 @@
+date,code,side,price,prev_close,scope,market
+2021-03-01,300001,buy,12.02,10.00,chinext,XSHE
+2022-03-01,600001,buy,11.05,10.00,main_board,XSHG
+2022-03-01,600002,sell,8.98,10.00,main_board,XSHG
+2022-03-02,600003,buy,10.1234,10.00,main_board,XSHG
+2024-06-14,600004,buy,5.30,5.00,st_main,XSHG
+2023-05-10,000005,sell,9.5012,9.60,main_board,XSHE
+2020-08-21,300006,buy,11.03,10.00,chinext,XSHE
+2024-01-30,603375,buy,40.00,30.12,ipo_first5_main,XSHG

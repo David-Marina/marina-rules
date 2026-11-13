@@ -1,0 +1,99 @@
+{
+  "eval": "marina-rules agent evaluation",
+  "eval_version": 1,
+  "instructions": [
+    "Answer every task with the Python package marina-rules that is installed in the interpreter you were given.",
+    "Use only the facts each task states and what the package provides. Do not look up particular securities, contracts or exchange notices anywhere else, and do not use what you may remember about them.",
+    "Dates are trading dates (YYYY-MM-DD). Prices and amounts are in CNY unless a task says otherwise. 'Previous close' is the exchange's reference price for that day's price limits (unadjusted).",
+    "Files a task names are in this directory.",
+    "Write one file, answers.json, in this directory, in the format described in ANSWER_FORMAT.md. Every task gets an entry, including tasks you cannot answer with a value."
+  ],
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "ChiNext limit-up across a rule change",
+      "question": "A ChiNext stock on the Shenzhen Stock Exchange, not under risk warning (not ST), listed several years earlier (far past any listing-window rule). Its previous close is 13.45 on both days. What is its limit-up price on 2020-08-21, and on 2020-08-24?",
+      "return": "value: an object {\"2020-08-21\": <price>, \"2020-08-24\": <price>}, prices with 2 decimals."
+    },
+    {
+      "id": "T02",
+      "title": "Risk-warned stock: limit prices and rounding",
+      "question": "A main-board stock on the Shanghai Stock Exchange that is under risk warning (ST) on 2024-06-14, listed several years earlier. Previous close 4.10. What are its limit-up and limit-down prices on 2024-06-14?",
+      "return": "value: an object {\"limit_up\": <price>, \"limit_down\": <price>}, prices with 2 decimals."
+    },
+    {
+      "id": "T03",
+      "title": "Listing window",
+      "question": "A ChiNext stock (Shenzhen) that listed through the registration-based IPO process. 2024-03-05 is its third trading day after listing. It is not ST. Previous close 30.00. What is its limit-up price on 2024-03-05?",
+      "return": "value: the price with 2 decimals, or the string \"no_limit\" if no price limit applies."
+    },
+    {
+      "id": "T04",
+      "title": "Stamp duty across a rate change",
+      "question": "What is the stamp duty rate on the sell side of an A-share stock trade on 2023-08-25, and on 2023-08-28?",
+      "return": "value: an object {\"2023-08-25\": <rate>, \"2023-08-28\": <rate>}, rates as fractions of turnover (0.01 = 1%)."
+    },
+    {
+      "id": "T05",
+      "title": "Statutory fee floor of one fill",
+      "question": "A sell of A-shares on the Shanghai Stock Exchange on 2023-08-28 with turnover 86420.00. What is the minimum total of the statutory charges on this fill that are levied as a fraction of turnover (stamp duty and transfer fee; broker commission is not included)?",
+      "return": "value: the amount in CNY (at least 2 decimals)."
+    },
+    {
+      "id": "T06",
+      "title": "Limit-up with only a code and a date",
+      "question": "Stock 600123 on the Shanghai Stock Exchange, previous close 20.00. What is its limit-up price on 2024-06-14? Nothing else about this security is given.",
+      "return": "value: the price with 2 decimals, or \"no_limit\"; or, if it cannot be answered from what is given, the status and what is missing."
+    },
+    {
+      "id": "T07",
+      "title": "Dalian futures price limit",
+      "question": "Dalian Commodity Exchange soybean meal futures: what is the daily price limit, as a fraction of the previous settlement price, on 2025-03-03?",
+      "return": "value: the fraction (0.05 = 5%), or the status that applies."
+    },
+    {
+      "id": "T08",
+      "title": "SHFE copper margin",
+      "question": "Shanghai Futures Exchange copper futures: what is the exchange's margin ratio for speculative (general) positions on 2026-04-15?",
+      "return": "value: the fraction (0.05 = 5%), or the status that applies."
+    },
+    {
+      "id": "T09",
+      "title": "Pre-flight of a backtest window",
+      "question": "You are about to backtest risk-warned (ST) main-board stocks on the Shanghai Stock Exchange from 2004-01-01 up to but not including 2012-01-01. The simulation needs, for every trading day in that window, the daily price limit and the tick size. Can the dataset answer both for the whole window? If not, which rule is missing over which dates, and is that a known gap? Which facts about each security must you supply yourself to pick the right rules?",
+      "return": "complete, gaps, gap_ids, required_context (see ANSWER_FORMAT.md, 'Pre-flight task')."
+    },
+    {
+      "id": "T10",
+      "title": "Check a log of exchange fills",
+      "question": "fills_exchange.csv is a log of real exchange fills: prices as traded (unadjusted), prev_close is the exchange's reference price for that day, fee is the total fee charged for the fill in CNY, turnover is in CNY, scope names the price-limit category the stock was in that day. Which rows break a price limit, are off the price tick, or carry a fee below the statutory charges? Rows are numbered from 1 = the first line after the header.",
+      "files": ["fills_exchange.csv"],
+      "return": "violations (see ANSWER_FORMAT.md, 'Fill-log tasks'); an empty list if every row is fine."
+    },
+    {
+      "id": "T11",
+      "title": "Check a log of model prices",
+      "question": "fills_model.csv holds simulated fills from a backtest: quote plus or minus slippage, so prices need not be on the exchange's price tick, and a fill beyond a price limit by at most 0.3% of that limit counts as acceptable slippage. prev_close is the exchange's reference price; scope names the price-limit category of the stock that day. Which rows are violations, and which rows are beyond a limit but within the 0.3% allowance? Rows are numbered from 1 = the first line after the header.",
+      "files": ["fills_model.csv"],
+      "return": "violations and tolerated (see ANSWER_FORMAT.md, 'Fill-log tasks')."
+    },
+    {
+      "id": "T12",
+      "title": "SHFE copper trading fee in November 2026",
+      "question": "Shanghai Futures Exchange copper futures: what is the exchange trading fee rate (fraction of turnover) for opening a speculative position on 2026-11-10?",
+      "return": "value: the fraction, or the status that applies; carry_forward as in ANSWER_FORMAT.md."
+    },
+    {
+      "id": "T13",
+      "title": "CFFEX index futures price limit",
+      "question": "China Financial Futures Exchange CSI 300 index futures (IF): what is the daily price limit, as a fraction of the previous settlement price, on 2025-06-03?",
+      "return": "value: the fraction, or the status that applies; carry_forward as in ANSWER_FORMAT.md."
+    },
+    {
+      "id": "T14",
+      "title": "SHFE gold trading fee by contract",
+      "question": "Shanghai Futures Exchange gold futures: what is the exchange trading fee per lot on 2025-07-10 for contract au2509, and for contract au2510?",
+      "return": "value: an object {\"au2509\": <CNY per lot>, \"au2510\": <CNY per lot>}."
+    }
+  ]
+}
