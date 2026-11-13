@@ -26,7 +26,8 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 A stock suspended for weeks inside its own first five trading days needs ``listing_day_index``.
   * day_high / day_low   optional, SAME PRICE BASIS as ``price``: the day's traded high and low. When both are given,
                 the fill price must lie within them (PRICE_OUTSIDE_DAY_RANGE). This is a DATA-CONSISTENCY check, not
-                an exchange rule: it catches a price-basis mismatch that stays inside a wide band.
+                an exchange rule: it catches a price-basis mismatch that stays inside a wide band. It says the fill price and the
+                day's range disagree, not which of the two is wrong.
   * fee / turnover   optional; when both present, the fee is checked against the day's statutory
                      components (stamp duty of the fill's side, transfer fee on turnover) as a *lower bound*.
                      A par-value transfer fee (SSE before 2015-08-01) is not computable from turnover and is
@@ -345,7 +346,8 @@ def _basis_hints(out_of_range: dict, full: bool) -> list:
                       "message": f"{n} rows of {code} are {'above' if sel[0][2] == 'up' else 'below'} {where} by a median "
                                  f"{mex:.2f}% with price / {ref} ≈ {med:.4f}: this may indicate that price and "
                                  f"{'prev_close' if source == 'band' else 'day_high / day_low'} are on different price "
-                                 "bases (adjusted vs unadjusted), or that the scope is wrong. A hint, not a finding."})
+                                 "bases (adjusted vs unadjusted, or an ex-rights event applied with the wrong factor), or that "
+                                 "the scope is wrong. A hint, not a finding."})
     return hints
 
 
