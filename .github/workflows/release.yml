@@ -10,7 +10,7 @@ permissions:
   id-token: write
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,7 +51,7 @@ jobs:
           gh release upload "${GITHUB_REF_NAME}" dist/* --clobber
   pypi:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: pypi
     steps:
       - uses: actions/download-artifact@v4
