@@ -1,0 +1,1142 @@
+[
+ {
+  "id": "FEE-0009",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2006-07-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财税〔2005〕11号：从2005年1月24日起……由立据双方当事人分别按1‰的税率缴纳 → 卖方 1‰ = 0.001",
+  "tags": [
+   "fees",
+   "coverage-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0010",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2006-07-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财税〔2005〕11号：立据双方当事人分别按1‰ → 买方同样 1‰ = 0.001",
+  "tags": [
+   "fees",
+   "bilateral"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0011",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2007-05-29",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "2007-05-30 调整前最后一天仍为 1‰（财政部 2007-05-29：由现行1‰调整为3‰）",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0012",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2007-05-30",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.003
+  },
+  "oracle": "财政部：从2007年5月30日起……由立据双方当事人分别按3‰ → 3/1000 = 0.003",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day",
+   "bilateral"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0013",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2008-04-23",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.003
+  },
+  "oracle": "2008-04-24 下调前最后一天仍为 3‰",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0014",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2008-04-24",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财政部、国家税务总局：从２００８年４月２４日起……由现行３‰调整为１‰，立据双方分别 → 0.001",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day",
+   "bilateral"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0015",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2008-09-18",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "单边征收前最后一天：买方仍按 1‰（2008-04-24 起双方各 1‰）",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0016",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2008-09-19",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "财政部 2008-09-19：……对受让方不再征税 → 买方 0",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0017",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2024-01-05",
+   "scope": "stock",
+   "market": "XSHG+XSHE+BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "印花税法第三条：证券交易印花税对证券交易的出让方征收，不对受让方征收 → 0",
+  "tags": [
+   "fees",
+   "three-exchanges"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0018",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2005-01-21",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "财税〔2005〕11号前（2005-01-24 前）税率为 2‰ 但 Marina 未收录且早于 2006-07-01 覆盖下限 → 不猜",
+  "tags": [
+   "fees",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0019",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2021-11-15",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财政部 税务总局公告2021年第33号：北交所印花税暂按现行新三板规定；财税〔2014〕47号：由出让方按 1‰ → 0.001；北交所 2021-11-15 开市",
+  "tags": [
+   "fees",
+   "bjse",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0020",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2023-08-28",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005
+  },
+  "oracle": "财政部 税务总局公告2023年第39号：证券交易印花税减半征收 → 0.001 / 2 = 0.0005（中国结算北京市场一览表：按成交金额的 1‰向出让方收取，减半征收）",
+  "tags": [
+   "fees",
+   "bjse",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0021",
+  "query": {
+   "rule": "transfer_fee_par_value",
+   "trade_date": "2012-05-31",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005
+  },
+  "oracle": "中国结算 2012-04-30：上海市场A股交易过户费现行标准为按成交面额的0.5‰ → 0.5/1000 = 0.0005（2012-06-01 前最后一天）",
+  "tags": [
+   "fees",
+   "par-value",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0022",
+  "query": {
+   "rule": "transfer_fee_par_value",
+   "trade_date": "2012-06-01",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.000375
+  },
+  "oracle": "中国结算 2012-04-30：从2012年6月1日起……调整降为按成交面额的0.375‰ → 0.000375",
+  "tags": [
+   "fees",
+   "par-value",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0023",
+  "query": {
+   "rule": "transfer_fee_par_value",
+   "trade_date": "2012-09-01",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0003
+  },
+  "oracle": "中国结算 2012-08-02：从2012年9月1日起……调整降为按成交面额的0.3‰ → 0.0003",
+  "tags": [
+   "fees",
+   "par-value",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0024",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-28",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-05
+  },
+  "oracle": "北京市场 0.025‰ 记录在 bse_stock 范围下；stock 范围仅剩沪深 0.02‰ 一条（中国结算 2022-04-28：现行沪深市场 A 股按照成交金额 0.02‰）→ 不指定市场也唯一 = 0.00002",
+  "tags": [
+   "fees",
+   "no-market",
+   "bse_stock-split"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0025",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2015-07-31",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2015-08-01 前沪市过户费按成交面值收取（规则 transfer_fee_par_value），不是成交金额费率 → 按成交金额查询无记录",
+  "tags": [
+   "fees",
+   "par-value",
+   "basis-change"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0026",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2015-07-31",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.55e-05
+  },
+  "oracle": "中国结算 2015-07-09：深市按照成交金额 0.0255 ‰ 向买卖双方投资者分别收取（调整前）→ 0.0000255",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0027",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2015-08-01",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-05
+  },
+  "oracle": "中国结算 2015-07-09：于2015年8月1日起……统一调整为按照成交金额0.02‰ → 0.00002",
+  "tags": [
+   "fees",
+   "basis-change",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0028",
+  "query": {
+   "rule": "transfer_fee_par_value",
+   "trade_date": "2015-08-01",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2015-08-01 起沪市不再按面值收取（改为成交金额 0.02‰）",
+  "tags": [
+   "fees",
+   "par-value",
+   "basis-change"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0029",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-28",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.5e-05
+  },
+  "oracle": "中国结算 2022-04-28：……北京市场 A 股和挂牌公司股份按照成交金额 0.025‰ 双向收取（现行，次日下调）→ 0.000025",
+  "tags": [
+   "fees",
+   "bjse",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0030",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-29",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1e-05
+  },
+  "oracle": "中国结算 2022-04-28：统一下调为按照成交金额 0.01‰ 双向收取 → 0.00001",
+  "tags": [
+   "fees",
+   "bjse",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0031",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2010-01-04",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_constituents": "mixed"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.003
+  },
+  "oracle": "证监发〔2002〕21号第一条：a股、b股、证券投资基金……不得高于证券交易金额的3‰",
+  "tags": [
+   "fees",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0032",
+  "query": {
+   "rule": "commission_min_per_order_cny",
+   "trade_date": "2022-01-04",
+   "scope": "reits",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 10
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5
+  },
+  "oracle": "证监发〔2002〕21号：证券投资基金每笔交易佣金不足5元的，按5元收取；公募 REITs 为公开募集基础设施证券投资基金（证监会公告〔2020〕54号）",
+  "tags": [
+   "fees",
+   "reits"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0033",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2022-01-04",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_constituents": "mixed"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "基金不征证券交易印花税（not_applicable，见 coverage/cn_targets.yaml）；Marina 不为不适用的规则造值",
+  "tags": [
+   "fees",
+   "fund",
+   "not-applicable"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0034",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2024-01-05",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "未找到北交所股票佣金上限的官方文本（unresolved）；佣金记录仅覆盖 XSHG+XSHE → 不猜",
+  "tags": [
+   "fees",
+   "bjse",
+   "unresolved"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0035",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2007-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所交易费用表（时间：2005 年 8 月 / 2007 年 5 月 30 日）：债券（国债、企业债券、可转换公司债券等）佣金 不超过成交金额的 0.1%，起点5元 → 0.001",
+  "tags": [
+   "fees",
+   "convertible",
+   "sse",
+   "single-source"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0036",
+  "query": {
+   "rule": "commission_min_per_order_cny",
+   "trade_date": "2007-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5
+  },
+  "oracle": "同上：起点5元 → 每笔最低 5 元",
+  "tags": [
+   "fees",
+   "convertible",
+   "sse",
+   "single-source"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0037",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2007-10-12",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0002
+  },
+  "oracle": "上交所《关于调整固定收益类产品收费标准的通知》：交易佣金：按不超过成交金额的0.2‰收取，起点1元；上述标准自2007年10月12日起执行 → 0.0002（生效日当天）",
+  "tags": [
+   "fees",
+   "convertible",
+   "sse",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0038",
+  "query": {
+   "rule": "commission_min_per_order_cny",
+   "trade_date": "2009-03-02",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上交所交易费用表（时间：2008 年 09 月 19 日）：债券（…可转换公司债券…）佣金 不超过成交金额的 0.02%，起点 1 元 → 1",
+  "tags": [
+   "fees",
+   "convertible",
+   "sse"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0039",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2010-06-01",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "深交所收费（及代收税费）明细表（2006-12-30 / 2007-11-12 / 2013-11-14）：佣金 可转债 不超过成交金额的 0.1% → 0.001",
+  "tags": [
+   "fees",
+   "convertible",
+   "szse",
+   "single-source"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0040",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2015-06-01",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "深交所收费明细表 2014-08-25 版起不再列佣金；之后无官方文本规定可转债佣金（unresolved）→ 不沿用 1‰、不猜",
+  "tags": [
+   "fees",
+   "convertible",
+   "szse",
+   "unresolved"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0041",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2021-12-01",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-05
+  },
+  "oracle": "中国结算 2022-04-28：股票交易过户费由现行沪深市场 A 股按照成交金额 0.02‰ 、北京市场 A 股和挂牌公司股份按照成交金额 0.025‰ 双向收取 → stock 范围（沪深）0.02‰ = 0.00002；北京市场值在 bse_stock 下，不与之冲突",
+  "tags": [
+   "fees",
+   "no-market",
+   "bse_stock-split"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0042",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2021-12-01",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.5e-05
+  },
+  "oracle": "中国结算 2022-04-28：股票交易过户费由现行沪深市场 A 股按照成交金额 0.02‰ 、北京市场 A 股和挂牌公司股份按照成交金额 0.025‰ 双向收取 → 北京市场 0.025‰ = 0.000025（北交所 2021-11-15 开市）",
+  "tags": [
+   "fees",
+   "bse_stock"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0043",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2021-12-01",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2022-04-29 前北京市场过户费只记录在 bse_stock 范围下；stock 范围的沪深记录（0.02‰）不覆盖北京市场 → 无记录",
+  "tags": [
+   "fees",
+   "bse_stock-split"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0044",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2021-07-30",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "税务局《香港股票印花税历史税率》：From 1 September 2001 to 31 July 2021 … 0.1% of the amount of the consideration … on every sold note and every bought note；2021-07-30 是旧税率最后一个交易日",
+  "tags": [
+   "hk",
+   "fees",
+   "stamp-duty",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0045",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2021-08-02",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0013
+  },
+  "oracle": "税务局历史税率表：From 1 August 2021 to 16 November 2023 … 0.13%；联交所 CT/080/21：the Bill … will come into effect on 1 August 2021 … increased from 0.1% to 0.13%（两家独立发布方 → verified）；2021-08-01 为星期日，首个交易日 2021-08-02",
+  "tags": [
+   "hk",
+   "fees",
+   "stamp-duty",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0046",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2023-11-17",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "GovHK 印花税税率表：With effect from 17 November 2023 … 0.1% … on every sold note and every bought note；联交所 CT/158/23 及政府 2023-11-15 新闻稿：come into operation on 17 November 2023，0.13% 下调至 0.1%",
+  "tags": [
+   "hk",
+   "fees",
+   "stamp-duty",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0047",
+  "query": {
+   "rule": "stamp_duty_buy",
+   "trade_date": "2015-02-13",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "税务局 Stamping Circular No. 02/2015：Stamp Duty (Amendment) Ordinance 2015 … published in the Gazette on 13 February 2015 … waive stamp duty payable on the transfers of shares or units of all exchange traded funds；港交所 2015-02-04 公告同日生效",
+  "tags": [
+   "hk",
+   "fees",
+   "stamp-duty",
+   "etf",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0048",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2014-06-16",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-HK-0003"
+   ]
+  },
+  "oracle": "2015-02-13 全体 ETF 豁免之前，印花税因 ETF 而异（税务局 IRSD128 的指定 ETF 豁免；港交所 2015-02-04 公告：124 只 ETF 中 26 只仍须缴纳）：一个比例不能代表整个 hk_etf → 已登记缺口，不猜",
+  "tags": [
+   "hk",
+   "fees",
+   "stamp-duty",
+   "etf",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0049",
+  "query": {
+   "rule": "settlement_fee_each_side",
+   "trade_date": "2025-06-27",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "rate": 2e-05,
+    "min": 2,
+    "max": 100
+   }
+  },
+  "oracle": "香港结算 HKSCC/008/2025：Existing Stock Settlement Fee Structure 0.0020% of gross value of an Exchange Trade, subject to a minimum fee of HK$2 and a maximum fee of HK$100 per side per trade；2025-06-27（星期五）为新收费前最后一个交易日",
+  "tags": [
+   "hk",
+   "fees",
+   "settlement-fee",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0050",
+  "query": {
+   "rule": "settlement_fee_each_side",
+   "trade_date": "2025-06-30",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "rate": 4.2e-05,
+    "min": null,
+    "max": null
+   }
+  },
+  "oracle": "香港结算 LSD/019/2025：The amendments … will come into effect on Monday, 30 June 2025 … 0.0042% per side of gross value of an Exchange Trade；HKSCC/008/2025：removal of the minimum and maximum boundary per side（合资格 ETF 做市商交易 0.002% 不属本 scope 的一般值）",
+  "tags": [
+   "hk",
+   "fees",
+   "settlement-fee",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0051",
+  "query": {
+   "rule": "trading_fee_each_side",
+   "trade_date": "2023-01-03",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5.65e-05
+  },
+  "oracle": "联交所 CT/141/22：Trading Fee of 0.005% per side … → Trading Fee of 0.00565% per side of the consideration of a transaction … The proposal will take effect on 1 January 2023；2023-01-03 为生效后首个交易日",
+  "tags": [
+   "hk",
+   "fees",
+   "trading-fee",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0052",
+  "query": {
+   "rule": "trading_tariff_per_trade",
+   "trade_date": "2022-12-30",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.5
+  },
+  "oracle": "联交所 CT/141/22：Existing … Trading Tariff of HK$0.50 payable on each and every purchase and sale transaction → New … Trading Tariff removed，自 2023-01-01 起；2022-12-30 为旧制最后一个交易日（2010-01-01 前的起点未查到，记录起点截于覆盖下限）",
+  "tags": [
+   "hk",
+   "fees",
+   "trading-tariff",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0053",
+  "query": {
+   "rule": "afrc_levy_each_side",
+   "trade_date": "2021-12-31",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "港交所交易费用页：Effective 1 January 2022, an AFRC Transaction Levy of 0.00015% … is charged per side：开征之前没有这项征费，也不记录 0（与新品种上市前一样：无记录、无缺口）",
+  "tags": [
+   "hk",
+   "fees",
+   "afrc-levy",
+   "before-commencement"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0054",
+  "query": {
+   "rule": "sec_fee_rate_sell",
+   "trade_date": "2025-05-13",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.78e-05
+  },
+  "oracle": "SEC 2024 年中调整令：the fee rates applicable under Sections 31(b) and (c) of the Exchange Act shall be $27.80 per $1,000,000 effective on May 22, 2024；2025-05-13 是改为 $0.00 前最后一个交易日（USD 每百万 ÷ 1,000,000）",
+  "tags": [
+   "us",
+   "fees",
+   "sec-fee",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0055",
+  "query": {
+   "rule": "sec_fee_rate_sell",
+   "trade_date": "2025-05-14",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0
+  },
+  "oracle": "SEC 2025 年中调整令：the fee rates applicable under sections 31(b) and (c) of the Exchange Act shall be $0.00 per $1,000,000 effective on May 14, 2025；ETF 与普通股同一费率",
+  "tags": [
+   "us",
+   "fees",
+   "sec-fee",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0056",
+  "query": {
+   "rule": "sec_fee_rate_sell",
+   "trade_date": "2026-04-06",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.06e-05
+  },
+  "oracle": "SEC 2026 年度调整令：shall be $20.60 per $1,000,000 effective on April 4, 2026（周六）；FINRA 2026-03-17 信息通知独立确认费率与日期 → verified；2026-04-06 为其后第一个交易日",
+  "tags": [
+   "us",
+   "fees",
+   "sec-fee",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0057",
+  "query": {
+   "rule": "finra_taf_sell",
+   "trade_date": "2026-09-30",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "per_share": 0.000195,
+    "max_per_trade": 9.79
+   }
+  },
+  "oracle": "FINRA By-Laws Schedule A 第 1 节 2026-01-01 至 2026-09-30 版本：$0.000195 per share for each sale of a covered equity security, with a maximum charge of $9.79 per trade；暂停前最后一天",
+  "tags": [
+   "us",
+   "fees",
+   "taf",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0058",
+  "query": {
+   "rule": "finra_taf_sell",
+   "trade_date": "2026-10-01",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "per_share": 0.0,
+    "max_per_trade": 0.0
+   }
+  },
+  "oracle": "SR-FINRA-2026-021：temporarily pause TAF revenue collection for transactions from October 1, 2026 through December 31, 2026 … temporarily be set at $0.00",
+  "tags": [
+   "us",
+   "fees",
+   "taf",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0059",
+  "query": {
+   "rule": "finra_taf_sell",
+   "trade_date": "2027-01-04",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "SR-FINRA-2026-021 写明暂停期止于 2026-12-31、2027 年 1 月恢复原费率；恢复后的费率不在本次记录范围内（覆盖窗口之外）：无记录、无缺口",
+  "tags": [
+   "us",
+   "fees",
+   "taf",
+   "after-window"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0060",
+  "query": {
+   "rule": "sec_fee_rate_sell",
+   "trade_date": "2009-12-31",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "美股覆盖自 2010-01-01 起；2009 年 $25.70 的实际起始日取决于拨款、未查明，记录起点截于覆盖下限：之前无记录、无缺口",
+  "tags": [
+   "us",
+   "fees",
+   "sec-fee",
+   "before-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

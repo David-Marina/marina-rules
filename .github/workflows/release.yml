@@ -1,0 +1,61 @@
+# On a version tag: run the full check suite, build a self-contained wheel, export JSON/SQLite dumps,
+# attach everything (with SHA256SUMS) to the GitHub Release (body = the CHANGELOG.md section, via scripts/release_notes.py), and publish to PyPI via trusted publishing
+# (no token stored anywhere; PyPI trusts this repo+workflow, configured once in PyPI's project settings).
+name: release
+on:
+  push:
+    tags: ["20[0-9][0-9].[0-9][0-9].[0-9][0-9]", "20[0-9][0-9].[0-9][0-9].[0-9][0-9].[0-9]*"]
+permissions:
+  contents: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e . pytest build
+      - name: the tag must equal the package version and be a final PEP 440 release
+        run: |
+          V=$(python -c "import marina_rules;print(marina_rules.VERSION)")
+          [ "$V" = "${GITHUB_REF_NAME}" ] || { echo "VERSION=$V but tag=${GITHUB_REF_NAME}"; exit 1; }
+          pip -q install packaging && python -c "from packaging.version import Version as X; import sys; v=X('$V'); sys.exit(1 if (v.is_prerelease or v.is_devrelease) else 0)" || { echo "$V is a pre-release under PEP 440 (letter suffix?) — use YYYY.MM.DD.N"; exit 1; }
+      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash)
+        run: python scripts/check_release_metadata.py
+      - run: pytest -q
+      - run: python conformance/run.py
+      - name: build wheel with vendored data
+        run: |
+          python scripts/vendor_data.py
+          python -m build
+      - name: installed wheel must carry the same dataset digest as the repo
+        run: |
+          python -m venv /tmp/w && /tmp/w/bin/pip -q install dist/*.whl
+          A=$(python -c "import marina_rules;print(marina_rules.dataset_digest())")
+          B=$(cd /tmp && /tmp/w/bin/python -c "import marina_rules;print(marina_rules.dataset_digest())")
+          [ "$A" = "$B" ] || { echo "digest mismatch repo=$A wheel=$B"; exit 1; }
+      - name: export release artefacts
+        run: python scripts/export_release.py dist/
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist/ }
+      - name: attach to GitHub Release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          python scripts/release_notes.py "${GITHUB_REF_NAME}" > /tmp/release-notes.md
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release edit "${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
+          else
+            gh release create "${GITHUB_REF_NAME}" --title "Marina ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
+          fi
+          gh release upload "${GITHUB_REF_NAME}" dist/* --clobber
+  pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist/ }
+      - name: keep only sdist and wheel
+        run: cd dist && ls | grep -vE '\.(whl|tar\.gz)$' | xargs -r rm -f && ls -la
+      - uses: pypa/gh-action-pypi-publish@release/v1

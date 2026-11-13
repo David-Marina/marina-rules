@@ -1,0 +1,146 @@
+schema: 1.1
+gaps:
+- gap_id: G-HK-0001
+  market: XHKG
+  scope: hk_stock
+  rule: session_schedule
+  interval:
+    from: '2016-07-25'
+    to: '2019-10-08'
+  severity: medium
+  reason: The scope contains both CAS and non-CAS stocks in this interval. Phase 1 covered HSCI LargeCap and MidCap constituent
+    stocks, H shares with corresponding Mainland-listed A shares, and all ETFs; phase 2 added HSCI SmallCap constituents,
+    not all equities. Index-deletion treatment also changed. A single full-scope session schedule cannot encode this conditional
+    CAS eligibility without new context.
+  evidence:
+  - The May 2016 implementation briefing at https://www.hkex.com.hk/-/media/Market-System/market/sec_tradinfra/vcm_cas/Documents/CAS-VCM-EP-Briefing-Session-May-(Eng).pdf
+    specifies LargeCap/MidCap constituents, H shares with Mainland A shares, and all ETFs; https://www.hkex.com.hk/News/Market-Communications/2016/160720news?sc_lang=en
+    confirms commencement on 25 July 2016. Phase 1 retained stocks deleted from the relevant indices.
+  - HKEX announcements at https://www.hkex.com.hk/News/Market-Communications/2017/170717news?sc_lang=en and https://www.hkex.com.hk/News/Market-Communications/2017/170724news?sc_lang=en
+    establish 24 July 2017 phase 2, addition of HSCI SmallCap constituents and regulated short selling. The 17 July announcement
+    specifies removal of deleted index constituents from phase 2 onward, including removal on launch of previously retained
+    deletions; A/H eligibility also ceases on delisting of the corresponding A share.
+  - HKEX successful rollout announcement at https://www.hkex.com.hk/News/Market-Communications/2019/1910082news?sc_lang=en
+    establishes that all equities and funds joined on 8 October 2019. The 2015 proposal at https://www.hkex.com.hk/News/Market-Communications/2015/150703news?sc_lang=en
+    envisaged broader phase-2 coverage but was not the final 2017 implemented scope.
+  status: open
+- gap_id: G-HK-0002
+  market: XHKG
+  scope: hk_etf
+  rule: stamp_duty_buy
+  interval:
+    from: '2010-01-01'
+    to: '2015-02-13'
+  severity: medium
+  reason: No single rate can represent all ETFs before the universal waiver. The earlier regime combined taxed ETFs and ETF-specific
+    remissions; the 2015 HKEX announcement reports a greater-than-40-percent Hong Kong equity composition exclusion. A composition-aware
+    scope is needed. No uniform historical value was found.
+  evidence:
+  - IRD historical remission guidance at https://www.ird.gov.hk/eng/pdf/irsd128.pdf states that it applies only to transactions
+    before 13 February 2015 and identifies Specified ETFs in Annex 1.
+  - HKEX announcement of 4 February 2015 at https://www.hkex.com.hk/News/Market-Communications/2015/150204news?sc_lang=en
+    reports 26 of 124 listed ETFs still subject to stamp duty and confirms the universal waiver starts on 13 February 2015.
+  status: open
+- gap_id: G-HK-0003
+  market: XHKG
+  scope: hk_etf
+  rule: stamp_duty_sell
+  interval:
+    from: '2010-01-01'
+    to: '2015-02-13'
+  severity: medium
+  reason: No single rate can represent all ETFs before the universal waiver. The earlier regime combined taxed ETFs and ETF-specific
+    remissions; the 2015 HKEX announcement reports a greater-than-40-percent Hong Kong equity composition exclusion. A composition-aware
+    scope is needed. No uniform historical value was found.
+  evidence:
+  - IRD historical remission guidance at https://www.ird.gov.hk/eng/pdf/irsd128.pdf states that it applies only to transactions
+    before 13 February 2015 and identifies Specified ETFs in Annex 1.
+  - HKEX announcement of 4 February 2015 at https://www.hkex.com.hk/News/Market-Communications/2015/150204news?sc_lang=en
+    reports 26 of 124 listed ETFs still subject to stamp duty and confirms the universal waiver starts on 13 February 2015.
+  status: open
+- gap_id: G-HK-0004
+  market: XHKG
+  scope: hk_etf
+  rule: session_schedule
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: No reliable date was found from which every ETF has a single complete continuous-session schedule. The 2011 and
+    2012 reforms explicitly distinguish two extended-morning ETFs from other securities. POS and all-ETF CAS dates are supported,
+    but do not resolve the historical lunch-session eligibility or establish that all ETF exceptions ceased. A partial auction-only
+    schedule would not satisfy the composite rule. Half-day holiday eves and severe-weather exceptions are outside the ordinary-day
+    model.
+  evidence:
+  - Severe-weather trading since 23 September 2024 is confirmed at https://www.hkex.com.hk/-/media/HKEX-Market/Services/Circulars-and-Notices/Participant-and-Members-Circulars/SEHK/2025/ce_SEHK_CT_132_2025.pdf;
+    it is an exception to the ordinary-day model, not a resolution of the ETF schedule.
+  - 'Rechecked https://www.hkex.com.hk/News/News-Release/2011/110303news?sc_lang=en and https://www.hkex.com.hk/News/News-Release/2012/120301news?sc_lang=en:
+    reforms took effect on 7 March 2011 and 5 March 2012; extended-morning trading was then limited to iShares Korea (4362)
+    and iShares Taiwan (4363).'
+  - Reviewed POS launch announcement at https://www.hkex.com.hk/News/News-Release/2002/020319news?sc_lang=en (25 March 2002,
+    securities market), the pre-enhancement all-securities POS discussion at https://www.hkex.com.hk/-/media/HKEX-Market/News/Market-Consultations/2016-Present/August-2019-Consultation-Paper-on-Market-Microstructure-Enhancements/Conclusions-(Dec-2019)/cp201908cc.pdf,
+    and current POS book at https://www.hkex.com.hk/-/media/HKEX-Market/Services/Trading/Securities/Overview/Trading-Mechanism/POS-Enhancements-Initiative/Trading-Mechanism-of-POS-in-the-Securities-Market_en.pdf
+    (19 October 2020 enhancement includes all ETFs). The 2002 notice is market-wide rather than an ETF-specific commencement
+    statement.
+  - 'All ETFs entered CAS on 25 July 2016: https://www.hkex.com.hk/News/Market-Communications/2017/170724news?sc_lang=en and
+    https://www.hkex.com.hk/-/media/Market-System/market/sec_tradinfra/vcm_cas/Documents/CAS-VCM-EP-Briefing-Session-May-(Eng).pdf.
+    The ETP trading-arrangements leaflet at https://www.hkex.com.hk/-/media/HKEX-Market/Products/Securities/Exchange-Traded-Products/Launch/HKEX_Trading-Arrangement-of-ETP.pdf
+    aggregates 09:30-16:00 without resolving the lunch break or dating a transition.'
+  - New searches and checks included HKEX securities operations FAQ https://www.hkex.com.hk/Global/Exchange/FAQ/Securities-Market/Trading/Securities-Market-Operations?sc_lang=en,
+    trading-hours page https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market?sc_lang=en,
+    and HKEX site searches for ETF lunch and Extended Trading Securities at https://www.hkex.com.hk/Global/HKEX-Market-Search-Result?sc_lang=en&mode=basic&q=ETF%20lunch&u=Market%20Data%7CProducts%7CServices%7CListing%7CNews%7CFAQ%7CGlobal
+    and https://www.hkex.com.hk/Global/HKEX-Market-Search-Result?sc_lang=en&mode=basic&q=Extended%20Trading%20Securities&u=Market%20Data%7CProducts%7CServices%7CListing%7CNews%7CFAQ%7CGlobal.
+    No dated evidence of a uniform all-ETF continuous session was found.
+  - Current Rules of the Exchange at https://www.hkex.com.hk/-/media/HKEX-Market/Services/Rules-and-Forms-and-Fees/Rules/SEHK/Whole_SEHK_e.pdf
+    define Extended Trading Securities as securities designated by the Exchange from time to time; Rule 501A retains their
+    additional extended-morning session. The text supplies no dated all-ETF removal of this distinction. Further HKEX searches
+    for ETF extended morning cessation and iShares Korea Taiwan delisting at https://www.hkex.com.hk/Global/HKEX-Market-Search-Result?sc_lang=en&mode=basic&q=ETF%20extended%20morning%20cessation&u=Market%20Data%7CProducts%7CServices%7CListing%7CNews%7CFAQ%7CGlobal
+    and https://www.hkex.com.hk/Global/HKEX-Market-Search-Result?sc_lang=en&mode=basic&q=iShares%20Korea%20Taiwan%20delisting&u=Market%20Data%7CProducts%7CServices%7CListing%7CNews%7CFAQ%7CGlobal
+    did not establish a complete designation history.
+  status: open
+- gap_id: G-HK-0005
+  market: XHKG
+  scope: hk_stock
+  rule: opening_auction_limit_pct
+  interval:
+    from: '2010-01-01'
+    to: '2020-10-19'
+  severity: medium
+  reason: The old POS had "No fixed price range (except 9-times rule)" (2019 consultation Appendix 1). The nine-times
+    quotation restriction is not a symmetric percentage band around a reference price and cannot be encoded by opening_auction_limit_pct.
+    Do not substitute 0, unlimited or 0.15. The pre-2020 POS covered all securities, including ETFs; this is a representation
+    gap, not a pre-commencement ETF interval. Earlier continuity back to the coverage floor is inferred from the
+    pre-existing regime; no separate ETF entry date within the coverage window was found.
+  evidence:
+  - HKEX Appendix 1 at https://www.hkex.com.hk/-/media/HKEX-Market/News/Market-Consultations/2016-Present/August-2019-Consultation-Paper-on-Market-Microstructure-Enhancements/Consultation-Paper/cp201908.pdf
+    states "Existing POS Proposed POS Existing CAS Securities Coverage All securities" and "Price Limit No fixed
+    price range (except 9-times rule)".
+  - The original POS commencement announcement at https://www.hkex.com.hk/News/News-Release/2002/020319news?sc_lang=en
+    dates the securities-market POS to 25 March 2002; the contemporaneous ETF status report at https://www.hkex.com.hk/News/News-Release/2002/020328news?sc_lang=en
+    confirms ETFs were listed/traded by that date.
+  - The launch announcement at https://www.hkex.com.hk/News/Market-Communications/2020/201005news?sc_lang=en dates
+    the new two-stage 15 percent price limit to 19 October 2020.
+  status: open
+- gap_id: G-HK-0006
+  market: XHKG
+  scope: hk_etf
+  rule: opening_auction_limit_pct
+  interval:
+    from: '2010-01-01'
+    to: '2020-10-19'
+  severity: medium
+  reason: The old POS had "No fixed price range (except 9-times rule)" (2019 consultation Appendix 1). The nine-times
+    quotation restriction is not a symmetric percentage band around a reference price and cannot be encoded by opening_auction_limit_pct.
+    Do not substitute 0, unlimited or 0.15. The pre-2020 POS covered all securities, including ETFs; this is a representation
+    gap, not a pre-commencement ETF interval. Earlier continuity back to the coverage floor is inferred from the
+    pre-existing regime; no separate ETF entry date within the coverage window was found.
+  evidence:
+  - HKEX Appendix 1 at https://www.hkex.com.hk/-/media/HKEX-Market/News/Market-Consultations/2016-Present/August-2019-Consultation-Paper-on-Market-Microstructure-Enhancements/Consultation-Paper/cp201908.pdf
+    states "Existing POS Proposed POS Existing CAS Securities Coverage All securities" and "Price Limit No fixed
+    price range (except 9-times rule)".
+  - The original POS commencement announcement at https://www.hkex.com.hk/News/News-Release/2002/020319news?sc_lang=en
+    dates the securities-market POS to 25 March 2002; the contemporaneous ETF status report at https://www.hkex.com.hk/News/News-Release/2002/020328news?sc_lang=en
+    confirms ETFs were listed/traded by that date.
+  - The launch announcement at https://www.hkex.com.hk/News/Market-Communications/2020/201005news?sc_lang=en dates
+    the new two-stage 15 percent price limit to 19 October 2020.
+  status: open

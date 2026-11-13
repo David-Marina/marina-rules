@@ -1,0 +1,1631 @@
+# CFFEX (中国金融期货交易所, MIC CCFX) stock-index futures: margin ratio (non-hedge positions) and exchange fees.
+# Two official sources per change point where possible: the CFFEX notice (/cn/jystz/) and the daily settlement-
+# parameter XML (/sj/jscs/YYYYMM/DD/index.xml). XML field JG_TRANSFEE_RATE is the DELIVERY fee, not the close-today fee.
+# Values are fractions of contract value (margin) or of turnover / delivery amount (fees).
+schema: 1.1
+market: CCFX
+asset_class: index_futures
+records:
+- id: cn.futures.margin_ratio.cffex_ic.2015-09-07
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.4
+  effective_from: '2015-09-07'
+  effective_to: '2017-02-17'
+  published_at: '2015-09-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150902/19270.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2015-09-02'
+    kind: official
+    quote: 自2015年9月7日（星期一）结算时起…非套期保值持仓的交易保证金标准，由目前合约价值的30%提高到40%
+    content_sha256: f22e50be0fe6d79649302d89fffcae05f989a64f1d41145d03b59f02a857515f
+    hash_kind: text
+    fetched_sha256: dc586a0b85f0f2b7b4673cc7a3b7bc8a708aea4830955e8fc5c7eee496822637
+  - url: http://www.cffex.com.cn/sj/jscs/201509/07/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2015-09-07（每日结算参数 XML）
+    date: '2015-09-07'
+    kind: official
+    quote: IC1509 … <LONGMARGINRATIO>0.4</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.4</SHORTMARGINRATIO>
+    content_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+    hash_kind: bytes
+    fetched_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+  notes: 2015 market turmoil. Before 2015-09-07 IC margins moved in asymmetric long/short steps (2015-07-08 sell-side 20%/30%;
+    2015-08-26..31 buy-side 12%→15%→20%→30%); not recorded — Marina has no long/short scope convention. Value is the non-hedge
+    (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2017-02-17
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.3
+  effective_from: '2017-02-17'
+  effective_to: '2018-12-03'
+  published_at: '2017-02-16'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170216/20197.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2017-02-16'
+    kind: official
+    quote: 自2017年2月17日（星期五）结算时起，沪深300和上证50股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为20%；中证500股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为30%
+    content_sha256: ff3687253d80f53c513b96424e3ce1f20c2464aec936104c7c4a71b7b0063abe
+    hash_kind: text
+    fetched_sha256: 2b3bdbd2d9b98cef8cb5be92438bedcdcca13ed54c1712f633b8629be1c52b34
+  - url: http://www.cffex.com.cn/sj/jscs/201702/17/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-02-17（每日结算参数 XML）
+    date: '2017-02-17'
+    kind: official
+    quote: IC1702 … <LONGMARGINRATIO>0.3</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.3</SHORTMARGINRATIO>
+    content_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+    hash_kind: bytes
+    fetched_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+  - url: http://www.cffex.com.cn/sj/jscs/201709/18/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-09-18（每日结算参数 XML）
+    date: '2017-09-18'
+    kind: official
+    quote: IC1710 … <LONGMARGINRATIO>0.3</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.3</SHORTMARGINRATIO>
+    content_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+    hash_kind: bytes
+    fetched_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+  notes: The 2017-09-18 notice adjusted IF/IH only; IC stayed at 30% (XML 2017-09-18 IC = 0.3). Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2018-12-03
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2018-12-03'
+  effective_to: '2019-04-22'
+  published_at: '2018-12-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20181202/23408.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2018-12-02'
+    kind: official
+    quote: 自2018年12月3日…沪深300和上证50股指期货各合约的交易保证金标准统一调整为10%；中证500…统一调整为15%
+    content_sha256: 53e12bf7c3583af4757b8ded1afec737463a4e7f8484dbdd6f6380a99fe3c0f8
+    hash_kind: text
+    fetched_sha256: fd881c962bbd4a32b5e40b0b6eefc32a364a889d14cecda17a43adeddc48f037
+  - url: http://www.cffex.com.cn/sj/jscs/201812/03/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2018-12-03（每日结算参数 XML）
+    date: '2018-12-03'
+    kind: official
+    quote: IC1812 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+    hash_kind: bytes
+    fetched_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+  notes: Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are
+    not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2019-04-22
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2019-04-22'
+  effective_to: '2020-09-29'
+  published_at: '2019-04-19'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20190419/23720.html
+    publisher: 中国金融期货交易所
+    title: 关于调整中证500股指期货交易保证金的通知
+    date: '2019-04-19'
+    kind: official
+    quote: 自2019年4月22日（星期一）结算时起，中证500股指期货各合约的交易保证金标准统一调整为12%
+    content_sha256: 8df223bac471946914eb2ea3bab95ada6a9e353b95457722b55a2d5e98df2f30
+    hash_kind: text
+    fetched_sha256: ee6248843c0b463c9ea5bc605b4260773d4b6b9e08a4ae941a88c396030fb397
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2019-04-22（每日结算参数 XML）
+    date: '2019-04-22'
+    kind: official
+    quote: IC1905 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+    hash_kind: bytes
+    fetched_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+  notes: 'Notice: from settlement on 2019-04-22; XML agrees (first 0.12 on 2019-04-22). Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.'
+- id: cn.futures.margin_ratio.cffex_ic.2020-09-29
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2020-09-29'
+  effective_to: '2020-12-30'
+  published_at: '2020-09-27'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/sj/jscs/202009/29/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-09-29（每日结算参数 XML）
+    date: '2020-09-29'
+    kind: official
+    quote: IC2010 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+    hash_kind: bytes
+    fetched_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+  - url: http://www.cffex.com.cn/sj/jscs/202010/09/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-10-09（每日结算参数 XML）
+    date: '2020-10-09'
+    kind: official
+    quote: IC2010 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+    hash_kind: bytes
+    fetched_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+  notes: National-Day raise to 13%; the notice table keeps IC at 13% after the holiday, so this record runs to the 2020-12-30
+    change. Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and
+    are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2020-12-30
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.14
+  effective_from: '2020-12-30'
+  effective_to: '2022-04-28'
+  published_at: '2020-12-28'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20201228/24934.html
+    publisher: 中国金融期货交易所
+    title: 关于2021年元旦期间有关工作安排的通知（中金所发〔2020〕37号）
+    date: '2020-12-28'
+    kind: official
+    quote: 自2020年12月30日（星期三）结算时起，沪深300、上证50…调整为12%；中证500股指期货…调整为14%
+    content_sha256: 7d56bb0da30653f08355936cdbc9bfea0c9d16ab550f9da4616b8a719f16772e
+    hash_kind: text
+    fetched_sha256: 74701562952be414f6c7f546daecf604e8196709a09d7a5dd3a33949f59b2af2
+  - url: http://www.cffex.com.cn/sj/jscs/202012/30/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-12-30（每日结算参数 XML）
+    date: '2020-12-30'
+    kind: official
+    quote: IC2101 … <LONGMARGINRATIO>0.14</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.14</SHORTMARGINRATIO>
+    content_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+    hash_kind: bytes
+    fetched_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+  - url: http://www.cffex.com.cn/sj/jscs/202108/16/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2021-08-16（每日结算参数 XML）
+    date: '2021-08-16'
+    kind: official
+    quote: IC2108 … <LONGMARGINRATIO>0.14</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.14</SHORTMARGINRATIO>
+    content_sha256: 8ef39937de1aba04465ca66eb50e82528ea8c67564b7bbff11e0a05723e2c6d7
+    hash_kind: bytes
+    fetched_sha256: 8ef39937de1aba04465ca66eb50e82528ea8c67564b7bbff11e0a05723e2c6d7
+  notes: New-Year notice set 14% (not a temporary holiday level). Value is the non-hedge (speculative) position margin; hedge
+    positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2022-04-28
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2022-04-28'
+  effective_to: '2022-05-05'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 自2022年4月28日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202204/28/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-04-28（每日结算参数 XML）
+    date: '2022-04-28'
+    kind: official
+    quote: IC2205 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+    hash_kind: bytes
+    fetched_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+  notes: Labour-Day temporary raise. Restoration is conditional (first day after 2022-05-05 trading on which the most-active
+    contract has no one-sided market); XML shows 0.14 again on 2022-05-05, so effective_to = 2022-05-05. Value is the non-hedge
+    (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2022-05-05
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.14
+  effective_from: '2022-05-05'
+  effective_to: '2023-04-27'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 2022年5月5日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准恢复至调整前水平
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202205/05/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-05-05（每日结算参数 XML）
+    date: '2022-05-05'
+    kind: official
+    quote: IC2205 … <LONGMARGINRATIO>0.14</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.14</SHORTMARGINRATIO>
+    content_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+    hash_kind: bytes
+    fetched_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+  - url: http://www.cffex.com.cn/sj/jscs/202303/20/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-03-20（每日结算参数 XML）
+    date: '2023-03-20'
+    kind: official
+    quote: IC2304 … <LONGMARGINRATIO>0.14</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.14</SHORTMARGINRATIO>
+    content_sha256: 794f8c729f7bfa044bc627417f887643487dc0a116298cb8f6d341020787b5e7
+    hash_kind: bytes
+    fetched_sha256: 794f8c729f7bfa044bc627417f887643487dc0a116298cb8f6d341020787b5e7
+  notes: Restored to the pre-holiday level (14%). Effective date fixed from the XML (conditional restoration clause). Value
+    is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2023-04-27
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2023-04-27'
+  effective_to: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 自2023年4月27日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202304/27/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-04-27（每日结算参数 XML）
+    date: '2023-04-27'
+    kind: official
+    quote: IC2305 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+    hash_kind: bytes
+    fetched_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+  notes: Labour-Day temporary raise; notice date agrees with the XML. Value is the non-hedge (speculative) position margin;
+    hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_ic.2023-05-04
+  scope: cffex_ic
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 2023年5月4日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500、中证1000股指期货各合约的交易保证金标准调整为12%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202305/04/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-05-04（每日结算参数 XML）
+    date: '2023-05-04'
+    kind: official
+    quote: IC2305 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+    hash_kind: bytes
+    fetched_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+  notes: Conditional post-holiday clause (first non-one-sided day after 2023-05-04 trading); XML shows 0.12 on 2023-05-04.
+    Unchanged in samples through 2026-10. Value is the non-hedge (speculative) position margin; hedge positions may differ
+    (20% in 2015-09..2017-09) and are not recorded.
+- id: cn.futures.margin_ratio.cffex_im.2022-07-22
+  scope: cffex_im
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2022-07-22'
+  effective_to: '2023-05-04'
+  published_at: '2022-07-18'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28855.html
+    publisher: 中国金融期货交易所
+    title: 关于中证1000股指期货和股指期权合约上市交易有关事项的通知（中金所发〔2022〕41号）
+    date: '2022-07-18'
+    kind: official
+    quote: 中证1000股指期货各合约上市初期的交易保证金标准为15%
+    content_sha256: 3d0f38ca2183e7b9dbdb28ec5b3335004735ea659d6de2bd2e5ecbd828323f1f
+    hash_kind: text
+    fetched_sha256: b919ec7ffc47780834162d877ad66ef38c46613079eb40dbcf30987f098ea17c
+  - url: http://www.cffex.com.cn/sj/jscs/202207/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-07-22（每日结算参数 XML）
+    date: '2022-07-22'
+    kind: official
+    quote: IM2208 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: a605f3526631a4e83ccb7bfc8682ab10232468d8bf170112715a6b0a356dd343
+    hash_kind: bytes
+    fetched_sha256: a605f3526631a4e83ccb7bfc8682ab10232468d8bf170112715a6b0a356dd343
+  - url: http://www.cffex.com.cn/sj/jscs/202304/27/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-04-27（每日结算参数 XML）
+    date: '2023-04-27'
+    kind: official
+    quote: IM2305 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+    hash_kind: bytes
+    fetched_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+  notes: CSI 1000 futures listed 2022-07-22 with an initial margin of 15%. The 2023 Labour-Day raise did not include IM (XML
+    2023-04-27 IM = 0.15). Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09)
+    and are not recorded.
+- id: cn.futures.margin_ratio.cffex_im.2023-05-04
+  scope: cffex_im
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 2023年5月4日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500、中证1000股指期货各合约的交易保证金标准调整为12%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202305/04/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-05-04（每日结算参数 XML）
+    date: '2023-05-04'
+    kind: official
+    quote: IM2305 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+    hash_kind: bytes
+    fetched_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+  notes: 'Labour-Day notice clause (2): CSI 1000 set to 12% after the holiday; effective date fixed from the XML. Value is
+    the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded.'
+- id: cn.futures.margin_ratio.cffex_if.2015-09-07
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.4
+  effective_from: '2015-09-07'
+  effective_to: '2017-02-17'
+  published_at: '2015-09-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150902/19270.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2015-09-02'
+    kind: official
+    quote: 自2015年9月7日（星期一）结算时起…非套期保值持仓的交易保证金标准，由目前合约价值的30%提高到40%
+    content_sha256: f22e50be0fe6d79649302d89fffcae05f989a64f1d41145d03b59f02a857515f
+    hash_kind: text
+    fetched_sha256: dc586a0b85f0f2b7b4673cc7a3b7bc8a708aea4830955e8fc5c7eee496822637
+  - url: http://www.cffex.com.cn/sj/jscs/201509/07/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2015-09-07（每日结算参数 XML）
+    date: '2015-09-07'
+    kind: official
+    quote: IF1509 … <LONGMARGINRATIO>0.4</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.4</SHORTMARGINRATIO>
+    content_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+    hash_kind: bytes
+    fetched_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+  notes: 2015 market turmoil; before 2015-09-07 non-hedge margins rose stepwise from 10% to 30% (2015-08-26..31), not recorded.
+    Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not
+    recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2015-09-07
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.4
+  effective_from: '2015-09-07'
+  effective_to: '2017-02-17'
+  published_at: '2015-09-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150902/19270.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2015-09-02'
+    kind: official
+    quote: 自2015年9月7日（星期一）结算时起…非套期保值持仓的交易保证金标准，由目前合约价值的30%提高到40%
+    content_sha256: f22e50be0fe6d79649302d89fffcae05f989a64f1d41145d03b59f02a857515f
+    hash_kind: text
+    fetched_sha256: dc586a0b85f0f2b7b4673cc7a3b7bc8a708aea4830955e8fc5c7eee496822637
+  - url: http://www.cffex.com.cn/sj/jscs/201509/07/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2015-09-07（每日结算参数 XML）
+    date: '2015-09-07'
+    kind: official
+    quote: IH1509 … <LONGMARGINRATIO>0.4</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.4</SHORTMARGINRATIO>
+    content_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+    hash_kind: bytes
+    fetched_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+  notes: 2015 market turmoil; before 2015-09-07 non-hedge margins rose stepwise from 10% to 30% (2015-08-26..31), not recorded.
+    Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not
+    recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2017-02-17
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.2
+  effective_from: '2017-02-17'
+  effective_to: '2017-09-18'
+  published_at: '2017-02-16'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170216/20197.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2017-02-16'
+    kind: official
+    quote: 自2017年2月17日（星期五）结算时起，沪深300和上证50股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为20%；中证500股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为30%
+    content_sha256: ff3687253d80f53c513b96424e3ce1f20c2464aec936104c7c4a71b7b0063abe
+    hash_kind: text
+    fetched_sha256: 2b3bdbd2d9b98cef8cb5be92438bedcdcca13ed54c1712f633b8629be1c52b34
+  - url: http://www.cffex.com.cn/sj/jscs/201702/17/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-02-17（每日结算参数 XML）
+    date: '2017-02-17'
+    kind: official
+    quote: IF1702 … <LONGMARGINRATIO>0.2</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.2</SHORTMARGINRATIO>
+    content_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+    hash_kind: bytes
+    fetched_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+  notes: Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are
+    not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2017-02-17
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.2
+  effective_from: '2017-02-17'
+  effective_to: '2017-09-18'
+  published_at: '2017-02-16'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170216/20197.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2017-02-16'
+    kind: official
+    quote: 自2017年2月17日（星期五）结算时起，沪深300和上证50股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为20%；中证500股指期货各合约非套期保值持仓的交易保证金标准，由目前合约价值的40%调整为30%
+    content_sha256: ff3687253d80f53c513b96424e3ce1f20c2464aec936104c7c4a71b7b0063abe
+    hash_kind: text
+    fetched_sha256: 2b3bdbd2d9b98cef8cb5be92438bedcdcca13ed54c1712f633b8629be1c52b34
+  - url: http://www.cffex.com.cn/sj/jscs/201702/17/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-02-17（每日结算参数 XML）
+    date: '2017-02-17'
+    kind: official
+    quote: IH1702 … <LONGMARGINRATIO>0.2</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.2</SHORTMARGINRATIO>
+    content_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+    hash_kind: bytes
+    fetched_sha256: b976d9f90406d98c96420a6d98c1c03ca4d97bba6d935b210273ad6674b867f6
+  notes: Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are
+    not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2017-09-18
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2017-09-18'
+  effective_to: '2018-12-03'
+  published_at: '2017-09-15'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170915/20368.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50股指期货交易保证金的通知
+    date: '2017-09-15'
+    kind: official
+    quote: 自2017年9月18日（星期一）结算时起，沪深300和上证50股指期货各合约交易保证金标准，由目前合约价值的20%调整为15%
+    content_sha256: 2a5f2a5cd1a2dc936972c660a9981ffafce6c21f8dada2637bbe4955d0b01dae
+    hash_kind: text
+    fetched_sha256: d7d561843fac104e4fe1640bc0a10d2798dad572d28ba86a6a14d69ecd68c274
+  - url: http://www.cffex.com.cn/sj/jscs/201709/18/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-09-18（每日结算参数 XML）
+    date: '2017-09-18'
+    kind: official
+    quote: IF1710 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+    hash_kind: bytes
+    fetched_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+  notes: Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are
+    not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2017-09-18
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.15
+  effective_from: '2017-09-18'
+  effective_to: '2018-12-03'
+  published_at: '2017-09-15'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170915/20368.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50股指期货交易保证金的通知
+    date: '2017-09-15'
+    kind: official
+    quote: 自2017年9月18日（星期一）结算时起，沪深300和上证50股指期货各合约交易保证金标准，由目前合约价值的20%调整为15%
+    content_sha256: 2a5f2a5cd1a2dc936972c660a9981ffafce6c21f8dada2637bbe4955d0b01dae
+    hash_kind: text
+    fetched_sha256: d7d561843fac104e4fe1640bc0a10d2798dad572d28ba86a6a14d69ecd68c274
+  - url: http://www.cffex.com.cn/sj/jscs/201709/18/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2017-09-18（每日结算参数 XML）
+    date: '2017-09-18'
+    kind: official
+    quote: IH1710 … <LONGMARGINRATIO>0.15</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.15</SHORTMARGINRATIO>
+    content_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+    hash_kind: bytes
+    fetched_sha256: 6c2b8fdf6815cef1931ef5d42519370aeec5d1089165df5780d92ba834d4de00
+  notes: Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are
+    not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2018-12-03
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.1
+  effective_from: '2018-12-03'
+  effective_to: '2020-09-29'
+  published_at: '2018-12-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20181202/23408.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2018-12-02'
+    kind: official
+    quote: 自2018年12月3日…沪深300和上证50股指期货各合约的交易保证金标准统一调整为10%；中证500…统一调整为15%
+    content_sha256: 53e12bf7c3583af4757b8ded1afec737463a4e7f8484dbdd6f6380a99fe3c0f8
+    hash_kind: text
+    fetched_sha256: fd881c962bbd4a32b5e40b0b6eefc32a364a889d14cecda17a43adeddc48f037
+  - url: http://www.cffex.com.cn/sj/jscs/201812/03/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2018-12-03（每日结算参数 XML）
+    date: '2018-12-03'
+    kind: official
+    quote: IF1812 … <LONGMARGINRATIO>0.1</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.1</SHORTMARGINRATIO>
+    content_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+    hash_kind: bytes
+    fetched_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2019-04-22（每日结算参数 XML）
+    date: '2019-04-22'
+    kind: official
+    quote: IF1905 … <LONGMARGINRATIO>0.1</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.1</SHORTMARGINRATIO>
+    content_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+    hash_kind: bytes
+    fetched_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+  notes: The 2019-04-19 notice adjusted IC only; 10% for IF/IH dates from the 2018-12-03 notice. Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih
+    同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2018-12-03
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.1
+  effective_from: '2018-12-03'
+  effective_to: '2020-09-29'
+  published_at: '2018-12-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20181202/23408.html
+    publisher: 中国金融期货交易所
+    title: 关于调整沪深300、上证50、中证500股指期货交易保证金的通知
+    date: '2018-12-02'
+    kind: official
+    quote: 自2018年12月3日…沪深300和上证50股指期货各合约的交易保证金标准统一调整为10%；中证500…统一调整为15%
+    content_sha256: 53e12bf7c3583af4757b8ded1afec737463a4e7f8484dbdd6f6380a99fe3c0f8
+    hash_kind: text
+    fetched_sha256: fd881c962bbd4a32b5e40b0b6eefc32a364a889d14cecda17a43adeddc48f037
+  - url: http://www.cffex.com.cn/sj/jscs/201812/03/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2018-12-03（每日结算参数 XML）
+    date: '2018-12-03'
+    kind: official
+    quote: IH1812 … <LONGMARGINRATIO>0.1</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.1</SHORTMARGINRATIO>
+    content_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+    hash_kind: bytes
+    fetched_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2019-04-22（每日结算参数 XML）
+    date: '2019-04-22'
+    kind: official
+    quote: IH1905 … <LONGMARGINRATIO>0.1</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.1</SHORTMARGINRATIO>
+    content_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+    hash_kind: bytes
+    fetched_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+  notes: The 2019-04-19 notice adjusted IC only; 10% for IF/IH dates from the 2018-12-03 notice. Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML
+    中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2020-09-29
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2020-09-29'
+  effective_to: '2020-10-09'
+  published_at: '2020-09-27'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/sj/jscs/202009/29/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-09-29（每日结算参数 XML）
+    date: '2020-09-29'
+    kind: official
+    quote: IF2010 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+    hash_kind: bytes
+    fetched_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+  notes: National-Day temporary raise; notice date agrees with the XML. Value is the non-hedge (speculative) position margin;
+    hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2020-09-29
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2020-09-29'
+  effective_to: '2020-10-09'
+  published_at: '2020-09-27'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/sj/jscs/202009/29/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-09-29（每日结算参数 XML）
+    date: '2020-09-29'
+    kind: official
+    quote: IH2010 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+    hash_kind: bytes
+    fetched_sha256: fba469c024a731938d6ce44662447d8400cd5956929abc23d0469a41d8f9b10e
+  notes: National-Day temporary raise; notice date agrees with the XML. Value is the non-hedge (speculative) position margin;
+    hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2020-10-09
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.11
+  effective_from: '2020-10-09'
+  effective_to: '2020-12-30'
+  published_at: '2020-09-27'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/sj/jscs/202010/09/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-10-09（每日结算参数 XML）
+    date: '2020-10-09'
+    kind: official
+    quote: IF2010 … <LONGMARGINRATIO>0.11</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.11</SHORTMARGINRATIO>
+    content_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+    hash_kind: bytes
+    fetched_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+  notes: Conditional post-holiday clause (first non-one-sided day after 2020-10-09 trading); XML shows 0.11 on 2020-10-09.
+    Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not
+    recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2020-10-09
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.11
+  effective_from: '2020-10-09'
+  effective_to: '2020-12-30'
+  published_at: '2020-09-27'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知（中金所发〔2020〕15号）
+    date: '2020-09-27'
+    kind: official
+    quote: 2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+    fetched_sha256: ea2fb8726fc860bc5b3f97de9c0f4a4148be6630e038cf3719c894c3d7b2b49f
+  - url: http://www.cffex.com.cn/sj/jscs/202010/09/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-10-09（每日结算参数 XML）
+    date: '2020-10-09'
+    kind: official
+    quote: IH2010 … <LONGMARGINRATIO>0.11</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.11</SHORTMARGINRATIO>
+    content_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+    hash_kind: bytes
+    fetched_sha256: bd659c8e4a8c3ee9eb76297c96208e498857b1e3b99eed88111d8603fe9a241e
+  notes: Conditional post-holiday clause (first non-one-sided day after 2020-10-09 trading); XML shows 0.11 on 2020-10-09.
+    Value is the non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not
+    recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2020-12-30
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2020-12-30'
+  effective_to: '2022-04-28'
+  published_at: '2020-12-28'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20201228/24934.html
+    publisher: 中国金融期货交易所
+    title: 关于2021年元旦期间有关工作安排的通知（中金所发〔2020〕37号）
+    date: '2020-12-28'
+    kind: official
+    quote: 自2020年12月30日（星期三）结算时起，沪深300、上证50…调整为12%；中证500股指期货…调整为14%
+    content_sha256: 7d56bb0da30653f08355936cdbc9bfea0c9d16ab550f9da4616b8a719f16772e
+    hash_kind: text
+    fetched_sha256: 74701562952be414f6c7f546daecf604e8196709a09d7a5dd3a33949f59b2af2
+  - url: http://www.cffex.com.cn/sj/jscs/202012/30/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-12-30（每日结算参数 XML）
+    date: '2020-12-30'
+    kind: official
+    quote: IF2101 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+    hash_kind: bytes
+    fetched_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+  notes: Closed at the 2022 Labour-Day temporary raise. Value is the non-hedge (speculative) position margin; hedge positions
+    may differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2020-12-30
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2020-12-30'
+  effective_to: '2022-04-28'
+  published_at: '2020-12-28'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20201228/24934.html
+    publisher: 中国金融期货交易所
+    title: 关于2021年元旦期间有关工作安排的通知（中金所发〔2020〕37号）
+    date: '2020-12-28'
+    kind: official
+    quote: 自2020年12月30日（星期三）结算时起，沪深300、上证50…调整为12%；中证500股指期货…调整为14%
+    content_sha256: 7d56bb0da30653f08355936cdbc9bfea0c9d16ab550f9da4616b8a719f16772e
+    hash_kind: text
+    fetched_sha256: 74701562952be414f6c7f546daecf604e8196709a09d7a5dd3a33949f59b2af2
+  - url: http://www.cffex.com.cn/sj/jscs/202012/30/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2020-12-30（每日结算参数 XML）
+    date: '2020-12-30'
+    kind: official
+    quote: IH2101 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+    hash_kind: bytes
+    fetched_sha256: dceb61792445a4418c1414e0e68818540ba9b9df396ce441172fb3859cc5b0de
+  notes: Closed at the 2022 Labour-Day temporary raise. Value is the non-hedge (speculative) position margin; hedge positions
+    may differ (20% in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2022-04-28
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2022-04-28'
+  effective_to: '2022-05-05'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 自2022年4月28日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202204/28/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-04-28（每日结算参数 XML）
+    date: '2022-04-28'
+    kind: official
+    quote: IF2205 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+    hash_kind: bytes
+    fetched_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+  notes: Labour-Day temporary raise; restoration date fixed from the XML (2022-05-05). Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih
+    同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2022-04-28
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2022-04-28'
+  effective_to: '2022-05-05'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 自2022年4月28日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202204/28/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-04-28（每日结算参数 XML）
+    date: '2022-04-28'
+    kind: official
+    quote: IH2205 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+    hash_kind: bytes
+    fetched_sha256: a42948c1428c998e58f00f798bfb70ea94f4b342f9434aa24ab5c821fd390988
+  notes: Labour-Day temporary raise; restoration date fixed from the XML (2022-05-05). Value is the non-hedge (speculative)
+    position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML
+    中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2022-05-05
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2022-05-05'
+  effective_to: '2023-04-27'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 2022年5月5日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准恢复至调整前水平
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202205/05/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-05-05（每日结算参数 XML）
+    date: '2022-05-05'
+    kind: official
+    quote: IF2205 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+    hash_kind: bytes
+    fetched_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+  notes: Restored to the pre-holiday level (12%). Value is the non-hedge (speculative) position margin; hedge positions may
+    differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2022-05-05
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2022-05-05'
+  effective_to: '2023-04-27'
+  published_at: '2022-04-26'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220426/27953.html
+    publisher: 中国金融期货交易所
+    title: 关于2022年劳动节期间有关工作安排的通知（中金所发〔2022〕21号）
+    date: '2022-04-26'
+    kind: official
+    quote: 2022年5月5日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准恢复至调整前水平
+    content_sha256: ab67dcd8ea7c315db32dcdd9117f0ce2f254a2b4c3a6c5a8fc06543d66bffaa4
+    hash_kind: text
+    fetched_sha256: 1a8d158cd1dc07a48f7d186c93c3378e7eb0e3aef01137e7e244dafadddb88e7
+  - url: http://www.cffex.com.cn/sj/jscs/202205/05/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2022-05-05（每日结算参数 XML）
+    date: '2022-05-05'
+    kind: official
+    quote: IH2205 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+    hash_kind: bytes
+    fetched_sha256: bf86104c2fd84d1b0fac41e71256ab0b21c31903ba6e710a7ee5fc6f5a9c8115
+  notes: Restored to the pre-holiday level (12%). Value is the non-hedge (speculative) position margin; hedge positions may
+    differ (20% in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2023-04-27
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2023-04-27'
+  effective_to: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 自2023年4月27日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202304/27/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-04-27（每日结算参数 XML）
+    date: '2023-04-27'
+    kind: official
+    quote: IF2305 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+    hash_kind: bytes
+    fetched_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+  notes: Labour-Day temporary raise. Value is the non-hedge (speculative) position margin; hedge positions may differ (20%
+    in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见 cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2023-04-27
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.13
+  effective_from: '2023-04-27'
+  effective_to: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 自2023年4月27日（星期四）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准分别调整为13%、13%、15%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202304/27/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-04-27（每日结算参数 XML）
+    date: '2023-04-27'
+    kind: official
+    quote: IH2305 … <LONGMARGINRATIO>0.13</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.13</SHORTMARGINRATIO>
+    content_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+    hash_kind: bytes
+    fetched_sha256: 9bf4574e483d515a7f4dbb5c9262eaaef01876dca256b1f6a0a426e3f16ef360
+  notes: Labour-Day temporary raise. Value is the non-hedge (speculative) position margin; hedge positions may differ (20%
+    in 2015-09..2017-09) and are not recorded. 与 cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.margin_ratio.cffex_if.2023-05-04
+  scope: cffex_if
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 2023年5月4日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500、中证1000股指期货各合约的交易保证金标准调整为12%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202305/04/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-05-04（每日结算参数 XML）
+    date: '2023-05-04'
+    kind: official
+    quote: IF2305 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+    hash_kind: bytes
+    fetched_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+  notes: Conditional post-holiday clause; XML shows 0.12 on 2023-05-04. Unchanged in samples through 2026-10. Value is the
+    non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. IH（上证50）同一通知同值，见
+    cffex_ih 同日记录。
+- id: cn.futures.margin_ratio.cffex_ih.2023-05-04
+  scope: cffex_ih
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2023-05-04'
+  published_at: '2023-04-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230425/32255.html
+    publisher: 中国金融期货交易所
+    title: 关于2023年劳动节期间有关工作安排的通知（中金所发〔2023〕28号）
+    date: '2023-04-25'
+    kind: official
+    quote: 2023年5月4日（星期四）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50、中证500、中证1000股指期货各合约的交易保证金标准调整为12%
+    content_sha256: 3aedfa5577561f814ecf24f53ed0c9eabfa11ac0256c5d619288b78548e4e304
+    hash_kind: text
+    fetched_sha256: f1c4fbd0d5519224565a30617fb3156afccc652ae52704d3b1ec83e5464c9d90
+  - url: http://www.cffex.com.cn/sj/jscs/202305/04/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-05-04（每日结算参数 XML）
+    date: '2023-05-04'
+    kind: official
+    quote: IH2305 … <LONGMARGINRATIO>0.12</LONGMARGINRATIO> … <SHORTMARGINRATIO>0.12</SHORTMARGINRATIO>
+    content_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+    hash_kind: bytes
+    fetched_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+  notes: Conditional post-holiday clause; XML shows 0.12 on 2023-05-04. Unchanged in samples through 2026-10. Value is the
+    non-hedge (speculative) position margin; hedge positions may differ (20% in 2015-09..2017-09) and are not recorded. 与
+    cffex_if 同一通知同值；结算参数 XML 中 IH 各合约数值已逐一核对。
+- id: cn.futures.trans_fee_rate.cffex_index_futures.2015-08-03
+  scope: cffex_index_futures
+  rule: trans_fee_rate
+  value: 2.3e-05
+  effective_from: '2015-08-03'
+  published_at: '2015-07-31'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150731/19201.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-07-31'
+    kind: official
+    quote: 自2015年8月3日起…交易手续费标准调整为成交金额的万分之零点二三
+    content_sha256: c0bbf52246c042740d29ace58ab9e77b51e0fe9207c4494b89f9d1e3219fe249
+    hash_kind: text
+    fetched_sha256: 1935dddad75b2d92caecfe167e2aa6be48429c5198e221c34f337274795196bd
+  - url: http://www.cffex.com.cn/sj/jscs/201509/07/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2015-09-07（每日结算参数 XML）
+    date: '2015-09-07'
+    kind: official
+    quote: IF1509 … <TRANSFEE_RATE>2.3E-5</TRANSFEE_RATE> … IH1509 … <TRANSFEE_RATE>2.3E-5</TRANSFEE_RATE> … IC1509 … <TRANSFEE_RATE>2.3E-5</TRANSFEE_RATE>
+    content_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+    hash_kind: bytes
+    fetched_sha256: 22c81b63fe1abd8442a6f0a92ad821503e62bf24b7d24e8e8920a6e1f8230eb1
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2019-04-22（每日结算参数 XML）
+    date: '2019-04-22'
+    kind: official
+    quote: IF1905 … <TRANSFEE_RATE>0.000023</TRANSFEE_RATE> … IH1905 … <TRANSFEE_RATE>0.000023</TRANSFEE_RATE> … IC1905 …
+      <TRANSFEE_RATE>0.000023</TRANSFEE_RATE>
+    content_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+    hash_kind: bytes
+    fetched_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+  - url: http://www.cffex.com.cn/u/cms/www/202606/01175123xpr3.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所收费一览表
+    date: '2026-06-01'
+    kind: official
+    quote: 股指期货：成交金额的万分之零点二三，其中平今仓手续费为成交金额的万分之二点三 … 股指期货：交割金额的万分之一
+    content_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+    hash_kind: bytes
+    fetched_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+  notes: Trading fee on turnover for opening and non-same-day closing (万分之零点二三). The per-order declaration fee (1 CNY/order
+    from 2015-08-03; OTR-tiered in the 2026 schedule) is not recorded. The IM listing notice applies the same rate (「暂定」).
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2015-08-26
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.000115
+  effective_from: '2015-08-26'
+  effective_to: '2015-09-07'
+  published_at: '2015-08-25'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150825/19246.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-08-25'
+    kind: official
+    quote: 自2015年8月26日（星期三）起…平今仓交易手续费标准调整为成交金额的万分之一点一五
+    content_sha256: a75604c66c30865fc8c2780d0a937d7ba2d8ad7c0c1af3be1dc78b2ba2518fce
+    hash_kind: text
+    fetched_sha256: 6862ca7e9c2b11b117656b04d2d99cf97caf36511437f8d0e2eb460a0a543181
+  - url: http://www.cffex.com.cn/sj/jscs/201508/26/20150826_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20150826）
+    date: '2015-08-26'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1509 … ,12%,12%,万分之0.23,万分之1,500%
+    content_sha256: 3ac72845d5485436314dc69469c7d67ac46b1b4f1d77d89d958b3bd63544a96d
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2015-09-07
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.0023
+  effective_from: '2015-09-07'
+  effective_to: '2017-02-17'
+  published_at: '2015-09-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150902/19269.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-09-02'
+    kind: official
+    quote: 自2015年9月7日（星期一）起…平今仓交易手续费标准调整为成交金额的万分之二十三
+    content_sha256: 59e7f2c9560c8dd710e297719883d90ce220ec354e9875f20b721a8f99dbe422
+    hash_kind: text
+    fetched_sha256: 63b20f373be178482439289d9b13d3a6be3497d91b324c7cf4525770ff5c07c8
+  - url: http://www.cffex.com.cn/sj/jscs/201509/07/20150907_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20150907）
+    date: '2015-09-07'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1509 … ,40%,40%,万分之0.23,万分之1,10000%
+    content_sha256: 924a91d03073dbcdc73c4b7cd2c4cc679a68cfbc8606844aec7e22014fbceb5d
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2017-02-17
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.00092
+  effective_from: '2017-02-17'
+  effective_to: '2017-09-18'
+  published_at: '2017-02-16'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170216/20198.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2017-02-16'
+    kind: official
+    quote: 自2017年2月17日（星期五）起…平今仓交易手续费标准调整为成交金额的万分之九点二
+    content_sha256: 0838ba3b2d69cb67f9d50a039693704213597c78b8a32d62615983b82e8426b0
+    hash_kind: text
+    fetched_sha256: 6b5ed1cd250b0b9c7c9298622cf73bb83c89a537500a374ddc65b10d9a5f927f
+  - url: http://www.cffex.com.cn/sj/jscs/201702/17/20170217_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20170217）
+    date: '2017-02-17'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1702 … ,20%,20%,万分之0.23,万分之1,4000%
+    content_sha256: 76af2494f2f2c437da99586611b739d18a4d430a366341e0790af8744164a65d
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2017-09-18
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.00069
+  effective_from: '2017-09-18'
+  effective_to: '2018-12-03'
+  published_at: '2017-09-15'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20170915/20369.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2017-09-15'
+    kind: official
+    quote: 自2017年9月18日（星期一）起…平今仓交易手续费标准调整为成交金额的万分之六点九
+    content_sha256: 06c092ae47b1d3ac8d08f054c915ef9c7345767b7666191b1ed33737d6a0befd
+    hash_kind: text
+    fetched_sha256: c66c63a39c3f738511dc4e17480f20a586a02c93c4656587c3778ff6ea986615
+  - url: http://www.cffex.com.cn/sj/jscs/201709/18/20170918_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20170918）
+    date: '2017-09-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1710 … ,15%,15%,万分之0.23,万分之1,3000%
+    content_sha256: 29f0db115da0e4292f4f759147e587d398f8c0e9defae7218c84f75bff13c41a
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2018-12-03
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.00046
+  effective_from: '2018-12-03'
+  effective_to: '2019-04-22'
+  published_at: '2018-12-02'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20181202/23407.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2018-12-02'
+    kind: official
+    quote: 自2018年12月3日（星期一）起…平今仓交易手续费标准调整为成交金额的万分之四点六
+    content_sha256: 24db69dc3f9e7eb84f6dca0ac6a2d7ef8efd1827f242ebad0ff8ef336c8b59b3
+    hash_kind: text
+    fetched_sha256: c3ebacd0dca5be2c4576ff5cc5cd207d4d858584105d05a1afcd845e5638d771
+  - url: http://www.cffex.com.cn/sj/jscs/201812/03/20181203_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20181203）
+    date: '2018-12-03'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1812 … ,10%,10%,万分之0.23,万分之1,2000%
+    content_sha256: 780905c6d2ba1196cddd03abf6f254375ad433cf1d65129f902823076580e7b6
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2019-04-22
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.000345
+  effective_from: '2019-04-22'
+  effective_to: '2023-03-20'
+  published_at: '2019-04-19'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20190419/23719.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2019-04-19'
+    kind: official
+    quote: 自2019年4月22日（星期一）起…平今仓交易手续费标准调整为成交金额的万分之三点四五
+    content_sha256: 248371153d1a40c7a25635093e12088597ffd652a378a1d69a8c1d024126ccce
+    hash_kind: text
+    fetched_sha256: 300076e925dda3d54e83154a81970820a816aea61612fd3e6b2dd44ac8ad09c3
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28855.html
+    publisher: 中国金融期货交易所
+    title: 关于中证1000股指期货和股指期权合约上市交易有关事项的通知（中金所发〔2022〕41号）
+    date: '2022-07-18'
+    kind: official
+    quote: 中证1000股指期货各合约的平今仓交易手续费标准为成交金额的万分之三点四五
+    content_sha256: 3d0f38ca2183e7b9dbdb28ec5b3335004735ea659d6de2bd2e5ecbd828323f1f
+    hash_kind: text
+    fetched_sha256: b919ec7ffc47780834162d877ad66ef38c46613079eb40dbcf30987f098ea17c
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/20190422_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20190422）
+    date: '2019-04-22'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1905 … ,10%,10%,万分之0.23,万分之1.0,1500%
+    content_sha256: e4b3f1386bde3f8968a469b2f584fdff5087f203535d287e12e8d636a1928e8a
+    hash_kind: bytes
+  notes: 'The CFFEX notice states the value and the effective date. Second official form: the CFFEX settlement-parameter CSV
+    (/sj/jscs/YYYYMM/DD/YYYYMMDD_1.csv) — the XML version has no close-today field, the CSV has 平今仓收取率; trading fee × that rate
+    equals the notice''s close-today fee, and the rate changes on exactly the notice''s date (286 CSVs 2010-04-14..2023-02-20
+    scanned). Same publisher, so this is agreement of two official forms, not two independent publishers.'
+- id: cn.futures.close_today_fee_rate.cffex_index_futures.2023-03-20
+  scope: cffex_index_futures
+  rule: close_today_fee_rate
+  value: 0.00023
+  effective_from: '2023-03-20'
+  published_at: '2023-03-17'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230317/31868.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知（中金所发〔2023〕16号）
+    date: '2023-03-17'
+    kind: official
+    quote: 自2023年3月20日（星期一）起，沪深300、上证50、中证500、中证1000股指期货各合约平今仓交易手续费标准调整为成交金额的万分之二点三
+    content_sha256: fb5464c0eb707dedd0b20d449b45b2812d1342c60dd8efd150bcb61535674f3a
+    hash_kind: text
+    fetched_sha256: 7d50de8f20b801b3a58fae59604f142764c9a19a2a83e1ffc097984d2ac49dee
+  - url: http://www.cffex.com.cn/u/cms/www/202606/01175123xpr3.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所收费一览表
+    date: '2026-06-01'
+    kind: official
+    quote: 股指期货：成交金额的万分之零点二三，其中平今仓手续费为成交金额的万分之二点三 … 股指期货：交割金额的万分之一
+    content_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+    hash_kind: bytes
+    fetched_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+  notes: 'Two official sources: the notice (value and date) and the 2026-06-01 CFFEX fee schedule (current value). The settlement
+    XML has no close-today field.'
+- id: cn.futures.delivery_fee_rate.cffex_index_futures.2015-04-16
+  scope: cffex_index_futures
+  rule: delivery_fee_rate
+  value: 0.0001
+  effective_from: '2015-04-16'
+  effective_to: '2021-08-16'
+  published_at: '2015-03-30'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/sj/jscs/201812/03/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2018-12-03（每日结算参数 XML）
+    date: '2018-12-03'
+    kind: official
+    quote: IF1812 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IH1812 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IC1812
+      … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE>
+    content_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+    hash_kind: bytes
+    fetched_sha256: e2f998decdc72afae7d2b24071112ecf4754928b22026bb0331494843ee03a01
+  - url: http://www.cffex.com.cn/sj/jscs/201904/22/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2019-04-22（每日结算参数 XML）
+    date: '2019-04-22'
+    kind: official
+    quote: IF1905 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IH1905 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IC1905
+      … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE>
+    content_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+    hash_kind: bytes
+    fetched_sha256: 8f84f68b56744d518ad286bfe4f53bad1b5cb09f476eea4680eebed1a1e23a19
+  - url: http://www.cffex.com.cn/u/cms/www/202606/01175123xpr3.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所收费一览表
+    date: '2026-06-01'
+    kind: official
+    quote: 股指期货：成交金额的万分之零点二三，其中平今仓手续费为成交金额的万分之二点三 … 股指期货：交割金额的万分之一
+    content_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+    hash_kind: bytes
+    fetched_sha256: cefd3a3767c60c6f3937434483659a8e7f4355b400c5fdbc29e5b89e9d5fa65e
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: '关于上证50、中证500股指期货合约上市交易有关事项的通知'
+    date: '2015-03-30'
+    kind: official
+    quote: '上证50和中证500股指期货合约交易的手续费标准暂定为交易金额的万分之零点二五，交割手续费标准为交割金额的万分之一。'
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: '关于上证50、中证500股指期货合约上市交易有关事项的通知（落款）'
+    date: '2015-03-30'
+    kind: official
+    quote: '中国金融期货交易所 2015年3月30日'
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20100326/10719.html
+    publisher: 中国金融期货交易所
+    title: '关于沪深300股指期货合约上市交易有关事项的通知（中金所办字【2010】36号）'
+    date: '2010-03-26'
+    kind: official
+    quote: '沪深300股指期货合约交易手续费暂定为成交金额的万分之零点五，交割手续费标准为交割金额的万分之一。'
+    content_sha256: 65c6041bf83beef8f16582f6a77f42fe525f7f8b10524a98db1fe70327e0fbff
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201504/16/20150416_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20150416）
+    date: '2015-04-16'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF1505 … ,10%,10%,万分之0.25,万分之1,100%
+    content_sha256: 5a7d087e0bf2de7202261858be7a1f4f7feee40324f926a60da09787ae9617ae
+    hash_kind: bytes
+  notes: '交割金额的万分之一 for every CFFEX stock-index future from 2015-04-16, the day IH and IC listed next to IF: the CFFEX listing
+    notices 中金所办字【2010】36号 (2010-03-26, IF, listed 2010-04-16) and of 2015-03-30 (IH/IC, 自2015年4月16日起上市交易) set it, the settlement-parameter
+    CSV of 2015-04-16 shows it for every IF/IH/IC contract, and every settlement-parameter file to 2021-07-19 (249 CSVs; XML
+    of 2018-12-03 and 2019-04-22 cited) shows the same 1/10,000 until the first halving on 2021-08-16. Until 2026.11.02 this
+    record started at 2018-12-03 (a conservative start, not a change date). IF alone paid the same rate from 2010-04-16; that
+    IF-only interval is not recorded under this all-products scope. Settlement-XML field JG_TRANSFEE_RATE is the DELIVERY fee
+    (not the close-today fee): it halves exactly on the dates of the CFFEX delivery-fee halving notices. Halving applies by
+    delivery date, so far-month contracts whose delivery falls outside an announced halving year still show 1.0E-4 in the XML.
+    published_at basis: official notice text (2015-03-30).'
+- id: cn.futures.delivery_fee_rate.cffex_index_futures.2021-08-16
+  scope: cffex_index_futures
+  rule: delivery_fee_rate
+  value: 5.0e-05
+  effective_from: '2021-08-16'
+  effective_to: '2024-01-01'
+  published_at: '2021-08-13'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20210813/25279.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2021年8月至12月股指期货、国债期货交割手续费的通知（中金所发〔2021〕39号）
+    date: '2021-08-13'
+    kind: official
+    quote: 自2021年8月16日起至2021年12月31日止，减半收取股指期货、国债期货交割手续费
+    content_sha256: ff772b9b1d2cec7e72c8d133726d9a2683cc7333e2b21a33f234dade25c227f5
+    hash_kind: text
+    fetched_sha256: 6e635c1bdd86e73fcb91708424433bcc6639e7a1a5ba45de318ad4f276abbb69
+  - url: http://www.cffex.com.cn/cn/jystz/20211224/26693.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2022年股指期货、国债期货交割手续费的通知（中金所发〔2021〕65号）
+    date: '2021-12-24'
+    kind: official
+    quote: 自2022年1月1日起至2022年12月31日止，减半收取股指期货和国债期货交割手续费
+    content_sha256: aeced8c80c047375946af0d550e9ac3f01d02083b75e2f23d91df25e187d9ceb
+    hash_kind: text
+    fetched_sha256: 5a6759b22395bd14af613288f6956ca2e8c6edc33085f1c0fc49e0a10dff1d49
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知（中金所发〔2022〕79号）
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+    fetched_sha256: fe24936497c04f87c786626eae2dd97e0433adb921ff34b6b16d2ad57acbb9c2
+  - url: http://www.cffex.com.cn/sj/jscs/202108/16/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2021-08-16（每日结算参数 XML）
+    date: '2021-08-16'
+    kind: official
+    quote: IF2108 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> … IH2108 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> …
+      IC2108 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE>
+    content_sha256: 8ef39937de1aba04465ca66eb50e82528ea8c67564b7bbff11e0a05723e2c6d7
+    hash_kind: bytes
+    fetched_sha256: 8ef39937de1aba04465ca66eb50e82528ea8c67564b7bbff11e0a05723e2c6d7
+  - url: http://www.cffex.com.cn/sj/jscs/202305/04/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-05-04（每日结算参数 XML）
+    date: '2023-05-04'
+    kind: official
+    quote: IF2305 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> … IH2305 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> …
+      IC2305 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE>
+    content_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+    hash_kind: bytes
+    fetched_sha256: d9bdfdb8929e044b3f908c022cf7c6b514387c6db4f089f72808e40a42eb6cb2
+  notes: 'Three consecutive halving notices: 2021-08-16..12-31, 2022, 2023. The IM listing notice also halves IM delivery
+    fees to 2022-12-31. Settlement-XML field JG_TRANSFEE_RATE is the DELIVERY fee (not the close-today fee): it halves exactly
+    on the dates of the CFFEX delivery-fee halving notices. Halving applies by delivery date, so far-month contracts whose
+    delivery falls outside an announced halving year still show 1.0E-4 in the XML.'
+- id: cn.futures.delivery_fee_rate.cffex_index_futures.2024-01-01
+  scope: cffex_index_futures
+  rule: delivery_fee_rate
+  value: 0.0001
+  effective_from: '2024-01-01'
+  effective_to: '2024-01-08'
+  published_at: '2022-12-23'
+  recorded_at: '2026-10-25'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知（中金所发〔2022〕79号）
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+    fetched_sha256: fe24936497c04f87c786626eae2dd97e0433adb921ff34b6b16d2ad57acbb9c2
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知（中金所发〔2024〕1号）
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+    fetched_sha256: f2b7e64b5885f99eb7c7c0a6c420dab6df657ad5a6ca4b3a16269fc050e06649
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2023-12-18（每日结算参数 XML）
+    date: '2023-12-18'
+    kind: official
+    quote: IF2401 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IH2401 … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE> … IC2401
+      … <JG_TRANSFEE_RATE>0.0001</JG_TRANSFEE_RATE>
+    content_sha256: 5d28d8b1e8cf2647aacaea493f6f17551de228151f3003605c2a853d0d5e1941
+    hash_kind: bytes
+    fetched_sha256: 5d28d8b1e8cf2647aacaea493f6f17551de228151f3003605c2a853d0d5e1941
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/20231218_1.csv
+    publisher: 中国金融期货交易所（结算业务参数表 CSV）
+    title: 期货合约结算业务参数表（20231218）
+    date: '2023-12-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … IF2401 … ,12%,12%,万分之0.23,万分之1.0,1000%
+    content_sha256: 622e5e51f733e8a512c06f87f78f89c80eb7c5d5e288699e886b0360472912a1
+    hash_kind: bytes
+  notes: 'single-source (published_at = the 2023 halving notice, whose stated end date restores the base rate): inferred from
+    two notices — the 2023 halving ended 2023-12-31 and the 2024 halving started 2024-01-08 — so the four trading days in between
+    paid the base rate; CFFEX publishes settlement parameters only on the days they change: 2024-01-02..05 return an empty <settlementproperty/>,
+    and the next file after 2023-12-18 is 2024-01-08, so those days ran on the 2023-12-18 parameters, which show 1/10,000 for
+    every listed IF/IH/IC/IM contract (CSV cited). Those files give per-contract rates by delivery date, so the 2024-01-01 start
+    is still inferred from the two notices; no index-futures delivery fell in the window. Settlement-XML field JG_TRANSFEE_RATE
+    is the DELIVERY fee (not the close-today fee): it halves exactly on the dates of the CFFEX delivery-fee halving notices.
+    Halving applies by delivery date, so far-month contracts whose delivery falls outside an announced halving year still show
+    1.0E-4 in the XML.'
+- id: cn.futures.delivery_fee_rate.cffex_index_futures.2024-01-08
+  scope: cffex_index_futures
+  rule: delivery_fee_rate
+  value: 5.0e-05
+  effective_from: '2024-01-08'
+  effective_to: '2027-01-01'
+  published_at: '2024-01-05'
+  recorded_at: '2026-10-25'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知（中金所发〔2024〕1号）
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+    fetched_sha256: f2b7e64b5885f99eb7c7c0a6c420dab6df657ad5a6ca4b3a16269fc050e06649
+  - url: http://www.cffex.com.cn/cn/jystz/20241227/42057.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2025年交割和行权（履约）手续费的通知（中金所发〔2024〕76号）
+    date: '2024-12-27'
+    kind: official
+    quote: 自2025年1月1日起至2025年12月31日止，减半收取…交割手续费…交易所认定的高频交易者除外
+    content_sha256: 356fa04795b6e711fade3f6755252a202c9cb9fb2052c6b9e8d45594bedc78c2
+    hash_kind: text
+    fetched_sha256: ba4123f470f72b75a22d12d16a9e75e06312620c825c99163c6bda191b101764
+  - url: http://www.cffex.com.cn/cn/jystz/20251222/47020.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2026年交割和行权（履约）手续费的通知（中金所发〔2025〕59号）
+    date: '2025-12-22'
+    kind: official
+    quote: 自2026年1月1日起至2026年12月31日止，减半收取…交割手续费…交易所认定的高频交易者除外
+    content_sha256: 58be2d6ef9c5d44768b88d0c71074fb9ccee4b49ddf62ada0ade2cae9b23fbd7
+    hash_kind: text
+    fetched_sha256: d363c18b03d59062c6bb423d1de9da77e8b97acfdd28cf45771fd4e6c507362a
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/index.xml
+    publisher: 中国金融期货交易所（结算参数每日 XML）
+    title: 结算参数 2024-01-08（每日结算参数 XML）
+    date: '2024-01-08'
+    kind: official
+    quote: IF2401 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> … IH2401 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE> …
+      IC2401 … <JG_TRANSFEE_RATE>0.00005</JG_TRANSFEE_RATE>
+    content_sha256: 07f6097efcd20a27f128ba9c42e335a8588fc3b46fd20f2b5a4742bc86068889
+    hash_kind: bytes
+    fetched_sha256: 07f6097efcd20a27f128ba9c42e335a8588fc3b46fd20f2b5a4742bc86068889
+  notes: 'Halving notices for 2024, 2025, 2026; 2025 and 2026 exclude exchange-designated high-frequency traders (who pay
+    the full 1e-4). The 2026 notice ends 2026-12-31, hence effective_to 2027-01-01; whether 2027 is halved awaits a new notice.
+    Settlement-XML field JG_TRANSFEE_RATE is the DELIVERY fee (not the close-today fee): it halves exactly on the dates of
+    the CFFEX delivery-fee halving notices. Halving applies by delivery date, so far-month contracts whose delivery falls
+    outside an announced halving year still show 1.0E-4 in the XML.'

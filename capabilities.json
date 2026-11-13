@@ -1,0 +1,9701 @@
+{
+ "capabilities_version": "1",
+ "ruleset_version": "2026.11.13",
+ "ruleset_hash": "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e",
+ "entrypoints": {
+  "python": {
+   "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None)",
+   "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None)",
+   "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
+   "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
+   "check": "python -m marina_rules.check fills.csv"
+  },
+  "statuses": [
+   "DETERMINED",
+   "MISSING_CONTEXT",
+   "OUT_OF_COVERAGE",
+   "CONFLICT",
+   "UNVERIFIED",
+   "NOT_YET_PUBLISHED",
+   "UNKNOWN_PUBLICATION"
+  ],
+  "as_of": "optional ISO date on record_at/rule_at/coverage/resolve/limit_price/tick_size: answer only from rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → UNKNOWN_PUBLICATION; never falls back to an older record",
+  "decision_schema": "python -m marina_rules.contract --schema"
+ },
+ "preflight": [
+  "coverage() over the whole window before any computation",
+  "supply every key in scope.requires per security per day; Marina never infers them",
+  "stop on any status other than DETERMINED; cite known_gap_ids when present",
+  "put citation() into every result"
+ ],
+ "rules": {
+  "close_today_fee_per_lot": {
+   "scopes": [
+    "czce_ap",
+    "czce_cf",
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_jr",
+    "czce_lr",
+    "czce_oi",
+    "czce_pf",
+    "czce_pk",
+    "czce_pl",
+    "czce_pm",
+    "czce_ri",
+    "czce_rm",
+    "czce_rs",
+    "czce_sf",
+    "czce_sm",
+    "czce_sr",
+    "czce_ta",
+    "czce_wh",
+    "czce_zc",
+    "ine_sc",
+    "shfe_au",
+    "shfe_ni",
+    "shfe_ru",
+    "shfe_sn"
+   ],
+   "markets": [
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2024-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 83
+   },
+   "contract_keyed_scopes": [
+    "czce_cf",
+    "czce_cj",
+    "czce_fg",
+    "czce_oi",
+    "czce_rm",
+    "czce_sf",
+    "czce_sm",
+    "ine_sc",
+    "shfe_au",
+    "shfe_ni",
+    "shfe_ru",
+    "shfe_sn"
+   ]
+  },
+  "close_today_fee_rate": {
+   "scopes": [
+    "cffex_index_futures",
+    "czce_ma",
+    "czce_pl",
+    "czce_pr",
+    "czce_px",
+    "czce_sa",
+    "czce_sh",
+    "czce_ur",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_ec",
+    "ine_lu",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_ao",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_op",
+    "shfe_rb",
+    "shfe_sp",
+    "shfe_wr"
+   ],
+   "markets": [
+    "CCFX",
+    "GFEX",
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2015-08-26",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 175,
+    "verified": 7
+   },
+   "contract_keyed_scopes": [
+    "czce_sa",
+    "czce_sh",
+    "czce_ur",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_ec",
+    "ine_lu",
+    "shfe_ag",
+    "shfe_ao",
+    "shfe_br",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_rb",
+    "shfe_wr"
+   ]
+  },
+  "commission_cap": {
+   "scopes": [
+    "convertible",
+    "etf",
+    "reits",
+    "stock"
+   ],
+   "markets": [
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2002-05-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 4,
+    "single-source": 3
+   }
+  },
+  "commission_min_per_order_cny": {
+   "scopes": [
+    "convertible",
+    "etf",
+    "reits",
+    "stock"
+   ],
+   "markets": [
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2002-05-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 4,
+    "single-source": 2
+   }
+  },
+  "delivery_fee_per_lot": {
+   "scopes": [
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts"
+   ],
+   "markets": [
+    "CCFX"
+   ],
+   "earliest_effective_from": "2013-09-06",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "verified": 25,
+    "single-source": 4
+   }
+  },
+  "delivery_fee_rate": {
+   "scopes": [
+    "cffex_index_futures"
+   ],
+   "markets": [
+    "CCFX"
+   ],
+   "earliest_effective_from": "2015-04-16",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "verified": 3,
+    "single-source": 1
+   }
+  },
+  "limit_price_min_tick": {
+   "scopes": [
+    "bse_stock",
+    "delisting",
+    "delisting_day1",
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 5,
+    "single-source": 3
+   }
+  },
+  "limit_price_rounding": {
+   "scopes": [
+    "stock"
+   ],
+   "markets": [
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "1996-12-16",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 1
+   }
+  },
+  "margin_ratio": {
+   "scopes": [
+    "cffex_ic",
+    "cffex_if",
+    "cffex_ih",
+    "cffex_im",
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts",
+    "czce_ap",
+    "czce_cf",
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_jr",
+    "czce_lr",
+    "czce_ma",
+    "czce_oi",
+    "czce_pf",
+    "czce_pk",
+    "czce_pm",
+    "czce_ri",
+    "czce_rm",
+    "czce_rs",
+    "czce_sa",
+    "czce_sf",
+    "czce_sm",
+    "czce_sr",
+    "czce_ta",
+    "czce_ur",
+    "czce_wh",
+    "czce_zc",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_bc",
+    "ine_ec",
+    "ine_lu",
+    "ine_nr",
+    "ine_sc",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_al",
+    "shfe_ao",
+    "shfe_au",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_cu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_ni",
+    "shfe_op",
+    "shfe_pb",
+    "shfe_rb",
+    "shfe_ru",
+    "shfe_sn",
+    "shfe_sp",
+    "shfe_ss",
+    "shfe_wr",
+    "shfe_zn"
+   ],
+   "markets": [
+    "CCFX",
+    "GFEX",
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2013-09-06",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 650,
+    "single-source": 306
+   }
+  },
+  "min_holding_days": {
+   "scopes": [
+    "b_share",
+    "bse_stock",
+    "cffex_ic",
+    "cffex_if",
+    "cffex_ih",
+    "cffex_im",
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts",
+    "convertible",
+    "czce_ap",
+    "czce_cf",
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_jr",
+    "czce_lr",
+    "czce_ma",
+    "czce_oi",
+    "czce_pf",
+    "czce_pk",
+    "czce_pl",
+    "czce_pm",
+    "czce_pr",
+    "czce_px",
+    "czce_ri",
+    "czce_rm",
+    "czce_rs",
+    "czce_sa",
+    "czce_sf",
+    "czce_sh",
+    "czce_sm",
+    "czce_sr",
+    "czce_ta",
+    "czce_ur",
+    "czce_wh",
+    "czce_zc",
+    "etf",
+    "etf_20pct",
+    "etf_bond",
+    "etf_commodity",
+    "etf_crossborder",
+    "etf_gold",
+    "etf_money",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_bc",
+    "ine_ec",
+    "ine_lu",
+    "ine_nr",
+    "ine_sc",
+    "reits",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_al",
+    "shfe_ao",
+    "shfe_au",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_cu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_ni",
+    "shfe_op",
+    "shfe_pb",
+    "shfe_rb",
+    "shfe_ru",
+    "shfe_sn",
+    "shfe_sp",
+    "shfe_ss",
+    "shfe_wr",
+    "shfe_zn",
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "CCFX",
+    "GFEX",
+    "XINE",
+    "XSGE",
+    "XSHE",
+    "XSHG",
+    "XZCE"
+   ],
+   "earliest_effective_from": "1995-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 72,
+    "verified": 18
+   }
+  },
+  "price_limit_pct": {
+   "scopes": [
+    "b_share",
+    "bse",
+    "chinext",
+    "convertible",
+    "delisting",
+    "delisting_bse",
+    "delisting_chinext",
+    "delisting_chinext_post0824",
+    "delisting_chinext_pre0824",
+    "delisting_day1",
+    "delisting_day1_bse",
+    "delisting_day1_star",
+    "delisting_star",
+    "etf",
+    "etf_20pct",
+    "ipo_day1_bse",
+    "ipo_day1_main",
+    "ipo_first5_chinext",
+    "ipo_first5_main",
+    "ipo_first5_star",
+    "main_board",
+    "reits",
+    "reits_day1",
+    "st_b_share",
+    "st_bse",
+    "st_chinext",
+    "st_main",
+    "st_star",
+    "star"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "1996-12-16",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 46,
+    "single-source": 3
+   }
+  },
+  "price_limit_pct_of_issue_price": {
+   "scopes": [
+    "convertible_day1"
+   ],
+   "markets": [
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 1,
+    "single-source": 1
+   }
+  },
+  "price_limit_pct_of_prev_settlement": {
+   "scopes": [
+    "cffex_ic",
+    "cffex_if",
+    "cffex_ih",
+    "cffex_im",
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts",
+    "czce_ap",
+    "czce_cf",
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_ma",
+    "czce_oi",
+    "czce_pf",
+    "czce_pk",
+    "czce_pl",
+    "czce_pr",
+    "czce_px",
+    "czce_rm",
+    "czce_rs",
+    "czce_sa",
+    "czce_sf",
+    "czce_sh",
+    "czce_sm",
+    "czce_sr",
+    "czce_ta",
+    "czce_ur",
+    "czce_wh",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_bc",
+    "ine_ec",
+    "ine_lu",
+    "ine_nr",
+    "ine_sc",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_al",
+    "shfe_ao",
+    "shfe_au",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_cu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_ni",
+    "shfe_op",
+    "shfe_pb",
+    "shfe_rb",
+    "shfe_ru",
+    "shfe_sn",
+    "shfe_sp",
+    "shfe_ss",
+    "shfe_wr",
+    "shfe_zn"
+   ],
+   "markets": [
+    "CCFX",
+    "GFEX",
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2010-04-16",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 548,
+    "single-source": 392
+   }
+  },
+  "retail_risk_disclosure_required": {
+   "scopes": [
+    "star_growth_legacy",
+    "star_growth_new"
+   ],
+   "markets": [
+    "XSHG"
+   ],
+   "earliest_effective_from": "2025-07-13",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "session_schedule": {
+   "scopes": [
+    "bse_stock",
+    "cffex_ic",
+    "cffex_if",
+    "cffex_ih",
+    "cffex_im",
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts",
+    "convertible",
+    "czce_pf",
+    "czce_pr",
+    "etf",
+    "ine_bc",
+    "ine_ec",
+    "ine_lu",
+    "ine_nr",
+    "ine_sc",
+    "reits",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_al",
+    "shfe_ao",
+    "shfe_au",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_cu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_ni",
+    "shfe_op",
+    "shfe_pb",
+    "shfe_rb",
+    "shfe_ru",
+    "shfe_sn",
+    "shfe_sp",
+    "shfe_ss",
+    "shfe_wr",
+    "shfe_zn",
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "CCFX",
+    "XINE",
+    "XSGE",
+    "XSHE",
+    "XSHG",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 23,
+    "single-source": 32
+   }
+  },
+  "stamp_duty_buy": {
+   "scopes": [
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2005-01-24",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 5
+   }
+  },
+  "stamp_duty_sell": {
+   "scopes": [
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2005-01-24",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 6
+   }
+  },
+  "tick_size": {
+   "scopes": [
+    "b_share",
+    "bse_stock",
+    "convertible",
+    "etf",
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 11,
+    "single-source": 2,
+    "unverified": 1
+   }
+  },
+  "trans_fee_per_lot": {
+   "scopes": [
+    "cffex_t",
+    "cffex_tf",
+    "cffex_tl",
+    "cffex_ts",
+    "czce_ap",
+    "czce_cf",
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_jr",
+    "czce_lr",
+    "czce_oi",
+    "czce_pf",
+    "czce_pk",
+    "czce_pl",
+    "czce_pm",
+    "czce_ri",
+    "czce_rm",
+    "czce_rs",
+    "czce_sf",
+    "czce_sm",
+    "czce_sr",
+    "czce_ta",
+    "czce_wh",
+    "czce_zc",
+    "ine_sc",
+    "shfe_al",
+    "shfe_au",
+    "shfe_ni",
+    "shfe_ru",
+    "shfe_sn",
+    "shfe_ss",
+    "shfe_zn"
+   ],
+   "markets": [
+    "CCFX",
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2013-09-06",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 9,
+    "single-source": 86
+   },
+   "contract_keyed_scopes": [
+    "czce_cj",
+    "czce_cy",
+    "czce_fg",
+    "czce_oi",
+    "czce_rm",
+    "czce_sf",
+    "czce_sm",
+    "ine_sc",
+    "shfe_au",
+    "shfe_ni"
+   ]
+  },
+  "trans_fee_rate": {
+   "scopes": [
+    "cffex_index_futures",
+    "czce_ma",
+    "czce_pl",
+    "czce_pr",
+    "czce_px",
+    "czce_sa",
+    "czce_sh",
+    "czce_ur",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_bc",
+    "ine_ec",
+    "ine_lu",
+    "ine_nr",
+    "shfe_ad",
+    "shfe_ag",
+    "shfe_ao",
+    "shfe_br",
+    "shfe_bu",
+    "shfe_cu",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_op",
+    "shfe_pb",
+    "shfe_rb",
+    "shfe_sp",
+    "shfe_wr"
+   ],
+   "markets": [
+    "CCFX",
+    "GFEX",
+    "XINE",
+    "XSGE",
+    "XZCE"
+   ],
+   "earliest_effective_from": "2015-08-03",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 119,
+    "verified": 31
+   },
+   "contract_keyed_scopes": [
+    "czce_sa",
+    "czce_sh",
+    "czce_ur",
+    "gfex_lc",
+    "gfex_pd",
+    "gfex_ps",
+    "gfex_pt",
+    "gfex_si",
+    "ine_lu",
+    "shfe_ag",
+    "shfe_ao",
+    "shfe_fu",
+    "shfe_hc",
+    "shfe_rb"
+   ]
+  },
+  "transfer_fee_each_side": {
+   "scopes": [
+    "bse_stock",
+    "stock"
+   ],
+   "markets": [
+    "BJSE",
+    "XSHE",
+    "XSHG"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "verified": 2,
+    "single-source": 2
+   }
+  },
+  "transfer_fee_par_value": {
+   "scopes": [
+    "stock"
+   ],
+   "markets": [
+    "XSHG"
+   ],
+   "earliest_effective_from": "2006-07-01",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "single-source": 1,
+    "verified": 2
+   }
+  }
+ },
+ "scopes": {
+  "b_share": {
+   "description": "Main-board B share (SSE 900xxx USD, SZSE 200xxx HKD), not risk-warned.",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "st_b_share"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "rule_asserts": {}
+  },
+  "bse": {
+   "description": "Beijing Stock Exchange, not risk-warned, not in listing window or delisting period.",
+   "requires": [
+    "board",
+    "st_status",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "ipo_day1_bse",
+    "st_bse",
+    "delisting_bse",
+    "delisting_day1_bse"
+   ],
+   "asserts": {
+    "board": "bse",
+    "st_status": false,
+    "listing_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "bse_stock": {
+   "description": "Beijing Stock Exchange shares — fee/settlement family scope for BSE-specific values.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_ic": {
+   "description": "CSI 500 index futures (IC), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_if": {
+   "description": "CSI 300 index futures (IF), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_ih": {
+   "description": "SSE 50 index futures (IH), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_im": {
+   "description": "CSI 1000 index futures (IM, listed 2022-07-22), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_index_futures": {
+   "description": "All CFFEX stock-index futures (IF, IH, IC, IM) when an exchange fee does not distinguish products (trading, close-today and delivery fees).",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_t": {
+   "description": "10-year Treasury bond futures (T, listed 2015-03-20), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_tf": {
+   "description": "5-year Treasury bond futures (TF, listed 2013-09-06), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_tl": {
+   "description": "30-year Treasury bond futures (TL, listed 2023-04-21), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "cffex_ts": {
+   "description": "2-year Treasury bond futures (TS, listed 2018-08-17), all contract months. margin_ratio = non-hedge position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "chinext": {
+   "description": "SZSE ChiNext (300/301), not ST, not in listing window.",
+   "requires": [
+    "board",
+    "st_status",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "st_chinext",
+    "ipo_first5_chinext",
+    "ipo_day1_main"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": [
+     {
+      "min": 2
+     },
+     {
+      "min": 6,
+      "from": "2020-08-24",
+      "unless": {
+       "issue_regime": "approval"
+      }
+     }
+    ]
+   },
+   "rule_asserts": {}
+  },
+  "convertible": {
+   "description": "Convertible bond from its second listing day on.",
+   "requires": [
+    "listing_day_index"
+   ],
+   "excludes": [
+    "convertible_day1"
+   ],
+   "asserts": {
+    "listing_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "convertible_day1": {
+   "description": "Convertible bond on its listing day — band is relative to the ISSUE PRICE, rule price_limit_pct_of_issue_price.",
+   "requires": [
+    "listing_day_index"
+   ],
+   "excludes": [
+    "convertible"
+   ],
+   "asserts": {
+    "listing_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "czce_ap": {
+   "description": "CZCE apple futures (AP), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_cf": {
+   "description": "CZCE cotton futures (CF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_cj": {
+   "description": "CZCE dried jujube futures (CJ), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_cy": {
+   "description": "CZCE cotton yarn futures (CY), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_fg": {
+   "description": "CZCE flat glass futures (FG), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_jr": {
+   "description": "CZCE japonica rice futures (JR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_lr": {
+   "description": "CZCE late indica rice futures (LR), all contract months; Marina coverage from 2024-01-01 to 2026-01-19 (no LR contract is listed in the daily settlement-parameter file from 2026-01-19; not a confirmed delisting date). margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_ma": {
+   "description": "CZCE methanol futures (MA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_oi": {
+   "description": "CZCE rapeseed oil futures (OI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_pf": {
+   "description": "CZCE polyester staple fiber futures (PF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_pk": {
+   "description": "CZCE peanut kernel futures (PK), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_pl": {
+   "description": "CZCE propylene futures (PL, first in the daily settlement-parameter file 2025-07-22), all contract months; Marina coverage from 2025-07-22. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_pm": {
+   "description": "CZCE common wheat futures (PM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_pr": {
+   "description": "CZCE PET bottle chip futures (PR, listed 2024-08-30), all contract months; Marina coverage from 2024-08-30. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_px": {
+   "description": "CZCE paraxylene futures (PX), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_ri": {
+   "description": "CZCE early indica rice futures (RI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_rm": {
+   "description": "CZCE rapeseed meal futures (RM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_rs": {
+   "description": "CZCE rapeseed futures (RS), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_sa": {
+   "description": "CZCE soda ash futures (SA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_sf": {
+   "description": "CZCE ferrosilicon futures (SF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_sh": {
+   "description": "CZCE caustic soda futures (SH), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_sm": {
+   "description": "CZCE silicomanganese futures (SM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_sr": {
+   "description": "CZCE white sugar futures (SR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_ta": {
+   "description": "CZCE PTA (purified terephthalic acid) futures (TA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_ur": {
+   "description": "CZCE urea futures (UR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_wh": {
+   "description": "CZCE strong wheat futures (WH), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_zc": {
+   "description": "CZCE thermal coal futures (ZC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "delisting": {
+   "description": "Main-board (SSE/SZSE) stock in the delisting arrangement period (退市整理期), from its second trading day.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "main_board",
+    "st_main",
+    "delisting_day1"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "delisting_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "delisting_bse": {
+   "description": "BSE stock in the delisting arrangement period, from its second day.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "bse",
+    "st_bse",
+    "delisting_day1_bse"
+   ],
+   "asserts": {
+    "board": "bse",
+    "delisting_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "delisting_chinext": {
+   "description": "ChiNext stock in the delisting arrangement period, from its second trading day. On 2020-08-24..2020-12-31 the band depended on the entry date (深证上〔2020〕620号) — no record under this context-free scope then (known gap G-0016) — use delisting_chinext_pre0824 / delisting_chinext_post0824.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "chinext",
+    "st_chinext",
+    "delisting_day1",
+    "delisting_chinext_pre0824",
+    "delisting_chinext_post0824"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "delisting_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "delisting_chinext_post0824": {
+   "description": "SZSE ChiNext stock that entered the delisting arrangement period ON OR AFTER 2020-08-24, every day of the period including the first (records only for 2020-08-24..2020-12-31; 20%, 深证上〔2020〕620号 item 2).",
+   "requires": [
+    "board",
+    "delisting_day_index",
+    "delisting_entry_before_2020_08_24"
+   ],
+   "excludes": [
+    "chinext",
+    "st_chinext",
+    "delisting_day1",
+    "delisting_chinext",
+    "delisting_chinext_pre0824"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "delisting_entry_before_2020_08_24": false,
+    "delisting_day_index": {
+     "min": 1
+    }
+   },
+   "rule_asserts": {}
+  },
+  "delisting_chinext_pre0824": {
+   "description": "SZSE ChiNext stock that entered the delisting arrangement period BEFORE 2020-08-24 and was still in it (records only for 2020-08-24..2020-12-31; trading-rules band 10%, 深证上〔2020〕620号 item 1).",
+   "requires": [
+    "board",
+    "delisting_entry_before_2020_08_24"
+   ],
+   "excludes": [
+    "chinext",
+    "st_chinext",
+    "delisting_day1",
+    "delisting_chinext",
+    "delisting_chinext_post0824"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "delisting_entry_before_2020_08_24": true,
+    "delisting_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "delisting_day1": {
+   "description": "First trading day of the delisting arrangement period, main board (SSE/SZSE) and ChiNext. On 2020-08-24..2020-12-31 main board only — a ChiNext first day then belongs to delisting_chinext_post0824 (20%, 深证上〔2020〕620号).",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "delisting",
+    "delisting_chinext",
+    "delisting_chinext_pre0824",
+    "delisting_chinext_post0824"
+   ],
+   "asserts": {
+    "board": [
+     {
+      "in": [
+       "main_board",
+       "chinext"
+      ]
+     },
+     {
+      "eq": "main_board",
+      "from": "2020-08-24",
+      "to": "2020-12-31"
+     }
+    ],
+    "delisting_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "delisting_day1_bse": {
+   "description": "First day of a BSE stock's delisting arrangement period.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "delisting_bse"
+   ],
+   "asserts": {
+    "board": "bse",
+    "delisting_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "delisting_day1_star": {
+   "description": "First trading day of a STAR stock's delisting arrangement period.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "delisting_star"
+   ],
+   "asserts": {
+    "board": "star",
+    "delisting_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "delisting_star": {
+   "description": "STAR stock in the delisting arrangement period, from its second trading day.",
+   "requires": [
+    "board",
+    "delisting_day_index"
+   ],
+   "excludes": [
+    "star",
+    "st_star",
+    "delisting_day1_star"
+   ],
+   "asserts": {
+    "board": "star",
+    "delisting_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "etf": {
+   "description": "Listed fund (ETF/LOF) whose constituents are NOT all 20%-band stocks. For min_holding_days it means an ordinary (T+1) fund — not of a same-day type (etf_bond / etf_money / etf_gold / etf_commodity / etf_crossborder) on that date.",
+   "requires": [
+    "fund_constituents"
+   ],
+   "excludes": [
+    "etf_20pct"
+   ],
+   "asserts": {
+    "fund_constituents": "mixed"
+   },
+   "rule_asserts": {
+    "min_holding_days": {
+     "requires": [
+      "fund_type"
+     ],
+     "asserts": {
+      "fund_type": {
+       "not_in": [
+        "bond_etf",
+        "money_market",
+        "gold_etf",
+        "commodity_futures_etf"
+       ]
+      },
+      "underlying_t0": {
+       "eq": false,
+       "when": {
+        "fund_type": "cross_border"
+       },
+       "required": true
+      }
+     }
+    }
+   }
+  },
+  "etf_20pct": {
+   "description": "ETF/LOF whose index constituents are exclusively 20%-band stocks (STAR / ChiNext), or ≥80% of non-cash assets in them. SSE from 2020-08-21, SZSE from 2020-08-24.",
+   "requires": [
+    "fund_constituents"
+   ],
+   "excludes": [
+    "etf"
+   ],
+   "asserts": {
+    "fund_constituents": "all_20pct_band"
+   },
+   "rule_asserts": {
+    "min_holding_days": {
+     "requires": [
+      "fund_type"
+     ],
+     "asserts": {
+      "fund_type": {
+       "not_in": [
+        "bond_etf",
+        "money_market",
+        "gold_etf",
+        "commodity_futures_etf"
+       ]
+      },
+      "underlying_t0": {
+       "eq": false,
+       "when": {
+        "fund_type": "cross_border"
+       },
+       "required": true
+      }
+     }
+    }
+   }
+  },
+  "etf_bond": {
+   "description": "Bond ETF (债券交易型开放式（指数）基金). Same-day round trip (min_holding_days 0) from 2015-01-19 (earliest sourced). Price band and tick follow the fund family (query them under etf).",
+   "requires": [
+    "fund_type"
+   ],
+   "excludes": [
+    "etf",
+    "etf_20pct",
+    "etf_money",
+    "etf_gold",
+    "etf_commodity",
+    "etf_crossborder"
+   ],
+   "asserts": {
+    "fund_type": "bond_etf"
+   },
+   "rule_asserts": {}
+  },
+  "etf_commodity": {
+   "description": "Commodity-futures ETF (商品期货交易型开放式（指数）基金). min_holding_days 0 — SZSE from 2019-01-11, SSE from 2020-01-20.",
+   "requires": [
+    "fund_type"
+   ],
+   "excludes": [
+    "etf",
+    "etf_20pct",
+    "etf_bond",
+    "etf_money",
+    "etf_gold",
+    "etf_crossborder"
+   ],
+   "asserts": {
+    "fund_type": "commodity_futures_etf"
+   },
+   "rule_asserts": {}
+  },
+  "etf_crossborder": {
+   "description": "Cross-border ETF or cross-border LOF whose tracked constituents / investment targets themselves trade same-day (underlying_t0 = true). min_holding_days 0 from 2015-01-19, 1 before. A cross-border fund with underlying_t0 = false is an ordinary fund — use etf.",
+   "requires": [
+    "fund_type",
+    "underlying_t0"
+   ],
+   "excludes": [
+    "etf",
+    "etf_20pct",
+    "etf_bond",
+    "etf_money",
+    "etf_gold",
+    "etf_commodity"
+   ],
+   "asserts": {
+    "fund_type": "cross_border",
+    "underlying_t0": true
+   },
+   "rule_asserts": {}
+  },
+  "etf_gold": {
+   "description": "Gold ETF (黄金交易型开放式（证券投资）基金). min_holding_days 0 from 2015-01-19 (earliest sourced).",
+   "requires": [
+    "fund_type"
+   ],
+   "excludes": [
+    "etf",
+    "etf_20pct",
+    "etf_bond",
+    "etf_money",
+    "etf_commodity",
+    "etf_crossborder"
+   ],
+   "asserts": {
+    "fund_type": "gold_etf"
+   },
+   "rule_asserts": {}
+  },
+  "etf_money": {
+   "description": "Exchange-traded / listed money-market fund (SSE 交易型货币市场基金, SZSE 上市交易的货币市场基金). min_holding_days 0 from 2015-01-19 (earliest sourced).",
+   "requires": [
+    "fund_type"
+   ],
+   "excludes": [
+    "etf",
+    "etf_20pct",
+    "etf_bond",
+    "etf_gold",
+    "etf_commodity",
+    "etf_crossborder"
+   ],
+   "asserts": {
+    "fund_type": "money_market"
+   },
+   "rule_asserts": {}
+  },
+  "gfex_lc": {
+   "description": "GFEX lithium carbonate futures (LC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "gfex_pd": {
+   "description": "GFEX palladium futures (PD, listed 2025-11-27), all contract months; Marina coverage from 2025-11-27. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "gfex_ps": {
+   "description": "GFEX polysilicon futures (PS, listed 2024-12-26), all contract months; Marina coverage from 2024-12-26. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "gfex_pt": {
+   "description": "GFEX platinum futures (PT, listed 2025-11-27), all contract months; Marina coverage from 2025-11-27. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "gfex_si": {
+   "description": "GFEX industrial silicon futures (SI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ine_bc": {
+   "description": "INE bonded copper futures (BC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ine_ec": {
+   "description": "INE container freight index (Europe line) futures (EC, listed 2023-08-18), all contract months; Marina coverage from 2024-01-01 (sessions and same-day round trips from 2023-08-18). margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ine_lu": {
+   "description": "INE low sulphur fuel oil futures (LU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ine_nr": {
+   "description": "INE TSR 20 rubber futures (NR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ine_sc": {
+   "description": "INE crude oil futures (SC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "ipo_day1_bse": {
+   "description": "Listing day on the Beijing Stock Exchange.",
+   "requires": [
+    "board",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "bse"
+   ],
+   "asserts": {
+    "board": "bse",
+    "listing_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "ipo_day1_main": {
+   "description": "Listing day (listing_day_index == 1) of a main-board-family security (main board; ChiNext before 2020-08-24).",
+   "requires": [
+    "board",
+    "listing_day_index",
+    "issue_regime"
+   ],
+   "excludes": [
+    "main_board",
+    "chinext",
+    "ipo_first5_main"
+   ],
+   "asserts": {
+    "board": [
+     {
+      "in": [
+       "main_board",
+       "chinext"
+      ],
+      "to": "2020-08-24"
+     },
+     {
+      "eq": "main_board",
+      "from": "2020-08-24"
+     }
+    ],
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   },
+   "rule_asserts": {}
+  },
+  "ipo_first5_chinext": {
+   "description": "First five trading days of a registration-regime ChiNext IPO (from 2020-08-24).",
+   "requires": [
+    "board",
+    "listing_day_index",
+    "issue_regime"
+   ],
+   "excludes": [
+    "chinext"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "listing_day_index": {
+     "min": 1,
+     "max": 5
+    },
+    "issue_regime": "registration"
+   },
+   "rule_asserts": {}
+  },
+  "ipo_first5_main": {
+   "description": "First five trading days of a registration-regime main-board IPO (from 2023-04-10).",
+   "requires": [
+    "board",
+    "listing_day_index",
+    "issue_regime"
+   ],
+   "excludes": [
+    "main_board",
+    "ipo_day1_main"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "listing_day_index": {
+     "min": 1,
+     "max": 5
+    },
+    "issue_regime": "registration"
+   },
+   "rule_asserts": {}
+  },
+  "ipo_first5_star": {
+   "description": "First five trading days of a STAR Market IPO.",
+   "requires": [
+    "board",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "star"
+   ],
+   "asserts": {
+    "board": "star",
+    "listing_day_index": {
+     "min": 1,
+     "max": 5
+    }
+   },
+   "rule_asserts": {}
+  },
+  "main_board": {
+   "description": "SSE/SZSE main board (incl. former SME board), not ST, not in listing window.",
+   "requires": [
+    "board",
+    "st_status",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "st_main",
+    "ipo_day1_main",
+    "ipo_first5_main"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": [
+     {
+      "min": 2
+     },
+     {
+      "min": 6,
+      "from": "2023-04-10",
+      "unless": {
+       "issue_regime": "approval"
+      }
+     }
+    ]
+   },
+   "rule_asserts": {}
+  },
+  "reits": {
+   "description": "Public infrastructure REIT (公募基础设施基金), after its listing day.",
+   "requires": [
+    "listing_day_index"
+   ],
+   "excludes": [
+    "reits_day1"
+   ],
+   "asserts": {
+    "listing_day_index": {
+     "min": 2
+    }
+   },
+   "rule_asserts": {}
+  },
+  "reits_day1": {
+   "description": "Listing day of a public infrastructure REIT.",
+   "requires": [
+    "listing_day_index"
+   ],
+   "excludes": [
+    "reits"
+   ],
+   "asserts": {
+    "listing_day_index": 1
+   },
+   "rule_asserts": {}
+  },
+  "shfe_ad": {
+   "description": "SHFE cast aluminium alloy futures (AD, listed 2025-06-10), all contract months; Marina coverage from 2025-06-10. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_ag": {
+   "description": "SHFE silver futures (AG), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_al": {
+   "description": "SHFE aluminium futures (AL), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_ao": {
+   "description": "SHFE alumina futures (AO), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_au": {
+   "description": "SHFE gold futures (AU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_br": {
+   "description": "SHFE butadiene rubber futures (BR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_bu": {
+   "description": "SHFE bitumen futures (BU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_cu": {
+   "description": "SHFE copper futures (CU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_fu": {
+   "description": "SHFE fuel oil futures (FU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_hc": {
+   "description": "SHFE hot-rolled coil futures (HC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_ni": {
+   "description": "SHFE nickel futures (NI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_op": {
+   "description": "SHFE offset printing paper futures (OP, listed 2025-09-10), all contract months; Marina coverage from 2025-09-10. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_pb": {
+   "description": "SHFE lead futures (PB), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_rb": {
+   "description": "SHFE rebar futures (RB), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_ru": {
+   "description": "SHFE natural rubber futures (RU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_sn": {
+   "description": "SHFE tin futures (SN), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_sp": {
+   "description": "SHFE pulp futures (SP), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_ss": {
+   "description": "SHFE stainless steel futures (SS), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_wr": {
+   "description": "SHFE wire rod futures (WR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "shfe_zn": {
+   "description": "SHFE zinc futures (ZN), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "st_b_share": {
+   "description": "B share under ST/*ST on that date. 5% until 2026-07-06, 10% after (same as st_main).",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "b_share"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "rule_asserts": {}
+  },
+  "st_bse": {
+   "description": "BSE stock under ST/*ST. Same 30% band as bse; kept as a scope so callers must know st_status.",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "bse"
+   ],
+   "asserts": {
+    "board": "bse",
+    "st_status": true
+   },
+   "rule_asserts": {}
+  },
+  "st_chinext": {
+   "description": "ChiNext security under ST/*ST on that date.",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "chinext"
+   ],
+   "asserts": {
+    "board": "chinext",
+    "st_status": true
+   },
+   "rule_asserts": {}
+  },
+  "st_main": {
+   "description": "Main-board security under ST/*ST on that date.",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "main_board"
+   ],
+   "asserts": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "rule_asserts": {}
+  },
+  "st_star": {
+   "description": "STAR security under *ST (since 2019) or ST (since 2024-10-30) on that date. Same 20% band as star; kept as a scope so callers must know st_status rather than assume STAR has none.",
+   "requires": [
+    "board",
+    "st_status"
+   ],
+   "excludes": [
+    "star"
+   ],
+   "asserts": {
+    "board": "star",
+    "st_status": true
+   },
+   "rule_asserts": {}
+  },
+  "star": {
+   "description": "SSE STAR Market (688), not risk-warned, not in listing window.",
+   "requires": [
+    "board",
+    "st_status",
+    "listing_day_index"
+   ],
+   "excludes": [
+    "st_star",
+    "ipo_first5_star"
+   ],
+   "asserts": {
+    "board": "star",
+    "st_status": false,
+    "listing_day_index": {
+     "min": 6
+    }
+   },
+   "rule_asserts": {}
+  },
+  "star_growth_legacy": {
+   "description": "SSE STAR share or depositary receipt listed before 2025-07-13 and not yet profitable since listing, moved into the growth tier on 2025-07-13 (terminal label 成1, name suffix U), while it is in the tier on that date.",
+   "requires": [
+    "board",
+    "star_growth_tier"
+   ],
+   "excludes": [
+    "star_growth_new"
+   ],
+   "asserts": {
+    "board": "star",
+    "star_growth_tier": "legacy"
+   },
+   "rule_asserts": {}
+  },
+  "star_growth_new": {
+   "description": "SSE STAR share or depositary receipt newly registered into the growth tier (in the tier from its listing day, on or after 2025-07-13; terminal label 成, name suffix U), while it is in the tier on that date.",
+   "requires": [
+    "board",
+    "star_growth_tier"
+   ],
+   "excludes": [
+    "star_growth_legacy"
+   ],
+   "asserts": {
+    "board": "star",
+    "star_growth_tier": "new"
+   },
+   "rule_asserts": {}
+  },
+  "stock": {
+   "description": "Any listed stock when the rule does not distinguish boards or status (fees, rounding).",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  }
+ },
+ "context_constraints": {
+  "grammar": "data/<market>/scopes.yaml header: scalar = equality; {eq|in|not_in|min|max} with qualifiers from/to (trade-date window), unless/when (context condition), required; a list = every applicable entry must hold; null value = not supplied",
+  "on_violation": "MISSING_CONTEXT with context_conflicts / missing_context"
+ },
+ "contract_selectors": {
+  "context_key": "contract — the exchange contract code, e.g. au2606; needed where rules[*].contract_keyed_scopes lists the scope (otherwise MISSING_CONTEXT with missing_context ['contract'])",
+  "grammar": "record/gap field contracts: {any|none: [clause]}; clause keys (AND): code {in|not_in}, delivery_month {in|not_in}, months_to_delivery {min|max|in} = delivery month index minus trade month index; docs/SCHEMA.md 'Contract selectors'"
+ },
+ "tick_families": {
+  "rule": "tick_size",
+  "map": {
+   "b_share": "b_share",
+   "bse": "bse_stock",
+   "bse_stock": "bse_stock",
+   "convertible": "convertible",
+   "convertible_day1": "convertible",
+   "delisting_bse": "bse_stock",
+   "delisting_day1_bse": "bse_stock",
+   "etf": "etf",
+   "etf_20pct": "etf",
+   "etf_bond": "etf",
+   "etf_commodity": "etf",
+   "etf_crossborder": "etf",
+   "etf_gold": "etf",
+   "etf_money": "etf",
+   "ipo_day1_bse": "bse_stock",
+   "reits": "etf",
+   "reits_day1": "etf",
+   "st_b_share": "b_share",
+   "st_bse": "bse_stock"
+  },
+  "default": "stock"
+ },
+ "context_vocabulary": [
+  "board",
+  "contract",
+  "delisting_day_index",
+  "delisting_entry_before_2020_08_24",
+  "fund_constituents",
+  "fund_type",
+  "issue_regime",
+  "listing_day_index",
+  "st_status",
+  "star_growth_tier",
+  "underlying_t0"
+ ],
+ "known_gaps": [
+  {
+   "gap_id": "G-0001",
+   "market": "XSHG+XSHE",
+   "scope": "convertible",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "medium",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0003",
+   "market": "XSHG",
+   "scope": "etf_20pct",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": "2019-07-22",
+    "to": "2020-08-21"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0005",
+   "market": "XSHG+XSHE",
+   "scope": "stock",
+   "rule": "tick_size",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0007",
+   "market": "XSHG+XSHE",
+   "scope": "stock",
+   "rule": "session_schedule",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "medium",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0010",
+   "market": "XSHE",
+   "scope": "delisting",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": null,
+    "to": "2012-12-17"
+   },
+   "severity": "low",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0012",
+   "market": "XSHE",
+   "scope": "delisting_day1",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": null,
+    "to": "2012-12-17"
+   },
+   "severity": "low",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0013",
+   "market": "XSHG+XSHE",
+   "scope": "etf",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0014",
+   "market": "XSHG+XSHE",
+   "scope": "b_share",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "medium",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0015",
+   "market": "XSHG+XSHE",
+   "scope": "stock",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "1995-01-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0016",
+   "market": "XSHE",
+   "scope": "delisting_chinext",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": "2020-08-24",
+    "to": "2020-12-31"
+   },
+   "severity": "low",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0018",
+   "market": "XSHG+XSHE",
+   "scope": "convertible_day1",
+   "rule": "price_limit_pct_of_issue_price",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0019",
+   "market": "XSHG",
+   "scope": "etf_bond",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-03-15"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0020",
+   "market": "XSHG",
+   "scope": "etf_money",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-01-28"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0021",
+   "market": "XSHG",
+   "scope": "etf_gold",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-07-27"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0022",
+   "market": "XSHG+XSHE",
+   "scope": "etf_crossborder",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0023",
+   "market": "XSHG+XSHE",
+   "scope": "etf_commodity",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0024",
+   "market": "XSHG+XSHE",
+   "scope": "etf",
+   "rule": "session_schedule",
+   "interval": {
+    "from": null,
+    "to": "2006-07-01"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0026",
+   "market": "XSHE",
+   "scope": "etf_bond",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-08-05"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0027",
+   "market": "XSHE",
+   "scope": "etf_money",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-11-30"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0028",
+   "market": "XSHE",
+   "scope": "etf_gold",
+   "rule": "min_holding_days",
+   "interval": {
+    "from": null,
+    "to": "2013-11-30"
+   },
+   "severity": "low",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0029",
+   "market": "CCFX",
+   "scope": "cffex_tf",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2015-03-16",
+    "to": "2015-09-12"
+   },
+   "severity": "medium",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0030",
+   "market": "CCFX",
+   "scope": "cffex_tf",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2015-03-16",
+    "to": "2015-09-12"
+   },
+   "severity": "medium",
+   "status": "wontfix"
+  },
+  {
+   "gap_id": "G-0031",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0032",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0033",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0034",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0035",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0036",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0037",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0038",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0039",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0040",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0041",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0042",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0043",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0044",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0045",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0046",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0047",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0048",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0049",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0050",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0051",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0052",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0053",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0054",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0055",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0056",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0057",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0058",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-17",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0059",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0060",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0061",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0062",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0063",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0064",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-17",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0065",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0066",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0067",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0068",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0069",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0070",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0071",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0072",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0073",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-05",
+    "to": "2026-01-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0074",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-18",
+    "to": "2026-07-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0075",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-06",
+    "to": "2026-02-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0076",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-19",
+    "to": "2026-07-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0077",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-12-12",
+    "to": "2025-12-16"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0078",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-05",
+    "to": "2026-02-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0079",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-18",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0080",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-12-15",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0081",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-06",
+    "to": "2026-02-04"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0082",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-19",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0083",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-07-31",
+    "to": "2024-08-16"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0084",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0085",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-05-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0086",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-08-01",
+    "to": "2024-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0087",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-10-09",
+    "to": "2024-10-16"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0088",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0089",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-05-20"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0090",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0091",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0092",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0093",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0094",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0095",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-05-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0096",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0097",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-05-20"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0098",
+   "market": "XSGE",
+   "scope": "shfe_ss",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0099",
+   "market": "XSGE",
+   "scope": "shfe_ss",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-07-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0100",
+   "market": "XSGE",
+   "scope": "shfe_ss",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-18",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0101",
+   "market": "XSGE",
+   "scope": "shfe_ss",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-07-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0102",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-04",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0103",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-12",
+    "to": "2026-11-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0104",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-05",
+    "to": "2026-03-11"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0105",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-06-26",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0106",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0107",
+   "market": "XSGE",
+   "scope": "shfe_bu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0108",
+   "market": "XSGE",
+   "scope": "shfe_bu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-13",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0109",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0110",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-07-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0111",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-17",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0112",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-07-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0113",
+   "market": "XSGE",
+   "scope": "shfe_sp",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0114",
+   "market": "XSGE",
+   "scope": "shfe_sp",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-07-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0115",
+   "market": "XSGE",
+   "scope": "shfe_sp",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-17",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0116",
+   "market": "XSGE",
+   "scope": "shfe_sp",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-07-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0117",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0118",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0119",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0120",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-19",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0121",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0122",
+   "market": "XSGE",
+   "scope": "shfe_ad",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0123",
+   "market": "XSGE",
+   "scope": "shfe_op",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0124",
+   "market": "XSGE",
+   "scope": "shfe_op",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-07-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0125",
+   "market": "XSGE",
+   "scope": "shfe_op",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-06-04",
+    "to": "2026-07-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0126",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-04",
+    "to": "2026-03-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0127",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-09-14",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0128",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0129",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-05",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0130",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-06-26",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0131",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0132",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-04",
+    "to": "2026-03-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0133",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-09-14",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0134",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0135",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-05",
+    "to": "2026-03-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0136",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-06-29",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0137",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0138",
+   "market": "XINE",
+   "scope": "ine_nr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0139",
+   "market": "XINE",
+   "scope": "ine_nr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-07-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0140",
+   "market": "XINE",
+   "scope": "ine_nr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-22",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0141",
+   "market": "XINE",
+   "scope": "ine_nr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-07-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0142",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-17",
+    "to": "2026-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0143",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0144",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-08",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0145",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-28",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0146",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-07",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0147",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-09",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0148",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2023-12-27",
+    "to": "2024-01-04"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0149",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-02-27",
+    "to": "2024-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0150",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-05-06",
+    "to": "2024-06-24"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0151",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-04",
+    "to": "2026-03-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0152",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-05-26",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0153",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-12-28",
+    "to": "2024-01-05"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0154",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-02-28",
+    "to": "2024-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0155",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-05-07",
+    "to": "2024-06-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0156",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-05",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0157",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-05-27",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0158",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2023-11-08",
+    "to": "2024-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0159",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-12-25",
+    "to": "2025-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0160",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-24",
+    "to": "2026-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0161",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-11-09",
+    "to": "2024-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0162",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-12-24",
+    "to": "2025-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0163",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0164",
+   "market": "XZCE",
+   "scope": "czce_cf",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2023-06-26",
+    "to": "2024-02-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0165",
+   "market": "XZCE",
+   "scope": "czce_cf",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-02-19",
+    "to": "2024-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0166",
+   "market": "XZCE",
+   "scope": "czce_cf",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-06-27",
+    "to": "2024-02-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0167",
+   "market": "XZCE",
+   "scope": "czce_cf",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-02-20",
+    "to": "2024-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0168",
+   "market": "XZCE",
+   "scope": "czce_cj",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2023-12-15",
+    "to": "2024-07-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0169",
+   "market": "XZCE",
+   "scope": "czce_cj",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-12-18",
+    "to": "2024-09-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0170",
+   "market": "XZCE",
+   "scope": "czce_cy",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-09-02",
+    "to": "2025-01-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0171",
+   "market": "XZCE",
+   "scope": "czce_cy",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-09-03",
+    "to": "2025-01-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0172",
+   "market": "XZCE",
+   "scope": "czce_ap",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0173",
+   "market": "XZCE",
+   "scope": "czce_cf",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0174",
+   "market": "XZCE",
+   "scope": "czce_cj",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0175",
+   "market": "XZCE",
+   "scope": "czce_cy",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0176",
+   "market": "XZCE",
+   "scope": "czce_pk",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0177",
+   "market": "XZCE",
+   "scope": "czce_sr",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0178",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-09-18",
+    "to": "2024-09-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0179",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-10-08",
+    "to": "2024-12-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0180",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-05-20",
+    "to": "2025-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0181",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-10-09",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0182",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-05",
+    "to": "2026-02-12"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0183",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0184",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-09-19",
+    "to": "2024-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0185",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-10-09",
+    "to": "2025-01-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0186",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-05-21",
+    "to": "2025-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0187",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-10-10",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0188",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-06",
+    "to": "2026-02-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0189",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-03-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0190",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-12",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0191",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-07-22",
+    "to": "2024-08-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0192",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-09-18",
+    "to": "2024-09-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0193",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-10-08",
+    "to": "2024-12-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0194",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-03-17",
+    "to": "2025-04-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0195",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-05-20",
+    "to": "2025-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0196",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-10-09",
+    "to": "2026-02-12"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0197",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-07-23",
+    "to": "2024-09-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0198",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-09-19",
+    "to": "2024-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0199",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-10-09",
+    "to": "2025-01-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0200",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-05-21",
+    "to": "2025-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0201",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-10-10",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0202",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-06",
+    "to": "2026-02-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0203",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-03-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0204",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-04-14",
+    "to": "2025-04-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0205",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-05-06",
+    "to": "2025-08-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0206",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-24",
+    "to": "2026-08-14"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0207",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-09-21",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0208",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-09",
+    "to": "2026-10-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0209",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-26",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0210",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-04-15",
+    "to": "2025-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0211",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-05-07",
+    "to": "2025-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0212",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0213",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-22",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0214",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0215",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-24",
+    "to": "2026-03-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0216",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-04",
+    "to": "2026-08-14"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0217",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-09-21",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0218",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-09",
+    "to": "2026-10-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0219",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-10-27",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0220",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-10-10",
+    "to": "2024-01-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0221",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-03-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0222",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-05",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0223",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-22",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0224",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0225",
+   "market": "XZCE",
+   "scope": "czce_sa",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0226",
+   "market": "XZCE",
+   "scope": "czce_sa",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-12",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0227",
+   "market": "XZCE",
+   "scope": "czce_fg",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-04-07",
+    "to": "2025-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0228",
+   "market": "XZCE",
+   "scope": "czce_fg",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0229",
+   "market": "XZCE",
+   "scope": "czce_fg",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-04-08",
+    "to": "2025-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0230",
+   "market": "XZCE",
+   "scope": "czce_fg",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-12",
+    "to": "2026-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0231",
+   "market": "XZCE",
+   "scope": "czce_oi",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0232",
+   "market": "XZCE",
+   "scope": "czce_rm",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0233",
+   "market": "XZCE",
+   "scope": "czce_ta",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0234",
+   "market": "XZCE",
+   "scope": "czce_ma",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0235",
+   "market": "XZCE",
+   "scope": "czce_sa",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0236",
+   "market": "XZCE",
+   "scope": "czce_fg",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0237",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2023-10-09",
+    "to": "2024-02-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0238",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-02-19",
+    "to": "2024-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0239",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-06-21",
+    "to": "2024-08-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0240",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-04-15"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0241",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2023-10-10",
+    "to": "2024-02-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0242",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-02-20",
+    "to": "2024-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0243",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-06-24",
+    "to": "2024-09-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0244",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-12",
+    "to": "2026-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0245",
+   "market": "XZCE",
+   "scope": "czce_pf",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-24",
+    "to": "2026-08-14"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0246",
+   "market": "XZCE",
+   "scope": "czce_pf",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0247",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0248",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-04-09",
+    "to": "2024-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0249",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-04-15",
+    "to": "2025-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0250",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-05-07",
+    "to": "2025-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0251",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0252",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-09-22",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0253",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-10-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0254",
+   "market": "XZCE",
+   "scope": "czce_sh",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0255",
+   "market": "XZCE",
+   "scope": "czce_sh",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-04-09",
+    "to": "2024-05-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0256",
+   "market": "XZCE",
+   "scope": "czce_sh",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-10",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0257",
+   "market": "XZCE",
+   "scope": "czce_sm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-06-04",
+    "to": "2024-09-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0258",
+   "market": "XZCE",
+   "scope": "czce_sm",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-10-08",
+    "to": "2024-12-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0259",
+   "market": "XZCE",
+   "scope": "czce_sm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-06-05",
+    "to": "2024-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0260",
+   "market": "XZCE",
+   "scope": "czce_sm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-10-09",
+    "to": "2025-01-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0261",
+   "market": "XZCE",
+   "scope": "czce_ur",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0262",
+   "market": "XZCE",
+   "scope": "czce_px",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0263",
+   "market": "XZCE",
+   "scope": "czce_sh",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0264",
+   "market": "XZCE",
+   "scope": "czce_sf",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0265",
+   "market": "XZCE",
+   "scope": "czce_sm",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0266",
+   "market": "XZCE",
+   "scope": "czce_pr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-08-30",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0267",
+   "market": "XZCE",
+   "scope": "czce_pr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0268",
+   "market": "XZCE",
+   "scope": "czce_pl",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-22",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0269",
+   "market": "XZCE",
+   "scope": "czce_pl",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-07-22",
+    "to": "2025-07-23"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0270",
+   "market": "XZCE",
+   "scope": "czce_pl",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0271",
+   "market": "XZCE",
+   "scope": "czce_pl",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2025-07-22",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0272",
+   "market": "XZCE",
+   "scope": "czce_wh",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0273",
+   "market": "XZCE",
+   "scope": "czce_rs",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0274",
+   "market": "XZCE",
+   "scope": "czce_pm",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0275",
+   "market": "XZCE",
+   "scope": "czce_ri",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0276",
+   "market": "XZCE",
+   "scope": "czce_pm",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0277",
+   "market": "XZCE",
+   "scope": "czce_ri",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0278",
+   "market": "XZCE",
+   "scope": "czce_jr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0279",
+   "market": "XZCE",
+   "scope": "czce_jr",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0280",
+   "market": "XZCE",
+   "scope": "czce_lr",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-12-15",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0281",
+   "market": "XZCE",
+   "scope": "czce_lr",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0282",
+   "market": "XZCE",
+   "scope": "czce_lr",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0283",
+   "market": "XZCE",
+   "scope": "czce_zc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0284",
+   "market": "XZCE",
+   "scope": "czce_zc",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0285",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0286",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-04-29",
+    "to": "2024-09-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0287",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-28",
+    "to": "2025-07-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0288",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-08-11",
+    "to": "2025-08-12"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0289",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-08-20",
+    "to": "2025-08-21"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0290",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-09-29",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0291",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-06",
+    "to": "2026-01-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0292",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-12",
+    "to": "2026-01-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0293",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-16",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0294",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-30",
+    "to": "2026-02-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0295",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-12",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0296",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0297",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-04-30",
+    "to": "2024-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0298",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-09-30",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0299",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-13",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0300",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0301",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0302",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-12-30",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0303",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-13",
+    "to": "2026-02-05"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0304",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-12",
+    "to": "2026-03-24"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0305",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-29",
+    "to": "2026-07-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0306",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0307",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-14",
+    "to": "2026-02-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0308",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-13",
+    "to": "2026-03-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0309",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-30",
+    "to": "2026-07-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0310",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2025-11-27",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0311",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-02",
+    "to": "2025-07-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0312",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-08",
+    "to": "2025-07-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0313",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-22",
+    "to": "2025-07-23"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0314",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-30",
+    "to": "2025-07-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0315",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-09-05",
+    "to": "2025-09-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0316",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-09-29",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0317",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-03",
+    "to": "2026-04-14"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0318",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-20",
+    "to": "2026-04-21"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0319",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-22",
+    "to": "2026-04-23"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0320",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-24",
+    "to": "2026-04-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0321",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-29",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0322",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-09-30",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0323",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-30",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0324",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-12-26",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0325",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0326",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-12-30",
+    "to": "2026-01-05"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0327",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-01-13",
+    "to": "2026-02-05"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0328",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-12",
+    "to": "2026-03-24"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0329",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-04-29",
+    "to": "2026-07-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0330",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0331",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-01-14",
+    "to": "2026-02-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0332",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-13",
+    "to": "2026-03-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0333",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-04-30",
+    "to": "2026-07-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0334",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2025-11-27",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0335",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0336",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2024-04-29",
+    "to": "2024-06-06"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0337",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-07-22",
+    "to": "2025-07-23"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0338",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2025-09-29",
+    "to": "2025-12-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0339",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-02-12",
+    "to": "2026-09-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0340",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0341",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2024-04-30",
+    "to": "2024-06-07"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0342",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2025-09-30",
+    "to": "2025-12-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0343",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-02-13",
+    "to": "2026-09-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0344",
+   "market": "GFEX",
+   "scope": "gfex_si",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0352",
+   "market": "XSGE",
+   "scope": "shfe_cu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0353",
+   "market": "XSGE",
+   "scope": "shfe_al",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0354",
+   "market": "XSGE",
+   "scope": "shfe_zn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0355",
+   "market": "XSGE",
+   "scope": "shfe_pb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0364",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-04-18"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0365",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-04-18",
+    "to": "2024-09-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ni2405",
+        "ni2406",
+        "ni2407",
+        "ni2408",
+        "ni2409"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0366",
+   "market": "XSGE",
+   "scope": "shfe_ni",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-09-19",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0367",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2025-04-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0368",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2025-04-25",
+    "to": "2025-06-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "au2506"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0369",
+   "market": "XSGE",
+   "scope": "shfe_au",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2025-06-17",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0370",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-04-18"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0371",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-04-18",
+    "to": "2024-06-18"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ag2406"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0372",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-06-18",
+    "to": "2024-10-29"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0373",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-29",
+    "to": "2024-12-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ag2412"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0374",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-12-17",
+    "to": "2025-12-24"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0375",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-12-24",
+    "to": "2026-01-09"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ag2602",
+        "ag2604"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0376",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-01-09",
+    "to": "2026-02-25"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ag2602",
+        "ag2604"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0377",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-02-25",
+    "to": "2026-04-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ag2604"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0378",
+   "market": "XSGE",
+   "scope": "shfe_ag",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-04-16",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0379",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-04-18"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0380",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-04-18",
+    "to": "2024-05-06"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sn2405",
+        "sn2406",
+        "sn2407"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0381",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-05-06",
+    "to": "2024-07-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sn2405",
+        "sn2406",
+        "sn2407"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0382",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-07-16",
+    "to": "2024-08-01"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0383",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-08-01",
+    "to": "2024-10-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sn2408",
+        "sn2409",
+        "sn2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0384",
+   "market": "XSGE",
+   "scope": "shfe_sn",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-10-16",
+    "to": "2025-04-02"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0385",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-05",
+    "to": "2024-10-21"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0386",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-21",
+    "to": "2024-10-30"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ao2411",
+        "ao2412",
+        "ao2501"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0387",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-30",
+    "to": "2024-12-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ao2411",
+        "ao2412",
+        "ao2501",
+        "ao2502",
+        "ao2503",
+        "ao2504",
+        "ao2505",
+        "ao2506",
+        "ao2507",
+        "ao2508",
+        "ao2509",
+        "ao2510"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0388",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-12-17",
+    "to": "2025-01-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ao2501",
+        "ao2502",
+        "ao2503",
+        "ao2504",
+        "ao2505",
+        "ao2506",
+        "ao2507",
+        "ao2508",
+        "ao2509",
+        "ao2510"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0389",
+   "market": "XSGE",
+   "scope": "shfe_ao",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-01-16",
+    "to": "2025-03-11"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ao2502",
+        "ao2503",
+        "ao2504",
+        "ao2505",
+        "ao2506",
+        "ao2507",
+        "ao2508",
+        "ao2509",
+        "ao2510"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0390",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-01-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "rb2401",
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0391",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-16",
+    "to": "2024-04-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0392",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-04-01",
+    "to": "2024-05-31"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0393",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-05-31",
+    "to": "2024-07-31"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0394",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-07-31",
+    "to": "2024-08-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0395",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-08-16",
+    "to": "2024-09-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0396",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-09-19",
+    "to": "2024-10-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "rb2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0397",
+   "market": "XSGE",
+   "scope": "shfe_rb",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-16",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0398",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-07-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0399",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-07-31",
+    "to": "2024-08-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "wr2408",
+        "wr2409",
+        "wr2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0400",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-08-16",
+    "to": "2024-09-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "wr2409",
+        "wr2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0401",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-09-19",
+    "to": "2024-10-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "wr2410"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0402",
+   "market": "XSGE",
+   "scope": "shfe_wr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-16",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0403",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-05-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0404",
+   "market": "XSGE",
+   "scope": "shfe_hc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-05-31",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        10
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0405",
+   "market": "XSGE",
+   "scope": "shfe_ss",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0406",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-05-31"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0407",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-05-31",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0408",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-04-01",
+    "to": "2026-05-06"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2605",
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0409",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-05-06",
+    "to": "2026-06-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0410",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-01",
+    "to": "2026-06-25"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0411",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-25",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0412",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-07-01",
+    "to": "2026-08-03"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0413",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-08-03",
+    "to": "2026-09-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2609",
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0414",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-09-01",
+    "to": "2026-10-08"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0415",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-10-08",
+    "to": "2026-11-02"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0416",
+   "market": "XSGE",
+   "scope": "shfe_fu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-11-02",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "delivery_month": {
+       "not_in": [
+        1,
+        5,
+        9
+       ]
+      },
+      "code": {
+       "not_in": [
+        "fu2406",
+        "fu2407"
+       ]
+      }
+     },
+     {
+      "code": {
+       "in": [
+        "fu2701"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0417",
+   "market": "XSGE",
+   "scope": "shfe_bu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-04-26"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0418",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-09-26"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0419",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-09-26",
+    "to": "2024-10-14"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ru2501"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0420",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-10-14",
+    "to": "2025-01-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ru2501"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0421",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2025-01-16",
+    "to": "2025-05-26"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0422",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2025-05-26",
+    "to": "2025-09-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ru2509"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0423",
+   "market": "XSGE",
+   "scope": "shfe_ru",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2025-09-16",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0424",
+   "market": "XSGE",
+   "scope": "shfe_sp",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2026-07-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0425",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0426",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-03-10",
+    "to": "2026-03-11"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2604",
+        "sc2605",
+        "sc2606",
+        "sc2607",
+        "sc2608",
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0427",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-05-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2604",
+        "sc2605",
+        "sc2606",
+        "sc2607",
+        "sc2608",
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0428",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-05-19",
+    "to": "2026-06-25"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2606",
+        "sc2607",
+        "sc2608",
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0429",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-06-25",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2607",
+        "sc2608",
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0430",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-07-01",
+    "to": "2026-08-03"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2608",
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0431",
+   "market": "XINE",
+   "scope": "ine_sc",
+   "rule": "close_today_fee_per_lot",
+   "interval": {
+    "from": "2026-08-03",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "sc2609",
+        "sc2610",
+        "sc2611",
+        "sc2612",
+        "sc2701",
+        "sc2702",
+        "sc2703",
+        "sc2706",
+        "sc2709",
+        "sc2712",
+        "sc2803",
+        "sc2806",
+        "sc2809",
+        "sc2812",
+        "sc2903"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0432",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2026-03-10"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0433",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-03-10",
+    "to": "2026-03-11"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2604",
+        "lu2605",
+        "lu2606",
+        "lu2607",
+        "lu2608",
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0434",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-03-11",
+    "to": "2026-05-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2604",
+        "lu2605",
+        "lu2606",
+        "lu2607",
+        "lu2608",
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0435",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-05-19",
+    "to": "2026-06-25"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2606",
+        "lu2607",
+        "lu2608",
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0436",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-25",
+    "to": "2026-07-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2607",
+        "lu2608",
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0437",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-07-01",
+    "to": "2026-08-03"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2608",
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0438",
+   "market": "XINE",
+   "scope": "ine_lu",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-08-03",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lu2609",
+        "lu2610",
+        "lu2611",
+        "lu2612",
+        "lu2701",
+        "lu2702",
+        "lu2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0439",
+   "market": "XINE",
+   "scope": "ine_nr",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0440",
+   "market": "XINE",
+   "scope": "ine_bc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0441",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-04-30"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0442",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-04-30",
+    "to": "2024-06-25"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ec2504"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0443",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-06-25",
+    "to": "2025-04-29"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ec2504",
+        "ec2506"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0444",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-04-29",
+    "to": "2025-07-01"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ec2506"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0445",
+   "market": "XINE",
+   "scope": "ine_ec",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-07-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0446",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-01-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2401",
+        "lc2402"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0447",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-03-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2403",
+        "lc2404",
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0448",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2407"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0449",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-01-16",
+    "to": "2024-02-23"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2402"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0450",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-03-15",
+    "to": "2024-04-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2404",
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0451",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-04-17",
+    "to": "2024-05-20"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0452",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-05-20",
+    "to": "2024-06-18"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0453",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-06-18",
+    "to": "2024-08-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0454",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-08-15",
+    "to": "2024-09-18"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0455",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-09-18",
+    "to": "2024-10-22"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0456",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2024-10-22",
+    "to": "2024-11-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0457",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-11-20",
+    "to": "2025-11-24"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2601"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0458",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-01-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2605"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0459",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-01-15",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2601"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0460",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-01-19",
+    "to": "2026-07-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0461",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-07-15",
+    "to": "2026-08-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2608",
+        "lc2609",
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0462",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-08-17",
+    "to": "2026-09-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2609",
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0463",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-09-15",
+    "to": "2026-09-22"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0464",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-09-22",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0465",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-01-16"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2401",
+        "lc2402"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0466",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-03-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2403",
+        "lc2404",
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0467",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-01-01",
+    "to": "2024-02-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2407"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0468",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-01-16",
+    "to": "2024-02-23"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2402"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0469",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-03-15",
+    "to": "2024-04-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2404",
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0470",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-04-17",
+    "to": "2024-05-20"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2405",
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0471",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-05-20",
+    "to": "2024-06-18"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2406",
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0472",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-06-18",
+    "to": "2024-08-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2408",
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0473",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-08-15",
+    "to": "2024-09-18"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2409",
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0474",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-09-18",
+    "to": "2024-10-22"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2410",
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0475",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2024-10-22",
+    "to": "2024-11-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2411"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0476",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-11-20",
+    "to": "2025-11-24"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2601"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0477",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-01-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2605"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0478",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-01-15",
+    "to": "2026-01-19"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2601"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0479",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-01-19",
+    "to": "2026-07-09"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0480",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-07-15",
+    "to": "2026-08-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2608",
+        "lc2609",
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0481",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-08-17",
+    "to": "2026-09-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2609",
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0482",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-09-15",
+    "to": "2026-09-22"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "lc2610",
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0483",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-09-22",
+    "to": "2026-10-22"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0484",
+   "market": "GFEX",
+   "scope": "gfex_lc",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-10-22",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "any": [
+     {
+      "code": {
+       "in": [
+        "lc2611",
+        "lc2612",
+        "lc2701",
+        "lc2702",
+        "lc2703",
+        "lc2704",
+        "lc2705",
+        "lc2706",
+        "lc2707",
+        "lc2708",
+        "lc2709"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0485",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0486",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-04-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0487",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-04-27",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "pd2606"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0488",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0489",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0490",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-04-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0491",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-04-27",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "pd2606"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0492",
+   "market": "GFEX",
+   "scope": "gfex_pd",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0493",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-12-29",
+    "to": "2026-04-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0494",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-05-20"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2605",
+        "ps2606",
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0495",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-05-20",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2606",
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0496",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": "2026-07-09"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0497",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-07-15",
+    "to": "2026-08-17"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703",
+        "ps2704",
+        "ps2705",
+        "ps2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0498",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-08-17",
+    "to": "2026-09-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703",
+        "ps2704",
+        "ps2705",
+        "ps2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0499",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-09-15",
+    "to": "2026-10-22"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703",
+        "ps2704",
+        "ps2705",
+        "ps2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0500",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-10-22",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703",
+        "ps2704",
+        "ps2705",
+        "ps2706"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0501",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-12-29",
+    "to": "2026-04-03"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0502",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-04-16",
+    "to": "2026-05-20"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2605",
+        "ps2606",
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0503",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-05-20",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2606",
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0504",
+   "market": "GFEX",
+   "scope": "gfex_ps",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": "2026-07-09"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "ps2607",
+        "ps2608",
+        "ps2609",
+        "ps2610",
+        "ps2611",
+        "ps2612",
+        "ps2701",
+        "ps2702",
+        "ps2703"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0505",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0506",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-04-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0507",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-04-27",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "pt2606"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0508",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "close_today_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0509",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-11-27",
+    "to": "2025-12-25"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0510",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2025-12-25",
+    "to": "2026-04-27"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0511",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-04-27",
+    "to": "2026-06-15"
+   },
+   "severity": "medium",
+   "status": "open",
+   "contracts": {
+    "none": [
+     {
+      "code": {
+       "in": [
+        "pt2606"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "gap_id": "G-0512",
+   "market": "GFEX",
+   "scope": "gfex_pt",
+   "rule": "trans_fee_rate",
+   "interval": {
+    "from": "2026-06-15",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  }
+ ],
+ "not_in_scope": [
+  "market data",
+  "security master",
+  "point-in-time ST / listing histories",
+  "matching, slippage, strategy"
+ ]
+}

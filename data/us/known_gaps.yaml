@@ -1,0 +1,371 @@
+schema: 1.1
+gaps:
+- gap_id: G-US-0001
+  market: XNYS+XNAS
+  scope: us_stock
+  rule: price_limit_pct
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: No official passage explicitly stating the absence of daily percentage price limits was found for this scope. Intraday
+    LULD bands and market-wide circuit breakers do not establish an unlimited daily-price-band rule.
+  evidence:
+  - Reviewed NYSE trading information at https://www.nyse.com/trade/trading-information and Nasdaq circuit-breaker guidance
+    at https://www.nasdaqtrader.com/trader.aspx?id=CircuitBreaker; neither explicitly states that daily percentage price limits
+    are absent.
+  - Reviewed the SEC LULD approval at https://www.govinfo.gov/content/pkg/FR-2012-06-06/html/2012-13653.htm and searched the
+    Federal Register official API for the exact phrases no daily price and NYSE no daily; no qualifying statement was found.
+  status: open
+- gap_id: G-US-0002
+  market: XNYS+XNAS
+  scope: us_etf
+  rule: price_limit_pct
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: No official passage explicitly stating the absence of daily percentage price limits was found for this scope. Intraday
+    LULD bands and market-wide circuit breakers do not establish an unlimited daily-price-band rule.
+  evidence:
+  - Reviewed NYSE trading information at https://www.nyse.com/trade/trading-information and Nasdaq circuit-breaker guidance
+    at https://www.nasdaqtrader.com/trader.aspx?id=CircuitBreaker; neither explicitly states that daily percentage price limits
+    are absent.
+  - Reviewed the SEC LULD approval at https://www.govinfo.gov/content/pkg/FR-2012-06-06/html/2012-13653.htm and searched the
+    Federal Register official API for the exact phrases no daily price and NYSE no daily; no qualifying statement was found.
+  status: open
+- gap_id: G-US-0003
+  market: XNAS
+  scope: us_stock
+  rule: extended_hours
+  interval:
+    from: '2010-01-01'
+    to: '2013-03-18'
+  severity: medium
+  reason: 'Not found: a complete, unambiguous applicability chain for the 07:00-09:30 and 16:00-20:00 Nasdaq sessions throughout
+    this interval. Pre-2010 texts document 07:00 openings and 20:00 endings, but some distinguish a 16:15 regular-session
+    end; routing availability alone does not establish trading sessions. The 2013 notice establishes the former regime and
+    the new launch but is not sufficient to resolve all earlier chronology.'
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2007-02-28/html/E7-3493.htm
+  - https://www.govinfo.gov/content/pkg/FR-2008-06-20/html/E8-13914.htm
+  - https://www.govinfo.gov/content/pkg/FR-2009-09-02/html/E9-21162.htm
+  - https://www.govinfo.gov/content/pkg/FR-2013-03-21/html/2013-06479.htm
+  - https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2013-21
+  status: open
+- gap_id: G-US-0004
+  market: XNAS
+  scope: us_etf
+  rule: extended_hours
+  interval:
+    from: '2010-01-01'
+    to: '2013-03-18'
+  severity: medium
+  reason: 'Not found: a complete, unambiguous applicability chain for the 07:00-09:30 and 16:00-20:00 Nasdaq sessions throughout
+    this interval. Pre-2010 texts document 07:00 openings and 20:00 endings, but some distinguish a 16:15 regular-session
+    end; routing availability alone does not establish trading sessions. The 2013 notice establishes the former regime and
+    the new launch but is not sufficient to resolve all earlier chronology.'
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2007-02-28/html/E7-3493.htm
+  - https://www.govinfo.gov/content/pkg/FR-2008-06-20/html/E8-13914.htm
+  - https://www.govinfo.gov/content/pkg/FR-2009-09-02/html/E9-21162.htm
+  - https://www.govinfo.gov/content/pkg/FR-2013-03-21/html/2013-06479.htm
+  - https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2013-21
+  status: open
+- gap_id: G-US-0005
+  market: XNYS+XNAS
+  scope: us_stock
+  rule: luld_band
+  interval:
+    from: '2013-04-08'
+    to: '2013-12-08'
+  severity: medium
+  reason: The Plan was introduced in per-security batches. Phase I started 2013-04-08 and the SEC fourth amendment reports completion
+    on 2013-05-03; Phase II began 2013-08-05 and all-NMS coverage was not reached until 2013-12-08. The scopes cannot represent
+    mixed covered/uncovered constituents, and no new per-security context is permitted.
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2013-09-03/html/2013-21301.htm
+  - https://www.govinfo.gov/content/pkg/FR-2014-04-09/html/2014-07881.htm
+  - https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2013-27
+  - https://www.nyse.com/api/notifications/public/summary/12548?systemId=1
+  status: open
+- gap_id: G-US-0006
+  market: XNYS+XNAS
+  scope: us_etf
+  rule: luld_band
+  interval:
+    from: '2013-04-08'
+    to: '2013-12-08'
+  severity: medium
+  reason: The Plan was introduced in per-security batches. Phase I started 2013-04-08 and the SEC fourth amendment reports completion
+    on 2013-05-03; Phase II began 2013-08-05 and all-NMS coverage was not reached until 2013-12-08. The scopes cannot represent
+    mixed covered/uncovered constituents, and no new per-security context is permitted.
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2013-09-03/html/2013-21301.htm
+  - https://www.govinfo.gov/content/pkg/FR-2014-04-09/html/2014-07881.htm
+  - https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2013-27
+  - https://www.nyse.com/api/notifications/public/summary/12548?systemId=1
+  status: open
+- gap_id: G-US-0007
+  market: XNYS
+  scope: us_etf
+  rule: session_schedule
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: ETFs are almost all primary-listed on NYSE Arca (MIC ARCX, not a market in this dataset). No separate official text was
+    found for the trading session and auctions of ETFs whose primary listing is NYSE (XNYS), so no session_schedule is recorded
+    for us_etf on XNYS.
+  evidence:
+  - https://www.nyse.com/markets/hours-calendars
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_American_ARCA_NYSE_Tapes_B_and_C.pdf
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_Tapes_B_and_C_symbol_migration_Approved.pdf
+  - https://www.nyse.com/api/notifications/public/summary/7862?systemId=1
+  status: open
+- gap_id: G-US-0008
+  market: XNYS
+  scope: us_stock
+  rule: extended_hours
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: 'Not found: a complete dated applicability chain establishing the absence of both continuous extended sessions for
+    NYSE-primary securities throughout the requested interval. The 2019 Pillar filing explicitly says Exchange-listed securities
+    trade only in the Core Trading Session and preserves existing Rule 51 treatment; the 2018 filing says there is no Late
+    Trading Session. These clarify the session distinction but do not establish the full earlier chronology or an actual 2010
+    applicability date. Crossing Session II accepted aggregate-price coupled orders, not continuous trading, and was decommissioned
+    on January 31, 2024. The 2007 Gold Shares early-opening approval also cautions against assuming one historical ETF schedule;
+    its implementation and listing migration were not established here. Therefore neither continuous windows nor null are
+    backfilled. On the current hours page NYSE-listed securities have pre-opening order entry only (from 06:30, queued for
+    the 09:30 opening auction); the 07:00-09:30 early trading session introduced with the April 2018 Tape B and C expansion
+    is limited to non-primary securities.'
+  evidence:
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_American_ARCA_NYSE_Tapes_B_and_C.pdf
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_Tapes_B_and_C_symbol_migration_Approved.pdf
+  - https://www.nyse.com/api/notifications/public/summary/110000087399?systemId=1
+  - https://www.govinfo.gov/content/pkg/FR-2007-01-17/html/E7-535.htm
+  - https://www.govinfo.gov/content/pkg/FR-2009-04-20/html/E9-8878.htm
+  - https://www.govinfo.gov/content/pkg/FR-2018-03-29/html/2018-06339.htm
+  - https://www.govinfo.gov/content/pkg/FR-2022-08-18/html/2022-17749.htm
+  - https://www.nyse.com/api/notifications/public/summary/110000751445?systemId=1
+  - https://www.nyse.com/markets/hours-calendars
+  - https://www.govinfo.gov/content/pkg/FR-2019-06-05/html/2019-11566.htm
+  status: open
+- gap_id: G-US-0009
+  market: XNYS
+  scope: us_etf
+  rule: extended_hours
+  interval:
+    from: '2010-01-01'
+    to: null
+  severity: medium
+  reason: 'Not found: a complete dated applicability chain establishing the absence of both continuous extended sessions for
+    NYSE-primary securities throughout the requested interval. The 2019 Pillar filing explicitly says Exchange-listed securities
+    trade only in the Core Trading Session and preserves existing Rule 51 treatment; the 2018 filing says there is no Late
+    Trading Session. These clarify the session distinction but do not establish the full earlier chronology or an actual 2010
+    applicability date. Crossing Session II accepted aggregate-price coupled orders, not continuous trading, and was decommissioned
+    on January 31, 2024. The 2007 Gold Shares early-opening approval also cautions against assuming one historical ETF schedule;
+    its implementation and listing migration were not established here. Therefore neither continuous windows nor null are
+    backfilled. On the current hours page NYSE-listed securities have pre-opening order entry only (from 06:30, queued for
+    the 09:30 opening auction); the 07:00-09:30 early trading session introduced with the April 2018 Tape B and C expansion
+    is limited to non-primary securities.'
+  evidence:
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_American_ARCA_NYSE_Tapes_B_and_C.pdf
+  - https://www.nyse.com/publicdocs/nyse/markets/nyse/Pillar_Update_NYSE_Tapes_B_and_C_symbol_migration_Approved.pdf
+  - https://www.nyse.com/api/notifications/public/summary/110000087399?systemId=1
+  - https://www.govinfo.gov/content/pkg/FR-2007-01-17/html/E7-535.htm
+  - https://www.govinfo.gov/content/pkg/FR-2009-04-20/html/E9-8878.htm
+  - https://www.govinfo.gov/content/pkg/FR-2018-03-29/html/2018-06339.htm
+  - https://www.govinfo.gov/content/pkg/FR-2022-08-18/html/2022-17749.htm
+  - https://www.nyse.com/api/notifications/public/summary/110000751445?systemId=1
+  - https://www.nyse.com/markets/hours-calendars
+  - https://www.govinfo.gov/content/pkg/FR-2019-06-05/html/2019-11566.htm
+  status: open
+- gap_id: G-US-0010
+  market: XNYS+XNAS
+  scope: us_stock
+  rule: single_stock_pause_pct
+  interval:
+    from: '2010-06-11'
+    to: '2011-08-08'
+  severity: medium
+  reason: 'Group membership (index constituents, designated ETPs) is the caller''s to determine, as for luld_band and the
+    Hong Kong vcm_trigger_pct, and is not itself a gap. The gap is that the pilot was activated security by security: NYSE
+    activated five S&P 500 securities on June 11, 2010 and a total of 54 on June 14, 2010, and the date by which every NYSE-listed
+    S&P 500 security was covered was not found; the September 2010 expansion began on September 14, 2010 with NYSE-listed
+    Russell 1000 symbols, and the designated ETPs were added in batches (five issues on September 14 and 106 on September
+    15, 2010, which the NYSE Arca trader update calls completing the first phase of rollout). Nasdaq implemented all its S&P
+    500 issues on June 14, 2010 without phasing and its Russell 1000 and selected ETP expansion on September 14, 2010. No
+    official text states a day from which every group was in force for all its securities, so no record is constructed before
+    the all-NMS implementation on August 8, 2011. No gap is declared for this scope before its pilot participation began.
+    Re-researched: NYSE''s S&P 500 activation rollout schedule (dates through June 16, 2010) is a plan, not a confirmation
+    of completion; the Russell 1000 notice dates the start of the September 2010 expansion, not its completion; no XNYS completion
+    notice for the S&P 500 stocks or any expansion group was found. Whatever such a date, other NMS stocks remained outside
+    the pilot until August 8, 2011, so the interval and the absence of a record are unchanged.'
+  evidence:
+  - https://www.nyse.com/api/notifications/public/summary/8064?systemId=1
+  - https://www.nyse.com/api/notifications/public/summary/8075?systemId=1
+  - https://www.nyse.com/api/notifications/public/summary/8293?systemId=1
+  - https://www.nyse.com/publicdocs/nyse/notifications/trader-update/ExpandedTradingPausePilot.pdf
+  - https://www.govinfo.gov/content/pkg/FR-2011-08-17/html/2011-20902.htm
+  - https://www.nasdaqtrader.com/content/productsservices/trading/tradingpausefaqs.pdf
+  - 'https://www.nyse.com/api/notifications/public/summary/8063?systemId=1 states: "The NYSE Cash Market Volatility Trading
+    Pause Activation Rollout Schedule for S&P 500 securities is now available via this link:" and "We will update the activation
+    list and issue an NYSE Trade Update with any revisions to this schedule." This is a rollout schedule, not confirmation
+    of actual completion.'
+  - https://www.nyse.com/publicdocs/nyse/notifications/trader-update/s_p_vtp_schedule_.xls contains first-column Excel date
+    cells through June 16, 2010. This is a scheduled endpoint only; an actual completion announcement was not found. The June
+    12 notice at https://www.nyse.com/api/notifications/public/summary/8075?systemId=1 still says "the Activation Rollout
+    Schedule for Monday, June 14, 2010 has been expanded to include a total of 54 securities."
+  - 'https://www.nyse.com/api/notifications/public/summary/8293?systemId=1 states: "the NYSE will expand the list of stock
+    symbols eligible for Volatility Trading Pauses - single-stock circuit breakers - to include NYSE-listed symbols in the
+    Russell 1000 index beginning Tuesday, September 14." The linked list at https://www.nyse.com/publicdocs/nyse/notifications/trader-update/vtp_symbol_list.xlsx
+    is an eligibility list, not a completion confirmation.'
+  - 'Not found: actual completion for all XNYS S&P 500 stocks or all XNYS expansion groups. Searched the NYSE public notifications
+    API for trading pause, Volatility, and S&P; reviewed notices 8063, 8064, 8075, 8293, the linked rollout schedule and eligible-symbol
+    list, proposed Rule 80C FAQ, and Nasdaq trading-pause FAQ. Nasdaq''s own June 14 completion and NYSE Arca''s September
+    15 first-phase ETP completion do not establish XNYS completion.'
+  - https://www.nyse.com/api/notifications/public/summary/32414744?systemId=1 links to a Volatility Trading Pause Verification
+    document, but identifies NYSE ARCA EQUITIES; the linked PDF returned 404. It cannot establish XNYS completion.
+  status: open
+- gap_id: G-US-0011
+  market: XNYS+XNAS
+  scope: us_stock
+  rule: single_stock_pause_pct
+  interval:
+    from: '2013-04-08'
+    to: '2013-12-08'
+  severity: medium
+  reason: LULD replaced the single-stock pause pilot in per-security batches, matching the existing LULD gap window. Mixed
+    mechanisms cannot be represented as one scope rule. The SEC states that all-NMS LULD coverage was achieved on December
+    8, 2013; no single-stock-pause record is extrapolated after replacement.
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2013-09-03/html/2013-21301.htm
+  - https://www.govinfo.gov/content/pkg/FR-2014-04-09/html/2014-07881.htm
+  - https://www.govinfo.gov/content/pkg/FR-2013-02-20/html/2013-03817.htm
+  status: open
+- gap_id: G-US-0012
+  market: XNYS+XNAS
+  scope: us_etf
+  rule: single_stock_pause_pct
+  interval:
+    from: '2010-09-14'
+    to: '2011-08-08'
+  severity: medium
+  reason: 'Group membership (index constituents, designated ETPs) is the caller''s to determine, as for luld_band and the
+    Hong Kong vcm_trigger_pct, and is not itself a gap. The gap is that the pilot was activated security by security: the
+    September 2010 expansion began on September 14, 2010 with NYSE-listed Russell 1000 symbols, and the designated ETPs were
+    added in batches (five issues on September 14 and 106 on September 15, 2010, which the NYSE Arca trader update calls completing
+    the first phase of rollout). Nasdaq added its selected ETPs on September 14, 2010. No official text states a day from
+    which every group was in force for all its securities, so no record is constructed before the all-NMS implementation on
+    August 8, 2011. No gap is declared for this scope before its pilot participation began. Re-researched: the Russell 1000
+    notice dates the start of the September 2010 expansion, not its completion; NYSE Arca''s first-phase completion of September
+    15, 2010 does not establish completion on XNYS, and no XNYS completion notice for the designated ETPs was found. Whatever
+    such a date, other NMS stocks remained outside the pilot until August 8, 2011, so the interval and the absence of a record
+    are unchanged.'
+  evidence:
+  - https://www.nyse.com/api/notifications/public/summary/8064?systemId=1
+  - https://www.nyse.com/api/notifications/public/summary/8075?systemId=1
+  - https://www.nyse.com/api/notifications/public/summary/8293?systemId=1
+  - https://www.nyse.com/publicdocs/nyse/notifications/trader-update/ExpandedTradingPausePilot.pdf
+  - https://www.govinfo.gov/content/pkg/FR-2011-08-17/html/2011-20902.htm
+  - https://www.nasdaqtrader.com/content/productsservices/trading/tradingpausefaqs.pdf
+  - 'https://www.nyse.com/api/notifications/public/summary/8063?systemId=1 states: "The NYSE Cash Market Volatility Trading
+    Pause Activation Rollout Schedule for S&P 500 securities is now available via this link:" and "We will update the activation
+    list and issue an NYSE Trade Update with any revisions to this schedule." This is a rollout schedule, not confirmation
+    of actual completion.'
+  - https://www.nyse.com/publicdocs/nyse/notifications/trader-update/s_p_vtp_schedule_.xls contains first-column Excel date
+    cells through June 16, 2010. This is a scheduled endpoint only; an actual completion announcement was not found. The June
+    12 notice at https://www.nyse.com/api/notifications/public/summary/8075?systemId=1 still says "the Activation Rollout
+    Schedule for Monday, June 14, 2010 has been expanded to include a total of 54 securities."
+  - 'https://www.nyse.com/api/notifications/public/summary/8293?systemId=1 states: "the NYSE will expand the list of stock
+    symbols eligible for Volatility Trading Pauses - single-stock circuit breakers - to include NYSE-listed symbols in the
+    Russell 1000 index beginning Tuesday, September 14." The linked list at https://www.nyse.com/publicdocs/nyse/notifications/trader-update/vtp_symbol_list.xlsx
+    is an eligibility list, not a completion confirmation.'
+  - 'Not found: actual completion for all XNYS S&P 500 stocks or all XNYS expansion groups. Searched the NYSE public notifications
+    API for trading pause, Volatility, and S&P; reviewed notices 8063, 8064, 8075, 8293, the linked rollout schedule and eligible-symbol
+    list, proposed Rule 80C FAQ, and Nasdaq trading-pause FAQ. Nasdaq''s own June 14 completion and NYSE Arca''s September
+    15 first-phase ETP completion do not establish XNYS completion.'
+  - https://www.nyse.com/api/notifications/public/summary/32414744?systemId=1 links to a Volatility Trading Pause Verification
+    document, but identifies NYSE ARCA EQUITIES; the linked PDF returned 404. It cannot establish XNYS completion.
+  status: open
+- gap_id: G-US-0013
+  market: XNYS+XNAS
+  scope: us_etf
+  rule: single_stock_pause_pct
+  interval:
+    from: '2013-04-08'
+    to: '2013-12-08'
+  severity: medium
+  reason: LULD replaced the single-stock pause pilot in per-security batches, matching the existing LULD gap window. Mixed
+    mechanisms cannot be represented as one scope rule. The SEC states that all-NMS LULD coverage was achieved on December
+    8, 2013; no single-stock-pause record is extrapolated after replacement.
+  evidence:
+  - https://www.govinfo.gov/content/pkg/FR-2013-09-03/html/2013-21301.htm
+  - https://www.govinfo.gov/content/pkg/FR-2014-04-09/html/2014-07881.htm
+  - https://www.govinfo.gov/content/pkg/FR-2013-02-20/html/2013-03817.htm
+  status: open
+- gap_id: G-US-0014
+  market: XNYS+XNAS
+  scope: us_stock
+  rule: pattern_day_trader_min_equity
+  interval:
+    from: '2026-06-04'
+    to: null
+  severity: medium
+  reason: 'FINRA''s amendments to Rule 4210 took effect on June 4, 2026: they remove the pattern day trader day-trade-count
+    definition and the special $25,000 pattern day trader minimum equity requirement and replace them with an account-level
+    intraday margin deficit calculation. Members may, however, phase in implementation over 18 months, until October 20, 2027,
+    and a member that has not yet implemented the new standards may still apply the former pattern day trader requirements.
+    Within this scope the applicable regime therefore depends on the broker, and Marina holds no broker information, so no
+    single value can be given (the same kind of mixed applicability as a rule phased in security by security). From October
+    20, 2027 the special requirement is none at every member, but that is outside the coverage window and no record is created.'
+  evidence:
+  - 'https://www.finra.org/rules-guidance/notices/26-10 (Regulatory Notice 26-10, April 20, 2026) states: "The effective date
+    of the amendments is June 4, 2026, 45 days from publication of this Notice . Members that need more time to implement
+    the rule change will be permitted to phase in their implementation over a period of 18 months, until October 20, 2027."
+    The new standards replace the day trading margin requirements in their entirety, including the day trade count for designating
+    a pattern day trader and the $25,000 minimum equity requirement.'
+  - https://www.govinfo.gov/content/pkg/FR-2026-04-17/html/2026-07485.htm (SEC approval of SR-FINRA-2025-017, April 14, 2026)
+    approves the 18-month phased-in implementation, which lets broker-dealers implement the new intraday margin requirements
+    any time after the 45-day effective date; during those 45 days all members must apply the current day trading rules.
+  - 'https://www.finra.org/rev/2021726 (Rule 4210 as in effect from June 4, 2026): new paragraph (d)(2) requires each member
+    to determine the intraday margin deficit of each customer margin account (other than a good faith or portfolio margin
+    account) for each day with an IML-reducing transaction, and to have it satisfied as promptly as possible.'
+  - 'https://www.finra.org/investors/insights/frequent-intraday-trading (FINRA investor insight, June 4, 2026): margin trading
+    still requires minimum equity of $2,000 and firms may impose higher house requirements; intraday trading in a cash account
+    must be paid for with settled funds.'
+  status: open
+- gap_id: G-US-0015
+  market: XNYS+XNAS
+  scope: us_etf
+  rule: pattern_day_trader_min_equity
+  interval:
+    from: '2026-06-04'
+    to: null
+  severity: medium
+  reason: 'FINRA''s amendments to Rule 4210 took effect on June 4, 2026: they remove the pattern day trader day-trade-count
+    definition and the special $25,000 pattern day trader minimum equity requirement and replace them with an account-level
+    intraday margin deficit calculation. Members may, however, phase in implementation over 18 months, until October 20, 2027,
+    and a member that has not yet implemented the new standards may still apply the former pattern day trader requirements.
+    Within this scope the applicable regime therefore depends on the broker, and Marina holds no broker information, so no
+    single value can be given (the same kind of mixed applicability as a rule phased in security by security). From October
+    20, 2027 the special requirement is none at every member, but that is outside the coverage window and no record is created.'
+  evidence:
+  - 'https://www.finra.org/rules-guidance/notices/26-10 (Regulatory Notice 26-10, April 20, 2026) states: "The effective date
+    of the amendments is June 4, 2026, 45 days from publication of this Notice . Members that need more time to implement
+    the rule change will be permitted to phase in their implementation over a period of 18 months, until October 20, 2027."
+    The new standards replace the day trading margin requirements in their entirety, including the day trade count for designating
+    a pattern day trader and the $25,000 minimum equity requirement.'
+  - https://www.govinfo.gov/content/pkg/FR-2026-04-17/html/2026-07485.htm (SEC approval of SR-FINRA-2025-017, April 14, 2026)
+    approves the 18-month phased-in implementation, which lets broker-dealers implement the new intraday margin requirements
+    any time after the 45-day effective date; during those 45 days all members must apply the current day trading rules.
+  - 'https://www.finra.org/rev/2021726 (Rule 4210 as in effect from June 4, 2026): new paragraph (d)(2) requires each member
+    to determine the intraday margin deficit of each customer margin account (other than a good faith or portfolio margin
+    account) for each day with an IML-reducing transaction, and to have it satisfied as promptly as possible.'
+  - 'https://www.finra.org/investors/insights/frequent-intraday-trading (FINRA investor insight, June 4, 2026): margin trading
+    still requires minimum equity of $2,000 and firms may impose higher house requirements; intraday trading in a cash account
+    must be paid for with settled funds.'
+  status: open

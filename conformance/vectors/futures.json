@@ -1,0 +1,3073 @@
+[
+ {
+  "id": "FUT-0001",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-09-28",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "中金所 2018-12-02 通知：自2018年12月3日结算时起，沪深300和上证50股指期货各合约的交易保证金标准统一调整为10%；国庆通知自 9-29 才上调",
+  "tags": [
+   "futures",
+   "margin",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0002",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-09-29",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.13
+  },
+  "oracle": "中金所发〔2020〕15号：自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%",
+  "tags": [
+   "futures",
+   "margin",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0003",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-10-01",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.13
+  },
+  "oracle": "中金所发〔2020〕15号：9-29 结算时起 13%；恢复条款自 10-9 交易后才可能生效 → 10-01 仍为 13%",
+  "tags": [
+   "futures",
+   "margin",
+   "holiday"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0004",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-10-09",
+   "scope": "cffex_ih",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.11
+  },
+  "oracle": "中金所发〔2020〕15号（二）：10月9日交易后首个非单边市日结算时起沪深300、上证50 调整至11%；结算参数 XML 2020-10-09 IH=0.11",
+  "tags": [
+   "futures",
+   "margin",
+   "conditional-date",
+   "ih"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0005",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-10-09",
+   "scope": "cffex_ic",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.13
+  },
+  "oracle": "中金所发〔2020〕15号（二）：中证500股指期货各合约的交易保证金标准维持13%不变",
+  "tags": [
+   "futures",
+   "margin",
+   "holiday"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0006",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2023-05-04",
+   "scope": "cffex_ic",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.12
+  },
+  "oracle": "中金所发〔2023〕28号（二）：5月4日交易后…中证500、中证1000股指期货各合约的交易保证金标准调整为12%；XML 2023-05-04 IC=0.12",
+  "tags": [
+   "futures",
+   "margin",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0007",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2023-05-03",
+   "scope": "cffex_ic",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.15
+  },
+  "oracle": "中金所发〔2023〕28号（一）：自2023年4月27日结算时起…中证500 15%（5-04 之前未恢复）",
+  "tags": [
+   "futures",
+   "margin",
+   "last-day-of-old",
+   "holiday"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0008",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2022-07-21",
+   "scope": "cffex_im",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "中金所发〔2022〕41号：中证1000股指期货自2022年7月22日起上市交易 → 前一天没有 IM，不猜",
+  "tags": [
+   "futures",
+   "margin",
+   "pre-listing"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0009",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2022-07-22",
+   "scope": "cffex_im",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.15
+  },
+  "oracle": "中金所发〔2022〕41号：中证1000股指期货各合约上市初期的交易保证金标准为15%",
+  "tags": [
+   "futures",
+   "margin",
+   "listing-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0010",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2023-03-17",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.000345
+  },
+  "oracle": "中金所 2019-04-19 通知：自2019年4月22日起…平今仓交易手续费标准调整为成交金额的万分之三点四五",
+  "tags": [
+   "futures",
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0011",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2023-03-20",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.00023
+  },
+  "oracle": "中金所发〔2023〕16号：自2023年3月20日（星期一）起…平今仓交易手续费标准调整为成交金额的万分之二点三",
+  "tags": [
+   "futures",
+   "fees",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0012",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2016-06-01",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0023
+  },
+  "oracle": "中金所 2015-09-02 通知写明自2015年9月7日起平今万分之二十三；结算业务参数表 CSV 20150907 的平今仓收取率 10000% × 交易费万分之0.23 = 万分之23，同日变动 → verified，要求 verified 时照答",
+  "tags": [
+   "futures",
+   "fees",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0013",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2016-06-01",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0023
+  },
+  "oracle": "中金所 2015-09-02 通知：自2015年9月7日起…平今仓交易手续费标准调整为成交金额的万分之二十三（= 0.0023）",
+  "tags": [
+   "futures",
+   "fees"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0014",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2024-06-14",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.3e-05
+  },
+  "oracle": "中金所 2015-07-31 通知：自2015年8月3日起…交易手续费标准调整为成交金额的万分之零点二三；2026-06-01 收费一览表同",
+  "tags": [
+   "futures",
+   "fees",
+   "steady-state"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0015",
+  "query": {
+   "rule": "delivery_fee_rate",
+   "trade_date": "2021-08-16",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5e-05
+  },
+  "oracle": "中金所发〔2021〕39号：自2021年8月16日起…减半收取股指期货交割手续费；收费一览表基础标准 交割金额的万分之一 → 0.00005。XML JG_TRANSFEE_RATE 由 1E-4 变 5E-5",
+  "tags": [
+   "futures",
+   "fees",
+   "delivery",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0016",
+  "query": {
+   "rule": "delivery_fee_rate",
+   "trade_date": "2024-01-05",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "〔2022〕79号减半至2023年12月31日止；〔2024〕1号自2024年1月8日起 → 01-01..01-07 为基础标准万分之一",
+  "tags": [
+   "futures",
+   "fees",
+   "delivery",
+   "gap-between-notices"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0017",
+  "query": {
+   "rule": "delivery_fee_rate",
+   "trade_date": "2024-01-03",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "2024-01-01..2024-01-08 的交割费万分之一由 2023 年减半通知的止日与 2024 年减半通知的起日推出；该窗口中金所未发布结算参数 → single-source，要求 verified 时拒答",
+  "tags": [
+   "futures",
+   "fees",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0018",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2012-06-01",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "2010年交易细则第十二条：普通日涨跌停为上一交易日结算价的±10%。",
+  "tags": [
+   "futures",
+   "price-limit"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0019",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2016-01-05",
+   "scope": "cffex_ih",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.07
+  },
+  "oracle": "2015-12-04上证50合约交易细则第二十二、二十六条：2016-01-01起每日最大幅度为上一交易日结算价±7%；第二十一条另有5%阶段限制。",
+  "tags": [
+   "futures",
+   "price-limit"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0020",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2016-01-08",
+   "scope": "cffex_ic",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "2016-01-07暂停熔断通知第二项及中证500合约交易细则第二十二条：2016-01-08起普通幅度恢复上一交易日结算价±10%。",
+  "tags": [
+   "futures",
+   "price-limit"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0021",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2015-06-01",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:10",
+     "09:15"
+    ],
+    "continuous": [
+     [
+      "09:15",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:15"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "2010年交易细则第十一、四十六条：普通日集合竞价09:10–09:15，连续09:15–11:30、13:00–15:15，无收盘集合竞价。",
+  "tags": [
+   "futures",
+   "sessions"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0022",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "cffex_im",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:25",
+     "09:30"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "2022-07-18中证1000合约交易细则第十一、二十三条：2022-07-22起集合竞价09:25–09:30，连续09:30–11:30、13:00–15:00，无收盘集合竞价。",
+  "tags": [
+   "futures",
+   "sessions"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0023",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "cffex_if",
+   "market": "CCFX",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "2015-08-25平今仓手续费通知及2018-02-02官方问答仅支持当日回转推断，未找到上市日起直接生效条文；记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0024",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2016-06-01",
+   "scope": "cffex_t",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.02
+  },
+  "oracle": "2015年10年期国债期货合约交易细则规定普通日涨跌停幅度为上一交易日结算价的±2%。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0025",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2020-10-08",
+   "scope": "cffex_ts",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.006
+  },
+  "oracle": "2020-09-27国庆、中秋工作安排通知：9月29日结算起2年期保证金临时调整为0.6%，10月9日恢复。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0026",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "cffex_tl",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:25",
+     "09:30"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:15"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "30年期国债期货合约交易细则：集合竞价09:25–09:30，连续交易09:30–11:30、13:00–15:15，无收盘集合竞价。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0027",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2015-06-01",
+   "scope": "cffex_tf",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2015年细则第二十一、二十六条：新合约1.2%，TF1506/TF1509保留1.5%；品种级记录留空至TF1509最后交易日2015-09-11结束。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0028",
+  "query": {
+   "rule": "delivery_fee_per_lot",
+   "trade_date": "2022-06-01",
+   "scope": "cffex_t",
+   "market": "CCFX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2.5
+  },
+  "oracle": "2021-12-24通知规定2022年全年交割费减半，基础5元/手减为2.5元/手。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0029",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "cffex_tf",
+   "market": "CCFX",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "平今仓手续费条文仅支持当日回转推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "bond-futures"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0030",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-02-08",
+   "scope": "shfe_cu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上期所2024年春节工作安排通知（2024-02-05）：自2月7日收盘结算时起铜投机交易保证金比例调整为10%；js20240207.dat结算参数一致。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0031",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-10-24",
+   "scope": "shfe_ao",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.09
+  },
+  "oracle": "上期所2024-10-22通知：自10月23日收盘结算时起氧化铝涨跌停板幅度调整为9%，适用于下一交易日10月24日；ContractDailyTradeArgument20241024.dat一致。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0032",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2025-10-15",
+   "scope": "shfe_ni",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上期所2025-10-10通知：自10月14日收盘结算时起镍一般持仓交易保证金比例调整为10%；js20251014.dat结算参数一致。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0033",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_cu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "20:55",
+     "21:00"
+    ],
+    "night": [
+     "21:00",
+     "01:00"
+    ],
+    "day_call": [
+     "08:55",
+     "09:00"
+    ],
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上期所交易时间页：夜盘集合竞价20:55–21:00、连续交易21:00–01:00，日盘集合竞价08:55–09:00、连续交易09:00–10:15、10:30–11:30、13:30–15:00；交易管理办法第三十三条。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0034",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-06-01",
+   "scope": "shfe_cu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2026年已上市合约与新上市合约（CU2703起）保证金分开定标准，一般月份同时存在两个值，品种级记录留空并登记已知缺口。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0035",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_sn",
+   "market": "XSGE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由日内平今仓手续费通知与品种页平今折扣率推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0036",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-08-15",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.12
+  },
+  "oracle": "上期所2024-05-21通知：自5月23日收盘结算时起黄金投机交易保证金比例调整为12%；js20240523.dat结算参数一致，至2025-01-24下一次调整前未变。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0037",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2025-07-15",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "上期所2025年劳动节工作安排通知（2025-04-25）：节后涨跌停板幅度恢复原有水平，自5月7日交易日起螺纹钢一般月份为5%；ContractDailyTradeArgument20250507.dat一致，至2025-09-30国庆节前调整前未变。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0038",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_ag",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "20:55",
+     "21:00"
+    ],
+    "night": [
+     "21:00",
+     "02:30"
+    ],
+    "day_call": [
+     "08:55",
+     "09:00"
+    ],
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上期所交易时间页：黄金、白银夜盘集合竞价20:55–21:00、连续交易21:00–02:30，日盘集合竞价08:55–09:00、连续交易09:00–10:15、10:30–11:30、13:30–15:00；交易管理办法第三十三条。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0039",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_wr",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "08:55",
+     "09:00"
+    ],
+    "night": null,
+    "day_call": null,
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上期所交易时间页：线材无夜盘，日盘集合竞价08:55–09:00、连续交易09:00–10:15、10:30–11:30、13:30–15:00；交易管理办法：未开设连续交易的品种，开盘集合竞价在日盘开市前5分钟内进行。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0040",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-08-05",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "上期所2024-07-29通知：自7月31日收盘结算时起RB2410投机交易保证金比例单独提高至8%，js20240731.dat中其他一般月份仍为7%，品种级记录留空并登记已知缺口（2024-07-31至2024-08-16）。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0041",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_hc",
+   "market": "XSGE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由平今仓手续费与风险控制管理办法“平当日新开仓位”撮合例外推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0042",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_fu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上期所2024年劳动节工作安排通知（2024-04-25）：节后保证金恢复原有水平；js20240506.dat燃料油一般月份投机交易保证金比例10%，交易日历同，至2024-09-27国庆节前调整前未变。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0043",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_ru",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.06
+  },
+  "oracle": "上期所2024年劳动节工作安排通知（2024-04-25）：节后涨跌停板幅度恢复原有水平；ContractDailyTradeArgument20240507.dat天然橡胶一般月份为6%，至2024-09-13调整前未变。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0044",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2025-06-10",
+   "scope": "shfe_ad",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.07
+  },
+  "oracle": "上期所2025-05-26铸造铝合金期货上市通知：自2025年6月10日上市，涨跌停板幅度为±7%，首日涨跌停板幅度为其2倍；当日交易参数文件显示挂牌双倍14%，普通幅度7%自上市日记录，挂牌双倍幅度不另建记录（交易管理办法第三十七条）。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0045",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2025-09-10",
+   "scope": "shfe_op",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.08
+  },
+  "oracle": "上期所2025-08-18胶版印刷纸期货上市通知：自2025年9月10日上市，交易保证金为合约价值的8%；js20250910.dat投机保证金一致。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0046",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2025-09-09",
+   "scope": "shfe_op",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "胶版印刷纸期货2025-09-10才上市（上期所2025-08-18通知），上市前一日无记录，Marina对该品种的覆盖自上市日起。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0047",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2025-07-01",
+   "scope": "shfe_ad",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "20:55",
+     "21:00"
+    ],
+    "night": [
+     "21:00",
+     "01:00"
+    ],
+    "day_call": [
+     "08:55",
+     "09:00"
+    ],
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上期所2025-05-26铸造铝合金期货上市通知与交易时间页：连续交易（夜盘）21:00–次日01:00，夜盘集合竞价20:55–21:00，日盘集合竞价08:55–09:00，日盘09:00–10:15、10:30–11:30、13:30–15:00；交易管理办法第三十三条。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0048",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-10-20",
+   "scope": "shfe_bu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "上期所2026-10-09通知（上期发〔2026〕344号）：自2026年10月12日收盘结算时起BU2610、BU2611、BU2612、BU2701一般持仓交易保证金比例为14%；js20261012.dat中其他一般月份仍为12%，品种级记录留空并登记已知缺口（2026-10-12起，未结束）。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0049",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "shfe_br",
+   "market": "XSGE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由平今仓手续费与风险控制管理办法“平当日新开仓位”撮合例外推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0050",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-06-14",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "能源中心2024年劳动节工作安排通知（2024-04-25）：节后涨跌停板幅度和交易保证金比例恢复原有水平；js20240506.dat原油一般月份（按风险控制管理细则第六十四条排除交割前第一月起的合约）投机交易保证金比例10%，至2024-09-18调整前未变。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0051",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-06-14",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.08
+  },
+  "oracle": "能源中心2024年劳动节工作安排通知（2024-04-25）：节后涨跌停板幅度恢复原有水平；ContractDailyTradeArgument20240507.dat原油一般月份为8%，至2024-09-19调整前未变。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0052",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-06-14",
+   "scope": "ine_bc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.09
+  },
+  "oracle": "能源中心2024年劳动节工作安排通知（2024-04-25）：节后保证金恢复原有水平；js20240506.dat国际铜一般月份（按风险控制管理细则第七十八条排除交割月及前一月梯度合约）投机交易保证金比例9%，至2024-09-27调整前未变。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0053",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-06-14",
+   "scope": "ine_nr",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.06
+  },
+  "oracle": "能源中心2024年劳动节工作安排通知（2024-04-25）：节后涨跌停板幅度恢复原有水平；ContractDailyTradeArgument20240507.dat 20号胶一般月份为6%，至2024-09-13调整前未变。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0054",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "ine_ec",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "08:55",
+     "09:00"
+    ],
+    "night": null,
+    "day_call": null,
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "能源中心集运指数（欧线）期货上市通知（2023-08-11）：交易时间每周一至周五09:00-10:15、10:30-11:30、13:30-15:00，无夜盘；08:55-09:00集合竞价（交易细则第十九条），交易时间页同。night与day_call为null。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0055",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "20:55",
+     "21:00"
+    ],
+    "night": [
+     "21:00",
+     "02:30"
+    ],
+    "day_call": [
+     "08:55",
+     "09:00"
+    ],
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "交易时间页：原油夜盘集合竞价20:55-21:00，连续交易21:00-次日02:30，日盘集合竞价08:55-09:00，日盘09:00-10:15、10:30-11:30、13:30-15:00；交易细则第十九条另设日盘集合竞价。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0056",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-10-20",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "js20261012.dat：排除交割前第一月起的合约后，SC2612、SC2701投机交易保证金比例18%，其他一般月份16%，品种级记录留空并登记已知缺口（2026-10-12起，未结束）。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0057",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "ine_lu",
+   "market": "XINE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由风险控制管理细则第十五条“平当日新开仓位”撮合例外推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "ine"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0058",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-06-14",
+   "scope": "czce_cf",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.07
+  },
+  "oracle": "郑商所2024-05-06期货结算参数表：按风险控制管理办法第五、七条排除交割月前一个月第16个日历日起进入梯度的合约后，棉花一般月份交易保证金标准7%，至2024-09-12调整前未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0059",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-09-30",
+   "scope": "czce_oi",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "郑商所2024年国庆节期间交易保证金标准和涨跌停板幅度调整情况（官网通知附件）：9月27日结算时起菜油12%/10%；期货交易管理办法第三十二条：结算价是确定下一交易日涨跌停板额的依据，故±10%自下一交易日2024-09-30起适用；2024-09-27期货结算参数表菜油一般月份涨跌停板±10，至2024-10-09前未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0060",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-09-27",
+   "scope": "czce_ma",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "郑商所2024年国庆节期间交易保证金标准和涨跌停板幅度调整情况（官网通知附件）：9月27日结算时起甲醇交易保证金标准由8%调整为10%；2024-09-27期货结算参数表甲醇一般月份10%。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0061",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-06-14",
+   "scope": "czce_sr",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.06
+  },
+  "oracle": "郑商所2024-05-06期货结算参数表：白糖一般月份（排除下一交易日进入交割月、单边市及挂牌双倍幅度的合约）涨跌停板±6，自下一交易日2024-05-07起适用，至2024-09-13调整前未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0062",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2025-03-14",
+   "scope": "czce_sf",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.09
+  },
+  "oracle": "郑商所2025-02-05期货结算参数表：按风险控制管理办法第五、七条排除交割月前一个月第16个日历日起进入梯度的合约后，硅铁一般月份交易保证金标准9%，至2025-04-29调整前未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0063",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "czce_pf",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "20:55",
+     "21:00"
+    ],
+    "night": [
+     "21:00",
+     "23:00"
+    ],
+    "day_call": null,
+    "continuous": [
+     [
+      "09:00",
+      "10:15"
+     ],
+     [
+      "10:30",
+      "11:30"
+     ],
+     [
+      "13:30",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "短纤期货上市交易公告（2020-09-28，存档）：夜盘交易时间21:00至23:00；期货交易管理办法（2023）第二十六、二十八条：日盘9:00-11:30（10:15-10:30休息）、13:30-15:00，开展夜盘交易的品种开盘集合竞价在夜盘开市前5分钟内；第三十条8:55-8:59仅可取消夜盘未成交申报单，不是日盘集合竞价，day_call为null。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0064",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-03-01",
+   "scope": "czce_ap",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "郑商所2023-11-08至2024-04-12期货结算参数表：排除梯度合约后苹果一般月份同时存在13%与10%两档（如2024-04-12 AP405为13%，AP410等为10%），品种级记录留空并登记已知缺口（2023-11-08至2024-04-15）。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0065",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "czce_sr",
+   "market": "XZCE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由期货结算参数表公布“日内平今仓交易手续费”一列推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0066",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-09-30",
+   "scope": "czce_pr",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.09
+  },
+  "oracle": "郑商所2024年国庆节期间交易保证金标准和涨跌停板幅度调整情况（官网通知附件）：9月27日结算时起瓶片由8%/7%调整为10%/9%；期货交易管理办法第三十二条：结算价是确定下一交易日涨跌停板额的依据，故±9%自下一交易日2024-09-30起适用；2024-09-27期货结算参数表瓶片一般月份涨跌停板±9，至2024-10-09恢复前未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0067",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-09-22",
+   "scope": "czce_rs",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.08
+  },
+  "oracle": "郑商所2026-09-15期货结算参数表：按风险控制管理办法第五、七条排除交割月前一个月第16个日历日起进入梯度的合约后，菜籽一般月份交易保证金标准由20%调整为8%（RS611），至2026-09-29调整前未变（2026-09-22 RS611、RS701、RS703、RS706、RS707、RS709均为8%）。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0068",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2025-06-16",
+   "scope": "czce_pm",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "郑商所期货结算参数表：覆盖窗口内普麦全部挂牌合约始终为挂牌双倍涨跌停板±14（合约无成交，风险控制管理办法第十五条：挂牌双倍幅度持续至成交首日），每日文件无普通幅度观测；窗口前通知所载普通幅度不向后沿用，品种级记录留空并登记已知缺口（2024-01-01起）。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0069",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2025-06-16",
+   "scope": "czce_zc",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.5
+  },
+  "oracle": "郑商所2025-06-13期货结算参数表：动力煤全部合约交易保证金标准50%（排除梯度合约后一般月份同为50%），2024-01-01至今未变。",
+  "tags": [
+   "futures",
+   "czce"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0070",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-02-07",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.11
+  },
+  "oracle": "广期所关于2024年春节假期前后调整相关期货合约涨跌停板幅度、交易保证金标准和交易手续费标准的通知（2024-02-05，存档）：自2024年2月7日结算时起，工业硅期货合约交易保证金标准调整为11%；保证金自结算日起适用，至2024-02-19恢复为8%前未变。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0071",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-02-08",
+   "scope": "gfex_lc",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.15
+  },
+  "oracle": "同一通知：自2024年2月7日结算时起，碳酸锂期货合约涨跌停板幅度调整为15%；结算时调整的涨跌停板幅度自下一交易日2024-02-08起适用，至2024-02-20恢复为10%前未变。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0072",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-12-26",
+   "scope": "gfex_ps",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.09
+  },
+  "oracle": "广期所关于多晶硅期货合约上市交易有关事项的通知（2024-12-13，存档）：多晶硅期货合约自2024年12月26日起上市交易，上市首日交易保证金水平为合约价值的9%，有成交则下一交易日起仍为9%；上市日即覆盖起点。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0073",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2025-03-14",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.07
+  },
+  "oracle": "广期所关于2025年春节假期前后调整相关期货合约涨跌停板幅度和交易保证金标准的通知（2025-01-21，存档）：节后恢复交易、持仓量最大合约未出现单边市的第一个交易日结算时起，工业硅涨跌停板幅度恢复至调整前水平（7%），自下一交易日2025-02-06起适用，至2025-04-08前未变。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0074",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-07-10",
+   "scope": "gfex_pd",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.16
+  },
+  "oracle": "广期所关于调整铂、钯期货合约涨跌停板幅度和交易保证金标准的通知（2026-07-01，存档）：自2026年7月3日结算时起，铂、钯期货合约交易保证金标准调整为16%，至2026年国庆节假期调整（2026-09-29结算时起）前未变。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0075",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2026-09-30",
+   "scope": "gfex_pt",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.16
+  },
+  "oracle": "广期所关于2026年国庆节假期调整相关期货合约涨跌停板幅度和交易保证金标准的通知（2026-09-21，存档）：自2026年9月29日结算时起，铂、钯期货合约涨跌停板幅度调整为16%；结算时调整的幅度自下一交易日2026-09-30起适用，至2026-10-09前未变。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0076",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2024-06-14",
+   "scope": "gfex_lc",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "2024-04-29至2024-09-26碳酸锂一般月份投机保证金在结算参数中由12%变为13%、再变为12%，但未取得带日期的调整与恢复通知，结算参数只作核对、不作来源；品种级记录留空并登记已知缺口（2024-04-29至2024-09-27）。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0077",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2025-11-27",
+   "scope": "gfex_pt",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "铂期货自2025-11-27挂牌（广期所铂挂牌通知，存档），覆盖自上市日起；广州期货交易所结算管理办法第四十六条列明“平当日仓盈亏”的计算公式，据此推断可当日开平（single-source），不表示免手续费或不限开仓。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0078",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2025-06-16",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "广州期货交易所交易管理办法规定日盘三节及有、无夜盘品种的集合竞价安排，夜盘品种另行公告；未取得工业硅夜盘归属及完整生效链的带日期原文，不断言有无夜盘，登记已知缺口（2024-01-01起，未结束）。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0079",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2025-06-16",
+   "scope": "gfex_lc",
+   "market": "GFEX",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "当日回转仅由结算管理办法第四十六条“平当日仓盈亏”公式推断，记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "gfex"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0080",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "shfe_cu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5e-05
+  },
+  "oracle": "上期所每日结算参数文件铜期货全部挂牌合约TRADEFEERATIO为0.05（单位‰，即成交金额的万分之零点五），2023年至2026-11-02未变；单位依据氧化铝2024-10-28通知“万分之三”对应日文件0.3。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0081",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-06-03",
+   "scope": "shfe_al",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3
+  },
+  "oracle": "每日结算参数文件铝期货全部挂牌合约TRADEFEERATIO为0、TRADEFEEUNIT为3（元/手），窗口内未变。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0082",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2024-11-01",
+   "scope": "shfe_ao",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0003
+  },
+  "oracle": "上期所2024-10-28通知：氧化铝期货交易手续费调整为成交金额的万分之三；js20241030.dat起全部合约TRADEFEERATIO为0.3，至2025-03-11下调前未变。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0083",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2025-11-10",
+   "scope": "shfe_ad",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上期所2025-11-04通知：铸造铝合金期货免收日内平今仓交易手续费，自2025-11-10起；免收记为0（有来源的0，不是缺省值）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0084",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-07-01",
+   "scope": "shfe_sn",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3
+  },
+  "oracle": "上期所2025-03-31通知附件：SN2507及后续新上市合约日内平今仓交易手续费3元/手；SN2504–SN2506（15元/手）于2025-06-17前全部摘牌。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0085",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-06-03",
+   "scope": "shfe_ni",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "2024-05-13至2024-07-02每日结算参数文件中NI2409为6元/手、其余镍合约3元/手；按合约分档记录，不给合约代码不替调用者挑档，返回MISSING_CONTEXT（缺contract）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0086",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-05-06",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "黄金期货交易手续费按月份类别与临近到期滚动分档（合约选择器记录），不给合约代码返回MISSING_CONTEXT（缺contract）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0087",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-07-01",
+   "scope": "shfe_sn",
+   "market": "XSGE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "锡期货平今手续费只有通知来源（每日文件没有平今字段），记录为single-source，要求verified返回UNVERIFIED。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0088",
+  "query": {
+   "rule": "margin_ratio",
+   "trade_date": "2026-11-03",
+   "scope": "shfe_fu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.16
+  },
+  "oracle": "js20261103.dat：排除最近两个到期月FU2612/FU2701（2026-10-30通知升至20%）与当日涨跌停合约后，FU2702–FU2711一般持仓投机保证金均为16%。",
+  "tags": [
+   "futures",
+   "shfe"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0089",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-06-03",
+   "scope": "shfe_ni",
+   "market": "XSGE",
+   "context": {
+    "contract": "ni2409"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 6
+  },
+  "oracle": "js20240513.dat至js20240701.dat：NI2409的TRADEFEEUNIT为6，其余镍合约为3。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0090",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-06-03",
+   "scope": "shfe_ni",
+   "market": "XSGE",
+   "context": {
+    "contract": "ni2410"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3
+  },
+  "oracle": "同期NI2409以外的镍合约TRADEFEEUNIT为3。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0091",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-01-02",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2402"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 10
+  },
+  "oracle": "js20240102.dat：au2402（最近三个月内的偶数月）TRADEFEEUNIT为10。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0092",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2024-01-02",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2403"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2
+  },
+  "oracle": "js20240102.dat：au2403（奇数月，2024-05-31前不属高档）TRADEFEEUNIT为2。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0093",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-07-10",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2509"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20
+  },
+  "oracle": "2025-06-03起最近三个日历月与6、12月合约为高档：au2509距交割2个月，TRADEFEEUNIT为20。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0094",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-07-10",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "AU2510"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 10
+  },
+  "oracle": "au2510距交割3个月且非6、12月，为低档10元；合约代码大小写不敏感。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0095",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-08-01",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2510"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20
+  },
+  "oracle": "进入8月后au2510距交割2个月，滚入高档20元（js20250801.dat）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0096",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-03-02",
+   "scope": "shfe_ag",
+   "market": "XSGE",
+   "context": {
+    "contract": "ag2606"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5e-05
+  },
+  "oracle": "白银6、12月合约与最近三个日历月合约TRADEFEERATIO为0.05‰（js20260302.dat）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0097",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-03-02",
+   "scope": "shfe_ag",
+   "market": "XSGE",
+   "context": {
+    "contract": "ag2607"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1e-05
+  },
+  "oracle": "ag2607距交割4个月且非6、12月，TRADEFEERATIO为0.01‰。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0098",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-05-06",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2506"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20
+  },
+  "oracle": "上期所2025-04-23通知：AU2506合约日内平今仓交易手续费20元/手，自2025-04-25起。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0099",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-05-06",
+   "scope": "shfe_au",
+   "market": "XSGE",
+   "context": {
+    "contract": "au2508"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0368"
+   ]
+  },
+  "oracle": "通知只点名AU2506，其余黄金合约同期平今收费没有找到，落在带合约选择器的缺口G-0368。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0100",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-03-03",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {
+    "contract": "rb2507"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-05
+  },
+  "oracle": "2024-05-29通知：螺纹钢非主力月份交易手续费降至万分之零点二；rb2507距交割4个月且非1/5/10月，js20250303.dat TRADEFEERATIO 0.02。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0101",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-03-03",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {
+    "contract": "rb2505"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "rb2505属1/5/10主力月份，js20250303.dat TRADEFEERATIO 0.1（万分之一）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0102",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2024-03-01",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {
+    "contract": "rb2501"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0003
+  },
+  "oracle": "2024年初RB2410、RB2501单独收万分之三（js20240301.dat TRADEFEERATIO 0.3）。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0103",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-03-03",
+   "scope": "shfe_rb",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "螺纹钢交易手续费按月份分档，不给合约返回MISSING_CONTEXT。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0104",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-03-12",
+   "scope": "shfe_fu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "2026-03-11起燃料油全部当时挂牌合约统一万分之一（通知+日文件），无需合约代码。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0105",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-06-29",
+   "scope": "shfe_fu",
+   "market": "XSGE",
+   "context": {
+    "contract": "fu2607"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "2026-06-25通知降费时FU2607保留万分之一。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0106",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "shfe_bu",
+   "market": "XSGE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5e-05
+  },
+  "oracle": "2024-04-23通知：沥青交易手续费自2024-04-26起万分之零点五，日文件一致。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0107",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-01-02",
+   "scope": "shfe_ss",
+   "market": "XSGE",
+   "context": {
+    "contract": "ss2503"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0405"
+   ]
+  },
+  "oracle": "不锈钢平今手续费在窗口内没有找到可证明的通知，整段缺口G-0405。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0108",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2026-08-03",
+   "scope": "shfe_sp",
+   "market": "XSGE",
+   "context": {
+    "contract": "sp2611"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "2026-07-10附件：纸浆全部挂牌及后续新上市合约平今手续费为0。",
+  "tags": [
+   "futures",
+   "shfe",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0109",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-01-02",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20
+  },
+  "oracle": "原油交易手续费人民币20元/手，全部合约同值（js20250102.dat TRADEFEEUNIT 20）。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0110",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2026-04-15",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "2026-04-01起已上市合约40元、新上市合约20元并存，不给合约返回MISSING_CONTEXT。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0111",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2026-04-15",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {
+    "contract": "sc2606"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 40
+  },
+  "oracle": "2026-03-09通知：原油期货已上市合约交易手续费调整为40元/手（2026-03-11起）。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0112",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2026-04-15",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {
+    "contract": "sc2704"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20
+  },
+  "oracle": "sc2704于2026-04-01新挂牌，按原费20元/手（js20260401.dat）。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0113",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "ine_ec",
+   "market": "XINE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0006
+  },
+  "oracle": "集运指数（欧线）交易手续费万分之六（日文件TRADEFEERATIO 0.6‰）。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0114",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2026-03-12",
+   "scope": "ine_sc",
+   "market": "XINE",
+   "context": {
+    "contract": "sc2606"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 240
+  },
+  "oracle": "2026-03-09通知附件：原油已上市合约日内平今仓交易手续费240元/手（2026-03-11起）。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0115",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "ine_nr",
+   "market": "XINE",
+   "context": {
+    "contract": "nr2505"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0439"
+   ]
+  },
+  "oracle": "20号胶平今手续费在窗口内没有找到通知，整段缺口G-0439。",
+  "tags": [
+   "futures",
+   "ine",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0116",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2025-01-02",
+   "scope": "czce_ap",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5.0
+  },
+  "oracle": "郑商所每日结算参数：苹果各合约交易手续费5.00、收取方式绝对值（元/手）。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0117",
+  "query": {
+   "rule": "close_today_fee_per_lot",
+   "trade_date": "2025-01-02",
+   "scope": "czce_ap",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 20.0
+  },
+  "oracle": "同文件苹果日内平今仓交易手续费20.00元/手。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0118",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "czce_ma",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "甲醇交易手续费1.00、比例值；比例值单位为成交金额的万分之X（2024-08-16瓶片上市通知存档），即0.0001。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0119",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2024-10-23",
+   "scope": "czce_sa",
+   "market": "XZCE",
+   "context": {
+    "contract": "SA501"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0004
+  },
+  "oracle": "2024-10-21通知：纯碱2412、2501合约两项手续费调整为成交金额的万分之四；三位代码SA501按交易日解读为2025年1月。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0120",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2024-10-23",
+   "scope": "czce_sa",
+   "market": "XZCE",
+   "context": {
+    "contract": "SA505"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0002
+  },
+  "oracle": "同日纯碱其他合约日内平今仓手续费2.00比例值（万分之二）。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0121",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2024-10-23",
+   "scope": "czce_sa",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "纯碱同日合约间收费不同，不给合约返回MISSING_CONTEXT。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0122",
+  "query": {
+   "rule": "trans_fee_per_lot",
+   "trade_date": "2026-07-01",
+   "scope": "czce_pl",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3.0
+  },
+  "oracle": "丙烯自2026-06-08由比例值改为绝对值3元/手（每日结算参数）。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0123",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-07-01",
+   "scope": "czce_pl",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "丙烯改按手收取后，比例形式不建记录也不建缺口。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0124",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2025-03-17",
+   "scope": "czce_pr",
+   "market": "XZCE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0
+  },
+  "oracle": "2025-03-12通知：瓶片免收日内平今仓交易手续费，自2025-03-17起（每日文件0.00）。",
+  "tags": [
+   "futures",
+   "czce",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0125",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-01-02",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "工业硅上市通知：交易手续费为成交金额的万分之一（结算参数1，全部合约）。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0126",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2024-06-03",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0
+  },
+  "oracle": "2023-03-30通知：自2023年4月3日交易时起免收工业硅期货日内平今仓交易手续费。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0127",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-08-01",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "contract"
+   ]
+  },
+  "oracle": "2025-07-23通知只调SI2509（万分之二点五），其他合约仍万分之一 → 不给合约不答。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0128",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2025-08-01",
+   "scope": "gfex_si",
+   "market": "GFEX",
+   "context": {
+    "contract": "SI2509"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.00025
+  },
+  "oracle": "2025-07-23通知：自2025年7月25日交易时起SI2509交易手续费万分之二点五。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0129",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2026-08-03",
+   "scope": "gfex_lc",
+   "market": "GFEX",
+   "context": {
+    "contract": "LC2609"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.00032
+  },
+  "oracle": "2026-07-07通知：LC2607–LC2706交易手续费万分之一点六、日内平今仓万分之三点二，自7月9日交易时起。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0130",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2024-01-02",
+   "scope": "gfex_lc",
+   "market": "GFEX",
+   "context": {
+    "contract": "LC2401"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "结算参数显示LC2401于2023-12-11起万分之六点四，未找到通知 → 缺口，不把观察值当记录。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0131",
+  "query": {
+   "rule": "close_today_fee_rate",
+   "trade_date": "2026-04-07",
+   "scope": "gfex_ps",
+   "market": "GFEX",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.00025
+  },
+  "oracle": "2026-04-01通知：PS2604–PS2703两项手续费万分之二点五，自4月3日交易时起（当时全部挂牌合约）。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0132",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-05-06",
+   "scope": "gfex_pt",
+   "market": "GFEX",
+   "context": {
+    "contract": "PT2606"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "2026-04-23通知：自2026年4月27日交易时起PT2606交易手续费万分之一。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FUT-0133",
+  "query": {
+   "rule": "trans_fee_rate",
+   "trade_date": "2026-05-06",
+   "scope": "gfex_pt",
+   "market": "GFEX",
+   "context": {
+    "contract": "PT2610"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "铂期货上市以来的基础手续费通知未找到 → PT2606以外的合约是缺口。",
+  "tags": [
+   "futures",
+   "gfex",
+   "fee",
+   "contract"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.marina-rules.@JOB@</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HELPER@</string>
+		<string>@JOB@</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>HOME</key>
+		<string>@HOME@</string>
+		<key>PATH</key>
+		<string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+@EXTRA_ENV@	</dict>
+	<key>StandardOutPath</key>
+	<string>@REPO@/ops/logs/launchd-@JOB@.out</string>
+	<key>StandardErrorPath</key>
+	<string>@REPO@/ops/logs/launchd-@JOB@.err</string>
+	<key>StartCalendarInterval</key>
+	<dict>
+@SCHEDULE@	</dict>
+</dict>
+</plist>

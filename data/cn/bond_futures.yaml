@@ -1,0 +1,2192 @@
+# CFFEX treasury bond futures (MIC CCFX), per product scope.
+# Rules: price limits, margins, sessions, holding periods and per-lot fees.
+# Sources: official contract-rule PDFs, notices and settlement CSVs; special-day exceptions appear only in notes.
+schema: 1.1
+market: CCFX
+asset_class: bond_futures
+records:
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2015-03-20'
+  effective_to: '2021-08-16'
+  published_at: '2015-03-09'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  notes: Exchange physical-delivery fee in CNY per lot. The first sourced temporary halving begins on 2021-08-16;
+    declaration fees and broker charges are excluded.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2021-08-16
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2021-08-16'
+  effective_to: '2022-01-01'
+  published_at: '2021-08-13'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20210813/25279.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2021年8月至12月股指期货、国债期货交割手续费的通知
+    date: '2021-08-13'
+    kind: official
+    quote: 自2021年8月16日起至2021年12月31日止，减半收取股指期货、国债期货交割手续费。
+    content_sha256: ff772b9b1d2cec7e72c8d133726d9a2683cc7333e2b21a33f234dade25c227f5
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202108/16/20210816_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20210816）
+    date: '2021-08-16'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … T2109 ,2%,2%,3元/手,2.5元/手,0%
+    content_sha256: 59d3883165dd5e73e987a6a56a20f76f534ab7c613cc77b0dc271f85cb7f11a9
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2022-01-01
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2022-01-01'
+  effective_to: '2023-01-01'
+  published_at: '2021-12-24'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20211224/26693.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2022年股指期货、国债期货交割手续费的通知
+    date: '2021-12-24'
+    kind: official
+    quote: 自2022年1月1日起至2022年12月31日止，减半收取股指期货和国债期货交割手续费。
+    content_sha256: aeced8c80c047375946af0d550e9ac3f01d02083b75e2f23d91df25e187d9ceb
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2023-01-01
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2023-01-01'
+  effective_to: '2024-01-01'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2024-01-01
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2024-01-01'
+  effective_to: '2024-01-08'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/20231218_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20231218）
+    date: '2023-12-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … T2403 ,2%,2%,3元/手,5元/手,0%
+    content_sha256: 622e5e51f733e8a512c06f87f78f89c80eb7c5d5e288699e886b0360472912a1
+    hash_kind: bytes
+  notes: Inferred resumption of the 5 CNY base fee between the expiry of the 2023 concession and the start of the
+    2024 concession. The 2023-12-18 CSV shows 5 CNY for 2024 delivery contracts. The calendar start is inferred
+    rather than directly stated, so verification remains single-source. This does not assert that exchange-for-physical
+    activity was absent during the gap.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2024-01-08
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2024-01-08'
+  effective_to: '2025-01-01'
+  published_at: '2024-01-05'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … T2403 ,2%,2%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2025-01-01
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2025-01-01'
+  effective_to: '2026-01-01'
+  published_at: '2024-12-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20241227/42057.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2025年交割和行权（履约）手续费的通知
+    date: '2024-12-27'
+    kind: official
+    quote: 自2025年1月1日起至2025年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 356fa04795b6e711fade3f6755252a202c9cb9fb2052c6b9e8d45594bedc78c2
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_t.2026-01-01
+  scope: cffex_t
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2026-01-01'
+  effective_to: '2027-01-01'
+  published_at: '2025-12-22'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20251222/47020.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2026年交割和行权（履约）手续费的通知
+    date: '2025-12-22'
+    kind: official
+    quote: 自2026年1月1日起至2026年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 58be2d6ef9c5d44768b88d0c71074fb9ccee4b49ddf62ada0ade2cae9b23fbd7
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.margin_ratio.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: margin_ratio
+  value: 0.02
+  effective_from: '2015-03-20'
+  effective_to: null
+  published_at: '2015-03-09'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货各合约的交易保证金为合约价值的2%，交割月份前一个月下旬的前一交易日结算时起，交易保证金为合约价值的3%，交割月份第一个交易日的前一交易日结算时起，交易保证金为合约价值的4%。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201503/20/20150320_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20150320）
+    date: '2015-03-20'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … T1509 ,2%,2%,3元/手,5元/手,0%
+    content_sha256: 913187a09c566a3fd9a77a212ecae702eb74f360210f51a48b4df966742b566b
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170851x6sc.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2018-02-12版本）
+    date: '2018-02-12'
+    kind: official
+    quote: 第十八条 本合约自交割月份之前的两个交易日结算 4 时起，交易保证金标准为合约价值的 3%。
+    content_sha256: f7d65556256055d4dce31040d21c1cec5f335ef0ea83205b13775d9f42cb7c5e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170851x6sc.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2018-02-12版本）
+    date: '2018-02-12'
+    kind: official
+    quote: 第二十四条 本细则自 2018 年 2 月 13 日起实施。本细 则第五条适用于 T1812 合约及其后续合约，T1803、T1806 和 T1809 合约按照《中国金融期货交易所 10 年期国债期货合约
+      交易细则》（2017 年 3 月 31 日第一次修订） 第五条执行； 第 6 十八条和第二十条适用于 T1806 合约及其后续合约，T1803 合约按照《中国金融期货交易所 10 年期国债期货合约交易 细则》（2017
+      年 3 月 31 日第一次修订） 第十八条和第二十条 执行。
+    content_sha256: f7d65556256055d4dce31040d21c1cec5f335ef0ea83205b13775d9f42cb7c5e
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Initially 3% before the last ten days of the preceding month and 4% before the first
+    trading day of the delivery month. From 2018-02-13, T1806 and later use 3% from settlement two trading days
+    before the delivery month; T1803 retains the old ladder.
+- id: cn.futures.min_holding_days.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: min_holding_days
+  value: 0
+  effective_from: '2015-03-20'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  notes: Inferred from the exchange's explicit close-today fee treatment (平今仓), which presupposes closing a position
+    opened on the same trading day. No directly worded rule permitting same-day opening and closing was found in
+    the examined contract rules and general trading rules. The listing-day start is inferred, not directly verified.
+    This does not imply zero transaction fees or unlimited opening.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.02
+  effective_from: '2015-03-20'
+  effective_to: null
+  published_at: '2015-03-09'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170819s583.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2015-03-06版本）
+    date: '2015-03-06'
+    kind: official
+    quote: '第二十一条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±2％。 合约上市首日涨跌停板幅度为挂盘基准价的±4％。上市 首日有成交的，于下一交易日恢复到合约规定的涨跌停板幅
+      度；上市首日无成交的，下一交易日继续执行前一交易日的 涨跌停板幅度。如上市首日连续三个交易日无成交的，交易 所可以对挂盘基准价作适当调整。 '
+    content_sha256: 90b74fe5237d28a4b6a9ac14c87d4b8dad0d0db9e6ba51efdb62c8e676609e6f
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  notes: Ordinary-day symmetric band against the previous trading day's settlement price. Listing-day band is ±4%
+    of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures.
+- id: cn.futures.session_schedule.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2015-03-20'
+  effective_to: '2020-07-20'
+  published_at: '2015-03-09'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170819s583.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2015-03-06版本）
+    date: '2015-03-06'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:10-9:15，其中 9:10-9:14 为 指令申报时间，9:14-9:15 为指令撮合时间。 连续竞价时间为每个交易日 9:15-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:15-11:30。
+    content_sha256: 90b74fe5237d28a4b6a9ac14c87d4b8dad0d0db9e6ba51efdb62c8e676609e6f
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  notes: 'Beijing time. Last trading day: opening call 09:10-09:15 and continuous trading 09:15-11:30 only; no afternoon
+    session or closing call auction.'
+- id: cn.futures.session_schedule.cffex_t.2020-07-20
+  scope: cffex_t
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2020-07-20'
+  effective_to: null
+  published_at: '2020-06-12'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195632jtop.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:25-9:30，其中9:25-9:29为 指令申报时间，9:29-9:30为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:30-11:30。
+    content_sha256: 1221bd17962406d2cd659bf2c9b1d8e66a8af88b96f6e9578ca89bfc1fbeee5f
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195632jtop.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 10年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 第二十四条 本细则自 2020年 7月 20日起实施。
+    content_sha256: 1221bd17962406d2cd659bf2c9b1d8e66a8af88b96f6e9578ca89bfc1fbeee5f
+    hash_kind: bytes
+  notes: 'Beijing time. Last trading day: opening call 09:25-09:30 and continuous trading 09:30-11:30 only; no afternoon
+    session or closing call auction. The afternoon close remains 15:15. Exchange-for-physical trading is outside
+    this auction schedule.'
+- id: cn.futures.trans_fee_per_lot.cffex_t.2015-03-20
+  scope: cffex_t
+  rule: trans_fee_per_lot
+  value: 3
+  effective_from: '2015-03-20'
+  effective_to: null
+  published_at: '2015-03-09'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150309/18708.html
+    publisher: 中国金融期货交易所
+    title: 关于10年期国债期货合约上市交易有关事项的通知
+    date: '2015-03-09'
+    kind: official
+    quote: 10年期国债期货合约自2015年3月20日（星期五）起上市交易。
+    content_sha256: 96d8bf528a6a97ae147c140d4ca827c65566387e1dbbb035c5c3094d83f6a74b
+    hash_kind: text
+  notes: Exchange fee in CNY per lot for opening and closing earlier-day positions. Close-today trades are exempt
+    from the listing date under the listing notice. No separate close_today_fee_per_lot record is created because
+    close-today is either waived or equal to the base fee. Per-order declaration fees and broker commissions are
+    outside this rule.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2013-09-06'
+  effective_to: '2021-08-16'
+  published_at: '2013-09-02'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  notes: Exchange physical-delivery fee in CNY per lot. The first sourced temporary halving begins on 2021-08-16;
+    declaration fees and broker charges are excluded.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2021-08-16
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2021-08-16'
+  effective_to: '2022-01-01'
+  published_at: '2021-08-13'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20210813/25279.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2021年8月至12月股指期货、国债期货交割手续费的通知
+    date: '2021-08-13'
+    kind: official
+    quote: 自2021年8月16日起至2021年12月31日止，减半收取股指期货、国债期货交割手续费。
+    content_sha256: ff772b9b1d2cec7e72c8d133726d9a2683cc7333e2b21a33f234dade25c227f5
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202108/16/20210816_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20210816）
+    date: '2021-08-16'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2109 ,1.2%,1.2%,3元/手,2.5元/手,0%
+    content_sha256: 59d3883165dd5e73e987a6a56a20f76f534ab7c613cc77b0dc271f85cb7f11a9
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2022-01-01
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2022-01-01'
+  effective_to: '2023-01-01'
+  published_at: '2021-12-24'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20211224/26693.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2022年股指期货、国债期货交割手续费的通知
+    date: '2021-12-24'
+    kind: official
+    quote: 自2022年1月1日起至2022年12月31日止，减半收取股指期货和国债期货交割手续费。
+    content_sha256: aeced8c80c047375946af0d550e9ac3f01d02083b75e2f23d91df25e187d9ceb
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2023-01-01
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2023-01-01'
+  effective_to: '2024-01-01'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2024-01-01
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2024-01-01'
+  effective_to: '2024-01-08'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/20231218_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20231218）
+    date: '2023-12-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2403 ,1.2%,1.2%,3元/手,5元/手,0%
+    content_sha256: 622e5e51f733e8a512c06f87f78f89c80eb7c5d5e288699e886b0360472912a1
+    hash_kind: bytes
+  notes: Inferred resumption of the 5 CNY base fee between the expiry of the 2023 concession and the start of the
+    2024 concession. The 2023-12-18 CSV shows 5 CNY for 2024 delivery contracts. The calendar start is inferred
+    rather than directly stated, so verification remains single-source. This does not assert that exchange-for-physical
+    activity was absent during the gap.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2024-01-08
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2024-01-08'
+  effective_to: '2025-01-01'
+  published_at: '2024-01-05'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2403 ,1.2%,1.2%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2025-01-01
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2025-01-01'
+  effective_to: '2026-01-01'
+  published_at: '2024-12-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20241227/42057.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2025年交割和行权（履约）手续费的通知
+    date: '2024-12-27'
+    kind: official
+    quote: 自2025年1月1日起至2025年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 356fa04795b6e711fade3f6755252a202c9cb9fb2052c6b9e8d45594bedc78c2
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tf.2026-01-01
+  scope: cffex_tf
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2026-01-01'
+  effective_to: '2027-01-01'
+  published_at: '2025-12-22'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20251222/47020.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2026年交割和行权（履约）手续费的通知
+    date: '2025-12-22'
+    kind: official
+    quote: 自2026年1月1日起至2026年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 58be2d6ef9c5d44768b88d0c71074fb9ccee4b49ddf62ada0ade2cae9b23fbd7
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.margin_ratio.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.03
+  effective_from: '2013-09-06'
+  effective_to: '2014-01-02'
+  published_at: '2013-09-02'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 为从严控制上市初期市场风险，5年期国债期货各合约的交易保证金暂定为合约价值的3%，交割月份前一个月中旬的前一交易日结算时起，交易保证金暂定为合约价值的4%，交割月份前一个月下旬的前一交易日结算时起，交易保证金暂定为合约价值的5%。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201309/06/20130906_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20130906）
+    date: '2013-09-06'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1312 ,3%,3%,,5元/手,100%
+    content_sha256: 3bfe932a5fc0daf2adce0288b5e9255a1779a09cfb03c27864018eec1cbdbcfe
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Listing notice overrides the contract-rule minimum of 2%. The pre-delivery ladder is
+    4% from settlement on the trading day before the middle ten days of the preceding month and 5% before its last
+    ten days.
+- id: cn.futures.margin_ratio.cffex_tf.2014-01-02
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.02
+  effective_from: '2014-01-02'
+  effective_to: '2014-11-03'
+  published_at: '2013-12-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20131227/17483.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货交易保证金等事项的通知
+    date: '2013-12-27'
+    kind: official
+    quote: 自2014年1月2日（星期四）结算时起，对国债期货交易保证金等事项作出以下调整： 一、5年期国债期货各合约的交易保证金标准调整为合约价值的2%，交割月份前一个月中旬的前一个交易日结算时起，交易保证金标准调整为合约价值的3%,交割月份前一个月下旬的前一个交易日结算时起，交易保证金标准为合约价值的5%。
+      二、5年期国债期货各合约的平今仓交易免收手续费。
+    content_sha256: aa397352cfa7e4162230b24ceb55215f956e47126f30a7adb3d6ec4b20c5cda4
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201401/02/20140102_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20140102）
+    date: '2014-01-02'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1406 ,2%,2%,3元/手,5元/手,0%
+    content_sha256: 962240e7a0d99a5b1b344f9d1fea9dedd296533936f34d167cdedf8fb92ea9fa
+    hash_kind: bytes
+  notes: 'Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Effective at settlement on 2014-01-02, not its opening. Pre-delivery ladder: 3% before
+    the middle ten days of the preceding month; 5% before its last ten days.'
+- id: cn.futures.margin_ratio.cffex_tf.2014-11-03
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.015
+  effective_from: '2014-11-03'
+  effective_to: '2015-03-16'
+  published_at: '2014-10-31'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20141031/18356.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货交易保证金的通知
+    date: '2014-10-31'
+    kind: official
+    quote: 自2014年11月3日（星期一）结算时起，5年期国债期货各合约的交易保证金标准为合约价值的1.5%，交割月份前一个月下旬的前一个交易日结算时起，交易保证金标准为合约价值的2%，交割月份第一个交易日的前一个交易日结算时起，交易保证金标准为合约价值的3%。
+    content_sha256: 50d98ad8bd933f9102fca1923a77f8d5cb1793338507e84d2ab60dfce269e040
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201411/03/20141103_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20141103）
+    date: '2014-11-03'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1506 ,1.5%,1.5%,3元/手,5元/手,0%
+    content_sha256: c5858bd30b95d6afa3ed32c2aa7877b3a27bcd63eec3e5321814c0d7d577ccd2
+    hash_kind: bytes
+  notes: 'Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Effective at settlement on 2014-11-03. Pre-delivery ladder: 2% before the last ten days
+    of the preceding month; 3% before the first trading day of the delivery month. Legacy TF1506/TF1509 remain on
+    this regime after 2015-03-16; see the successor record.'
+- id: cn.futures.margin_ratio.cffex_tf.2015-09-12
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.012
+  effective_from: '2015-09-12'
+  effective_to: '2020-09-29'
+  published_at: '2015-03-10'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150310/18713.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货最小变动价位和交易保证金有关事项的通知
+    date: '2015-03-10'
+    kind: official
+    quote: 5年期国债期货新上市合约自2015年3月16日起交易保证金标准为合约价值的1.2%；交割月份前一个月下旬的前一交易日结算时起，交易保证金为合约价值的1.5%，交割月份第一个交易日的前一交易日结算时起，交易保证金为合约价值的2%。已上市合约的交易保证金仍按我所于2014年10月31日发布的《关于调整5年期国债期货交易保证金的通知》规定的标准执行。
+    content_sha256: 110f7feaca9eff59f44c71a8e64ef4c234da9441a7ca27027bf93c1f5e65ec0e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201503/16/20150316_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20150316）
+    date: '2015-03-16'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1506 ,1.5%,1.5%,3元/手,5元/手,0% … TF1509 ,1.5%,1.5%,3元/手,5元/手,0%
+      … TF1512 ,1.2%,1.2%,3元/手,5元/手,0%
+    content_sha256: 94c67284a3a6e1b603f0ae578d25d2030c426d16986176ba8321d72946351e9e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2717042441er.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2018-02-12版本）
+    date: '2018-02-12'
+    kind: official
+    quote: 第十八条 本合约自交割月份之前的两个交易日结算 时起，交易保证金标准为合约价值的 2%。
+    content_sha256: 5d6798e9e4bf83818f1fcb3a5951626b9b9d8897af0d3ac34dbc6d8abb0913da
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2717042441er.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2018-02-12版本）
+    date: '2018-02-12'
+    kind: official
+    quote: 第二十四条 本细则自 2018 年 2 月 13 日起实施。本细 则第五条适用于 TF1812 合约及其后续合约，TF1803、TF1806 和 TF1809 合约按照《中国金融期货交易所 5 年期国债期货
+      6 合约交易细则》（2017 年 3 月 31 日第三次修订）第五条执 行；第十八条和第二十条适用于 TF1806 合约及其后续合约， TF1803 合约按照《中国金融期货交易所 5 年期国债期货合 约交易细则》（2017
+      年 3 月 31 日第三次修订） 第十八条和第 二十条执行。
+    content_sha256: 5d6798e9e4bf83818f1fcb3a5951626b9b9d8897af0d3ac34dbc6d8abb0913da
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170345hv9j.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2015-02-27版本）
+    date: '2015-02-27'
+    kind: official
+    quote: 第九条 本合约的最后交易日为合约到期月份的第二 个星期五。最后交易日为国家法定假日或者因异常情况等原 因未交易的，以下一交易日为最后交易日。
+    content_sha256: 51a4e05e5ef10534b576525992504cf0226500fc8f79d198f68827f5f67765cd
+    hash_kind: bytes
+  notes: 'Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. The exchange-applied 1.2% overrides the 1% contractual minimum. Before the 2018 revision
+    the new-series pre-delivery ladder was 1.5% before the last ten days of the preceding month and 2% before the
+    first trading day of the delivery month. From 2018-02-13, TF1806 and later use 2% from settlement two trading
+    days before the delivery month; TF1803 retains the old ladder. Product-level coverage begins on 2015-09-12,
+    the day after TF1509 expired: art. 9 sets the last trading day to the second Friday of the expiry month (2015-09-11).
+    From 2015-03-16 through 2015-09-11, TF1512 and later used the new 1.2% ordinary band and base margin, while
+    TF1506/TF1509 retained the 1.5% ordinary band and old base-margin regime until expiry. That coexistence interval
+    is deliberately left without product-level records; see known_gaps.yaml. Delivery-month margin increases remain
+    excluded.'
+- id: cn.futures.margin_ratio.cffex_tf.2020-09-29
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.014
+  effective_from: '2020-09-29'
+  effective_to: '2020-10-09'
+  published_at: '2020-09-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知
+    date: '2020-09-27'
+    kind: official
+    quote: （一）自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%；5年期、2年期国债期货各合约的交易保证金标准分别调整为1.4%和0.6%。 （二）2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变；5年期、2年期国债期货各合约的交易保证金标准恢复至调整前水平。
+      （三）
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202009/29/20200929_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20200929）
+    date: '2020-09-29'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2012 ,1.4%,1.4%,3元/手,5元/手,0%
+    content_sha256: f80df7950e72fe5f56f65580474434c9c506b1fb7d9e83b8d85d681272bcf517
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Temporary National Day/Mid-Autumn holiday rate, effective at settlement on 2020-09-29.
+    The notice makes restoration conditional on no one-sided market in the most-held contract; the 2020-10-09 settlement
+    CSV confirms restoration on that day.
+- id: cn.futures.margin_ratio.cffex_tf.2020-10-09
+  scope: cffex_tf
+  rule: margin_ratio
+  value: 0.012
+  effective_from: '2020-10-09'
+  effective_to: null
+  published_at: '2020-09-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知
+    date: '2020-09-27'
+    kind: official
+    quote: （一）自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%；5年期、2年期国债期货各合约的交易保证金标准分别调整为1.4%和0.6%。 （二）2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变；5年期、2年期国债期货各合约的交易保证金标准恢复至调整前水平。
+      （三）
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202010/09/20201009_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20201009）
+    date: '2020-10-09'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2012 ,1.2%,1.2%,3元/手,5元/手,0%
+    content_sha256: 697fa90834416297c5fb140e64f6d49786f58b3afa1c722089542ec49fd8f2e9
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF2403 ,1.2%,1.2%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Restored at settlement on 2020-10-09; the conditional restoration date is fixed by the
+    official settlement CSV. Delivery-month margin is 2% from settlement two trading days before the delivery month.
+- id: cn.futures.min_holding_days.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: min_holding_days
+  value: 0
+  effective_from: '2013-09-06'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20131227/17483.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货交易保证金等事项的通知
+    date: '2013-12-27'
+    kind: official
+    quote: 二、5年期国债期货各合约的平今仓交易免收手续费。
+    content_sha256: aa397352cfa7e4162230b24ceb55215f956e47126f30a7adb3d6ec4b20c5cda4
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  notes: Inferred from the exchange's explicit close-today fee treatment (平今仓), which presupposes closing a position
+    opened on the same trading day. No directly worded rule permitting same-day opening and closing was found in
+    the examined contract rules and general trading rules. The listing-day start is inferred, not directly verified;
+    for TF the fee evidence is later than listing. This does not imply zero transaction fees or unlimited opening.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.02
+  effective_from: '2013-09-06'
+  effective_to: '2014-11-03'
+  published_at: '2013-09-02'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2717031907yv.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2013-08-30版本）
+    date: '2013-08-30'
+    kind: official
+    quote: '第二十一条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±2％。 合约上市首日涨跌停板幅度为挂盘基准价的±4％。上市 首日有成交的，于下一交易日恢复到合约规定的涨跌停板幅
+      度；上市首日无成交的，下一交易日继续执行前一交易日的 涨跌停板幅度。如上市首日连续三个交易日无成交的，交易 所可以对挂盘基准价作适当调整。 '
+    content_sha256: 83cdb1c5008f2478c53883510114ade899ae2ee3e705025d6b9a896628c3bd19
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  notes: Ordinary-day symmetric band against the previous trading day's settlement price. Listing-day band is ±4%
+    of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_tf.2014-11-03
+  scope: cffex_tf
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.015
+  effective_from: '2014-11-03'
+  effective_to: '2015-03-16'
+  published_at: '2014-10-31'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170330ksgx.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2014-10-31版本）
+    date: '2014-10-31'
+    kind: official
+    quote: '第二十一条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±1.5％。 合约上市首日涨跌停板幅度为挂盘基准价的±3％。上市 首日有成交的，于下一交易日恢复到合约规定的涨跌停板幅
+      度；上市首日无成交的，下一交易日继续执行前一交易日的 涨跌停板幅度。如上市首日连续三个交易日无成交的，交易 所可以对挂盘基准价作适当调整。 '
+    content_sha256: db84b9097e4010d01485c577cadc3903e0f1bcba2ee79911548ead5ca87da440
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170330ksgx.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2014-10-31版本）
+    date: '2014-10-31'
+    kind: official
+    quote: 第二十六条 本细则自 2014 年 11 月 3 日起实施。
+    content_sha256: db84b9097e4010d01485c577cadc3903e0f1bcba2ee79911548ead5ca87da440
+    hash_kind: bytes
+  notes: Ordinary-day symmetric band against the previous trading day's settlement price. Listing-day band is ±3%
+    of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_tf.2015-09-12
+  scope: cffex_tf
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.012
+  effective_from: '2015-09-12'
+  effective_to: null
+  published_at: '2015-02-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170345hv9j.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2015-02-27版本）
+    date: '2015-02-27'
+    kind: official
+    quote: '第二十一条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±1.2％。 合约上市首日涨跌停板幅度为挂盘基准价的±2.4％。上 市首日有成交的，于下一交易日恢复到合约规定的涨跌停板
+      幅度；上市首日无成交的，下一交易日继续执行前一交易日 的涨跌停板幅度。如上市首日连续三个交易日无成交的，交 易所可以对挂盘基准价作适当调整。 '
+    content_sha256: 51a4e05e5ef10534b576525992504cf0226500fc8f79d198f68827f5f67765cd
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170345hv9j.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2015-02-27版本）
+    date: '2015-02-27'
+    kind: official
+    quote: 第二十六条 本细则自2015年3月16日起实施。本细则 第七条自2015年3月16日结算时起执行；本细则第五条、第十 九条、第二十条、第二十一条适用于新上市合约，已上市合 约按照《中国金融期货交易所 5年期国债期货交易细则》
+      （2014年11月3日第一次修订）的相关规定执行。
+    content_sha256: 51a4e05e5ef10534b576525992504cf0226500fc8f79d198f68827f5f67765cd
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27170345hv9j.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2015-02-27版本）
+    date: '2015-02-27'
+    kind: official
+    quote: 第九条 本合约的最后交易日为合约到期月份的第二 个星期五。最后交易日为国家法定假日或者因异常情况等原 因未交易的，以下一交易日为最后交易日。
+    content_sha256: 51a4e05e5ef10534b576525992504cf0226500fc8f79d198f68827f5f67765cd
+    hash_kind: bytes
+  notes: 'Ordinary-day symmetric band against the previous trading day''s settlement price. Listing-day band is
+    ±2.4% of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures. Product-level coverage begins on 2015-09-12, the day after TF1509 expired: art. 9 sets the last
+    trading day to the second Friday of the expiry month (2015-09-11). From 2015-03-16 through 2015-09-11, TF1512
+    and later used the new 1.2% ordinary band and base margin, while TF1506/TF1509 retained the 1.5% ordinary band
+    and old base-margin regime until expiry. That coexistence interval is deliberately left without product-level
+    records; see known_gaps.yaml. Delivery-month margin increases remain excluded.'
+- id: cn.futures.session_schedule.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2013-09-06'
+  effective_to: '2020-07-20'
+  published_at: '2013-09-02'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2717031907yv.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2013-08-30版本）
+    date: '2013-08-30'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:10-9:15，其中 9:10-9:14 为指令申报时间，9:14-9:15 为指令撮合时间。 连续竞价时间为每个交易日 9:15-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:15-11:30。
+    content_sha256: 83cdb1c5008f2478c53883510114ade899ae2ee3e705025d6b9a896628c3bd19
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  notes: 'Beijing time. Last trading day: opening call 09:10-09:15 and continuous trading 09:15-11:30 only; no afternoon
+    session or closing call auction.'
+- id: cn.futures.session_schedule.cffex_tf.2020-07-20
+  scope: cffex_tf
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2020-07-20'
+  effective_to: null
+  published_at: '2020-06-12'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195607cl58.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:25-9:30，其中9:25-9:29为 指令申报时间，9:29-9:30为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:30-11:30。
+    content_sha256: 9f4a5b33038d427183434adafea807197ba3ca2ec104e5f8780b92dd84d5d4c2
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195607cl58.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 5年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 第二十四条 本细则自 2020年 7月 20日起实施。
+    content_sha256: 9f4a5b33038d427183434adafea807197ba3ca2ec104e5f8780b92dd84d5d4c2
+    hash_kind: bytes
+  notes: 'Beijing time. Last trading day: opening call 09:25-09:30 and continuous trading 09:30-11:30 only; no afternoon
+    session or closing call auction. The afternoon close remains 15:15. Exchange-for-physical trading is outside
+    this auction schedule.'
+- id: cn.futures.trans_fee_per_lot.cffex_tf.2013-09-06
+  scope: cffex_tf
+  rule: trans_fee_per_lot
+  value: 3
+  effective_from: '2013-09-06'
+  effective_to: null
+  published_at: '2013-09-02'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约的手续费标准暂定为每手3元，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20130902/17156.html
+    publisher: 中国金融期货交易所
+    title: 关于5年期国债期货合约上市交易有关事项的通知
+    date: '2013-09-02'
+    kind: official
+    quote: 5年期国债期货合约自2013年9月6日（星期五）起上市交易。
+    content_sha256: c87eaef523314bc808888e6692fd74cd31f71905350b7417a8736581cd396c9e
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20131227/17483.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货交易保证金等事项的通知
+    date: '2013-12-27'
+    kind: official
+    quote: 自2014年1月2日（星期四）结算时起，对国债期货交易保证金等事项作出以下调整： 一、5年期国债期货各合约的交易保证金标准调整为合约价值的2%，交割月份前一个月中旬的前一个交易日结算时起，交易保证金标准调整为合约价值的3%,交割月份前一个月下旬的前一个交易日结算时起，交易保证金标准为合约价值的5%。
+      二、5年期国债期货各合约的平今仓交易免收手续费。
+    content_sha256: aa397352cfa7e4162230b24ceb55215f956e47126f30a7adb3d6ec4b20c5cda4
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20151120/19352.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货平今仓手续费的通知
+    date: '2015-11-20'
+    kind: official
+    quote: 自2015年12月1日（星期二）起，5年期国债期货各合约的平今仓交易手续费调整为每手3元。
+    content_sha256: 32016ea0c0a125bcfc1b08dba0b64f71f91f8525287f1c7b0299a21558a0990f
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20180202/21451.html
+    publisher: 中国金融期货交易所
+    title: 关于调整5年期国债期货平今仓手续费的通知
+    date: '2018-02-02'
+    kind: official
+    quote: 自2018年2月5日（星期一）起，5年期国债期货各合约的平今仓交易免收手续费。
+    content_sha256: 9a462b2b0a08ae0ff4aea0c93b3e986ef36ba48480a86724e7759021a38f1481
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201309/06/20130906_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20130906）
+    date: '2013-09-06'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1312 ,3%,3%,,5元/手,100%
+    content_sha256: 3bfe932a5fc0daf2adce0288b5e9255a1779a09cfb03c27864018eec1cbdbcfe
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/sj/jscs/201512/01/20151201_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20151201）
+    date: '2015-12-01'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1603 ,1.2%,1.2%,3元/手,5元/手,100%
+    content_sha256: b7c0127440e53bded91b6cf2efefab5c22db2c8007c699b0c08cb06e405c5e1e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/sj/jscs/201802/05/20180205_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20180205）
+    date: '2018-02-05'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TF1806 ,1.2%,1.2%,3元/手,5元/手,0%
+    content_sha256: 02e7e739f6ce3913c9462ac654e7823bab6d20725e36a566f21322389ca2c264
+    hash_kind: bytes
+  notes: Exchange fee in CNY per lot for opening and closing earlier-day positions. Close-today fee initially equals
+    the base fee (100% in the 2013-09-06 CSV; its trading-fee cell is blank, so the 3 CNY amount comes from the
+    listing notice). The 2013-12-27 notice waives close-today fees from settlement on 2014-01-02; the daily CSV
+    already shows 0% on that date, so intraday fee applicability is not resolved here. Close-today returns to 3
+    CNY on 2015-12-01 and is waived again from 2018-02-05. No separate close_today_fee_per_lot record is created
+    because close-today is either waived or equal to the base fee. Per-order declaration fees and broker commissions
+    are outside this rule.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2023-04-21'
+  effective_to: '2024-01-01'
+  published_at: '2023-04-14'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tl.2024-01-01
+  scope: cffex_tl
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2024-01-01'
+  effective_to: '2024-01-08'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/20231218_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20231218）
+    date: '2023-12-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TL2403 ,3.5%,3.5%,3元/手,5元/手,0%
+    content_sha256: 622e5e51f733e8a512c06f87f78f89c80eb7c5d5e288699e886b0360472912a1
+    hash_kind: bytes
+  notes: Inferred resumption of the 5 CNY base fee between the expiry of the 2023 concession and the start of the
+    2024 concession. The 2023-12-18 CSV shows 5 CNY for 2024 delivery contracts. The calendar start is inferred
+    rather than directly stated, so verification remains single-source. This does not assert that exchange-for-physical
+    activity was absent during the gap.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tl.2024-01-08
+  scope: cffex_tl
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2024-01-08'
+  effective_to: '2025-01-01'
+  published_at: '2024-01-05'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TL2403 ,3.5%,3.5%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tl.2025-01-01
+  scope: cffex_tl
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2025-01-01'
+  effective_to: '2026-01-01'
+  published_at: '2024-12-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20241227/42057.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2025年交割和行权（履约）手续费的通知
+    date: '2024-12-27'
+    kind: official
+    quote: 自2025年1月1日起至2025年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 356fa04795b6e711fade3f6755252a202c9cb9fb2052c6b9e8d45594bedc78c2
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_tl.2026-01-01
+  scope: cffex_tl
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2026-01-01'
+  effective_to: '2027-01-01'
+  published_at: '2025-12-22'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20251222/47020.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2026年交割和行权（履约）手续费的通知
+    date: '2025-12-22'
+    kind: official
+    quote: 自2026年1月1日起至2026年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 58be2d6ef9c5d44768b88d0c71074fb9ccee4b49ddf62ada0ade2cae9b23fbd7
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.margin_ratio.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: margin_ratio
+  value: 0.035
+  effective_from: '2023-04-21'
+  effective_to: null
+  published_at: '2023-04-14'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货各合约的交易保证金为合约价值的3.5%，自交割月份之前的两个交易日结算时起，交易保证金标准为合约价值的5%。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约自2023年4月21日（星期五）起上市交易。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202304/21/20230421_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20230421）
+    date: '2023-04-21'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TL2309 ,3.5%,3.5%,3元/手,2.5元/手,0%
+    content_sha256: 57f677131a06eaf89d1b1687c961d670dba4a9d84704c5468c776cc4cab17cd9
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. 5% from settlement two trading days before the delivery month.
+- id: cn.futures.min_holding_days.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: min_holding_days
+  value: 0
+  effective_from: '2023-04-21'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约自2023年4月21日（星期五）起上市交易。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  notes: Inferred from the exchange's explicit close-today fee treatment (平今仓), which presupposes closing a position
+    opened on the same trading day. No directly worded rule permitting same-day opening and closing was found in
+    the examined contract rules and general trading rules. The listing-day start is inferred, not directly verified.
+    This does not imply zero transaction fees or unlimited opening.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.035
+  effective_from: '2023-04-21'
+  effective_to: null
+  published_at: '2023-04-14'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202304/14161906s97c.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 30 年期国债期货合约交易细则（2023-04-14版本）
+    date: '2023-04-14'
+    kind: official
+    quote: '第十九条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的±3.5%。 合约上市首日涨跌停板幅度为挂盘基准价的±7%。上市 首日有成交的，于下一交易日恢复到合约规定的涨跌停板幅
+      度；上市首日无成交的，下一交易日继续执行前一交易日的 4 涨跌停板幅度。如上市首日连续三个交易日无成交的，交易 所可以对挂盘基准价作适当调整。 '
+    content_sha256: ab1b80fbf80a6ede3fa89ddc2be7ad90ada84cfb9f8436fcaa681941203751ce
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约自2023年4月21日（星期五）起上市交易。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  notes: Ordinary-day symmetric band against the previous trading day's settlement price. Listing-day band is ±7%
+    of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures.
+- id: cn.futures.session_schedule.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2023-04-21'
+  effective_to: null
+  published_at: '2023-04-14'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202304/14161906s97c.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 30 年期国债期货合约交易细则（2023-04-14版本）
+    date: '2023-04-14'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:25-9:30，其中 9:25-9:29 为指令申报时间，9:29-9:30 为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为9:30-11:30。
+    content_sha256: ab1b80fbf80a6ede3fa89ddc2be7ad90ada84cfb9f8436fcaa681941203751ce
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202304/14161906s97c.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 30 年期国债期货合约交易细则（2023-04-14版本）
+    date: '2023-04-14'
+    kind: official
+    quote: 第二十四条 本细则自2023 年4 月21 日起实施。
+    content_sha256: ab1b80fbf80a6ede3fa89ddc2be7ad90ada84cfb9f8436fcaa681941203751ce
+    hash_kind: bytes
+  notes: 'Beijing time. Last trading day: opening call 09:25-09:30 and continuous trading 09:30-11:30 only; no afternoon
+    session or closing call auction. The afternoon close remains 15:15. Exchange-for-physical trading is outside
+    this auction schedule.'
+- id: cn.futures.trans_fee_per_lot.cffex_tl.2023-04-21
+  scope: cffex_tl
+  rule: trans_fee_per_lot
+  value: 3
+  effective_from: '2023-04-21'
+  effective_to: null
+  published_at: '2023-04-14'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元，交割手续费至2023年12月31日止减半收取。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20230414/32098.html
+    publisher: 中国金融期货交易所
+    title: 关于30年期国债期货合约上市交易有关事项的通知
+    date: '2023-04-14'
+    kind: official
+    quote: 30年期国债期货合约自2023年4月21日（星期五）起上市交易。
+    content_sha256: 13fe786ce1c341ca944eaeda858a81f33880686a3f50571e0345440d4395d854
+    hash_kind: text
+  notes: Exchange fee in CNY per lot for opening and closing earlier-day positions. Close-today trades are exempt
+    from the listing date under the listing notice. No separate close_today_fee_per_lot record is created because
+    close-today is either waived or equal to the base fee. Per-order declaration fees and broker commissions are
+    outside this rule.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2018-08-17'
+  effective_to: '2021-08-16'
+  published_at: '2018-08-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  notes: Exchange physical-delivery fee in CNY per lot. The first sourced temporary halving begins on 2021-08-16;
+    declaration fees and broker charges are excluded.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2021-08-16
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2021-08-16'
+  effective_to: '2022-01-01'
+  published_at: '2021-08-13'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20210813/25279.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2021年8月至12月股指期货、国债期货交割手续费的通知
+    date: '2021-08-13'
+    kind: official
+    quote: 自2021年8月16日起至2021年12月31日止，减半收取股指期货、国债期货交割手续费。
+    content_sha256: ff772b9b1d2cec7e72c8d133726d9a2683cc7333e2b21a33f234dade25c227f5
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202108/16/20210816_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20210816）
+    date: '2021-08-16'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2109 ,.5%,.5%,3元/手,2.5元/手,0%
+    content_sha256: 59d3883165dd5e73e987a6a56a20f76f534ab7c613cc77b0dc271f85cb7f11a9
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2022-01-01
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2022-01-01'
+  effective_to: '2023-01-01'
+  published_at: '2021-12-24'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20211224/26693.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2022年股指期货、国债期货交割手续费的通知
+    date: '2021-12-24'
+    kind: official
+    quote: 自2022年1月1日起至2022年12月31日止，减半收取股指期货和国债期货交割手续费。
+    content_sha256: aeced8c80c047375946af0d550e9ac3f01d02083b75e2f23d91df25e187d9ceb
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2023-01-01
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2023-01-01'
+  effective_to: '2024-01-01'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2024-01-01
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 5
+  effective_from: '2024-01-01'
+  effective_to: '2024-01-08'
+  published_at: '2022-12-23'
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20221223/31042.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2023年交割和行权（履约）手续费的通知
+    date: '2022-12-23'
+    kind: official
+    quote: 自2023年1月1日起至2023年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 656cb0deb11274e040f4ff2a5aa6473ad2ba2c44faad5e10e7cc05c261e0c696
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202312/18/20231218_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20231218）
+    date: '2023-12-18'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2403 ,.5%,.5%,3元/手,5元/手,0%
+    content_sha256: 622e5e51f733e8a512c06f87f78f89c80eb7c5d5e288699e886b0360472912a1
+    hash_kind: bytes
+  notes: Inferred resumption of the 5 CNY base fee between the expiry of the 2023 concession and the start of the
+    2024 concession. The 2023-12-18 CSV shows 5 CNY for 2024 delivery contracts. The calendar start is inferred
+    rather than directly stated, so verification remains single-source. This does not assert that exchange-for-physical
+    activity was absent during the gap.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2024-01-08
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2024-01-08'
+  effective_to: '2025-01-01'
+  published_at: '2024-01-05'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20240105/36120.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2024年交割和行权（履约）手续费的通知
+    date: '2024-01-05'
+    kind: official
+    quote: 自2024年1月8日起至2024年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费。
+    content_sha256: 2dc7be2f2ea1803561d7b1ffc3d0ad2d235b0d4392fcfb3e8fb535a63955fcf9
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2403 ,.5%,.5%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2025-01-01
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2025-01-01'
+  effective_to: '2026-01-01'
+  published_at: '2024-12-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20241227/42057.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2025年交割和行权（履约）手续费的通知
+    date: '2024-12-27'
+    kind: official
+    quote: 自2025年1月1日起至2025年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 356fa04795b6e711fade3f6755252a202c9cb9fb2052c6b9e8d45594bedc78c2
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.delivery_fee_per_lot.cffex_ts.2026-01-01
+  scope: cffex_ts
+  rule: delivery_fee_per_lot
+  value: 2.5
+  effective_from: '2026-01-01'
+  effective_to: '2027-01-01'
+  published_at: '2025-12-22'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20251222/47020.html
+    publisher: 中国金融期货交易所
+    title: 关于减半收取2026年交割和行权（履约）手续费的通知
+    date: '2025-12-22'
+    kind: official
+    quote: 自2026年1月1日起至2026年12月31日止，减半收取股指期货和国债期货交割手续费、股指期权行权（履约）手续费，交易所认定的高频交易者除外。
+    content_sha256: 58be2d6ef9c5d44768b88d0c71074fb9ccee4b49ddf62ada0ade2cae9b23fbd7
+    hash_kind: text
+  notes: Temporary 50% reduction of the 5 CNY per-lot physical-delivery fee. The interval ends exclusively on the
+    day after the notice's inclusive end date. Applies by delivery date, not the date a position is opened. Exchange-designated
+    high-frequency traders are excluded and pay the full 5 CNY per lot; this scalar is only the eligible non-HFT
+    rate, and the product-only scope cannot enforce the exclusion.
+  unit: CNY
+- id: cn.futures.margin_ratio.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: margin_ratio
+  value: 0.005
+  effective_from: '2018-08-17'
+  effective_to: '2020-09-29'
+  published_at: '2018-08-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货各合约的交易保证金为合约价值的0.5%，自交割月份之前的两个交易日结算时起，交易保证金标准为合约价值的1%。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/201808/17/20180817_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20180817）
+    date: '2018-08-17'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS1812 ,.5%,.5%,3元/手,5元/手,0%
+    content_sha256: 20bbe4c453c0647652eb8504aa0cd8355896d90079c5e83f71e4499722136e81
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. 1% from settlement two trading days before the delivery month.
+- id: cn.futures.margin_ratio.cffex_ts.2020-09-29
+  scope: cffex_ts
+  rule: margin_ratio
+  value: 0.006
+  effective_from: '2020-09-29'
+  effective_to: '2020-10-09'
+  published_at: '2020-09-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知
+    date: '2020-09-27'
+    kind: official
+    quote: （一）自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%；5年期、2年期国债期货各合约的交易保证金标准分别调整为1.4%和0.6%。 （二）2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变；5年期、2年期国债期货各合约的交易保证金标准恢复至调整前水平。
+      （三）
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202009/29/20200929_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20200929）
+    date: '2020-09-29'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2012 ,.6%,.6%,3元/手,5元/手,0%
+    content_sha256: f80df7950e72fe5f56f65580474434c9c506b1fb7d9e83b8d85d681272bcf517
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Temporary National Day/Mid-Autumn holiday rate, effective at settlement on 2020-09-29.
+    The notice makes restoration conditional on no one-sided market in the most-held contract; the 2020-10-09 settlement
+    CSV confirms restoration on that day.
+- id: cn.futures.margin_ratio.cffex_ts.2020-10-09
+  scope: cffex_ts
+  rule: margin_ratio
+  value: 0.005
+  effective_from: '2020-10-09'
+  effective_to: null
+  published_at: '2020-09-27'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20200927/24740.html
+    publisher: 中国金融期货交易所
+    title: 关于2020年国庆节、中秋节期间有关工作安排的通知
+    date: '2020-09-27'
+    kind: official
+    quote: （一）自2020年9月29日（星期二）结算时起，沪深300、上证50、中证500股指期货各合约的交易保证金标准调整为13%；5年期、2年期国债期货各合约的交易保证金标准分别调整为1.4%和0.6%。 （二）2020年10月9日（星期五）交易后，自相关品种持仓量最大的合约未出现单边市的第一个交易日结算时起，沪深300、上证50股指期货各合约的交易保证金标准调整至11%；中证500股指期货各合约的交易保证金标准维持13%不变；5年期、2年期国债期货各合约的交易保证金标准恢复至调整前水平。
+      （三）
+    content_sha256: f84536c090c400d927bca893d558adcbf9528501faad9940c5a8d142bfca8300
+    hash_kind: text
+  - url: http://www.cffex.com.cn/sj/jscs/202010/09/20201009_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20201009）
+    date: '2020-10-09'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2012 ,.5%,.5%,3元/手,5元/手,0%
+    content_sha256: 697fa90834416297c5fb140e64f6d49786f58b3afa1c722089542ec49fd8f2e9
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/sj/jscs/202401/08/20240108_1.csv
+    publisher: 中国金融期货交易所
+    title: 期货合约结算业务参数表（20240108）
+    date: '2024-01-08'
+    kind: official
+    quote: 期货合约,合约多头保证金标准,合约空头保证金标准,交易手续费标准,交割手续费标准,平今仓收取率 … TS2403 ,.5%,.5%,3元/手,2.5元/手,0%
+    content_sha256: 06d9bc9a36f4d4540687644efcf16d8201dbe9b8796249a6e7fc9528b5214c3a
+    hash_kind: bytes
+  notes: Exchange base trading margin for non-hedge positions, as a fraction of contract value; brokers may add
+    a markup. This scalar excludes contract-specific delivery-month increases, extraordinary risk measures and offsets
+    for opposite positions. Restored at settlement on 2020-10-09; the conditional restoration date is fixed by the
+    official settlement CSV. Delivery-month margin is 1% from settlement two trading days before the delivery month.
+- id: cn.futures.min_holding_days.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: min_holding_days
+  value: 0
+  effective_from: '2018-08-17'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  notes: Inferred from the exchange's explicit close-today fee treatment (平今仓), which presupposes closing a position
+    opened on the same trading day. No directly worded rule permitting same-day opening and closing was found in
+    the examined contract rules and general trading rules. The listing-day start is inferred, not directly verified.
+    This does not imply zero transaction fees or unlimited opening.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.005
+  effective_from: '2018-08-17'
+  effective_to: null
+  published_at: '2018-08-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271701510v1q.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 2 年期国债期货合约交易细则（2018-08-06版本）
+    date: '2018-08-06'
+    kind: official
+    quote: '第十九条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的±0.5％。 合约上市首日涨跌停板幅度为挂盘基准价的±1％。上市 首日有成交的，于下一交易日恢复到合约规定的涨跌停板幅
+      度；上市首日无成交的，下一交易日继续执行前一交易日的 涨跌停板幅度。如上市首日连续三个交易日无成交的，交易 4 所可以对挂盘基准价作适当调整。 '
+    content_sha256: c4c90bcf52eb18429868cc5ed9daf562a6e79f8dd54c3c0caeefcc9e3fafd14e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  notes: Ordinary-day symmetric band against the previous trading day's settlement price. Listing-day band is ±1%
+    of the listing reference price; after a trade occurs the ordinary band resumes on the following day, otherwise
+    the listing band continues; after three consecutive days without trades the exchange may adjust the reference
+    price. The cited rules contain no separate last-trading-day band; the ordinary band applies, subject to exchange
+    risk measures.
+- id: cn.futures.session_schedule.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2018-08-17'
+  effective_to: '2020-07-20'
+  published_at: '2018-08-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271701510v1q.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 2 年期国债期货合约交易细则（2018-08-06版本）
+    date: '2018-08-06'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:10-9:15，其中 9:10-9:14 为 指令申报时间，9:14-9:15 为指令撮合时间。 连续竞价时间为每个交易日 9:15-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:15-11:30。
+    content_sha256: c4c90bcf52eb18429868cc5ed9daf562a6e79f8dd54c3c0caeefcc9e3fafd14e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  notes: 'Beijing time. Last trading day: opening call 09:10-09:15 and continuous trading 09:15-11:30 only; no afternoon
+    session or closing call auction.'
+- id: cn.futures.session_schedule.cffex_ts.2020-07-20
+  scope: cffex_ts
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2020-07-20'
+  effective_to: null
+  published_at: '2020-06-12'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195523ctbu.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 2年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 集合竞价时间为每个交易日 9:25-9:30，其中9:25-9:29为 指令申报时间，9:29-9:30为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和 13:00-15:15（第二节），最后交易日连续竞价时间为
+      9:30-11:30。
+    content_sha256: 2b49a5dff464976c61c5e7b73bcb83dc4e0001f704fe0276a8a1e20eb363fb2e
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202006/12195523ctbu.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所 2年期国债期货合约交易细则（2020-06-12版本）
+    date: '2020-06-12'
+    kind: official
+    quote: 第二十四条 本细则自 2020年 7月 20日起实施。
+    content_sha256: 2b49a5dff464976c61c5e7b73bcb83dc4e0001f704fe0276a8a1e20eb363fb2e
+    hash_kind: bytes
+  notes: 'Beijing time. Last trading day: opening call 09:25-09:30 and continuous trading 09:30-11:30 only; no afternoon
+    session or closing call auction. The afternoon close remains 15:15. Exchange-for-physical trading is outside
+    this auction schedule.'
+- id: cn.futures.trans_fee_per_lot.cffex_ts.2018-08-17
+  scope: cffex_ts
+  rule: trans_fee_per_lot
+  value: 3
+  effective_from: '2018-08-17'
+  effective_to: null
+  published_at: '2018-08-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约的手续费标准暂定为每手3元，平今仓交易免收手续费，交割手续费标准为每手5元。交易所有权根据市场运行情况对手续费标准进行调整。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20180807/22445.html
+    publisher: 中国金融期货交易所
+    title: 关于2年期国债期货合约上市交易有关事项的通知
+    date: '2018-08-07'
+    kind: official
+    quote: 2年期国债期货合约自2018年8月17日（星期五）起上市交易。
+    content_sha256: 6a6e1c13250e9a1cd79ebea914d2c0e32af7d307fffab38e67cda610442c5fe8
+    hash_kind: text
+  notes: Exchange fee in CNY per lot for opening and closing earlier-day positions. Close-today trades are exempt
+    from the listing date under the listing notice. No separate close_today_fee_per_lot record is created because
+    close-today is either waived or equal to the base fee. Per-order declaration fees and broker commissions are
+    outside this rule.
+  unit: CNY

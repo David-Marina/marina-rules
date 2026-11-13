@@ -1,0 +1,7586 @@
+[
+ {
+  "id": "LIM-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-13",
+   "scope": "main_board",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "涨跌停板制度 1996-12-16 起恢复；此前（1992-05-21 至 1996-12-15）无涨跌幅限制，Marina 未收录该区间 → 不猜",
+  "tags": [
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "main_board",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所《深市涨跌停板制度的由来》：1996年12月16日起除上市首日外每只证券涨跌幅不得超过10%",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-10-19",
+   "scope": "main_board",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所《深市涨跌停板制度的由来》：1996年12月16日起除上市首日外每只证券涨跌幅不得超过10%；2026 版沪深交易规则 3.3.13 主板股票 10%",
+  "tags": [
+   "steady-state"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0010",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1998-04-21",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "ST 制度 1998-04-22 起；之前无 ST 类别",
+  "tags": [
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0011",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1998-04-22",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "深交所《由来》：1998-04-27 建 ST 制度并将 ST 涨跌幅调为 5%；上交所 1998 大事记 4月22日起实施特别处理",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0012",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-03",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "深交所《由来》：1998-04-27 建 ST 制度并将 ST 涨跌幅调为 5%；上交所 1998 大事记 4月22日起实施特别处理（7月6日前最后一个交易日）",
+  "tags": [
+   "regime-switch",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0013",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2026-04-24 公告：将主板风险警示股票价格涨跌幅限制比例由5%调整为10%，《交易规则》2026年7月6日起实施",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0014",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "st_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "深交所《由来》：1998-04-27 建 ST 制度并将 ST 涨跌幅调为 5%；上交所 1998 大事记 4月22日起实施特别处理",
+  "tags": [
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0020",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2009-10-29",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "创业板 2009-10-30 开板",
+  "tags": [
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0021",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2009-10-30",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "创业板开板沿用 10%（深交所 2009-09-24 创业板交易特别规定）",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0022",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-21",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深证上〔2020〕620号《创业板交易特别规定》2.1 涨跌幅 20%；深交所 2020-08-21 发布会：8月24日起施行，存量股票一并调整（8月21日为旧规最后交易日）",
+  "tags": [
+   "regime-switch",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0023",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深证上〔2020〕620号《创业板交易特别规定》2.1 涨跌幅 20%；深交所 2020-08-21 发布会：8月24日起施行，存量股票一并调整",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0024",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-21",
+   "scope": "st_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "2020-08-24 前创业板 ST 与主板 ST 同为 5%",
+  "tags": [
+   "st",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0025",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "st_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深证上〔2020〕620号：创业板风险警示股票涨跌幅亦为 20%（不进风险警示板）",
+  "tags": [
+   "st",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0026",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "2026-07-06 调整只涉及主板风险警示股；创业板 ST 本就 20%",
+  "tags": [
+   "st",
+   "not-affected"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0030",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2019-07-19",
+   "scope": "star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "科创板 2019-07-22 开市",
+  "tags": [
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0031",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2019-07-22",
+   "scope": "star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "上证发〔2019〕23号《科创板股票交易特别规定》第十六条：涨跌幅比例为20%；首批公司 2019-07-22 上市",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0032",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-06-11",
+   "scope": "st_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "上证发〔2024〕52号引入科创板 ST；清越科技 2026-04-28 公告：实施风险警示期间涨跌幅不变仍为20%",
+  "tags": [
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0033",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "st_status"
+   ]
+  },
+  "oracle": "科创板自 2019 即有 *ST（上市规则第十二章），2024-10-30 起有 ST；选 star 必须知道 st_status",
+  "tags": [
+   "context"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0040",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-11-12",
+   "scope": "bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "北交所 2021-11-15 开市",
+  "tags": [
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0041",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-11-15",
+   "scope": "bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "st_status": false,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.3
+  },
+  "oracle": "北证〔2021〕21号《北京证券交易所交易规则（试行）》：涨跌幅限制比例为30%；2021-11-15 开市",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0042",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-11-15",
+   "scope": "ipo_day1_bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "北交所交易规则：上市首日不设涨跌幅限制",
+  "tags": [
+   "ipo",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0050",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2013-12-12",
+   "scope": "ipo_day1_main",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "1996-12-16 通知：除上市首日外……；2012 版交易规则 3.4.13：首次公开发行上市的股票首个交易日无价格涨跌幅限制",
+  "tags": [
+   "ipo",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0051",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2013-12-13",
+   "scope": "ipo_day1_main",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "up": 0.44,
+    "down": 0.36
+   }
+  },
+  "oracle": "上证发〔2013〕47号 2013-12-13 起：新股上市首日有效申报价格不高于发行价 144%、不低于 64%",
+  "tags": [
+   "ipo",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0052",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2014-03-03",
+   "scope": "ipo_day1_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所 2013-12-13 通知只设开盘集合竞价区间与盘中临停，全日 64%–144% 带自深证会〔2014〕54号 2014-06-13 起",
+  "tags": [
+   "ipo",
+   "exchange-divergence"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0053",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2014-06-13",
+   "scope": "ipo_day1_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "up": 0.44,
+    "down": 0.36
+   }
+  },
+  "oracle": "深证会〔2014〕54号 2014-06-13 起",
+  "tags": [
+   "ipo",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0054",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2023-04-07",
+   "scope": "ipo_first5_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 3,
+    "issue_regime": "registration"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "全面注册制主板前5日无涨跌幅自首只注册制主板新股上市日 2023-04-10 起；2023-02-17 只是发布日",
+  "tags": [
+   "ipo",
+   "published-vs-effective"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0055",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2023-04-10",
+   "scope": "ipo_first5_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 3,
+    "issue_regime": "registration"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上证发〔2023〕32号 / 深证上〔2023〕98号：首次公开发行上市的股票上市后的前5个交易日不设涨跌幅；自首只注册制主板股票上市首日（2023-04-10）起施行",
+  "tags": [
+   "ipo",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0056",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-01-30",
+   "scope": "ipo_first5_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 6,
+    "issue_regime": "registration"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "上市第 6 日已不在前五日窗口：上下文与 scope 矛盾，不得返回值",
+  "tags": [
+   "ipo",
+   "context-contradiction"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0057",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "ipo_first5_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "listing_day_index": 2,
+    "issue_regime": "registration"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深证上〔2020〕620号 2.2：首次公开发行上市的股票上市后的前5个交易日不设价格涨跌幅限制",
+  "tags": [
+   "ipo"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0058",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2019-07-22",
+   "scope": "ipo_first5_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上证发〔2019〕23号第十六条：上市后的前5个交易日不设价格涨跌幅限制",
+  "tags": [
+   "ipo"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0060",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-01-05",
+   "scope": "etf",
+   "market": "XSHG",
+   "context": {
+    "fund_constituents": "mixed"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "沪深交易规则：基金的价格涨跌幅限制比例为10%",
+  "tags": [
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0061",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-20",
+   "scope": "etf_20pct",
+   "market": "XSHG",
+   "context": {
+    "fund_constituents": "all_20pct_band"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0003"
+   ]
+  },
+  "oracle": "上证发〔2020〕61号 2020-08-21 发布当日施行；之前无此类基金在市（首只科创50ETF 2020-11-16 上市）",
+  "tags": [
+   "fund",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0062",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-21",
+   "scope": "etf_20pct",
+   "market": "XSHG",
+   "context": {
+    "fund_constituents": "all_20pct_band"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "上证发〔2020〕61号：跟踪指数成份股仅为科创板股票或其他涨跌幅比例为20%的股票的 ETF/LOF 涨跌幅 20%，自发布之日起实施",
+  "tags": [
+   "fund",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0063",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "etf_20pct",
+   "market": "XSHE",
+   "context": {
+    "fund_constituents": "all_20pct_band"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深交所 2020-08-21 发布会：创业板相关基金涨跌幅 8月24日调整为20%",
+  "tags": [
+   "fund",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0070",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-01-05",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所接口规格书：主板股票(B股) 涨跌幅为前收价10%；交易规则对「股票」统一 10%",
+  "tags": [
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0071",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-01-05",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "B 股生效日仅单源（1996 通知覆盖「每只证券」但未点名 B 股）→ 记录为 single-source；调用方要求 verified 时须拒绝",
+  "tags": [
+   "b-share",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0072",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-03",
+   "scope": "st_b_share",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "ST 制度不分股类；2026-07-06 前风险警示股 5%",
+  "tags": [
+   "b-share",
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0073",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_b_share",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所接口规格书：风险警示板股票（B股）涨跌幅为前收价10%；2026-07-06 起",
+  "tags": [
+   "b-share",
+   "st",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0080",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2022-07-29",
+   "scope": "convertible",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 30
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所交易规则（2006）3.3.14、上交所交易规则（2006）3.4.13：只对“股票、基金交易实行价格涨跌幅限制”；债券属“无价格涨跌幅限制的证券”（深 3.4.4（二）、沪 3.4.15（二））；深交所债券业务问答（2020-02-19）：“本所可转债交易不设价格涨跌幅限制。” 2022-08-01 新细则前无日涨跌幅。（2026.10.26.5 前此向量期望 G-0001：属覆盖新增，非更正）",
+  "tags": [
+   "convertible",
+   "pre-2022",
+   "coverage-added"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "LIM-0081",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2022-08-01",
+   "scope": "convertible",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 30
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "沪深《可转换公司债券交易实施细则》2022-08-01 施行：上市次日起 20%",
+  "tags": [
+   "convertible",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0082",
+  "query": {
+   "rule": "price_limit_pct_of_issue_price",
+   "trade_date": "2022-08-01",
+   "scope": "convertible_day1",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "up": 0.573,
+    "down": 0.433
+   }
+  },
+  "oracle": "上交所 2022-07-29 新闻稿：上市首日设置 -43.3% 至 57.3% 的涨跌幅限制（相对发行价）",
+  "tags": [
+   "convertible",
+   "ipo"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LIM-0083",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2022-08-01",
+   "scope": "convertible_day1",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "首日规则相对发行价，rule 名不同；按前收盘价的 price_limit_pct 在 convertible_day1 下不存在，不得回退到 20%",
+  "tags": [
+   "convertible",
+   "rule-name-discipline"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "board",
+    "st_status",
+    "listing_day_index"
+   ]
+  },
+  "oracle": "scopes.yaml main_board requires board/st_status/listing_day_index",
+  "tags": [
+   "context"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true,
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "st_status=True 与 main_board（非 ST）矛盾；不得返回 10%",
+  "tags": [
+   "context-contradiction"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "st_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "st_status=False 与 st_main 矛盾；不得返回 5%",
+  "tags": [
+   "context-contradiction"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0004",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005
+  },
+  "oracle": "scope stock 无上下文要求；印花税 2023-08-28 起 0.05%（财政部 税务总局 2023 年第 39 号公告）",
+  "tags": [
+   "fees",
+   "no-context-needed"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0006",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "unicorn",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "不存在的 scope：既非记录亦非已知缺口 → 盲区，known_gap_ids 为空",
+  "tags": [
+   "blind-spot"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "CTX-0007",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2005-06-14",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "other"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0013"
+   ]
+  },
+  "oracle": "2006-07-01 前基金回转方式的交易规则原文未找到；已登记 G-0013（2026.10.26.5 起 G-0013 缩至 2006-07-01 之前）",
+  "tags": [
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "FEE-0001",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2008-09-18",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财政部 2008-04-23：从2008年4月24日起……由立据双方当事人分别按１‰的税率缴纳；2008-09-18 是单边征收前最后一天，卖方仍按 1‰（step 2 起收录双边期，此前该向量期望 OUT_OF_COVERAGE）",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0002",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2008-09-19",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财税〔2008〕84号：2008-09-19 起由双边征收改为单边征收，税率 1‰",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "FEE-0003",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2023-08-25",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "2023-08-28 前最后一个交易日仍 1‰",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "FEE-0004",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2023-08-28",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005
+  },
+  "oracle": "财政部 税务总局公告 2023 年第 39 号：自 2023-08-28 起证券交易印花税实施减半征收",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "FEE-0005",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-28",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-05
+  },
+  "oracle": "中国结算 2015-08-01 起沪深过户费按成交金额 0.02‰ 双向收取（step 2 起须指定市场：同日北京市场为 0.025‰，market=null 为 CONFLICT，见 FEE-0024）",
+  "tags": [
+   "fees",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0006",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-29",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1e-05
+  },
+  "oracle": "中国结算 2022-04-28 公告：自 2022-04-29 起过户费总体下调 50% 至 0.01‰",
+  "tags": [
+   "fees",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "FEE-0007",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2002-05-01",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.003
+  },
+  "oracle": "证监发〔2002〕21号：佣金不得高于成交金额 3‰，2002-05-01 起执行",
+  "tags": [
+   "fees",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "FEE-0008",
+  "query": {
+   "rule": "commission_min_per_order_cny",
+   "trade_date": "2024-01-05",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5
+  },
+  "oracle": "证监发〔2002〕21号：A股、证券投资基金每笔交易佣金不足5元的按5元收取",
+  "tags": [
+   "fees"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0001",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-05",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "沪深交易规则：A 股申报价格最小变动单位 0.01 元",
+  "tags": [
+   "tick"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0002",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-05",
+   "scope": "etf",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "沪深交易规则：基金 0.001 元",
+  "tags": [
+   "tick"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0003",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-05",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所交易规则 3.3.11：B 股交易为 0.001 美元",
+  "tags": [
+   "tick",
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0004",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-05",
+   "scope": "b_share",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "深交所交易规则：B 股申报价格最小变动单位 0.01 港元",
+  "tags": [
+   "tick",
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0005",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2011-02-25",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false
+  },
+  "oracle": "深交所 2006 版 3.3.14 只有四舍五入句；一 tick 下限条款随 2011 版 3.3.16 于 2011-02-28 施行 → 此前记为 false（无下限）",
+  "tags": [
+   "one-tick",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0006",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2011-02-28",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": true
+  },
+  "oracle": "深交所交易规则（2011年修订）3.3.16：涨跌幅限制价格与前收盘价之差的绝对值低于价格最小变动单位的，以前收盘价增减一个价格最小变动单位",
+  "tags": [
+   "one-tick",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "TCK-0007",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2023-04-07",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false,
+   "known_gap_ids": []
+  },
+  "oracle": "上交所 2006 版 3.4.13、2012 版、2020 版只有四舍五入句；一 tick 条款首见 2023 版 3.3.17（2023-04-10）→ 此前记为 false；G-0006 已关闭",
+  "tags": [
+   "one-tick",
+   "exchange-divergence",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0008",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2023-04-10",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": true
+  },
+  "oracle": "上交所交易规则（2023年修订）3.3.17，随首只注册制主板新股上市日 2023-04-10 施行",
+  "tags": [
+   "one-tick",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "DLS-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2012-12-31",
+   "scope": "delisting",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "上交所风险警示板暂行办法 2013-01-01 施行；之前不收录",
+  "tags": [
+   "delisting",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2013-01-04",
+   "scope": "delisting",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "《上海证券交易所风险警示板股票交易暂行办法》第七条：退市整理股票价格的涨跌幅限制为10%；自2013年1月1日起施行",
+  "tags": [
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-12-30",
+   "scope": "delisting_day1",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "2020-12-31 前上交所退市整理期首日无例外（2013 办法第九条只列恢复上市/重新上市首日无涨跌幅），首日即 10%",
+  "tags": [
+   "delisting",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0004",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-12-31",
+   "scope": "delisting_day1",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上证发〔2020〕103号《风险警示板股票交易管理办法（2020年12月修订）》第八条：进入退市整理期交易的退市整理股票，首个交易日无价格涨跌幅限制；自发布之日起施行",
+  "tags": [
+   "delisting",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0005",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所投教 2021-01-27：自第二个交易日起，主板、中小企业板退市整理股票价格涨跌幅限制比例为10%",
+  "tags": [
+   "delisting"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0006",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深交所投教 2021-01-27：创业板退市整理股票价格涨跌幅限制比例20%",
+  "tags": [
+   "delisting",
+   "chinext"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0007",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所投教 2021-01-27：深交所对退市整理股票的首个交易日不实行价格涨跌幅限制",
+  "tags": [
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0008",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2019-06-03",
+   "scope": "delisting",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "《深圳证券交易所交易规则（2012年修订）》4.5.2：本所对股票退市整理期间交易实行价格涨跌幅限制，涨跌幅限制比例为 10%；通知：自 2012年12月17日起施行（2026.10.26.4 起由 G-0010 转为已收录）",
+  "tags": [
+   "delisting",
+   "known-gap",
+   "exchange-divergence"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0009",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "上交所交易规则（2023年修订）6.6：科创板股票涨跌幅限制比例为20%；退市整理期科创板股票不进入风险警示板（6.14）",
+  "tags": [
+   "delisting",
+   "star"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0010",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_day1_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上交所交易规则（2023年修订）6.6（二）：进入退市整理期交易的退市整理股票首个交易日不实行价格涨跌幅限制",
+  "tags": [
+   "delisting",
+   "star",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0011",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "delisting_day_index"
+   ]
+  },
+  "oracle": "选 delisting 必须知道是整理期第几日：首日适用 delisting_day1",
+  "tags": [
+   "delisting",
+   "context"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "RTS-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-06-21",
+   "scope": "reits_day1",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.3
+  },
+  "oracle": "《上交所公募 REITs 业务办法（试行）》：基础设施基金上市首日涨跌幅限制比例为30%；2021-01-29 发布施行；首批 2021-06-21 上市",
+  "tags": [
+   "reits",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "RTS-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-06-22",
+   "scope": "reits",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 2
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "同上：非上市首日涨跌幅限制比例为10%",
+  "tags": [
+   "reits"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "RTS-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "reits",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 200
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所 REITs 平台：非上市首日涨跌幅限制比例为10%",
+  "tags": [
+   "reits"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "RTS-0004",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "reits",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 200
+   },
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所《公开募集基础设施证券投资基金业务办法（试行）》（2021-01-29，发布之日起施行）第三十四条：非上市首日涨跌幅限制比例为10% → verified，要求 verified 时照答",
+  "tags": [
+   "reits",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "RTS-0005",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-01-28",
+   "scope": "reits",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 2
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "REITs 业务办法 2021-01-29 发布施行；之前无此类产品与规则",
+  "tags": [
+   "reits",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0001",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "1995-01-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "深交所 1995 大事记：1月1日起 A 股及基金交易由 T+0 交收改为 T+1 交收",
+  "tags": [
+   "t+1",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0002",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "沪深交易规则 3.1.4：投资者买入的证券，在交收前不得卖出，但实行回转交易的除外",
+  "tags": [
+   "t+1"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0003",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "A 股 T+1 起始日仅深交所大事记单源 → single-source；调用方要求 verified 时须拒绝",
+  "tags": [
+   "t+1",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0004",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "1994-12-30",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0015"
+   ]
+  },
+  "oracle": "1995 年前 T+0 时期未编码（G-0015）",
+  "tags": [
+   "t+1",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0005",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "沪交易规则 3.1.5：B股实行次交易日起回转交易",
+  "tags": [
+   "t+1",
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "SET-0006",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2005-06-14",
+   "scope": "b_share",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0014"
+   ]
+  },
+  "oracle": "B 股 2001-12-01 起 T+1 仅见报道，交易所原文未哈希（G-0014）；不推定",
+  "tags": [
+   "t+1",
+   "b-share",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "BSE-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-05-06",
+   "scope": "st_bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "st_status": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.3
+  },
+  "oracle": "北交所交易规则（试行）3.3.11 一律 30%，3.3.12 无 ST 例外；*ST田野 2026-04-30 公告：涨跌幅限制仍为30%",
+  "tags": [
+   "bse",
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "BSE-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_day1_bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "北交所交易规则（试行）3.3.12（二）：退市整理期首日无价格涨跌幅限制",
+  "tags": [
+   "bse",
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "BSE-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "delisting_day_index": 3
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.3
+  },
+  "oracle": "北交所交易规则（试行）3.3.11：30%",
+  "tags": [
+   "bse",
+   "delisting"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "BSE-0004",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "listing_day_index": 1000
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "st_status"
+   ]
+  },
+  "oracle": "北交所有 ST/*ST（2026 *ST田野）；选 bse 须知 st_status，尽管带宽相同",
+  "tags": [
+   "bse",
+   "context"
+  ],
+  "ruleset_version_min": "2026.10.26.2"
+ },
+ {
+  "id": "DLS-0012",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-12-30",
+   "scope": "delisting_day1_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "上证发〔2019〕23号《科创板股票交易特别规定》第十八条：涨跌幅比例为 20%，仅首次公开发行上市后前 5 个交易日不设限；科创板上市规则（2019）12.7 未设退市整理期首日例外 → 首日 20%",
+  "tags": [
+   "delisting",
+   "star",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0013",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-12-31",
+   "scope": "delisting_day1_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "《科创板股票上市规则（2020年12月修订）》：公司股票进入退市整理期首日，不设价格涨跌幅限制；上证发〔2020〕101号：自发布之日起施行（2020-12-31）",
+  "tags": [
+   "delisting",
+   "star",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0014",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2019-07-22",
+   "scope": "delisting_day1_star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "科创板首批上市 2019-07-22（上交所答记者问）；23号第十八条 20%，无退市首日例外",
+  "tags": [
+   "delisting",
+   "star",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0015",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2012-12-14",
+   "scope": "delisting",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0010"
+   ]
+  },
+  "oracle": "深交所交易规则 2012 修订（新增退市整理期间交易事项）自 2012-12-17 施行；此前不收录（G-0010）",
+  "tags": [
+   "delisting",
+   "known-gap",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0016",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2012-12-17",
+   "scope": "delisting",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所交易规则（2012年修订）4.5.2：涨跌幅限制比例为 10%；自 2012年12月17日起施行",
+  "tags": [
+   "delisting",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0017",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2015-06-01",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所交易规则（2012年修订）4.5.2 对股票退市整理期间交易一律 10%；3.3.17 无价格涨跌幅限制的首日仅限 IPO / 恢复上市 → 退市整理期首日 10%",
+  "tags": [
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0018",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2016-06-01",
+   "scope": "delisting_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所交易规则（2012年修订）4.5.1/4.5.2：退市整理板（含创业板股票）涨跌幅 10%；深证上〔2020〕620号：《特别规定》实施前……退市整理期间，价格涨跌幅限制比例为 10%",
+  "tags": [
+   "delisting",
+   "chinext"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0019",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0016"
+   ]
+  },
+  "oracle": "深证上〔2020〕620号：2020-08-24 前已进入退市整理期者 10%、之后进入者 20%——取决于进入日，scope 不携带 → G-0016",
+  "tags": [
+   "delisting",
+   "chinext",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "DLS-0020",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-21",
+   "scope": "delisting_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "2020-08-24《创业板交易特别规定》施行前一交易日：交易规则 4.5.2 10%（深证上〔2020〕620号第一条）",
+  "tags": [
+   "delisting",
+   "chinext",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "SET-0007",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2006-07-03",
+   "scope": "b_share",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "《深圳证券交易所交易规则》（2006）3.1.5：B股实行次交易日起回转交易；通知：自 2006年7月1日起施行",
+  "tags": [
+   "t+1",
+   "b-share",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "SET-0008",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2008-06-16",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "《上海证券交易所交易规则》（2006）3.1.5：B股实行次交易日起回转交易；11.7：本规则自2006年7月1日起施行",
+  "tags": [
+   "t+1",
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "SET-0009",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2006-06-30",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0014"
+   ]
+  },
+  "oracle": "2001-12-01 起 B 股 T+1 只见报道及第三方转载，交易所原文未在官方域名找到；2006 规则自 2006-07-01 起施行 → 此前仍为 G-0014",
+  "tags": [
+   "t+1",
+   "b-share",
+   "known-gap",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "TCK-0010",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2006-07-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "深交所交易规则（2006）3.3.12：A股……申报价格最小变动单位为0.01元人民币；上交所交易规则（2006）3.4.11：A股……0.01元人民币；均自 2006-07-01 施行",
+  "tags": [
+   "tick",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "TCK-0011",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2006-06-30",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0005"
+   ]
+  },
+  "oracle": "最早已哈希的 A 股 tick 原文为 2006 规则（2006-07-01 施行）；此前 G-0005",
+  "tags": [
+   "tick",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "TCK-0012",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2008-01-02",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所交易规则（2006）3.4.11：B股交易为0.001美元",
+  "tags": [
+   "tick",
+   "b-share"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "CNV-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2006-07-03",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 30
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所交易规则（2006，2006-07-01 施行）3.3.14：“本所对股票、基金交易实行价格涨跌幅限制”；3.4.4 列“无涨跌幅限制证券……（二）债券”",
+  "tags": [
+   "convertible",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2006-06-30",
+   "scope": "convertible",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 30
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0001"
+   ]
+  },
+  "oracle": "2006 规则前（2001 联合交易规则）原文未找到 → G-0001",
+  "tags": [
+   "convertible",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-11-02",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 30
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所 2020-10-30 通知：“无价格涨跌幅限制的可转换公司债券竞价交易出现下列情形的，本所可以对其实施盘中临时停牌措施”——临停不是涨跌幅",
+  "tags": [
+   "convertible",
+   "halt-is-not-a-band"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0004",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2022-07-29",
+   "scope": "convertible",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 30
+   },
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "无涨跌幅 2006→2022 沪市一侧仅凭“债券”归类与监控细则“无价格涨跌幅限制的其他债券”推出，未见沪市明文点名可转债 → single-source；要求 verified 须拒绝",
+  "tags": [
+   "convertible",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0005",
+  "query": {
+   "rule": "price_limit_pct_of_issue_price",
+   "trade_date": "2020-02-19",
+   "scope": "convertible_day1",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所债券业务问答“可转债上市首日是否有价格涨跌幅限制？”答：“本所可转债交易不设价格涨跌幅限制。”",
+  "tags": [
+   "convertible",
+   "listing-day"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0006",
+  "query": {
+   "rule": "price_limit_pct_of_issue_price",
+   "trade_date": "2022-08-01",
+   "scope": "convertible_day1",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "up": 0.573,
+    "down": 0.433
+   }
+  },
+  "oracle": "上交所 2022-07-29：“可转债上市首日设置-43.3%至57.3%的涨跌幅限制……次日起实行20%的涨跌幅限制”；细则 2022-08-01 施行",
+  "tags": [
+   "convertible",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0007",
+  "query": {
+   "rule": "price_limit_pct_of_issue_price",
+   "trade_date": "2005-01-04",
+   "scope": "convertible_day1",
+   "market": "XSHG+XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0018"
+   ]
+  },
+  "oracle": "2006 规则前未覆盖 → G-0018",
+  "tags": [
+   "convertible",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0001",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2015-01-19",
+   "scope": "etf_bond",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "bond_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上证发〔2015〕6号 3.1.5“（二）债券交易型开放式指数基金”；深交所 2015-01-09 通知 3.1.4“债券交易型开放式基金……竞价交易实行当日回转交易”；均 2015-01-19 施行",
+  "tags": [
+   "t+0",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0002",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2015-01-16",
+   "scope": "etf_bond",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "bond_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0,
+   "known_gap_ids": []
+  },
+  "oracle": "深交所 2013 版交易规则 3.1.4（2013-08-05 施行）：债券、债券交易型开放式指数证券投资基金竞价交易实行当日回转交易；上交所债券ETF业务指南：当日买入的债券 ETF 份额，当日可卖出 → 0",
+  "tags": [
+   "t+0",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0003",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf_money",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "money_market"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上交所交易规则（2023）3.1.5“（二）交易型货币市场基金”",
+  "tags": [
+   "t+0",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0004",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2026-07-06",
+   "scope": "etf_gold",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "gold_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "深交所交易规则（2026）3.1.5“（三）黄金交易型开放式基金”，2026-07-06 施行",
+  "tags": [
+   "t+0",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0005",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2020-01-20",
+   "scope": "etf_commodity",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "commodity_futures_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上证发〔2020〕1号：“（五）商品期货交易型开放式指数基金”；“本通知自2020年1月20日起施行。”",
+  "tags": [
+   "t+0",
+   "fund",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0006",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2020-01-17",
+   "scope": "etf_commodity",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "commodity_futures_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "2020-01-20 前沪市当日回转名单（上证发〔2015〕6号）无商品期货 ETF → 交易规则 3.1.4：交收前不得卖出",
+  "tags": [
+   "t+1",
+   "fund",
+   "day-before"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0007",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2019-01-11",
+   "scope": "etf_commodity",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "commodity_futures_etf"
+   },
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "深证会〔2019〕23号（2019-01-11，发布之日起施行，szse.cn 原文）：对商品期货交易型开放式基金实行当日回转交易 → verified",
+  "tags": [
+   "t+0",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0008",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2015-01-19",
+   "scope": "etf_crossborder",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "cross_border",
+    "underlying_t0": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "深交所 2015-01-09 通知：跨境 ETF/LOF 当日回转，“仅限于所跟踪指数成份证券或投资标的实施当日回转交易的开放式基金”；2015-01-19 施行",
+  "tags": [
+   "t+0",
+   "cross-border"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0009",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2015-01-16",
+   "scope": "etf_crossborder",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "cross_border",
+    "underlying_t0": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上证发〔2015〕6号“决定对跨境交易型开放式指数基金和跨境上市开放式基金实行当日回转交易”自 2015-01-19；此前 2006 规则 3.1.5 名单不含 → 3.1.4 T+1",
+  "tags": [
+   "t+1",
+   "cross-border",
+   "day-before"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0010",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf_crossborder",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "cross_border"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "underlying_t0"
+   ]
+  },
+  "oracle": "3.1.5 跨境基金“仅限于所跟踪指数成份证券或投资标的实施当日回转交易的”——逐只事实，调用方必须提供",
+  "tags": [
+   "context",
+   "cross-border"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0011",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "other"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "交易规则 3.1.4：“投资者买入的证券，在交收前不得卖出，但实行回转交易的除外”；普通股票型 ETF 不在 3.1.5 名单",
+  "tags": [
+   "t+1",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0012",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "fund_type"
+   ]
+  },
+  "oracle": "基金是否属 3.1.5 当日回转品种决定 T+0/T+1；不问 ST/成份构成，只问品种",
+  "tags": [
+   "context",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0013",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "gold_etf"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "黄金 ETF 属 3.1.5 当日回转品种，不得在普通 etf scope 下得到 T+1（应用 etf_gold）",
+  "tags": [
+   "context",
+   "contradiction"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0014",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2006-07-03",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_type": "other"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "沪深交易规则（2006）3.1.4 交收前不得卖出；3.1.5 当日回转仅债券（回购）/权证；2006-07-01 施行",
+  "tags": [
+   "t+1",
+   "fund",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "T0-0015",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-05",
+   "scope": "etf_money",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所交易规则（2023）3.3.11：“基金、权证交易为0.001元人民币”",
+  "tags": [
+   "tick",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0001",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2006-07-03",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "深交所交易规则（2006）2.3.2：“每个交易日的9:15至9:25为开盘集合竞价时间，9:30至11:30、13:00至14:57为连续竞价时间，14：57至15:00为收盘集合竞价时间。”",
+  "tags": [
+   "session",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0002",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2018-08-17",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上交所交易规则（2006）2.4.2：“9:15至9:25为开盘集合竞价时间，9:30至11:30、13:00至15:00为连续竞价时间”；收盘集合竞价自 2018-08-20 才实施",
+  "tags": [
+   "session",
+   "day-before"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0003",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2018-08-20",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "上交所 2018-08-06：“收盘交易机制及相关调整将自2018年8月20日起实施”；“收盘集合竞价的时间为14:57至15:00”",
+  "tags": [
+   "session",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0004",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上交所交易规则（2023）2.4.2：“基金交易，每个交易日的9:15至9:25为开盘集合竞价时间，9:30至11:30、13:00至15:00为连续竞价时间。”",
+  "tags": [
+   "session",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0005",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-07-06",
+   "scope": "etf",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "上交所 2026-04-24：“基金收盘阶段交易方式由连续竞价调整为收盘集合竞价”；规则 2.4.2 统一 14:57 至 15:00；11.9 自 2026-07-06 施行",
+  "tags": [
+   "session",
+   "fund",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0006",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "深交所交易规则 2.3.2/2.4.2 适用于所有“证券采用竞价交易方式的”，基金同 14:57 收盘集合竞价",
+  "tags": [
+   "session",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0007",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2006-06-30",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0007"
+   ]
+  },
+  "oracle": "2006 规则前交易时间原文未找到 → G-0007",
+  "tags": [
+   "session",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "SES-0008",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "沪深两所不同时期收盘机制不同，只有分所记录；XSHG+XSHE 联合查询不得由单所记录回答（子集匹配）",
+  "tags": [
+   "session",
+   "market-subset"
+  ],
+  "ruleset_version_min": "2026.10.26.5"
+ },
+ {
+  "id": "CNV-0010",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2025-06-16",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所《可转换公司债券交易实施细则》（上证发〔2022〕117号，2022-08-01 施行）第六条：申报价格最小变动单位为0.001元",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CNV-0011",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2022-08-01",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "深交所《可转换公司债券交易实施细则》（深证上〔2022〕719号，2022-08-01 施行）第六条：申报价格最小变动单位为0.001元；第四十三条 本细则自2022年8月1日起施行",
+  "tags": [
+   "convertible",
+   "tick",
+   "first-day-of-new"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CNV-0012",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2022-08-01",
+   "scope": "convertible_day1",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "两所细则第六条均为0.001元，第六条适用于全部可转债交易（含上市首日）",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CNV-0013",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2022-07-29",
+   "scope": "convertible",
+   "market": "XSHG+XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "2022 细则前两所「债券」价位不同（沪 3.4.11：0.01元；深 2011 版 3.3.13：0.001元）→ 按交易所分别记录，XSHG+XSHE 合并查询无共同答案（不猜）；G-0025 已关闭",
+  "tags": [
+   "convertible",
+   "tick",
+   "gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0010",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "star",
+    "st_status": false,
+    "listing_day_index": 100
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "scope main_board 断言 board=main_board；688 科创板股票适用 star（20%），不是主板",
+  "tags": [
+   "context",
+   "contradiction"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0011",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "2023-04-10 起注册制主板新股上市后前5个交易日不设涨跌幅（沪/深交易规则 3.3.13/3.3.15）→ 上市首日不是普通主板",
+  "tags": [
+   "context",
+   "ipo-window"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0012",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 5
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "同上：第5个交易日仍在注册制前5日无涨跌幅窗口内",
+  "tags": [
+   "context",
+   "ipo-window",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0013",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 6
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "第6个交易日起适用10%（主板）",
+  "tags": [
+   "context",
+   "ipo-window",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0014",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2015-06-01",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 2
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "核准制下仅上市首日特殊（深 2014-06-13 起首日 44%/36%），次日起10%",
+  "tags": [
+   "context",
+   "ipo-window",
+   "approval"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0015",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2015-06-01",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "核准制上市首日适用 ipo_day1_main，不是普通主板",
+  "tags": [
+   "context",
+   "ipo-window",
+   "approval"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0016",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "ipo_first5_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "前5日无涨跌幅只适用于按《首次公开发行股票注册管理办法》发行的主板股票（注册制）",
+  "tags": [
+   "context",
+   "regime"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0017",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "etf_20pct",
+   "market": "XSHE",
+   "context": {
+    "fund_constituents": "mixed"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "深 2026 规则 3.3.13：20% 只适用于成份股仅为创业板/20%涨跌幅股票的基金；mixed 与 etf_20pct 矛盾",
+  "tags": [
+   "context",
+   "contradiction",
+   "fund"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0018",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "细则：上市首个交易日涨跌幅以发行价为前收盘价（57.3%/43.3%），属 convertible_day1，不是 convertible",
+  "tags": [
+   "context",
+   "convertible"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0019",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 2
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "delisting_day1 = 退市整理期首个交易日；第2日属 delisting",
+  "tags": [
+   "context",
+   "delisting"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0020",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "reits_day1",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 2
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "reits_day1 = 基础设施基金上市首日（30%）；第2日起属 reits（10%）",
+  "tags": [
+   "context",
+   "reits"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0021",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "bse",
+   "market": "BJSE",
+   "context": {
+    "board": "bse",
+    "st_status": true,
+    "listing_day_index": 100
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "scope bse 断言非风险警示；ST 股票须用 st_bse",
+  "tags": [
+   "context",
+   "contradiction",
+   "bse"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0022",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": null,
+    "st_status": false,
+    "listing_day_index": null
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "board",
+    "listing_day_index"
+   ]
+  },
+  "oracle": "值为 null 的必需上下文等同未提供",
+  "tags": [
+   "context",
+   "null"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0023",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "cross_border"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "underlying_t0"
+   ]
+  },
+  "oracle": "深 2026 规则 3.1.5：跨境基金仅限于所跟踪指数成份证券或投资标的实施当日回转交易的才 T+0 → 未说明 underlying_t0 不能答 T+1",
+  "tags": [
+   "context",
+   "t0",
+   "cross-border"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "CTX-0024",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "etf",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "cross_border",
+    "underlying_t0": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "同上：标的不实施当日回转的跨境基金为普通基金，次交易日起可卖",
+  "tags": [
+   "context",
+   "t0",
+   "cross-border"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0020",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "A股的申报价格最小变动单位为0.01元人民币；主板属股票价位族，不需 ST/上市日上下文",
+  "tags": [
+   "tick",
+   "family"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0001",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2006-07-03",
+   "scope": "stock",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false
+  },
+  "oracle": "上交所 2006 版 3.4.13：计算结果按照四舍五入原则取至价格最小变动单位（无一 tick 下限句）",
+  "tags": [
+   "one-tick",
+   "false"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0002",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2008-06-02",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false
+  },
+  "oracle": "深交所 2006 版 3.3.14：只有四舍五入句",
+  "tags": [
+   "one-tick",
+   "false"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0003",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2011-02-28",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": true
+  },
+  "oracle": "深交所 2011 版 3.3.16 自 2011-02-28 施行：以前收盘价增减一个价格最小变动单位",
+  "tags": [
+   "one-tick",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0004",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2024-06-14",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false
+  },
+  "oracle": "北交所交易规则（试行）3.3.11 只有公式：涨跌幅限制价格=前收盘价×（1±涨跌幅限制比例），无一 tick 下限",
+  "tags": [
+   "one-tick",
+   "bse"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0005",
+  "query": {
+   "rule": "limit_price_min_tick",
+   "trade_date": "2021-11-12",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "北交所 2021-11-15 开市；此前无规则",
+  "tags": [
+   "bse",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0006",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "bse",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "北交所交易规则（试行）3.3.10：股票交易的申报价格最小变动单位为0.01元人民币",
+  "tags": [
+   "bse",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0007",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "北交所交易规则（试行）3.1.4：投资者买入的证券，买入当日不得卖出",
+  "tags": [
+   "bse",
+   "t+1"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0008",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "北交所交易规则 2.3.2：9:15至9:25 开盘集合竞价，9:30至11:30、13:00至14:57 连续竞价，14:57至15:00 收盘集合竞价",
+  "tags": [
+   "bse",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0009",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2010-06-01",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "深交所 2006 版 3.3.12：A股、债券…申报价格最小变动单位为0.01元人民币",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0010",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2011-02-28",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "深交所 2011-02-28 → 2012-12-10 两份官方条文冲突：2008 可转债细则（深证上〔2008〕152号）第十四条 0.01 元；2011 交易规则 3.3.13 债券 0.001 元，未写以谁为准 → unverified，默认 min_verification 下拒答",
+  "tags": [
+   "convertible",
+   "tick",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0011",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2022-07-29",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "上交所交易规则 3.4.11：A股、债券交易…最小变动单位为0.01元人民币（2022-08-01 起可转债细则 0.001）",
+  "tags": [
+   "convertible",
+   "tick",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0012",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2022-08-01",
+   "scope": "convertible_day1",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所可转债交易实施细则第六条：申报价格最小变动单位为0.001元",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0013",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2010-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上交所 2006 版 3.1.5：债券和权证实行当日回转交易",
+  "tags": [
+   "convertible",
+   "t+0"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0014",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "深交所可转债交易实施细则第五条：实行当日回转交易或者转让",
+  "tags": [
+   "convertible",
+   "t+0"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0015",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2020-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上交所交易规则 2020 版 2.4.2：基金、债券、债券回购交易…9:30至11:30、13:00至15:00为连续竞价时间（无收盘集合竞价）",
+  "tags": [
+   "convertible",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0016",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "深交所可转债交易实施细则第十二条：9:15至9:25 开盘集合匹配，9:30至11:30、13:00至14:57 连续匹配，14:57至15:00 收盘集合匹配",
+  "tags": [
+   "convertible",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0017",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-07-06",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上交所可转债交易实施细则第十二条：9:15至9:25为集合匹配时间，9:30至11:30、13:00至15:00为连续匹配时间（2026 交易规则不适用可转债）",
+  "tags": [
+   "convertible",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0018",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2022-06-01",
+   "scope": "reits",
+   "market": "XSHE",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "深交所投资者问答：当日买入的基础设施基金份额 T+1 日才能卖出",
+  "tags": [
+   "reits",
+   "t+1"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0019",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "reits",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "15:00"
+     ]
+    ],
+    "close_call": null
+   }
+  },
+  "oracle": "上交所 REITs 业务办法：竞价交易适用基金交易的相关规定；2023 版 2.4.2：基金交易 9:30至11:30、13:00至15:00 连续竞价",
+  "tags": [
+   "reits",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0020",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2026-07-06",
+   "scope": "reits",
+   "market": "XSHG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "上交所 2026 版 2.4.2（2026-07-06 施行）：证券采用竞价交易方式的…14:57至15:00为收盘集合竞价时间",
+  "tags": [
+   "reits",
+   "session",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0021",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "reits",
+   "market": "XSHE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:15",
+     "09:25"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "11:30"
+     ],
+     [
+      "13:00",
+      "14:57"
+     ]
+    ],
+    "close_call": [
+     "14:57",
+     "15:00"
+    ]
+   }
+  },
+  "oracle": "深交所：基础设施基金竞价交易的交易时间适用《深圳证券交易所交易规则》（2.4.2/2.3.2）",
+  "tags": [
+   "reits",
+   "session"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0022",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-03-15",
+   "scope": "etf_bond",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "bond_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "上交所：今年3月15日发布并施行的《关于债券类交易型开放式指数基金交易相关事项的通知》… 当日买入的债券ETF份额，当日可卖出",
+  "tags": [
+   "t+0",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0023",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-08-02",
+   "scope": "etf_bond",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "bond_etf"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0026"
+   ]
+  },
+  "oracle": "深交所首只债券ETF 2013-08-05 上市、2013 版规则同日施行；此前无该品种",
+  "tags": [
+   "t+0",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0024",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-06-03",
+   "scope": "etf_money",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "money_market"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上交所 2013-12-09 交易规则修订才明确交易型货币市场基金当日回转；此前适用 3.1.4（交收前不得卖出）",
+  "tags": [
+   "t+1",
+   "money-market"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0025",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-12-02",
+   "scope": "etf_gold",
+   "market": "XSHE",
+   "context": {
+    "fund_type": "gold_etf"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "深交所 2013-11-30 决定：黄金交易型开放式证券投资基金…竞价交易实行当日回转交易（自发布之日起施行）",
+  "tags": [
+   "t+0",
+   "gold"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0026",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-07-26",
+   "scope": "etf_gold",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "gold_etf"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-0021"
+   ]
+  },
+  "oracle": "上交所黄金ETF业务指引 2013-07-27 发布施行；此前无该品种",
+  "tags": [
+   "known-gap",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0027",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_chinext_post0824",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 1,
+    "delisting_entry_before_2020_08_24": false
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深证上〔2020〕620号：《特别规定》正式实施后进入退市整理期的创业板股票涨跌幅限制比例为 20%（首日亦然：2020-12-31 前无首日例外）",
+  "tags": [
+   "delisting",
+   "chinext",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0028",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_chinext_pre0824",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 5,
+    "delisting_entry_before_2020_08_24": true
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深证上〔2020〕620号：《特别规定》实施前已进入退市整理期…价格涨跌幅限制比例为 10%",
+  "tags": [
+   "delisting",
+   "chinext",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0029",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_chinext_pre0824",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_entry_before_2020_08_24": false
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "pre0824 断言进入日早于 2020-08-24；false 为矛盾",
+  "tags": [
+   "context",
+   "conflict"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0030",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "深交所 2012 版 4.5.2：退市整理期间涨跌幅限制比例为 10%，无首日例外（主板）",
+  "tags": [
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0031",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-15",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "2020-08-24..2020-12-31 创业板退市首日属 delisting_chinext_post0824（20%），delisting_day1 断言主板",
+  "tags": [
+   "context",
+   "conflict",
+   "delisting"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0032",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2021-01-04",
+   "scope": "delisting_day1",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "delisting_day_index": 1
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "深交所投教：深交所对退市整理股票的首个交易日不实行价格涨跌幅限制（2020-12-31 起，主板与创业板）",
+  "tags": [
+   "delisting",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0033",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2015-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0002
+  },
+  "oracle": "上证财字〔2010〕6号：交易佣金：按照不超过成交金额的 0.2 ‰收取（债券含可转换公司债券）",
+  "tags": [
+   "fee",
+   "convertible"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0034",
+  "query": {
+   "rule": "commission_min_per_order_cny",
+   "trade_date": "2015-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上证财字〔2010〕6号：起点 1 元",
+  "tags": [
+   "fee",
+   "convertible"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0035",
+  "query": {
+   "rule": "commission_cap",
+   "trade_date": "2022-06-01",
+   "scope": "convertible",
+   "market": "XSHG",
+   "context": {
+    "listing_day_index": 20
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "上证财字〔2010〕6号 于 2021-12-31 被上证发〔2021〕95号 废止；之后无官方佣金标准（unresolved）",
+  "tags": [
+   "fee",
+   "unresolved"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0036",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "上交所/深交所交易规则：A股交易的申报价格最小变动单位为0.01元人民币；北交所 tick 另存于 bse_stock，无市场的 stock 查询只命中沪深一条记录",
+  "tags": [
+   "tick",
+   "no-market"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0037",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": null,
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "深交所交易规则：投资者买入的证券，在交收前不得卖出（A股 T+1，沪深一条记录）；北交所 3.1.4 另存于 bse_stock",
+  "tags": [
+   "t+1",
+   "no-market"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0038",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "bse_stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "北交所交易规则（试行）3.3.10：股票交易的申报价格最小变动单位为0.01元人民币",
+  "tags": [
+   "bse",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0039",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "stock",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "北交所交易规则（试行）3.3.10：0.01元。resolve 对 tick_size 按家族取数：stock + BJSE → 家族 bse_stock（rule_at 直接查 stock + BJSE 则无记录）",
+  "tags": [
+   "bse",
+   "tick",
+   "family-scope"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0040",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-06-14",
+   "scope": "st_bse",
+   "market": "BJSE",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "北交所交易规则（试行）3.3.10：股票 0.01 元；ST 状态不影响 tick（st_bse → 家族 bse_stock）",
+  "tags": [
+   "bse",
+   "tick",
+   "st"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3-0041",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2013-06-03",
+   "scope": "convertible",
+   "market": "XSHE",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "深证会〔2012〕144号《债券交易实施细则》（2012-12-10 施行）第四条列明可转换公司债券、第九条现券 0.001 元、第六十六条此前规定不一致的以本细则为准 → verified",
+  "tags": [
+   "convertible",
+   "tick",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0084",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "港交所 ETP 常见问题：securities listed on the Exchange are not [subject to trading bands]；2016-08-18 市调机制公告：不應將其 與某些市場 採用的每日漲跌幅 限制混淆",
+  "tags": [
+   "hk",
+   "unlimited"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0009",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2020-10-19",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": [
+     "09:00",
+     "09:22"
+    ],
+    "continuous": [
+     [
+      "09:30",
+      "12:00"
+     ],
+     [
+      "13:00",
+      "16:00"
+     ]
+    ],
+    "close_call": [
+     "16:01",
+     "16:10"
+    ]
+   }
+  },
+  "oracle": "港交所开市前时段机制说明：the enhanced POS was rolled out on 19 October 2020 … Order Input Period 9:00am – 9:15am … Random Matching Period 9:20am – up to 9:22am；收市竞价机制说明：Order Input Period 16:01 – 16:06 … Random Closing Period 16:08 – 16:10；2012-03-05 起早市 09:30-12:00、午市 13:00-16:00",
+  "tags": [
+   "hk",
+   "sessions",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0010",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2018-06-14",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-HK-0001"
+   ]
+  },
+  "oracle": "收市竞价机制说明：CAS Phase 1 and Phase 2 … launched on 25 July 2016 and 24 July 2017 … starting from 8 October 2019, CAS Securities were further expanded to cover all equities：其间 hk_stock 内部分股票有收市竞价、部分没有 → 已登记缺口",
+  "tags": [
+   "hk",
+   "sessions",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SET-0010",
+  "query": {
+   "rule": "settlement_cycle_days",
+   "trade_date": "2024-06-14",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2
+  },
+  "oracle": "港交所 ETP 交易安排：ETPs are settled on T+2 through CCASS on a Continuous Net Settlement (CNS) basis",
+  "tags": [
+   "hk",
+   "settlement-cycle"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0016",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "沪深港通投资者手册 3.12：For Southbound trading, Mainland investors are allowed to conduct day trading for Hong Kong stocks——由此推及港股本身可即日回转，single-source 推断，verified 门槛下拒答",
+  "tags": [
+   "hk",
+   "t+0",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0085",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0001"
+   ]
+  },
+  "oracle": "未找到明确写明美股没有每日涨跌幅限制的官方原文；LULD 与全市场熔断是盘中机制，不能据此写 unlimited → 已登记缺口",
+  "tags": [
+   "us",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0086",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0002"
+   ]
+  },
+  "oracle": "同 LIM-0085，ETF 另有 LULD 档位与杠杆 ETP 倍率差异，同样不写 unlimited → 已登记缺口",
+  "tags": [
+   "us",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SET-0011",
+  "query": {
+   "rule": "settlement_cycle_days",
+   "trade_date": "2017-09-01",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3
+  },
+  "oracle": "SEC 2017 最终规则：September 5, 2017 is an appropriate compliance date by which the transition to a T+2 standard settlement cycle should be completed，并追述 Rule 15c6-1 的 T+3 自 1995-06-07 起；2017-09-01 为 T+3 最后一个交易日（09-04 劳工节休市）",
+  "tags": [
+   "us",
+   "settlement-cycle",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SET-0012",
+  "query": {
+   "rule": "settlement_cycle_days",
+   "trade_date": "2017-09-05",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2
+  },
+  "oracle": "SEC 2017 最终规则与 FINRA 通知 17-19 独立确认 2017-09-05 起 T+2 → verified",
+  "tags": [
+   "us",
+   "settlement-cycle",
+   "first-day",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SET-0013",
+  "query": {
+   "rule": "settlement_cycle_days",
+   "trade_date": "2024-05-24",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2
+  },
+  "oracle": "SEC 2023 最终规则：compliance date of May 28, 2024, for the amendments to Exchange Act Rule 15c6-1(a)（T+2 → T+1）；2024-05-24 为 T+2 最后一个交易日（05-27 阵亡将士纪念日休市）",
+  "tags": [
+   "us",
+   "settlement-cycle",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SET-0014",
+  "query": {
+   "rule": "settlement_cycle_days",
+   "trade_date": "2024-05-28",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "FINRA 通知 24-04：will become operative on May 28, 2024, which is the compliance date the SEC announced for amended Rule 15c6-1 → T+1，verified；不是 2023-05-05 的法律生效日",
+  "tags": [
+   "us",
+   "settlement-cycle",
+   "first-day",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0021",
+  "query": {
+   "rule": "min_quote_increment",
+   "trade_date": "2024-06-14",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "threshold": 1.0,
+    "at_or_above": 0.01,
+    "below": 0.0001
+   }
+  },
+  "oracle": "SEC 2024 修订令追述：Rule 612 … minimum pricing increments of $0.01 for quotations and orders of NMS stocks priced at, or greater than, $1.00 per share, and $0.0001 … under $1.00；2024 修订的合规日已延至 2027 年 11 月首个工作日",
+  "tags": [
+   "us",
+   "tick",
+   "min-quote-increment"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0017",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2024-06-14",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "FINRA Rule 4210 日内交易定义承认同日买卖同一证券——由此推断可即日回转，single-source，verified 门槛下拒答",
+  "tags": [
+   "us",
+   "t+0",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0022",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2025-08-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 0.25,
+     "tick": 0.001
+    },
+    {
+     "gt": 0.25,
+     "le": 0.5,
+     "tick": 0.005
+    },
+    {
+     "gt": 0.5,
+     "le": 10.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 20.0,
+     "le": 100.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 1.0
+    },
+    {
+     "gt": 2000.0,
+     "le": 5000.0,
+     "tick": 2.0
+    },
+    {
+     "gt": 5000.0,
+     "le": 9995.0,
+     "tick": 5.0
+    }
+   ]
+  },
+  "oracle": "港交所 2024 年最低价位咨询文件 Table 1 现行价位表：From 0.01 to 0.25 0.001 Over 0.25 to 0.50 0.005 Over 0.50 to 10.00 0.010 Over 10.00 to 20.00 0.020 Over 20.00 to 100.00 0.050 … Over 5,000.00 to 9,995.00 5.000；第一阶段 2025-08-04 起生效 → 2025-08-01（周五）仍为旧表",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0023",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2025-08-04",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 0.25,
+     "tick": 0.001
+    },
+    {
+     "gt": 0.25,
+     "le": 0.5,
+     "tick": 0.005
+    },
+    {
+     "gt": 0.5,
+     "le": 10.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 20.0,
+     "le": 50.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 50.0,
+     "le": 100.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 1.0
+    },
+    {
+     "gt": 2000.0,
+     "le": 5000.0,
+     "tick": 2.0
+    },
+    {
+     "gt": 5000.0,
+     "le": 9995.0,
+     "tick": 5.0
+    }
+   ]
+  },
+  "oracle": "LSD/030/2025：The amendments … will come into effect on Monday, 4 August 2025；Part A：Over 10.00 to 20.00 0.010 Over 20.00 to 50.00 0.020 Over 50.00 to 100.00 0.050（其余各段不变）",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0024",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2026-08-03",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 0.25,
+     "tick": 0.001
+    },
+    {
+     "gt": 0.25,
+     "le": 10.0,
+     "tick": 0.005
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 20.0,
+     "le": 50.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 50.0,
+     "le": 100.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 1.0
+    },
+    {
+     "gt": 2000.0,
+     "le": 5000.0,
+     "tick": 2.0
+    },
+    {
+     "gt": 5000.0,
+     "le": 9995.0,
+     "tick": 5.0
+    }
+   ]
+  },
+  "oracle": "CT/104/26：Phase 2 … is targeted to be launched on 3 August 2026 (Monday)；现行附表二 Part A：From 0.01 to 0.25 0.001 Over 0.25 to 10.00 0.005 Over 10.00 to 20.00 0.010 …",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0025",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2019-06-14",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_a"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 0.25,
+     "tick": 0.001
+    },
+    {
+     "gt": 0.25,
+     "le": 0.5,
+     "tick": 0.005
+    },
+    {
+     "gt": 0.5,
+     "le": 10.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 20.0,
+     "le": 100.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 1.0
+    },
+    {
+     "gt": 2000.0,
+     "le": 5000.0,
+     "tick": 2.0
+    },
+    {
+     "gt": 5000.0,
+     "le": 9995.0,
+     "tick": 5.0
+    }
+   ]
+  },
+  "oracle": "港交所 ETP 交易安排单张：All ETPs follow the Spread Table (Part A) … except for fixed income and currency ETPs which follow the Spread Table (Part B)；Part A 即 2024 年咨询文件 Table 1 现行价位表 From 0.01 to 0.25 0.001 … Over 5,000.00 to 9,995.00 5.000 → 2019-06-14 按 Part A 买卖的 ETF 用股票同一张 Part A 表",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0026",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2026-08-03",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_d"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 1.0,
+     "tick": 0.001
+    },
+    {
+     "gt": 1.0,
+     "le": 5.0,
+     "tick": 0.002
+    },
+    {
+     "gt": 5.0,
+     "le": 10.0,
+     "tick": 0.005
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 20.0,
+     "le": 100.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 2000.0,
+     "le": 9999.0,
+     "tick": 1.0
+    }
+   ]
+  },
+  "oracle": "ETP/004/20（2020-05-18）：new spread table (Part D) … will be introduced on 1 June 2020；From 0.01 to 1.00 0.001 Over 1.00 to 5.00 0.002 Over 5.00 to 10.00 0.005 Over 10.00 to 20.00 0.010 Over 20.00 to 100.00 0.020 … Over 2,000.00 to 9,999.00 1.000；两阶段缩小价位均排除 ETP（excluding Exchange Traded Products (ETPs)）→ 2026-08-03（第二阶段首日）Part D 不变",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0027",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2020-06-01",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_d"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 1.0,
+     "tick": 0.001
+    },
+    {
+     "gt": 1.0,
+     "le": 5.0,
+     "tick": 0.002
+    },
+    {
+     "gt": 5.0,
+     "le": 10.0,
+     "tick": 0.005
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 20.0,
+     "le": 100.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 2000.0,
+     "le": 9999.0,
+     "tick": 1.0
+    }
+   ]
+  },
+  "oracle": "ETP/004/20（2020-05-18）：new spread table (Part D) … will be introduced on 1 June 2020；From 0.01 to 1.00 0.001 Over 1.00 to 5.00 0.002 Over 5.00 to 10.00 0.005 Over 10.00 to 20.00 0.010 Over 20.00 to 100.00 0.020 … Over 2,000.00 to 9,999.00 1.000 → 2020-06-01（周一）首日即 Part D",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0028",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2020-05-29",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_a"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.01,
+     "le": 0.25,
+     "tick": 0.001
+    },
+    {
+     "gt": 0.25,
+     "le": 0.5,
+     "tick": 0.005
+    },
+    {
+     "gt": 0.5,
+     "le": 10.0,
+     "tick": 0.01
+    },
+    {
+     "gt": 10.0,
+     "le": 20.0,
+     "tick": 0.02
+    },
+    {
+     "gt": 20.0,
+     "le": 100.0,
+     "tick": 0.05
+    },
+    {
+     "gt": 100.0,
+     "le": 200.0,
+     "tick": 0.1
+    },
+    {
+     "gt": 200.0,
+     "le": 500.0,
+     "tick": 0.2
+    },
+    {
+     "gt": 500.0,
+     "le": 1000.0,
+     "tick": 0.5
+    },
+    {
+     "gt": 1000.0,
+     "le": 2000.0,
+     "tick": 1.0
+    },
+    {
+     "gt": 2000.0,
+     "le": 5000.0,
+     "tick": 2.0
+    },
+    {
+     "gt": 5000.0,
+     "le": 9995.0,
+     "tick": 5.0
+    }
+   ]
+  },
+  "oracle": "港交所 ETP 交易安排单张：All ETPs follow the Spread Table (Part A) … except for fixed income and currency ETPs which follow the Spread Table (Part B)；Part D 自 1 June 2020 起 → 2020-05-29（周五）仍为 Part A",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0029",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2021-06-14",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "spread_table"
+   ]
+  },
+  "oracle": "ETP/004/20：Existing spread table (Part B) remains an option at the ETF manager’s preference (applicable to Fixed Income ETFs only) → 同一日 ETF 可能用 Part D 或 Part B，用哪张是逐证券事实，不给 spread_table 不能答",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0030",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2021-06-14",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_a"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": []
+  },
+  "oracle": "ETP/004/20：Part D 自 1 June 2020 起适用于 ETF（Part B 仅固定收益 ETF 可选）→ 2021 年 ETF 不可能按 Part A 买卖，part_a 与 hk_etf 矛盾",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context-contradiction"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0031",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2020-05-29",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_d"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": []
+  },
+  "oracle": "ETP/004/20：Part D will be introduced on 1 June 2020 → 2020-05-29 尚无 Part D，part_d 与日期矛盾",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context-contradiction",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0032",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2015-06-15",
+   "scope": "hk_etf_part_b",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_b"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.5,
+     "le": 9999.95,
+     "tick": 0.05
+    }
+   ]
+  },
+  "oracle": "现行第二附表 Part B：From 0.50 to 9,999.95 — 0.050；港交所 ETP 交易安排单张：All ETPs follow the Spread Table (Part A) … except for fixed income and currency ETPs which follow the Spread Table (Part B) and are traded at a uniform spread of $0.050",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0033",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2026-08-03",
+   "scope": "hk_etf_part_b",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_b"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": [
+    {
+     "ge": 0.5,
+     "le": 9999.95,
+     "tick": 0.05
+    }
+   ]
+  },
+  "oracle": "现行第二附表 Part B：From 0.50 to 9,999.95 — 0.050；ETP/004/20：Existing spread table (Part B) remains an option … (applicable to Fixed Income ETFs only)；缩小价位排除债务证券与 ETP → 2026-08-03 不变",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "TCK-0034",
+  "query": {
+   "rule": "tick_size_table",
+   "trade_date": "2021-06-14",
+   "scope": "hk_etf_part_b",
+   "market": "XHKG",
+   "context": {
+    "spread_table": "part_d"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": []
+  },
+  "oracle": "hk_etf_part_b 指按第二附表 Part B 买卖的 ETF → spread_table=part_d 与所选 scope 矛盾",
+  "tags": [
+   "hk",
+   "tick",
+   "spread-table",
+   "context-contradiction"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0087",
+  "query": {
+   "rule": "closing_auction_limit_pct",
+   "trade_date": "2016-07-25",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "2016 年收市竞价规则 501L：the upper price limit means a price which is 5% … higher than the CAS reference price … lower price limit … 5% … lower；2016-07-20 公告：第一阶段于 2016 年 7 月 25 日（周一）推出",
+  "tags": [
+   "hk",
+   "closing-auction",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0088",
+  "query": {
+   "rule": "closing_auction_limit_pct",
+   "trade_date": "2016-07-22",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "收市竞价 2016-07-25 才推出（2016-07-20 公告），之前机制不存在 → 无记录、无缺口",
+  "tags": [
+   "hk",
+   "closing-auction",
+   "before-commencement"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0089",
+  "query": {
+   "rule": "vcm_trigger_pct",
+   "trade_date": "2016-08-22",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "hsi_hscei_constituents": 0.1
+   }
+  },
+  "oracle": "2016-08-18 公告：將於下星期一（2016 年 8 月 22 日）…推出市場波動調節機制…僅適用於恒生指數…及恒生中國企業指數…成份股…超出 5 分鐘前最後一次交易價格的 ±10%，即觸發 5 分鐘冷靜期",
+  "tags": [
+   "hk",
+   "vcm",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0090",
+  "query": {
+   "rule": "vcm_trigger_pct",
+   "trade_date": "2020-05-11",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "hsci_largecap_constituents": 0.1,
+    "hsci_midcap_constituents": 0.15,
+    "hsci_smallcap_constituents": 0.2
+   }
+  },
+  "oracle": "CT/029/20：VCM Phase 1 Enhancement will be launched on 11 May 2020 (Monday)；VCM 机制说明：HSCI LargeCap, MidCap and SmallCap … triggering thresholds at ±10%, ±15%, and ±20%",
+  "tags": [
+   "hk",
+   "vcm",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0091",
+  "query": {
+   "rule": "vcm_trigger_pct",
+   "trade_date": "2022-05-03",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "vcm_eligible_etfs": 0.05
+   }
+  },
+  "oracle": "ETP/001/22：ETFs and -1x Inverse Products ±5%（入选：上市满 3 个月且近 3 个月日均成交额不低于 1 亿港元）；ETP/002/22：Effective from the same date [3 May 2022] … will be included in the list of VCM securities",
+  "tags": [
+   "hk",
+   "vcm",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0092",
+  "query": {
+   "rule": "vcm_trigger_pct",
+   "trade_date": "2022-05-02",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "ETP/002/22：ETF 自 2022-05-03 起才纳入市调机制证券名单，此前 ETF 不受市调机制约束 → 无记录、无缺口",
+  "tags": [
+   "hk",
+   "vcm",
+   "before-commencement"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0093",
+  "query": {
+   "rule": "vcm_trigger_pct",
+   "trade_date": "2024-06-14",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "市调机制的通函、规则与机制说明均出自港交所一个发布方 → single-source，不满足 verified",
+  "tags": [
+   "hk",
+   "vcm",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0094",
+  "query": {
+   "rule": "luld_band",
+   "trade_date": "2014-06-02",
+   "scope": "us_stock",
+   "market": "XNYS+XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "tier_1": [
+     {
+      "gt": 3.0,
+      "pct": 0.05,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "ge": 0.75,
+      "le": 3.0,
+      "pct": 0.2,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "lt": 0.75,
+      "pct": 0.75,
+      "abs_cap": 0.15,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     }
+    ],
+    "tier_2": [
+     {
+      "gt": 3.0,
+      "pct": 0.1,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "ge": 0.75,
+      "le": 3.0,
+      "pct": 0.2,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "lt": 0.75,
+      "pct": 0.75,
+      "abs_cap": 0.15,
+      "doubled": [
+       [
+        "09:30",
+        "09:45"
+       ],
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     }
+    ],
+    "hours": [
+     "09:30",
+     "16:00"
+    ]
+   }
+  },
+  "oracle": "LULD Plan Appendix A：Tier 1 NMS Stocks with a Reference Price more than $3.00 shall be 5% … Tier 2 … more than $3.00 shall be 10% … equal to $0.75 and up to and including $3.00 shall be 20% … less than $0.75 shall be the lesser of (a) $0.15 or (b) 75%；第七修正 2014-02-24 起 Plan 运行至 16:00，09:30–09:45 与 15:35–16:00 加倍",
+  "tags": [
+   "us",
+   "luld",
+   "intraday-band"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0095",
+  "query": {
+   "rule": "luld_band",
+   "trade_date": "2020-02-24",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "tier_1": [
+     {
+      "gt": 3.0,
+      "pct": 0.05,
+      "doubled": [
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "ge": 0.75,
+      "le": 3.0,
+      "pct": 0.2,
+      "doubled": [
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "lt": 0.75,
+      "pct": 0.75,
+      "abs_cap": 0.15,
+      "doubled": [
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     }
+    ],
+    "tier_2": [
+     {
+      "gt": 3.0,
+      "pct": 0.1,
+      "doubled": []
+     },
+     {
+      "ge": 0.75,
+      "le": 3.0,
+      "pct": 0.2,
+      "doubled": [
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     },
+     {
+      "lt": 0.75,
+      "pct": 0.75,
+      "abs_cap": 0.15,
+      "doubled": [
+       [
+        "15:35",
+        "16:00"
+       ]
+      ]
+     }
+    ],
+    "hours": [
+     "09:30",
+     "16:00"
+    ]
+   }
+  },
+  "oracle": "NYSE 实施通知：on Monday, February 24, 2020 … will implement Amendment 18 … eliminates the doubling of percentage parameters: between 9:30 - 9:45 a.m. … between 3:35 - 4:00 p.m. for Tier 2 NMS stocks with a reference price above $3.00 → 当日为新规第一天",
+  "tags": [
+   "us",
+   "luld",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0096",
+  "query": {
+   "rule": "luld_band",
+   "trade_date": "2013-05-01",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0005"
+   ]
+  },
+  "oracle": "第四修正回顾：Phase I 自 2013-04-08 按证券分批；第七修正：2013-12-08 才覆盖全部 NMS 证券 → 期间同一 scope 内部分证券受 LULD 约束、部分不受，已登记缺口",
+  "tags": [
+   "us",
+   "luld",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0097",
+  "query": {
+   "rule": "luld_band",
+   "trade_date": "2013-04-05",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "LULD Plan Phase I 2013-04-08 才开始 → 2013-04-05（周五）机制尚不存在：无记录、无缺口",
+  "tags": [
+   "us",
+   "luld",
+   "before-commencement"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0098",
+  "query": {
+   "rule": "mwcb_decline_levels",
+   "trade_date": "2013-04-05",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "reference": "djia_quarterly_points",
+    "levels": [
+     0.1,
+     0.2,
+     0.3
+    ]
+   }
+  },
+  "oracle": "2012 批准令回顾旧规则：Levels 1, 2, and 3 are calculated at the beginning of each calendar quarter, using 10%, 20%, and 30% … of the DJIA；新制 2013-04-08 起 → 前一交易日仍为旧制",
+  "tags": [
+   "us",
+   "mwcb",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0099",
+  "query": {
+   "rule": "mwcb_decline_levels",
+   "trade_date": "2013-04-08",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "reference": "sp500_prev_close",
+    "levels": [
+     0.07,
+     0.13,
+     0.2
+    ]
+   }
+  },
+  "oracle": "Nasdaq 熔断说明：Reduce the market decline percentage thresholds … to 7%, 13% and 20% from the prior day's closing price；Nasdaq 与 NYSE 上线通知均为 2013-04-08 → 两方来源，verified",
+  "tags": [
+   "us",
+   "mwcb",
+   "first-day-of-new-rule",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0011",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": null,
+    "continuous": [
+     [
+      "09:30",
+      "16:00"
+     ]
+    ],
+    "close_call": null,
+    "open_cross": "09:30",
+    "close_cross": "16:00"
+   }
+  },
+  "oracle": "NYSE 时段页：Tape A … Core Trading Session: 9:30 a.m. to 4:00 p.m. ET 9:30 a.m. ET - Core Open Auction … 4:00 p.m. ET - Closing Auction；Pillar 说明：opening and closing auctions will remain exclusive to NYSE-listed companies",
+  "tags": [
+   "us",
+   "sessions",
+   "primary-listing"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0012",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2010-01-04",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "open_call": null,
+    "continuous": [
+     [
+      "09:30",
+      "16:00"
+     ]
+    ],
+    "close_call": null,
+    "open_cross": "09:30",
+    "close_cross": "16:00"
+   }
+  },
+  "oracle": "2006 Nasdaq 规则文本：For Nasdaq-listed securities, the Nasdaq Opening Cross shall occur at 9:30 … The Nasdaq Closing Cross will begin at 4:00:00；2013 备案：the regular session which runs from 9:30 a.m. to 4:00 p.m.",
+  "tags": [
+   "us",
+   "sessions",
+   "coverage-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0013",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0007"
+   ]
+  },
+  "oracle": "ETF 几乎都主上市于 NYSE Arca（ARCX，不在本库市场内）；XNYS 主上市 ETF 的时段与撮合没有单独原文 → 已登记缺口",
+  "tags": [
+   "us",
+   "sessions",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0014",
+  "query": {
+   "rule": "session_schedule",
+   "trade_date": "2024-06-14",
+   "scope": "us_stock",
+   "market": "XNYS+XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "时段按主上市交易所逐所记录（XNYS 或 XNAS）；同时问两所 → 子集匹配不到任何记录，无缺口：调用方须给出主上市交易所",
+  "tags": [
+   "us",
+   "sessions",
+   "per-exchange"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0015",
+  "query": {
+   "rule": "extended_hours",
+   "trade_date": "2013-03-15",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0003"
+   ]
+  },
+  "oracle": "2013 备案：pre-market session which runs from 7:00 a.m. … post-market session … to 8:00 p.m. 为旧制，但其实际起始日与更早变迁未找到 → 2013-03-18 前为已登记缺口",
+  "tags": [
+   "us",
+   "sessions",
+   "extended-hours",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0016",
+  "query": {
+   "rule": "extended_hours",
+   "trade_date": "2013-03-18",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "pre_market": [
+     "04:00",
+     "09:30"
+    ],
+    "post_market": [
+     "16:00",
+     "20:00"
+    ]
+   }
+  },
+  "oracle": "Nasdaq ETA2013-21：Effective Monday, March 18, 2013, the NASDAQ Stock Market … will begin pre-market trading in all NMS securities at 4:00 A.M. Eastern Time；系统时段至 8:00 P.M. 不变",
+  "tags": [
+   "us",
+   "sessions",
+   "extended-hours",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SES-0017",
+  "query": {
+   "rule": "extended_hours",
+   "trade_date": "2024-06-14",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0009"
+   ]
+  },
+  "oracle": "NYSE Pillar 说明：early trading session from the hours of 7:00 am ET to 9:30 am ET for Tape B and C non-primary securities only；主上市证券有无盘后时段没找到原文 → 已登记缺口",
+  "tags": [
+   "us",
+   "sessions",
+   "extended-hours",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0061",
+  "query": {
+   "rule": "sec_fee_rate_sell",
+   "trade_date": "2010-01-15",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1.27e-05
+  },
+  "oracle": "FINRA 2009-12-24 通知：Effective January 15, 2010, the Section 31 fee will decrease … to $12.70 per million dollars；SEC 2010 年中令 Appendix A：sales between 1/15/10 and 3/31/10 … fee rate of $12.70 per million → 两方来源，verified",
+  "tags": [
+   "us",
+   "fees",
+   "first-day-of-new-rule",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0062",
+  "query": {
+   "rule": "trading_fee_each_side",
+   "trade_date": "2021-06-14",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 5e-05
+  },
+  "oracle": "联交所 CT/141/22：现行 Trading Fee of 0.005% per side，1 January 2023 起改为 0.00565%（股票与 ETF 同一收费）→ 2021-06-14 hk_etf 为 0.005%；价位表用第二附表哪一部分只影响 tick_size_table，查费用不要求 spread_table",
+  "tags": [
+   "hk",
+   "fee",
+   "context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0100",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2012-06-01",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "sp500_constituents": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "russell1000_constituents": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "specified_etps": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "other_nms_stocks": [
+     {
+      "ge": 1.0,
+      "pct": 0.3
+     },
+     {
+      "lt": 1.0,
+      "pct": 0.5
+     }
+    ],
+    "hours": [
+     "09:45",
+     "15:35"
+    ],
+    "lookback_minutes": 5
+   }
+  },
+  "oracle": "FINRA 2011 备案回顾：Effective August 8, 2011 … extended … to all other NMS stocks；Phase I & II 证券 ten percent price move within a five- minute period，Phase III thirty percent（前收盘 $1.00 or more）/ fifty percent（less than $1.00）；监测 9:45–15:35 → 组成员由调用者判定",
+  "tags": [
+   "us",
+   "single-stock-pause"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0101",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2013-04-05",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "sp500_constituents": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "russell1000_constituents": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "specified_etps": [
+     {
+      "gt": 0.0,
+      "pct": 0.1
+     }
+    ],
+    "other_nms_stocks": [
+     {
+      "ge": 1.0,
+      "pct": 0.3
+     },
+     {
+      "lt": 1.0,
+      "pct": 0.5
+     }
+    ],
+    "hours": [
+     "09:45",
+     "15:35"
+    ],
+    "lookback_minutes": 5
+   }
+  },
+  "oracle": "NYSE Arca RBE-11-05：Effective August 8, 2011, Rule 7.11 will be applicable to all NMS stocks … including all exchange traded products；FINRA 2011 备案同述 → 两方来源，verified；LULD 2013-04-08 起分批替代 → 前一交易日仍为试点",
+  "tags": [
+   "us",
+   "single-stock-pause",
+   "last-day-of-old-rule",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0102",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2011-01-03",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0010"
+   ]
+  },
+  "oracle": "NYSE 通知：2010-06-11 首批 5 只、06-14 expanded to include a total of 54 securities；全部 S&P 500 的完成日没找到 → 试点按证券逐只激活，已登记缺口（组成员本身由调用者负责，不构成缺口）",
+  "tags": [
+   "us",
+   "single-stock-pause",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0103",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2013-05-01",
+   "scope": "us_etf",
+   "market": "XNYS+XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0013"
+   ]
+  },
+  "oracle": "SEC 第七修正：The limit up-limit down mechanism … would replace the existing single-stock circuit breaker pilot … not implemented across all NMS Stocks until December 8, 2013 → 迁移期两种机制并存，已登记缺口",
+  "tags": [
+   "us",
+   "single-stock-pause",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0104",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2014-06-02",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "SEC 第七修正：LULD 自 2013-12-08 覆盖全部 NMS 证券并替代单股暂停试点 → 机制已结束，无记录、无缺口（不填 0）",
+  "tags": [
+   "us",
+   "single-stock-pause",
+   "post-history"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0105",
+  "query": {
+   "rule": "single_stock_pause_pct",
+   "trade_date": "2010-06-14",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "Nasdaq FAQ：Phase II, effective Tuesday, September 14, 2010, included … select Exchange-Traded Products → ETF 在 2010-09-14 前未参加试点，无记录、无缺口",
+  "tags": [
+   "us",
+   "single-stock-pause",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0063",
+  "query": {
+   "rule": "cat_fee_per_share",
+   "trade_date": "2024-09-02",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 3.5e-05
+  },
+  "oracle": "FINRA SR-FINRA-2024-011：The fee rate for CAT Fee 2024-1 would be $0.000035 per executed equivalent share … first monthly invoice … in October 2024 calculated based on … September 2024 → 按被计费交易月份，2024-09 起",
+  "tags": [
+   "us",
+   "fees",
+   "cat",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0064",
+  "query": {
+   "rule": "cat_fee_per_share",
+   "trade_date": "2025-12-15",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "CAT Fee Alert 2025-4：last invoice for CAT Fee 2025-2 … in December 2025, based on November 2025 transactions；2026-1 公告：no CAT fees … 2025-12-01 至 2026-04-30 由储备支付 → 停收期记 0",
+  "tags": [
+   "us",
+   "fees",
+   "cat"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0065",
+  "query": {
+   "rule": "cat_fee_per_share",
+   "trade_date": "2026-05-01",
+   "scope": "us_stock",
+   "market": "XNYS+XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1e-06
+  },
+  "oracle": "FINRA 备案：The fee rate for CAT Fee 2026-1 would be $0.000001 per executed equivalent share … first monthly invoice … in June 2026 … in May 2026 → 2026-05-01 起",
+  "tags": [
+   "us",
+   "fees",
+   "cat",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0066",
+  "query": {
+   "rule": "cat_historical_assessment_per_share",
+   "trade_date": "2024-10-01",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1.3e-05
+  },
+  "oracle": "FINRA 备案：The fee rate for Historical CAT Assessment 1 will be $0.000013 per executed equivalent share … first monthly invoice … in November 2024 … in October 2024 → 2024-10-01 起",
+  "tags": [
+   "us",
+   "fees",
+   "cat",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0067",
+  "query": {
+   "rule": "cat_historical_assessment_per_share",
+   "trade_date": "2026-06-01",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 2e-06
+  },
+  "oracle": "FINRA 备案：The fee rate for Historical CAT Assessment 1A will be $0.000002 per executed equivalent share … first monthly invoice … in June 2026 … in May 2026 → 2026-05-01 起；1A 追回 Assessment 1 未收完的部分，不叠加",
+  "tags": [
+   "us",
+   "fees",
+   "cat"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0068",
+  "query": {
+   "rule": "cat_fee_per_share",
+   "trade_date": "2024-08-30",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "CAT Fee Alert 2024-1：first invoice for CAT Fee 2024-1 in October 2024 … based on transactions in September 2024；更早账单为测试、不要求支付 → 首个计费交易月前无记录、无缺口",
+  "tags": [
+   "us",
+   "fees",
+   "cat",
+   "pre-history"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0069",
+  "query": {
+   "rule": "cat_fee_per_share",
+   "trade_date": "2026-11-03",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "CAT 费率仅 FINRA 备案与 CAT LLC 公告（存档件）支撑，存档依赖 → single-source；min_verification=verified 时拒答",
+  "tags": [
+   "us",
+   "fees",
+   "cat",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0106",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2010-06-01",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "none"
+  },
+  "oracle": "SEC 2007 最终规则：No short sale price test, including any short sale price test of any self-regulatory organization, shall apply … Compliance Date: July 6, 2007 → 2007-07-06 起 none，至 Rule 201 合规日",
+  "tags": [
+   "us",
+   "short-sale"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0107",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2011-02-25",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "none"
+  },
+  "oracle": "SEC 延期令：The compliance date … has been extended from November 10, 2010 to February 28, 2011 → 2011-02-25（周五）仍为旧制 none",
+  "tags": [
+   "us",
+   "short-sale",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0108",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2011-02-28",
+   "scope": "us_stock",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "trigger_decline_pct": 0.1,
+    "reference": "prior_close",
+    "restriction": "above_national_best_bid",
+    "duration": "rest_of_day_and_next_day"
+   }
+  },
+  "oracle": "SEC 2010 最终规则 Rule 201(b)(1)：decreases by 10% or more from the covered security's closing price … at a price that is less than or equal to the current national best bid … for the remainder of the day and the following day；合规日延至 2011-02-28；FINRA 10-48 与 NYSE 通知独立佐证 → verified",
+  "tags": [
+   "us",
+   "short-sale",
+   "first-day-of-new-rule",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0109",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2020-01-02",
+   "scope": "us_etf",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "trigger_decline_pct": 0.1,
+    "reference": "prior_close",
+    "restriction": "above_national_best_bid",
+    "duration": "rest_of_day_and_next_day"
+   }
+  },
+  "oracle": "Rule 201 覆盖 NMS 股票（含 ETF 份额）；2018/2021/2024 修订仅改定义编号与主上市交易所措辞，不改 10%、前收盘、持续期",
+  "tags": [
+   "us",
+   "short-sale"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0110",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2010-06-01",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "旧制 none 仅 SEC 最终规则 + NYSE Arca 本所系统通知，后者不独立证明两交易所 → single-source；min_verification=verified 时拒答",
+  "tags": [
+   "us",
+   "short-sale",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0018",
+  "query": {
+   "rule": "pattern_day_trader_min_equity",
+   "trade_date": "2015-03-02",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "min_equity": 25000.0,
+    "day_trades": 4,
+    "window_business_days": 5
+   }
+  },
+  "oracle": "NASD 01-26：pattern day traders are defined as those customers who day trade four or more times in five business days … minimum equity of $25,000；2001-09-28 起；2010-12-02 并入 FINRA Rule 4210 值不变",
+  "tags": [
+   "us",
+   "pattern-day-trader"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0019",
+  "query": {
+   "rule": "pattern_day_trader_min_equity",
+   "trade_date": "2026-06-03",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "min_equity": 25000.0,
+    "day_trades": 4,
+    "window_business_days": 5
+   }
+  },
+  "oracle": "Regulatory Notice 26-10：The effective date of the amendments is June 4, 2026 → 旧要求在 2026-06-03 仍有效",
+  "tags": [
+   "us",
+   "pattern-day-trader",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0020",
+  "query": {
+   "rule": "pattern_day_trader_min_equity",
+   "trade_date": "2026-06-04",
+   "scope": "us_stock",
+   "market": "XNYS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0014"
+   ]
+  },
+  "oracle": "Regulatory Notice 26-10：Members that need more time to implement the rule change will be permitted to phase in their implementation over a period of 18 months, until October 20, 2027 → 同一 scope 内适用哪套规则取决于券商，Marina 不存券商信息：缺口",
+  "tags": [
+   "us",
+   "pattern-day-trader",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0021",
+  "query": {
+   "rule": "pattern_day_trader_min_equity",
+   "trade_date": "2026-11-03",
+   "scope": "us_etf",
+   "market": "XNYS+XNAS",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-US-0015"
+   ]
+  },
+  "oracle": "券商逐家过渡至 2027-10-20，窗口内一直是缺口；不建 none 记录",
+  "tags": [
+   "us",
+   "pattern-day-trader",
+   "known-gap"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "T0-0022",
+  "query": {
+   "rule": "pattern_day_trader_min_equity",
+   "trade_date": "2015-03-02",
+   "scope": "us_etf",
+   "market": "XNAS",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "SEC 批准 SRO 备案与 FINRA/NASD 通知按同一发布方计 → single-source；min_verification=verified 时拒答",
+  "tags": [
+   "us",
+   "pattern-day-trader",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0111",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2015-06-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "restriction": "not_below_best_ask",
+    "duration": "always"
+   }
+  },
+  "oracle": "交易所规则第十一附表 (15)：A short sale of a Designated Security shall not be made on the Exchange below the best current ask price；起点截在覆盖下限 2010-01-01（2001 年公告已述 tick rule，真实起日未找到）",
+  "tags": [
+   "hk",
+   "short-sale"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0112",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2015-06-01",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "restriction": "exempt",
+    "duration": "always"
+   }
+  },
+  "oracle": "港交所 2002-03-28 状况报告：As of 25 March 2002, all the ETF now listed or traded on the Stock Exchange will be exempt from the Tick Rule → 全体参与者豁免，不只是庄家",
+  "tags": [
+   "hk",
+   "short-sale",
+   "etf"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0113",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2009-12-31",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "restriction": "exempt",
+    "duration": "always"
+   }
+  },
+  "oracle": "ETF 豁免起于原文写明的 2002-03-25（早于覆盖下限），故 2009-12-31 仍有答案；股票同日无记录无缺口",
+  "tags": [
+   "hk",
+   "short-sale",
+   "etf",
+   "before-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0114",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2023-06-19",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "restriction": "not_below_best_ask",
+    "duration": "always"
+   }
+  },
+  "oracle": "2023-06-19 起双柜台庄家卖空另获豁免（第十九附表），普通卖空仍不得低于最佳沽盘价 → 同值分段，值不变",
+  "tags": [
+   "hk",
+   "short-sale",
+   "same-value-split"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0115",
+  "query": {
+   "rule": "short_sale_price_test",
+   "trade_date": "2015-06-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "港交所规则与通告算一个发布方；证监会指引只有存档件，不能升 verified → single-source；min_verification=verified 时拒答",
+  "tags": [
+   "hk",
+   "short-sale",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0116",
+  "query": {
+   "rule": "opening_auction_limit_pct",
+   "trade_date": "2020-10-19",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.15
+  },
+  "oracle": "港交所 2020-10-05 公告：POS 优化 effective Monday, 19 October 2020；the first-stage price limit will be ± 15 per cent against the security's POS reference price",
+  "tags": [
+   "hk",
+   "pre-opening",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0117",
+  "query": {
+   "rule": "opening_auction_limit_pct",
+   "trade_date": "2020-10-16",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-HK-0005"
+   ]
+  },
+  "oracle": "2019 咨询文件附录 1：旧 POS “No fixed price range (except 9-times rule)”，不是对称比例 → 登记缺口 G-HK-0005，不写 0 / unlimited / 0.15",
+  "tags": [
+   "hk",
+   "pre-opening",
+   "known-gap",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0118",
+  "query": {
+   "rule": "opening_auction_limit_pct",
+   "trade_date": "2015-06-01",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": [
+    "G-HK-0006"
+   ]
+  },
+  "oracle": "旧 POS 覆盖 All securities（含 ETF），同样只有 9 倍规则 → 缺口 G-HK-0006，不是 ETF 未进入 POS",
+  "tags": [
+   "hk",
+   "pre-opening",
+   "known-gap",
+   "etf"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0119",
+  "query": {
+   "rule": "opening_auction_limit_pct",
+   "trade_date": "2026-11-03",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.15
+  },
+  "oracle": "2026-11-02 起 9 倍规则收紧为 5 倍（修订索引），外层 ±15% 不变；ETF 上市日以上市前每单位资产净值为基准",
+  "tags": [
+   "hk",
+   "pre-opening",
+   "etf",
+   "same-value-split"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0070",
+  "query": {
+   "rule": "investor_compensation_levy_each_side",
+   "trade_date": "2012-01-03",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "港交所收费页：Effective 19 December 2005, the payment of Investor Compensation Levy (i.e. 0.002% per side …) has been suspended by the SFC → 暂停为有来源的 0",
+  "tags": [
+   "hk",
+   "fee",
+   "levy"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0071",
+  "query": {
+   "rule": "investor_compensation_levy_each_side",
+   "trade_date": "2021-01-04",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0
+  },
+  "oracle": "政府 2019-10-11 公告：2020-01-01 起暂停 / 恢复门槛改为 30 亿 / 20 亿港元，will not affect the levy suspension in effect since 2005；CT/108/26（2026）仍确认暂停 → 二级市场 ETF 同为 0",
+  "tags": [
+   "hk",
+   "fee",
+   "levy",
+   "etf"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "FEE-0072",
+  "query": {
+   "rule": "investor_compensation_levy_each_side",
+   "trade_date": "2021-01-04",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "政府公告附负面审议条件、2005 年证监会豁免通知原文未取得 → 保守 single-source；min_verification=verified 时拒答",
+  "tags": [
+   "hk",
+   "fee",
+   "levy",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0120",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2015-06-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": null,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "港交所 2005-06-29 公告：Quotation Rules 8 spreads → 24 spreads（2005-07-04 起）；Rules 506A/507A 持续交易时段被动边界以同侧最佳价为基准，只有价位分支 → wider_pct null",
+  "tags": [
+   "hk",
+   "quotation-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0121",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2025-08-04",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": 0.05,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "LSD/030/2025：will come into effect on Monday, 4 August 2025；Rules 506A/507A 改为 the lower / higher of twenty-four spreads or 5%（百分比向下方向 rounded up、向上方向 rounded down）→ 两者取较宽",
+  "tags": [
+   "hk",
+   "quotation-rule",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0122",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2025-08-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": null,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "2025-08-04 前股票仍只有 24 个价位（2023 年修订只给 ETF 加 3.5%）→ wider_pct null",
+  "tags": [
+   "hk",
+   "quotation-rule",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0123",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2023-03-20",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": 0.035,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "修订索引：dual structure price limit (i.e. either 24 spreads or 3.5% from the reference price, whichever is greater in percentage terms) (effective from 20 March 2023)；ETP/001/23 确认 20 March 2023 实施",
+  "tags": [
+   "hk",
+   "quotation-rule",
+   "etf",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0124",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2023-03-17",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": null,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "2023-03-20 前 ETF 与股票同为 24 个价位规则（2005-07-04 起），无百分比分支",
+  "tags": [
+   "hk",
+   "quotation-rule",
+   "etf",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0125",
+  "query": {
+   "rule": "order_spread_limit",
+   "trade_date": "2009-06-01",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_spreads": 24,
+    "wider_pct": null,
+    "reference": "same_side_best_or_rule_fallback"
+   }
+  },
+  "oracle": "24 个价位真实起点 2005-07-04（早于覆盖下限，原文写明），故 2009-06-01 仍有答案",
+  "tags": [
+   "hk",
+   "quotation-rule",
+   "before-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0126",
+  "query": {
+   "rule": "order_price_multiple_limit",
+   "trade_date": "2026-10-30",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_multiple": 9,
+    "reference": "nominal_or_previous_close_for_opening"
+   }
+  },
+  "oracle": "CT/120/26：Under the current 9-times rule, a buy order or a sell order shall not be made at a price that deviates by 9 times or more from the nominal price；2026-11-02 前最后一个交易日",
+  "tags": [
+   "hk",
+   "multiple-rule",
+   "etf",
+   "last-day-of-old-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0127",
+  "query": {
+   "rule": "order_price_multiple_limit",
+   "trade_date": "2026-11-02",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": {
+    "max_multiple": 5,
+    "reference": "nominal_or_previous_close_for_opening"
+   }
+  },
+  "oracle": "LSD/072/2026：tightening the relevant order price limit from 9-times rule to 5-times rule for all securities, except for structured products … come into effect on Monday, 2 November 2026；拒绝 P ≥ 5R 或 P ≤ R/5",
+  "tags": [
+   "hk",
+   "multiple-rule",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0128",
+  "query": {
+   "rule": "order_price_multiple_limit",
+   "trade_date": "2009-12-31",
+   "scope": "hk_stock",
+   "market": "XHKG",
+   "context": {}
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "9 倍规则真实起点未找到，起点截在覆盖下限 2010-01-01 → 之前无记录也无缺口（与其他截断记录一致）",
+  "tags": [
+   "hk",
+   "multiple-rule",
+   "before-floor"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LIM-0129",
+  "query": {
+   "rule": "order_price_multiple_limit",
+   "trade_date": "2026-11-03",
+   "scope": "hk_etf",
+   "market": "XHKG",
+   "context": {},
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "全部原文出自港交所（一个发布方），通函称获证监会批准不算第二发布方原文 → single-source；min_verification=verified 时拒答",
+  "tags": [
+   "hk",
+   "multiple-rule",
+   "etf",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0001",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star_growth_new",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "star_growth_tier": "new"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": true
+  },
+  "oracle": "上证函〔2025〕2218号（2025年7月13日，自发布之日起施行）：普通投资者首次参与新注册的科创成长层股票的申购、交易前……投资者未签署的，证券公司不得接受其相关委托 → true",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "first-day-of-new-rule"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0002",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star_growth_legacy",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "star_growth_tier": "legacy"
+   }
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": false
+  },
+  "oracle": "上证函〔2025〕2218号（2025年7月13日，自发布之日起施行）：投资者参与本通知发布前已上市且上市后尚未首次实现盈利的科创板公司股票、存托凭证交易的，无需签署 → false（有出处的豁免，不是默认值）",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "exemption"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0003",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-12",
+   "scope": "star_growth_new",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "star_growth_tier": "new"
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "上证函〔2025〕2218号（2025年7月13日，自发布之日起施行）：科创成长层自 2025-07-13 设立，之前不存在该层，无记录、无缺口",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "before-existence"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0004",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star_growth_new",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "star_growth_tier": "legacy"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT"
+  },
+  "oracle": "star_growth_new 断言 star_growth_tier = new；调用者给出 legacy（存量、标签「成1」）与所选范围矛盾 → 拒答",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "context-conflict"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0005",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star_growth_new",
+   "market": "XSHG",
+   "context": {
+    "board": "star"
+   }
+  },
+  "expect": {
+   "status": "MISSING_CONTEXT",
+   "missing_context": [
+    "star_growth_tier"
+   ]
+  },
+  "oracle": "是否属于科创成长层（新注册「成」/ 存量「成1」）是逐只证券、逐日的事实，Marina 不推断；未提供 star_growth_tier → 缺上下文",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "missing-context"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0006",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "st_status": false,
+    "listing_day_index": 100
+   }
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "known_gap_ids": []
+  },
+  "oracle": "上证函〔2025〕2218号（2025年7月13日，自发布之日起施行） 只约束科创成长层股票；普通 star 范围下无此规则的记录，不得默认为 false",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "no-default"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "SUI-0007",
+  "query": {
+   "rule": "retail_risk_disclosure_required",
+   "trade_date": "2025-07-14",
+   "scope": "star_growth_new",
+   "market": "XSHG",
+   "context": {
+    "board": "star",
+    "star_growth_tier": "new"
+   },
+   "min_verification": "verified"
+  },
+  "expect": {
+   "status": "UNVERIFIED"
+  },
+  "oracle": "通知与答记者问都出自上交所（一个发布方）→ single-source；min_verification=verified 时拒答",
+  "tags": [
+   "suitability",
+   "star-growth",
+   "verification-bar"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "marina-rules"
+version = "2026.11.13"
+description = "Point-in-time trading rules for financial markets, as data. Price limits, fees, sessions, settlement — every record cites its source."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "David Li"}]
+keywords = ["trading", "backtest", "exchange-rules", "price-limit", "fees", "point-in-time", "a-share"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = ["pyyaml>=6"]
+
+[project.urls]
+Homepage = "https://github.com/David-Marina/marina-rules"
+Issues = "https://github.com/David-Marina/marina-rules/issues"
+
+[project.scripts]
+marina-check = "marina_rules.check:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+# The dataset is vendored into the wheel so `pip install marina-rules` is self-contained.
+# scripts/vendor_data.py copies data/ → src/marina_rules/data/ right before build; the copy is
+# git-ignored and must byte-match data/ (checked in CI and by `marina_rules.dataset_digest()`).
+[tool.setuptools.package-data]
+marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv"]

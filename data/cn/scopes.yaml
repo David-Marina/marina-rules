@@ -1,0 +1,482 @@
+# Scope registry · China A-share
+# A scope names *which securities* a rule applies to. Each scope declares what the caller must already
+# know about the security to legitimately select it. Marina never infers this context (it holds rules,
+# not security histories); it refuses to answer when the context is missing — see coverage().
+#
+# requires vocabulary:
+#   board              the security's listing board (main_board | chinext | star | bse) — derivable from code
+#   st_status          whether the security was under Special Treatment ON THAT DATE (point-in-time list)
+#   listing_day_index  1-based trading-day index since listing (1 = listing day)
+#   issue_regime       approval | registration (which IPO regime the security listed under)
+#   fund_constituents  all_20pct_band | mixed — whether every index constituent of a fund is a 20%-band stock
+#   delisting_day_index 1-based trading-day index within the delisting arrangement period (1 = first day)
+#   fund_type          the listed fund's same-day-rotation category under trading rules 3.1.5 on that date:
+#                      bond_etf | money_market | gold_etf | commodity_futures_etf | cross_border | other
+#   delisting_entry_before_2020_08_24  (SZSE ChiNext delisting stocks, 2020-08-24..2020-12-31 only) true if the stock had
+#                      entered the delisting arrangement period before the ChiNext special rules took effect on 2020-08-24
+#                      (深证上〔2020〕620号: 10% band if so, 20% if it entered on/after 2020-08-24). Per-security fact.
+#   underlying_t0      (cross-border ETF/LOF only) whether the tracked index constituents / investment targets themselves
+#                      trade same-day — the condition in rules 3.1.5 for a cross-border fund to be T+0. Per-instrument fact.
+#   star_growth_tier   (STAR Market growth tier 科创成长层, from 2025-07-13) new | legacy — whether the security was in the tier
+#                      ON THAT DATE as a newly registered member (label 成) or as an existing unprofitable STAR stock moved in
+#                      on 2025-07-13 (label 成1). A STAR stock outside the tier selects neither growth scope. Per-security fact.
+#
+# excludes: scopes that must NOT be simultaneously selected for the same security/date; selecting two
+# scopes that are mutually exclusive is a caller error and record_at reports a conflict.
+#
+# asserts: what selecting the scope ASSERTS about the security on the trade date. contract.resolve() checks every
+# supplied context key against it and answers MISSING_CONTEXT (context_conflicts) on a contradiction — e.g. scope
+# main_board with board=star, or with listing_day_index=1 (a listing day belongs to an IPO scope). Grammar, per key:
+#   <scalar>                      the key must equal it                       (board: main_board)
+#   {eq|in|not_in|min|max: …}     comparison; min/max are inclusive           (listing_day_index: {min: 2})
+#   a list of such dicts          every entry that applies must hold
+# Qualifiers inside a dict entry:
+#   from / to   the entry applies only to trade dates in [from, to)           (date dependence is explicit)
+#   unless      {key: value}: the entry does not apply if the context says so (issue_regime: approval)
+#   when        {key: value}: the entry applies only if the context says so
+#   required    true: when the entry applies and the key is absent, the key is MISSING
+# A key supplied with value null counts as not supplied (missing if required).
+# rule_asserts: {rule: {requires: [...], asserts: {...}}} — extra requirements/constraints for one rule only
+# (min_holding_days under etf: the fund type must be stated and must not be a same-day type).
+schema: 1.1
+market: XSHG+XSHE
+scopes:
+  stock:
+    description: Any listed stock when the rule does not distinguish boards or status (fees, rounding).
+    requires: []
+  bse_stock:
+    description: Beijing Stock Exchange shares — fee/settlement family scope for BSE-specific values.
+    requires: []
+  main_board:
+    description: SSE/SZSE main board (incl. former SME board), not ST, not in listing window.
+    requires: [board, st_status, listing_day_index]
+    excludes: [st_main, ipo_day1_main, ipo_first5_main]
+    asserts:
+      board: main_board
+      st_status: false
+      # Ordinary main board = outside the IPO no-band window. Day-1-only regimes (ipo_day1_main) leave day ≥ 2; from
+      # 2023-04-10 registration-regime IPOs are unlimited for 5 days (ipo_first5_main), so ordinary means day ≥ 6. An
+      # approval-regime stock listed before 2023-04-10 and on day 2..5 just after it: supply issue_regime: approval.
+      listing_day_index: [{min: 2}, {min: 6, from: '2023-04-10', unless: {issue_regime: approval}}]
+  chinext:
+    description: SZSE ChiNext (300/301), not ST, not in listing window.
+    requires: [board, st_status, listing_day_index]
+    excludes: [st_chinext, ipo_first5_chinext, ipo_day1_main]
+    asserts:
+      board: chinext
+      st_status: false
+      listing_day_index: [{min: 2}, {min: 6, from: '2020-08-24', unless: {issue_regime: approval}}]
+  star:
+    description: SSE STAR Market (688), not risk-warned, not in listing window.
+    requires: [board, st_status, listing_day_index]
+    excludes: [st_star, ipo_first5_star]
+    asserts: {board: star, st_status: false, listing_day_index: {min: 6}}
+  st_star:
+    description: STAR security under *ST (since 2019) or ST (since 2024-10-30) on that date. Same 20% band as star; kept as a scope so callers must know st_status rather than assume STAR has none.
+    requires: [board, st_status]
+    excludes: [star]
+    asserts: {board: star, st_status: true}
+  bse:
+    description: Beijing Stock Exchange, not risk-warned, not in listing window or delisting period.
+    requires: [board, st_status, listing_day_index]
+    excludes: [ipo_day1_bse, st_bse, delisting_bse, delisting_day1_bse]
+    asserts: {board: bse, st_status: false, listing_day_index: {min: 2}}
+  st_main:
+    description: Main-board security under ST/*ST on that date.
+    requires: [board, st_status]
+    excludes: [main_board]
+    asserts: {board: main_board, st_status: true}
+  st_chinext:
+    description: ChiNext security under ST/*ST on that date.
+    requires: [board, st_status]
+    excludes: [chinext]
+    asserts: {board: chinext, st_status: true}
+  ipo_day1_main:
+    description: Listing day (listing_day_index == 1) of a main-board-family security (main board; ChiNext before 2020-08-24).
+    requires: [board, listing_day_index, issue_regime]
+    excludes: [main_board, chinext, ipo_first5_main]
+    asserts:
+      board: [{in: [main_board, chinext], to: '2020-08-24'}, {eq: main_board, from: '2020-08-24'}]
+      listing_day_index: 1
+      issue_regime: approval
+  ipo_day1_bse:
+    description: Listing day on the Beijing Stock Exchange.
+    requires: [board, listing_day_index]
+    excludes: [bse]
+    asserts: {board: bse, listing_day_index: 1}
+  ipo_first5_main:
+    description: First five trading days of a registration-regime main-board IPO (from 2023-04-10).
+    requires: [board, listing_day_index, issue_regime]
+    excludes: [main_board, ipo_day1_main]
+    asserts: {board: main_board, listing_day_index: {min: 1, max: 5}, issue_regime: registration}
+  ipo_first5_chinext:
+    description: First five trading days of a registration-regime ChiNext IPO (from 2020-08-24).
+    requires: [board, listing_day_index, issue_regime]
+    excludes: [chinext]
+    asserts: {board: chinext, listing_day_index: {min: 1, max: 5}, issue_regime: registration}
+  ipo_first5_star:
+    description: First five trading days of a STAR Market IPO.
+    requires: [board, listing_day_index]
+    excludes: [star]
+    asserts: {board: star, listing_day_index: {min: 1, max: 5}}
+  b_share:
+    description: Main-board B share (SSE 900xxx USD, SZSE 200xxx HKD), not risk-warned.
+    requires: [board, st_status]
+    excludes: [st_b_share]
+    asserts: {board: main_board, st_status: false}
+  st_b_share:
+    description: B share under ST/*ST on that date. 5% until 2026-07-06, 10% after (same as st_main).
+    requires: [board, st_status]
+    excludes: [b_share]
+    asserts: {board: main_board, st_status: true}
+  etf:
+    description: Listed fund (ETF/LOF) whose constituents are NOT all 20%-band stocks. For min_holding_days it means an ordinary (T+1) fund — not of a same-day type (etf_bond / etf_money / etf_gold / etf_commodity / etf_crossborder) on that date.
+    requires: [fund_constituents]
+    excludes: [etf_20pct]
+    asserts: {fund_constituents: mixed}
+    rule_asserts:
+      min_holding_days:
+        requires: [fund_type]
+        asserts:
+          fund_type: {not_in: [bond_etf, money_market, gold_etf, commodity_futures_etf]}
+          # a cross-border fund is ordinary (T+1) only if its underlying does NOT trade same-day; that must be stated
+          underlying_t0: {eq: false, when: {fund_type: cross_border}, required: true}
+  etf_20pct:
+    description: ETF/LOF whose index constituents are exclusively 20%-band stocks (STAR / ChiNext), or ≥80% of non-cash assets in them. SSE from 2020-08-21, SZSE from 2020-08-24.
+    requires: [fund_constituents]
+    excludes: [etf]
+    asserts: {fund_constituents: all_20pct_band}
+    rule_asserts:
+      min_holding_days:
+        requires: [fund_type]
+        asserts:
+          fund_type: {not_in: [bond_etf, money_market, gold_etf, commodity_futures_etf]}
+          underlying_t0: {eq: false, when: {fund_type: cross_border}, required: true}
+  convertible:
+    description: Convertible bond from its second listing day on.
+    requires: [listing_day_index]
+    excludes: [convertible_day1]
+    asserts: {listing_day_index: {min: 2}}
+  convertible_day1:
+    description: Convertible bond on its listing day — band is relative to the ISSUE PRICE, rule price_limit_pct_of_issue_price.
+    requires: [listing_day_index]
+    excludes: [convertible]
+    asserts: {listing_day_index: 1}
+  delisting:
+    description: Main-board (SSE/SZSE) stock in the delisting arrangement period (退市整理期), from its second trading day.
+    requires: [board, delisting_day_index]
+    excludes: [main_board, st_main, delisting_day1]
+    asserts: {board: main_board, delisting_day_index: {min: 2}}
+  delisting_day1:
+    description: First trading day of the delisting arrangement period, main board (SSE/SZSE) and ChiNext. On 2020-08-24..2020-12-31 main board only — a ChiNext first day then belongs to delisting_chinext_post0824 (20%, 深证上〔2020〕620号).
+    requires: [board, delisting_day_index]
+    excludes: [delisting, delisting_chinext, delisting_chinext_pre0824, delisting_chinext_post0824]
+    asserts:
+      board: [{in: [main_board, chinext]}, {eq: main_board, from: '2020-08-24', to: '2020-12-31'}]
+      delisting_day_index: 1
+  delisting_chinext:
+    description: "ChiNext stock in the delisting arrangement period, from its second trading day. On 2020-08-24..2020-12-31 the band depended on the entry date (深证上〔2020〕620号) — no record under this context-free scope then (known gap G-0016) — use delisting_chinext_pre0824 / delisting_chinext_post0824."
+    requires: [board, delisting_day_index]
+    excludes: [chinext, st_chinext, delisting_day1, delisting_chinext_pre0824, delisting_chinext_post0824]
+    asserts: {board: chinext, delisting_day_index: {min: 2}}
+  delisting_chinext_pre0824:
+    description: SZSE ChiNext stock that entered the delisting arrangement period BEFORE 2020-08-24 and was still in it (records only for 2020-08-24..2020-12-31; trading-rules band 10%, 深证上〔2020〕620号 item 1).
+    requires: [board, delisting_entry_before_2020_08_24]
+    excludes: [chinext, st_chinext, delisting_day1, delisting_chinext, delisting_chinext_post0824]
+    asserts: {board: chinext, delisting_entry_before_2020_08_24: true, delisting_day_index: {min: 2}}
+  delisting_chinext_post0824:
+    description: SZSE ChiNext stock that entered the delisting arrangement period ON OR AFTER 2020-08-24, every day of the period including the first (records only for 2020-08-24..2020-12-31; 20%, 深证上〔2020〕620号 item 2).
+    requires: [board, delisting_day_index, delisting_entry_before_2020_08_24]
+    excludes: [chinext, st_chinext, delisting_day1, delisting_chinext, delisting_chinext_pre0824]
+    asserts: {board: chinext, delisting_entry_before_2020_08_24: false, delisting_day_index: {min: 1}}
+  delisting_star:
+    description: STAR stock in the delisting arrangement period, from its second trading day.
+    requires: [board, delisting_day_index]
+    excludes: [star, st_star, delisting_day1_star]
+    asserts: {board: star, delisting_day_index: {min: 2}}
+  delisting_day1_star:
+    description: First trading day of a STAR stock's delisting arrangement period.
+    requires: [board, delisting_day_index]
+    excludes: [delisting_star]
+    asserts: {board: star, delisting_day_index: 1}
+  reits:
+    description: Public infrastructure REIT (公募基础设施基金), after its listing day.
+    requires: [listing_day_index]
+    excludes: [reits_day1]
+    asserts: {listing_day_index: {min: 2}}
+  reits_day1:
+    description: Listing day of a public infrastructure REIT.
+    requires: [listing_day_index]
+    excludes: [reits]
+    asserts: {listing_day_index: 1}
+  st_bse:
+    description: BSE stock under ST/*ST. Same 30% band as bse; kept as a scope so callers must know st_status.
+    requires: [board, st_status]
+    excludes: [bse]
+    asserts: {board: bse, st_status: true}
+  delisting_bse:
+    description: BSE stock in the delisting arrangement period, from its second day.
+    requires: [board, delisting_day_index]
+    excludes: [bse, st_bse, delisting_day1_bse]
+    asserts: {board: bse, delisting_day_index: {min: 2}}
+  delisting_day1_bse:
+    description: First day of a BSE stock's delisting arrangement period.
+    requires: [board, delisting_day_index]
+    excludes: [delisting_bse]
+    asserts: {board: bse, delisting_day_index: 1}
+  etf_bond:
+    description: Bond ETF (债券交易型开放式（指数）基金). Same-day round trip (min_holding_days 0) from 2015-01-19 (earliest sourced). Price band and tick follow the fund family (query them under etf).
+    requires: [fund_type]
+    excludes: [etf, etf_20pct, etf_money, etf_gold, etf_commodity, etf_crossborder]
+    asserts: {fund_type: bond_etf}
+  etf_money:
+    description: Exchange-traded / listed money-market fund (SSE 交易型货币市场基金, SZSE 上市交易的货币市场基金). min_holding_days 0 from 2015-01-19 (earliest sourced).
+    requires: [fund_type]
+    excludes: [etf, etf_20pct, etf_bond, etf_gold, etf_commodity, etf_crossborder]
+    asserts: {fund_type: money_market}
+  etf_gold:
+    description: Gold ETF (黄金交易型开放式（证券投资）基金). min_holding_days 0 from 2015-01-19 (earliest sourced).
+    requires: [fund_type]
+    excludes: [etf, etf_20pct, etf_bond, etf_money, etf_commodity, etf_crossborder]
+    asserts: {fund_type: gold_etf}
+  etf_commodity:
+    description: Commodity-futures ETF (商品期货交易型开放式（指数）基金). min_holding_days 0 — SZSE from 2019-01-11, SSE from 2020-01-20.
+    requires: [fund_type]
+    excludes: [etf, etf_20pct, etf_bond, etf_money, etf_gold, etf_crossborder]
+    asserts: {fund_type: commodity_futures_etf}
+  etf_crossborder:
+    description: Cross-border ETF or cross-border LOF whose tracked constituents / investment targets themselves trade same-day (underlying_t0 = true). min_holding_days 0 from 2015-01-19, 1 before. A cross-border fund with underlying_t0 = false is an ordinary fund — use etf.
+    requires: [fund_type, underlying_t0]
+    excludes: [etf, etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity]
+    asserts: {fund_type: cross_border, underlying_t0: true}
+  # --- SSE STAR Market growth tier (科创成长层), from 2025-07-13, added with equity_suitability.yaml ---
+  # Suitability-only scopes: a growth-tier stock keeps the STAR band, tick and session (query those under star / st_star /
+  # ipo_first5_star). Selecting one of these scopes does not exclude those; it answers only the suitability rules.
+  star_growth_new:
+    description: SSE STAR share or depositary receipt newly registered into the growth tier (in the tier from its listing day, on or after 2025-07-13; terminal label 成, name suffix U), while it is in the tier on that date.
+    requires: [board, star_growth_tier]
+    excludes: [star_growth_legacy]
+    asserts: {board: star, star_growth_tier: new}
+  star_growth_legacy:
+    description: SSE STAR share or depositary receipt listed before 2025-07-13 and not yet profitable since listing, moved into the growth tier on 2025-07-13 (terminal label 成1, name suffix U), while it is in the tier on that date.
+    requires: [board, star_growth_tier]
+    excludes: [star_growth_new]
+    asserts: {board: star, star_growth_tier: legacy}
+  # --- China Financial Futures Exchange (CFFEX, MIC CCFX) stock-index futures, added with index_futures_margin_fee.yaml ---
+  # Product is read from the contract code (IF2412 → IF), so no per-security history is needed. margin_ratio records hold the
+  # NON-HEDGE (speculative) position margin; hedge-position margins are not recorded.
+  cffex_if:
+    description: CSI 300 index futures (IF), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_ih:
+    description: SSE 50 index futures (IH), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_ic:
+    description: CSI 500 index futures (IC), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_im:
+    description: CSI 1000 index futures (IM, listed 2022-07-22), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_index_futures:
+    description: All CFFEX stock-index futures (IF, IH, IC, IM) when an exchange fee does not distinguish products (trading, close-today and delivery fees).
+    requires: []
+  cffex_tf:
+    description: 5-year Treasury bond futures (TF, listed 2013-09-06), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_t:
+    description: 10-year Treasury bond futures (T, listed 2015-03-20), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_ts:
+    description: 2-year Treasury bond futures (TS, listed 2018-08-17), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  cffex_tl:
+    description: 30-year Treasury bond futures (TL, listed 2023-04-21), all contract months. margin_ratio = non-hedge position margin.
+    requires: []
+  # --- Shanghai Futures Exchange (SHFE, MIC XSGE) metal, energy and chemical futures (shfe_futures.yaml) ---
+  # Product is read from the contract code (cu2409 → CU). Marina coverage starts 2024-01-01 (no record before;
+  # AD and OP, listed later, from their listing day);
+  # margin_ratio records hold the speculative (non-hedge, 一般持仓) position margin of general contract months.
+  shfe_cu:
+    description: SHFE copper futures (CU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_al:
+    description: SHFE aluminium futures (AL), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_zn:
+    description: SHFE zinc futures (ZN), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_pb:
+    description: SHFE lead futures (PB), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ni:
+    description: SHFE nickel futures (NI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_sn:
+    description: SHFE tin futures (SN), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ao:
+    description: SHFE alumina futures (AO), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_au:
+    description: SHFE gold futures (AU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ag:
+    description: SHFE silver futures (AG), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_rb:
+    description: SHFE rebar futures (RB), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_wr:
+    description: SHFE wire rod futures (WR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_hc:
+    description: SHFE hot-rolled coil futures (HC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ss:
+    description: SHFE stainless steel futures (SS), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_fu:
+    description: SHFE fuel oil futures (FU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_bu:
+    description: SHFE bitumen futures (BU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ru:
+    description: SHFE natural rubber futures (RU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_sp:
+    description: SHFE pulp futures (SP), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_br:
+    description: SHFE butadiene rubber futures (BR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_ad:
+    description: SHFE cast aluminium alloy futures (AD, listed 2025-06-10), all contract months; Marina coverage from 2025-06-10. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  shfe_op:
+    description: SHFE offset printing paper futures (OP, listed 2025-09-10), all contract months; Marina coverage from 2025-09-10. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  # --- Shanghai International Energy Exchange (INE, MIC XINE) energy, rubber, copper and freight futures (ine_futures.yaml) ---
+  # Product is read from the contract code (sc2409 → SC). Marina coverage starts 2024-01-01 (no record before;
+  # EC sessions and same-day round trips from its listing day 2023-08-18);
+  # margin_ratio records hold the speculative (non-hedge, 一般持仓) position margin of general contract months.
+  ine_sc:
+    description: INE crude oil futures (SC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  ine_lu:
+    description: INE low sulphur fuel oil futures (LU), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  ine_nr:
+    description: INE TSR 20 rubber futures (NR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  ine_bc:
+    description: INE bonded copper futures (BC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  ine_ec:
+    description: INE container freight index (Europe line) futures (EC, listed 2023-08-18), all contract months; Marina coverage from 2024-01-01 (sessions and same-day round trips from 2023-08-18). margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  # --- Zhengzhou Commodity Exchange (CZCE, MIC XZCE) agricultural, chemical and ferroalloy futures (czce_futures.yaml) ---
+  # Product is read from the contract code (AP505 → AP; CZCE codes carry a three-digit year-month). Marina coverage starts
+  # 2024-01-01 (no record before); margin_ratio records hold the speculative (non-hedge, 一般持仓) position margin of general
+  # contract months.
+  czce_ap:
+    description: CZCE apple futures (AP), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_cf:
+    description: CZCE cotton futures (CF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_cj:
+    description: CZCE dried jujube futures (CJ), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_cy:
+    description: CZCE cotton yarn futures (CY), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_pk:
+    description: CZCE peanut kernel futures (PK), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_sr:
+    description: CZCE white sugar futures (SR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_oi:
+    description: CZCE rapeseed oil futures (OI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_rm:
+    description: CZCE rapeseed meal futures (RM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_ta:
+    description: CZCE PTA (purified terephthalic acid) futures (TA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_ma:
+    description: CZCE methanol futures (MA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_sa:
+    description: CZCE soda ash futures (SA), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_fg:
+    description: CZCE flat glass futures (FG), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_ur:
+    description: CZCE urea futures (UR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_pf:
+    description: CZCE polyester staple fiber futures (PF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_px:
+    description: CZCE paraxylene futures (PX), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_sh:
+    description: CZCE caustic soda futures (SH), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_sf:
+    description: CZCE ferrosilicon futures (SF), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_sm:
+    description: CZCE silicomanganese futures (SM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_pr:
+    description: CZCE PET bottle chip futures (PR, listed 2024-08-30), all contract months; Marina coverage from 2024-08-30. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_pl:
+    description: CZCE propylene futures (PL, first in the daily settlement-parameter file 2025-07-22), all contract months; Marina coverage from 2025-07-22. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_wh:
+    description: CZCE strong wheat futures (WH), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_rs:
+    description: CZCE rapeseed futures (RS), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_pm:
+    description: CZCE common wheat futures (PM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_ri:
+    description: CZCE early indica rice futures (RI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_jr:
+    description: CZCE japonica rice futures (JR), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_lr:
+    description: CZCE late indica rice futures (LR), all contract months; Marina coverage from 2024-01-01 to 2026-01-19 (no LR contract is listed in the daily settlement-parameter file from 2026-01-19; not a confirmed delisting date). margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  czce_zc:
+    description: CZCE thermal coal futures (ZC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  # --- Guangzhou Futures Exchange (GFEX, MIC GFEX) industrial silicon, lithium carbonate, polysilicon, platinum and palladium
+  # futures (gfex_futures.yaml) ---
+  # Product is read from the contract code (SI2501 → SI). Marina coverage starts 2024-01-01 (polysilicon from its listing day
+  # 2024-12-26, platinum and palladium from 2025-11-27; no record before); margin_ratio records hold the speculative
+  # (non-hedge) position margin of general contract months.
+  gfex_si:
+    description: GFEX industrial silicon futures (SI), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  gfex_lc:
+    description: GFEX lithium carbonate futures (LC), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  gfex_ps:
+    description: GFEX polysilicon futures (PS, listed 2024-12-26), all contract months; Marina coverage from 2024-12-26. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  gfex_pt:
+    description: GFEX platinum futures (PT, listed 2025-11-27), all contract months; Marina coverage from 2025-11-27. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
+  gfex_pd:
+    description: GFEX palladium futures (PD, listed 2025-11-27), all contract months; Marina coverage from 2025-11-27. margin_ratio = speculative (non-hedge) position margin.
+    requires: []

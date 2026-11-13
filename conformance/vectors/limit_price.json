@@ -1,0 +1,782 @@
+[
+ {
+  "id": "LPX-0001",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "main_board",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 11.0,
+   "limit_down": 9.0
+  },
+  "oracle": "涨跌幅限制价格=前收盘价×(1±比例)，四舍五入至 0.01（沪 3.3.17 / 深 3.3.19）：10×1.1=11.00；10×0.9=9.00",
+  "tags": [
+   "basic"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0002",
+  "query": {
+   "prev_close": 10.05,
+   "scope": "main_board",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 11.06,
+   "limit_down": 9.05
+  },
+  "oracle": "涨跌幅限制价格=前收盘价×(1±比例)，四舍五入至 0.01（沪 3.3.17 / 深 3.3.19）：10.05×1.1=11.055→11.06（半进）；10.05×0.9=9.045→9.05（半进，非银行家舍入）",
+  "tags": [
+   "rounding",
+   "half-up"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0003",
+  "query": {
+   "prev_close": 10.15,
+   "scope": "main_board",
+   "trade_date": "2024-06-14",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 11.17,
+   "limit_down": 9.14
+  },
+  "oracle": "涨跌幅限制价格=前收盘价×(1±比例)，四舍五入至 0.01（沪 3.3.17 / 深 3.3.19）：10.15×1.1=11.165→11.17；10.15×0.9=9.135→9.14",
+  "tags": [
+   "rounding",
+   "half-up"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0004",
+  "query": {
+   "prev_close": 9.99,
+   "scope": "main_board",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 10.99,
+   "limit_down": 8.99
+  },
+  "oracle": "涨跌幅限制价格=前收盘价×(1±比例)，四舍五入至 0.01（沪 3.3.17 / 深 3.3.19）：9.99×1.1=10.989→10.99；9.99×0.9=8.991→8.99",
+  "tags": [
+   "rounding"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0005",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "st_main",
+   "trade_date": "2024-06-14",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 10.5,
+   "limit_down": 9.5
+  },
+  "oracle": "主板 ST 5%（1998 ST 制度）：10×1.05=10.50；10×0.95=9.50",
+  "tags": [
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0006",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "st_main",
+   "trade_date": "2026-07-06",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 11.0,
+   "limit_down": 9.0
+  },
+  "oracle": "2026-07-06 起主板 ST 10%：11.00 / 9.00",
+  "tags": [
+   "st",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0007",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "chinext",
+   "trade_date": "2020-08-21",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 11.0,
+   "limit_down": 9.0
+  },
+  "oracle": "创业板 2020-08-21 仍 10%",
+  "tags": [
+   "regime-switch",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0008",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "chinext",
+   "trade_date": "2020-08-24",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 12.0,
+   "limit_down": 8.0
+  },
+  "oracle": "创业板 2020-08-24 起 20%：12.00 / 8.00",
+  "tags": [
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0009",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "star",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 12.0,
+   "limit_down": 8.0
+  },
+  "oracle": "科创板 20%（上证发〔2019〕23号第十六条）：10×1.2=12.00；10×0.8=8.00",
+  "tags": [
+   "basic"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0010",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "bse",
+   "trade_date": "2024-06-14",
+   "market": "BJSE"
+  },
+  "expect": {
+   "limit_up": 13.0,
+   "limit_down": 7.0
+  },
+  "oracle": "北交所 30%（北证〔2021〕21号）：10×1.3=13.00；10×0.7=7.00",
+  "tags": [
+   "basic"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0011",
+  "query": {
+   "prev_close": 1.234,
+   "scope": "etf",
+   "trade_date": "2024-01-05",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 1.357,
+   "limit_down": 1.111
+  },
+  "oracle": "基金 10%，tick 0.001：1.234×1.1=1.3574→1.357；1.234×0.9=1.1106→1.111",
+  "tags": [
+   "fund",
+   "tick-0.001"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0012",
+  "query": {
+   "prev_close": 1.0005,
+   "scope": "etf",
+   "trade_date": "2024-01-05",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 1.101,
+   "limit_down": 0.9
+  },
+  "oracle": "1.0005×1.1=1.10055→1.101（半进）；1.0005×0.9=0.90045→0.900",
+  "tags": [
+   "fund",
+   "half-up"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0013",
+  "query": {
+   "prev_close": 100.0,
+   "scope": "convertible",
+   "trade_date": "2022-08-01",
+   "market": "XSHG+XSHE"
+  },
+  "expect": {
+   "limit_up": 120.0,
+   "limit_down": 80.0
+  },
+  "oracle": "可转债次日起 20%（细则 2022-08-01）；tick 按 stock 0.01：120.00 / 80.00",
+  "tags": [
+   "convertible"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0020",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2011-03-01",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.05,
+   "limit_down": 0.03
+  },
+  "oracle": "深交所 2011 投教原例：前收 0.04，10% → 0.044/0.036 四舍五入仍 0.04，按 3.3.16 以前收增减一个最小变动单位 → [0.03, 0.05]",
+  "tags": [
+   "one-tick",
+   "exchange-example"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0021",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2011-02-25",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.04,
+   "limit_down": 0.04
+  },
+  "oracle": "2011-02-28 前深交所只有四舍五入句：0.044→0.04，0.036→0.04（规则字面）",
+  "tags": [
+   "one-tick",
+   "last-day-of-old"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0022",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2023-04-07",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.04,
+   "limit_down": 0.04
+  },
+  "oracle": "上交所 2012 版只有四舍五入：涨跌停价=前收（规则字面；2023-04-10 前 limit_price_min_tick=false）",
+  "tags": [
+   "one-tick",
+   "exchange-divergence"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0023",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2023-04-10",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.05,
+   "limit_down": 0.03
+  },
+  "oracle": "上交所 2023 版 3.3.17 自 2023-04-10：以前收增减一个申报价格最小变动单位",
+  "tags": [
+   "one-tick",
+   "regime-switch",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0024",
+  "query": {
+   "prev_close": 0.09,
+   "scope": "st_main",
+   "trade_date": "2024-06-14",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.1,
+   "limit_down": 0.08
+  },
+  "oracle": "5% 带：0.09×1.05=0.0945→0.09，差 0 < 0.01 → 下限条款 → 0.10；0.0855→0.09 → 0.08",
+  "tags": [
+   "one-tick",
+   "st"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0025",
+  "query": {
+   "prev_close": 0.1,
+   "scope": "st_main",
+   "trade_date": "2024-06-14",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.11,
+   "limit_down": 0.09
+  },
+  "oracle": "0.10×1.05=0.105→0.11（半进），差 0.01 = 一个 tick，不触发下限条款；0.095→0.10？否：0.095 半进→0.10，差 0 → 触发 → 0.09",
+  "tags": [
+   "one-tick",
+   "st",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0026",
+  "query": {
+   "prev_close": 0.05,
+   "scope": "main_board",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.06,
+   "limit_down": 0.04
+  },
+  "oracle": "0.05×1.1=0.055→0.06（半进，差 0.01 不触发）；0.045→0.05（半进，差 0 触发）→ 0.04",
+  "tags": [
+   "one-tick",
+   "boundary"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0027",
+  "query": {
+   "prev_close": 0.02,
+   "scope": "star",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.03,
+   "limit_down": 0.01
+  },
+  "oracle": "20% 带：0.024→0.02 触发 → 0.03；0.016→0.02 触发 → 0.01",
+  "tags": [
+   "one-tick",
+   "star"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0028",
+  "query": {
+   "prev_close": 0.81,
+   "scope": "st_main",
+   "trade_date": "2024-06-14",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.85,
+   "limit_down": 0.77
+  },
+  "oracle": "0.81×1.05=0.8505→0.85；0.7695→0.77（E-0002 样本：交易所原价即停在此）",
+  "tags": [
+   "st",
+   "errata-E-0002"
+  ],
+  "ruleset_version_min": "2026.10.26"
+ },
+ {
+  "id": "LPX-0030",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "delisting",
+   "trade_date": "2015-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.05,
+   "limit_down": 0.03
+  },
+  "oracle": "上交所《风险警示板股票交易暂行办法》（2013-01-01 施行）第七条：退市整理股票价格的涨跌幅限制为 10% ，但 A 股前收盘价格低于 0.05 元人民币的，其涨跌幅限制为 0.01 元人民币：0.04<0.05 → 0.04±0.01 = 0.05/0.03（同期上交所普通股票尚无一档下限条款）",
+  "tags": [
+   "delisting",
+   "one-tick",
+   "board-specific"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0031",
+  "query": {
+   "prev_close": 0.05,
+   "scope": "delisting",
+   "trade_date": "2015-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.06,
+   "limit_down": 0.05
+  },
+  "oracle": "上交所《风险警示板股票交易暂行办法》（2013-01-01 施行）第七条：退市整理股票价格的涨跌幅限制为 10% ，但 A 股前收盘价格低于 0.05 元人民币的，其涨跌幅限制为 0.01 元人民币：0.05 不「低于」0.05 → 按 10%：0.055→0.06（半进）；0.045→0.05（半进）= 前收（2023-04-10 前上交所无一般一档下限：limit_price_min_tick=false）",
+  "tags": [
+   "delisting",
+   "boundary",
+   "board-specific"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0032",
+  "query": {
+   "prev_close": 0.05,
+   "scope": "delisting",
+   "trade_date": "2021-01-04",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.06,
+   "limit_down": 0.04
+  },
+  "oracle": "上交所《风险警示板股票交易管理办法（2020年12月修订）》第七条：……A股前收盘价格低于或等于0.05元人民币的，其涨跌幅限制为0.01元人民币：0.05 ≤ 0.05 → 0.05±0.01 = 0.06/0.04",
+  "tags": [
+   "delisting",
+   "boundary",
+   "regime-switch"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0033",
+  "query": {
+   "prev_close": 0.03,
+   "scope": "delisting_day1",
+   "trade_date": "2015-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.04,
+   "limit_down": 0.02
+  },
+  "oracle": "上交所《风险警示板股票交易暂行办法》（2013-01-01 施行）第七条：退市整理股票价格的涨跌幅限制为 10% ，但 A 股前收盘价格低于 0.05 元人民币的，其涨跌幅限制为 0.01 元人民币；2020-12-31 前首日亦为 10%（第九条只列恢复/重新上市首日不设限）→ 0.03±0.01 = 0.04/0.02",
+  "tags": [
+   "delisting",
+   "first-day",
+   "board-specific"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0034",
+  "query": {
+   "prev_close": 0.05,
+   "scope": "delisting",
+   "trade_date": "2024-06-14",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.06,
+   "limit_down": 0.04
+  },
+  "oracle": "2023-04-10 起风险警示板办法废止（2023 交易规则附件3 第10项），4.4.10 仅 10%；适用 3.3.17 一档下限：0.055→0.06；0.045→0.05 差 0 < 0.01 → 0.05−0.01 = 0.04",
+  "tags": [
+   "delisting",
+   "one-tick"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0035",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "delisting",
+   "trade_date": "2015-06-01",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.05,
+   "limit_down": 0.03
+  },
+  "oracle": "深交所交易规则（2012年修订）4.5.2 退市整理 10%；3.3.16：涨跌幅限制价格与前收盘价之差的绝对值低于价格最小变动单位的，以前收盘价增减一个价格最小变动单位：0.044→0.04、0.036→0.04 → 0.05/0.03",
+  "tags": [
+   "delisting",
+   "one-tick"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0036",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "delisting_day1_star",
+   "trade_date": "2020-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 12.0,
+   "limit_down": 8.0
+  },
+  "oracle": "上证发〔2019〕23号第十八条：科创板 20%，退市整理期首日无例外（2020-12 修订说明：放开退市整理期首日涨跌幅限制）→ 10×1.2=12.00；10×0.8=8.00",
+  "tags": [
+   "delisting",
+   "star",
+   "first-day"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0037",
+  "query": {
+   "prev_close": 0.06,
+   "scope": "delisting",
+   "trade_date": "2015-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.07,
+   "limit_down": 0.05
+  },
+  "oracle": "上交所《风险警示板股票交易暂行办法》（2013-01-01 施行）第七条：退市整理股票价格的涨跌幅限制为 10% ，但 A 股前收盘价格低于 0.05 元人民币的，其涨跌幅限制为 0.01 元人民币：0.06 ≥ 0.05 不适用 → 10%：0.066→0.07；0.054→0.05",
+  "tags": [
+   "delisting",
+   "board-specific"
+  ],
+  "ruleset_version_min": "2026.10.26.4"
+ },
+ {
+  "id": "LPX-0040",
+  "query": {
+   "prev_close": 100.003,
+   "scope": "convertible",
+   "trade_date": "2025-06-16",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 120.004,
+   "limit_down": 80.002
+  },
+  "oracle": "上交所《可转换公司债券交易实施细则》（上证发〔2022〕117号，2022-08-01 施行）第六条：申报价格最小变动单位为0.001元；第十五条：涨跌幅价格=前收盘价×（1±涨跌幅比例）。计算结果按照四舍五入原则取至价格最小变动单位；次日起20%：100.003×1.2=120.0036→120.004；100.003×0.8=80.0024→80.002",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LPX-0041",
+  "query": {
+   "prev_close": 100.003,
+   "scope": "convertible",
+   "trade_date": "2025-06-16",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 120.004,
+   "limit_down": 80.002
+  },
+  "oracle": "深交所《可转换公司债券交易实施细则》（深证上〔2022〕719号，2022-08-01 施行）第六条：申报价格最小变动单位为0.001元；第十五条 涨跌幅限制价格=前收盘价×（1±涨跌幅限制比例），四舍五入取至价格最小变动单位：100.003×1.2=120.0036→120.004；100.003×0.8=80.0024→80.002",
+  "tags": [
+   "convertible",
+   "tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LPX-0042",
+  "query": {
+   "prev_close": 123.457,
+   "scope": "convertible",
+   "trade_date": "2022-08-01",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 148.148,
+   "limit_down": 98.766
+  },
+  "oracle": "深交所《可转换公司债券交易实施细则》（深证上〔2022〕719号，2022-08-01 施行）第六条：申报价格最小变动单位为0.001元；施行首日：123.457×1.2=148.1484→148.148；123.457×0.8=98.7656→98.766",
+  "tags": [
+   "convertible",
+   "tick",
+   "first-day-of-new"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0001",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2010-06-01",
+   "market": "XSHG"
+  },
+  "expect": {
+   "limit_up": 0.04,
+   "limit_down": 0.04
+  },
+  "oracle": "上交所 2006 版：0.04×1.1=0.044→0.04；0.04×0.9=0.036→0.04（四舍五入，无一 tick 下限：false）",
+  "tags": [
+   "one-tick",
+   "false"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0002",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "main_board",
+   "trade_date": "2008-06-02",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.04,
+   "limit_down": 0.04
+  },
+  "oracle": "深交所 2006 版：0.044→0.04；0.036→0.04（无一 tick 下限：false）",
+  "tags": [
+   "one-tick",
+   "false"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0004",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "bse",
+   "trade_date": "2024-06-14",
+   "market": "BJSE"
+  },
+  "expect": {
+   "limit_up": 13.0,
+   "limit_down": 7.0
+  },
+  "oracle": "北交所 3.3.11：10×1.3=13.00；10×0.7=7.00",
+  "tags": [
+   "bse",
+   "basic"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0005",
+  "query": {
+   "prev_close": 1.0,
+   "scope": "delisting_chinext_post0824",
+   "trade_date": "2020-09-15",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 1.2,
+   "limit_down": 0.8
+  },
+  "oracle": "深证上〔2020〕620号 20%：1×1.2=1.20；1×0.8=0.80",
+  "tags": [
+   "delisting",
+   "chinext"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0006",
+  "query": {
+   "prev_close": 1.0,
+   "scope": "delisting_chinext_pre0824",
+   "trade_date": "2020-09-15",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 1.1,
+   "limit_down": 0.9
+  },
+  "oracle": "深证上〔2020〕620号 10%：1×1.1=1.10；1×0.9=0.90",
+  "tags": [
+   "delisting",
+   "chinext"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0007",
+  "query": {
+   "prev_close": 0.04,
+   "scope": "delisting_chinext_pre0824",
+   "trade_date": "2020-09-15",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": 0.05,
+   "limit_down": 0.03
+  },
+  "oracle": "10%：0.044→0.04=前收 → 深交所 2011 版 3.3.16 一 tick 下限：0.05 / 0.03",
+  "tags": [
+   "delisting",
+   "one-tick"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "S3L-0008",
+  "query": {
+   "prev_close": 100.003,
+   "scope": "convertible",
+   "trade_date": "2022-07-29",
+   "market": "XSHE"
+  },
+  "expect": {
+   "limit_up": null,
+   "limit_down": null
+  },
+  "oracle": "2022-08-01 前可转债无涨跌幅限制 → None（价位 0.001 不影响）",
+  "tags": [
+   "convertible"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "LPX-0043",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "hk_etf",
+   "trade_date": "2024-06-14",
+   "market": "XHKG"
+  },
+  "expect": {
+   "limit_up": null,
+   "limit_down": null
+  },
+  "oracle": "港交所 ETP 常见问题：A-shares are subject to trading bands … while securities listed on the Exchange are not；市调机制与收市竞价 ±5% 为盘中机制，不是每日涨跌幅 → 无涨跌停价",
+  "tags": [
+   "hk",
+   "unlimited"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

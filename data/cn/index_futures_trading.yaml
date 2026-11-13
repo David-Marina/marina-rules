@@ -1,0 +1,827 @@
+# CFFEX (中国金融期货交易所, MIC CCFX) stock-index futures: daily price limits (vs previous settlement price), trading
+# sessions and same-day round trips, per product scope. Sources: CFFEX trading rules / contract trading rules (PDF) and
+# notices (/cn/jystz/). Special-day limits (listing day, last trading day) are described in notes, not encoded.
+schema: 1.1
+market: CCFX
+asset_class: index_futures
+records:
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_if.2010-04-16
+  scope: cffex_if
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2010-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2010-03-26'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27160931bnup.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所交易细则（2010年修订）
+    date: '2010-02-20'
+    kind: official
+    quote: 第十二条 沪 深300股指期货合约的每日价格最大波动 限制是指其每日价格涨跌停板幅度，为上一交易日结算价的 ±10%。
+    content_sha256: 3450249eb6b3cf1e630fe1adaf5c297f8e3442cd416e280db54ce73e1805f1e2
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20100326/10719.html
+    publisher: 中国金融期货交易所
+    title: 关于沪深300股指期货合约上市交易有关事项的通知
+    date: '2010-03-26'
+    kind: official
+    quote: 沪深300股指期货合约自2010年4月16日起上市交易。
+    content_sha256: 65c6041bf83beef8f16582f6a77f42fe525f7f8b10524a98db1fe70327e0fbff
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/hs300wd/20100205/17770.html
+    publisher: 中国金融期货交易所
+    title: 股指期货的涨跌停板幅度是10%还是20%？
+    date: '2010-02-05'
+    kind: official
+    quote: 第一，股指期货合约的涨跌停板幅度为上一交易日结算价的±10％。第二，季月合约上市首日涨跌停板幅度为挂盘基准价的±20％。上市首日成交的，于下一交易日恢复到合约规定的涨跌停板幅度；上市首日无成交的，下一交易日继续执行前一交易日的涨跌停板幅度。第三，股指期货合约最后交易日涨跌停板幅度为上一交易日结算价的±20％。
+    content_sha256: 2fd034262a0be031661b32b8b0f50551297d0decb89a030c34535d8b63728c59
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20100326/10719.html
+    publisher: 中国金融期货交易所
+    title: 关于沪深300股指期货合约上市交易有关事项的通知
+    date: '2010-03-26'
+    kind: official
+    quote: 上市当日涨跌停板幅度，5月、6月合约为挂盘基准价的±10％，9月、12月合约为挂盘基准价的±20％。
+    content_sha256: 65c6041bf83beef8f16582f6a77f42fe525f7f8b10524a98db1fe70327e0fbff
+    hash_kind: text
+  notes: Ordinary-day symmetric band of ±10% of the previous trading day's settlement price (2010-02-20 Trading Rules Implementing
+    Details art. 12 and the 2010-02-05 official FAQ). On the listing day of a quarterly contract, the band is ±20% of the
+    listing reference price; after trades occur, the ordinary band resumes on the next trading day; with no trades, the same
+    band continues the next day. The last-trading-day band is ±20% of the previous trading day's settlement price. Special
+    days have no separate scope; do not apply this ordinary-day value to them. The 2010-03-26 listing notice specifies first-day
+    bands on 2010-04-16 of ±10% for the May/June contracts and ±20% for September/December, all relative to the listing reference
+    price.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_if.2016-01-01
+  scope: cffex_if
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.07
+  effective_from: '2016-01-01'
+  effective_to: '2016-01-08'
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165403c9yk.pdf
+    publisher: 中国金融期货交易所
+    title: 沪深300股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±7%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20％。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: bca59bf6c36315e0214a38ec61b011ed6e4ddd7cebc302acda6c9735d2e4b927
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165403c9yk.pdf
+    publisher: 中国金融期货交易所
+    title: 沪深300股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016年 1 月 1 日起实施。
+    content_sha256: bca59bf6c36315e0214a38ec61b011ed6e4ddd7cebc302acda6c9735d2e4b927
+    hash_kind: bytes
+  notes: The ordinary daily maximum band is ±7% of the previous trading day's settlement price under the 2015-12-04 contract
+    trading rules art. 22, not merely a circuit-breaker threshold. During 2016-01-01..2016-01-08 (exclusive), art. 21 also
+    limits contract prices to ±5% of that settlement price until the CSI 300 benchmark triggers 5%; the 7% band then applies
+    in the triggered direction, alongside trading halts. A single 0.07 cannot describe all admissible intraday prices. The
+    last-trading-day band is ±20%; its afternoon session is exempt from circuit breakers. No separate special-day scope is
+    encoded. Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The December 2015 revision
+    omits the former quarterly-contract listing-day ±20% clause; do not carry that old provision forward.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_if.2016-01-08
+  scope: cffex_if
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2016-01-08'
+  effective_to: null
+  published_at: '2016-01-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 为维护市场平稳运行，经中国证监会批准，中国金融期货交易所决定自2016年1月8日起，暂停实施沪深300、上证50、中证500股指期货熔断制度。现将有关事项通知如下： 一、《中国金融期货交易所交易规则》第五十六条、《中国金融期货交易所结算细则》第四十三条、《中国金融期货交易所风险控制管理办法》第八条、《中国金融期货交易所沪深300股指期货合约交易细则》第二十一条、《中国金融期货交易所上证50股指期货合约交易细则》第二十一条和《中国金融期货交易所中证500股指期货合约交易细则》第二十一条中的熔断制度暂停实施；
+      二、《沪深300股指期货合约》、《上证50股指期货合约》和《中证500股指期货合约》中的每日价格最大波动限制由“上一个交易日结算价的±7%”调整为“上一个交易日结算价的±10%”。 《中国金融期货交易所沪深300股指期货合约交易细则》第二十二条第一款、《中国金融期货交易所上证50股指期货合约交易细则》第二十二条第一款和《中国金融期货交易所中证500股指期货合约交易细则》第二十二条第一款“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±7%”调整为“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±10%”；
+      三、
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165436e0mo.pdf
+    publisher: 中国金融期货交易所
+    title: 沪深300股指期货合约交易细则（2016年1月7日修订）
+    date: '2016-01-07'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±10%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20%。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: 64d578bad21b30eba5bd51c22ebea51c1bda7512d8a8df12d622408910c1f96e
+    hash_kind: bytes
+  notes: The 2016-01-07 notice suspends circuit breakers from 2016-01-08 and restores the ordinary band from ±7% to ±10% of
+    the previous trading day's settlement price. The last-trading-day band remains ±20% (contract trading rules revised 2016-01-07,
+    art. 22; downloaded evidence in evidence/). The 2017 and 2018 versions retain the ordinary 10% band; no other ordinary-band
+    changes were found. The listing reference price is not the previous trading day's settlement price. This record excludes
+    listing days and does not extend the deleted quarterly- contract first-day 20% provision to the present.
+- id: cn.futures.session_schedule.cffex_if.2010-04-16
+  scope: cffex_if
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2010-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2010-03-26'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27160931bnup.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所交易细则（2010年修订）
+    date: '2010-02-20'
+    kind: official
+    quote: 第十一条 沪 深300股指期货合约的交易时间为交易日 9：15-11：30（第一节）和13：00-15：15（第二节），最后 交易日交易时间为9：15-11：30（第一节）和13：00-15：00 （第二节）。
+    content_sha256: 3450249eb6b3cf1e630fe1adaf5c297f8e3442cd416e280db54ce73e1805f1e2
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27160931bnup.pdf
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所交易细则（2010年修订）
+    date: '2010-02-20'
+    kind: official
+    quote: 第四十六条 集合竞价在交易日 9:10-9:15进行，其中 9:10-9:14为指令申报时间，9:14-9:15为指令撮合时间。 集合竞价指令申报时间不接受市价指令申报。 集合竞价指令撮合时间不接受指令申报。
+    content_sha256: 3450249eb6b3cf1e630fe1adaf5c297f8e3442cd416e280db54ce73e1805f1e2
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20100326/10719.html
+    publisher: 中国金融期货交易所
+    title: 关于沪深300股指期货合约上市交易有关事项的通知
+    date: '2010-03-26'
+    kind: official
+    quote: 沪深300股指期货合约自2010年4月16日起上市交易。
+    content_sha256: 65c6041bf83beef8f16582f6a77f42fe525f7f8b10524a98db1fe70327e0fbff
+    hash_kind: text
+  notes: 'Beijing time, ordinary trading days (2010-02-20 Trading Rules Implementing Details arts. 11 and 46). The opening
+    call auction takes orders for the first four minutes and matches in the final minute. On the last trading day, the afternoon
+    session is 13:00–15:00, closing 15 minutes earlier; no separate record is encoded. close_call=null: the rules use an opening
+    call auction and continuous trading; the closing price is the last transaction price of the day.'
+- id: cn.futures.session_schedule.cffex_if.2016-01-01
+  scope: cffex_if
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:00'
+    close_call: null
+  effective_from: '2016-01-01'
+  effective_to: null
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165403c9yk.pdf
+    publisher: 中国金融期货交易所
+    title: 沪深300股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第十三条 本合约采用集合竞价和连续竞价两种交易 方式。 3 集合竞价时间为每个交易日 9:25-9:30，其中 9:25-9:29 为指令申报时间，9:29-9:30为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和
+      13:00-15:00（第二节）。 第四章 结算业务
+    content_sha256: bca59bf6c36315e0214a38ec61b011ed6e4ddd7cebc302acda6c9735d2e4b927
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165403c9yk.pdf
+    publisher: 中国金融期货交易所
+    title: 沪深300股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016年 1 月 1 日起实施。
+    content_sha256: bca59bf6c36315e0214a38ec61b011ed6e4ddd7cebc302acda6c9735d2e4b927
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 三、沪深300、上证50、中证500股指期货合约的交易时间继续与股票市场保持一致。集合竞价时间为每个交易日9:25-9:30，其中9:25-9:29为指令申报时间，9:29-9:30为指令撮合时间；连续竞价时间为每个交易日9:30-11:30（第一节）和13:00-15:00（第二节）；
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  notes: Beijing time; orders 09:25–09:29, matching 09:29–09:30, with no closing call auction (2015-12-04 contract trading
+    rules art. 13). Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The last trading
+    day also closes at 15:00. Item 3 of the 2016-01-07 notice retains these hours after circuit breakers are suspended on
+    2016-01-08. Circuit breakers could end trading early on 2016-01-04 through 2016-01-07; this value represents the regular
+    planned schedule, not actual halts or reopening auctions.
+- id: cn.futures.min_holding_days.cffex_if.2010-04-16
+  scope: cffex_if
+  rule: min_holding_days
+  value: 0
+  effective_from: '2010-04-16'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150825/19246.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-08-25'
+    kind: official
+    quote: 经研究决定，自2015年8月26日（星期三）起，沪深300、上证50、中证500股指期货各合约平今仓交易手续费标准调整为成交金额的万分之一点一五。
+    content_sha256: a75604c66c30865fc8c2780d0a937d7ba2d8ad7c0c1af3be1dc78b2ba2518fce
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/hs300wd/20180202/21454.html
+    publisher: 中国金融期货交易所
+    title: 中金所在计算平今仓交易手续费时，平今仓数量是如何计算的？
+    date: '2018-02-02'
+    kind: official
+    quote: 我所上市产品在计算平今仓交易手续费时，对当日平仓成交按成交时间先后顺序，逐笔采取“先平当日新开仓，再平历史仓”的方式计算平今仓数量，每笔成交的平今仓数量为该笔成交中平当日新开仓数量。
+    content_sha256: cec12c084af99825532eb9968041cab8da0def95fffe5a1eaf0a7c91280c0520
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20100326/10719.html
+    publisher: 中国金融期货交易所
+    title: 关于沪深300股指期货合约上市交易有关事项的通知
+    date: '2010-03-26'
+    kind: official
+    quote: 沪深300股指期货合约自2010年4月16日起上市交易。
+    content_sha256: 65c6041bf83beef8f16582f6a77f42fe525f7f8b10524a98db1fe70327e0fbff
+    hash_kind: text
+  notes: 'Inference, not an explicit provision: the 2015-08-25 notice charges for closing positions opened the same day, and
+    the 2018-02-02 official FAQ calculates fees by closing newly opened positions before historical positions. These support
+    an inference of same-day round trips. No direct provision establishing this permission from the product''s listing day
+    was found. effective_from is backdated to the listing day as part of that inference (single-source); published_at=null
+    because no publication establishing that historical start was located. The start is not verified. Checked the 2010 trading
+    rules, trading implementing details and settlement rules, the 2020 trading implementing details, eight pages of CSI 300
+    FAQs and four pages of market-entry risk guidance, plus listing and fee notices.'
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ih.2015-04-16
+  scope: cffex_ih
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2015-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2015-03-30'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/oldsys/W020150327602765129311.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年首次发布）
+    date: '2015-03-27'
+    kind: official
+    quote: 第二十一条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的± 10%。 季月合约上市首日涨跌停板幅度为挂盘基准价的 ± 20％。 上市首日有成交的，于下一交易日恢复到合约规定的涨跌停 板幅度；上市首日无成交的，下一交易日继续执行前一交易
+      日的涨跌停板幅度。 本合约最后交易日涨跌停板幅度为上一交易日结算价 的± 20％。
+    content_sha256: 3523eed5969b07d82e18b5973208f5a835eb584058c26b91340ccdf8f0e3952f
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: Ordinary-day symmetric band of ±10% of the previous trading day's settlement price (2015-03-27 contract trading rules
+    art. 21). On the listing day of a quarterly contract, the band is ±20% of the listing reference price; after trades occur,
+    the ordinary band resumes on the next trading day; with no trades, the same band continues the next day. The last-trading-day
+    band is ±20% of the previous trading day's settlement price. Special days have no separate scope; do not apply this ordinary-day
+    value to them.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ih.2016-01-01
+  scope: cffex_ih
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.07
+  effective_from: '2016-01-01'
+  effective_to: '2016-01-08'
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271657334k2g.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±7%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20％。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: af35d87bf07555f787ec99740bc7d1fdad5862625459621ca374b16ebd1a5eb0
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271657334k2g.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016 年 1 月 1 日起实施。
+    content_sha256: af35d87bf07555f787ec99740bc7d1fdad5862625459621ca374b16ebd1a5eb0
+    hash_kind: bytes
+  notes: The ordinary daily maximum band is ±7% of the previous trading day's settlement price under the 2015-12-04 contract
+    trading rules art. 22, not merely a circuit-breaker threshold. During 2016-01-01..2016-01-08 (exclusive), art. 21 also
+    limits contract prices to ±5% of that settlement price until the CSI 300 benchmark triggers 5%; the 7% band then applies
+    in the triggered direction, alongside trading halts. A single 0.07 cannot describe all admissible intraday prices. The
+    last-trading-day band is ±20%; its afternoon session is exempt from circuit breakers. No separate special-day scope is
+    encoded. Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The December 2015 revision
+    omits the former quarterly-contract listing-day ±20% clause; do not carry that old provision forward.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ih.2016-01-08
+  scope: cffex_ih
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2016-01-08'
+  effective_to: null
+  published_at: '2016-01-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 为维护市场平稳运行，经中国证监会批准，中国金融期货交易所决定自2016年1月8日起，暂停实施沪深300、上证50、中证500股指期货熔断制度。现将有关事项通知如下： 一、《中国金融期货交易所交易规则》第五十六条、《中国金融期货交易所结算细则》第四十三条、《中国金融期货交易所风险控制管理办法》第八条、《中国金融期货交易所沪深300股指期货合约交易细则》第二十一条、《中国金融期货交易所上证50股指期货合约交易细则》第二十一条和《中国金融期货交易所中证500股指期货合约交易细则》第二十一条中的熔断制度暂停实施；
+      二、《沪深300股指期货合约》、《上证50股指期货合约》和《中证500股指期货合约》中的每日价格最大波动限制由“上一个交易日结算价的±7%”调整为“上一个交易日结算价的±10%”。 《中国金融期货交易所沪深300股指期货合约交易细则》第二十二条第一款、《中国金融期货交易所上证50股指期货合约交易细则》第二十二条第一款和《中国金融期货交易所中证500股指期货合约交易细则》第二十二条第一款“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±7%”调整为“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±10%”；
+      三、
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165751k0ck.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2016年1月7日修订）
+    date: '2016-01-07'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其 每日价格涨跌停板幅度，为上一交易日结算价的±10%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20%。 交易所有权根据市场情况调整涨跌停板幅度。
+    content_sha256: 8fb659bb0d65d945cf9f274e33b7bde3d635640666a71bda396effbdba514b29
+    hash_kind: bytes
+  notes: The 2016-01-07 notice suspends circuit breakers from 2016-01-08 and restores the ordinary band from ±7% to ±10% of
+    the previous trading day's settlement price. The last-trading-day band remains ±20% (contract trading rules revised 2016-01-07,
+    art. 22; downloaded evidence in evidence/). The 2017 and 2018 versions retain the ordinary 10% band; no other ordinary-band
+    changes were found. The listing reference price is not the previous trading day's settlement price. This record excludes
+    listing days and does not extend the deleted quarterly- contract first-day 20% provision to the present.
+- id: cn.futures.session_schedule.cffex_ih.2015-04-16
+  scope: cffex_ih
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2015-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2015-03-30'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/oldsys/W020150327602765129311.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年首次发布）
+    date: '2015-03-27'
+    kind: official
+    quote: 第十三条 本合约采用集合竞价和连续竞价两种 交易 方式。 集合竞价时间为每个交易日 9:10-9:15，其中 9:10-9:14 为指令申报时间，9:14-9:15 为指令撮合时间。 连续竞价 时间为每个交易日 9:15-11:30（第一节）和
+      13:00-15:15（第二节）， 最后交易日连续竞价时间为 9:15-11:30 （第一节）和 13:00-15:00（第二节）。 第四章 结算业务
+    content_sha256: 3523eed5969b07d82e18b5973208f5a835eb584058c26b91340ccdf8f0e3952f
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: 'Beijing time, ordinary trading days (2015-03-27 contract trading rules art. 13). The opening call auction takes
+    orders for the first four minutes and matches in the final minute. On the last trading day, the afternoon session is 13:00–15:00,
+    closing 15 minutes earlier; no separate record is encoded. close_call=null: the rules use an opening call auction and
+    continuous trading; the closing price is the last transaction price of the day.'
+- id: cn.futures.session_schedule.cffex_ih.2016-01-01
+  scope: cffex_ih
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:00'
+    close_call: null
+  effective_from: '2016-01-01'
+  effective_to: null
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271657334k2g.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第十三条 本合约采用集合竞价和连续竞价两种交易 方式。 集合竞价时间为每个交易日 9:25-9:30，其中 9:25-9:29 3 为指令申报时间， 9:29-9:30 为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和
+      13:00-15:00（第二节）。 第四章 结算业务
+    content_sha256: af35d87bf07555f787ec99740bc7d1fdad5862625459621ca374b16ebd1a5eb0
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/271657334k2g.pdf
+    publisher: 中国金融期货交易所
+    title: 上证50股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016 年 1 月 1 日起实施。
+    content_sha256: af35d87bf07555f787ec99740bc7d1fdad5862625459621ca374b16ebd1a5eb0
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 三、沪深300、上证50、中证500股指期货合约的交易时间继续与股票市场保持一致。集合竞价时间为每个交易日9:25-9:30，其中9:25-9:29为指令申报时间，9:29-9:30为指令撮合时间；连续竞价时间为每个交易日9:30-11:30（第一节）和13:00-15:00（第二节）；
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  notes: Beijing time; orders 09:25–09:29, matching 09:29–09:30, with no closing call auction (2015-12-04 contract trading
+    rules art. 13). Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The last trading
+    day also closes at 15:00. Item 3 of the 2016-01-07 notice retains these hours after circuit breakers are suspended on
+    2016-01-08. Circuit breakers could end trading early on 2016-01-04 through 2016-01-07; this value represents the regular
+    planned schedule, not actual halts or reopening auctions.
+- id: cn.futures.min_holding_days.cffex_ih.2015-04-16
+  scope: cffex_ih
+  rule: min_holding_days
+  value: 0
+  effective_from: '2015-04-16'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150825/19246.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-08-25'
+    kind: official
+    quote: 经研究决定，自2015年8月26日（星期三）起，沪深300、上证50、中证500股指期货各合约平今仓交易手续费标准调整为成交金额的万分之一点一五。
+    content_sha256: a75604c66c30865fc8c2780d0a937d7ba2d8ad7c0c1af3be1dc78b2ba2518fce
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/hs300wd/20180202/21454.html
+    publisher: 中国金融期货交易所
+    title: 中金所在计算平今仓交易手续费时，平今仓数量是如何计算的？
+    date: '2018-02-02'
+    kind: official
+    quote: 我所上市产品在计算平今仓交易手续费时，对当日平仓成交按成交时间先后顺序，逐笔采取“先平当日新开仓，再平历史仓”的方式计算平今仓数量，每笔成交的平今仓数量为该笔成交中平当日新开仓数量。
+    content_sha256: cec12c084af99825532eb9968041cab8da0def95fffe5a1eaf0a7c91280c0520
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: 'Inference, not an explicit provision: the 2015-08-25 notice charges for closing positions opened the same day, and
+    the 2018-02-02 official FAQ calculates fees by closing newly opened positions before historical positions. These support
+    an inference of same-day round trips. No direct provision establishing this permission from the product''s listing day
+    was found. effective_from is backdated to the listing day as part of that inference (single-source); published_at=null
+    because no publication establishing that historical start was located. The start is not verified. Checked the 2010 trading
+    rules, trading implementing details and settlement rules, the 2020 trading implementing details, eight pages of CSI 300
+    FAQs and four pages of market-entry risk guidance, plus listing and fee notices.'
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ic.2015-04-16
+  scope: cffex_ic
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2015-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2015-03-30'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/oldsys/W020150327602765131821.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年首次发布）
+    date: '2015-03-27'
+    kind: official
+    quote: 第二十一条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的± 10%。 季月合约上市首日涨跌停板幅度为挂盘基准价的 ± 20％。 上市首日有成交的，于下一交易日恢复到合约规定的涨跌停 板幅度；上市首日无成交的，下一交易日继续执行前一交易
+      日的涨跌停板幅度。 本合约最后交易日涨跌停板幅度为上一交易日结算价 的± 20％。
+    content_sha256: ee1e223653b75eb9d9bb0c3cd509026a87e3864a7941321d0d473f7b809bde25
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: Ordinary-day symmetric band of ±10% of the previous trading day's settlement price (2015-03-27 contract trading rules
+    art. 21). On the listing day of a quarterly contract, the band is ±20% of the listing reference price; after trades occur,
+    the ordinary band resumes on the next trading day; with no trades, the same band continues the next day. The last-trading-day
+    band is ±20% of the previous trading day's settlement price. Special days have no separate scope; do not apply this ordinary-day
+    value to them.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ic.2016-01-01
+  scope: cffex_ic
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.07
+  effective_from: '2016-01-01'
+  effective_to: '2016-01-08'
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2716592504mf.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的±7%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20％。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: babc2715d838ed085f5a56b2192300a385219078b3fc5634eede5e03355f0619
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2716592504mf.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016 年 1 月 1 日起实施。
+    content_sha256: babc2715d838ed085f5a56b2192300a385219078b3fc5634eede5e03355f0619
+    hash_kind: bytes
+  notes: The ordinary daily maximum band is ±7% of the previous trading day's settlement price under the 2015-12-04 contract
+    trading rules art. 22, not merely a circuit-breaker threshold. During 2016-01-01..2016-01-08 (exclusive), art. 21 also
+    limits contract prices to ±5% of that settlement price until the CSI 300 benchmark triggers 5%; the 7% band then applies
+    in the triggered direction, alongside trading halts. A single 0.07 cannot describe all admissible intraday prices. The
+    last-trading-day band is ±20%; its afternoon session is exempt from circuit breakers. No separate special-day scope is
+    encoded. Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The December 2015 revision
+    omits the former quarterly-contract listing-day ±20% clause; do not carry that old provision forward.
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_ic.2016-01-08
+  scope: cffex_ic
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2016-01-08'
+  effective_to: null
+  published_at: '2016-01-07'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 为维护市场平稳运行，经中国证监会批准，中国金融期货交易所决定自2016年1月8日起，暂停实施沪深300、上证50、中证500股指期货熔断制度。现将有关事项通知如下： 一、《中国金融期货交易所交易规则》第五十六条、《中国金融期货交易所结算细则》第四十三条、《中国金融期货交易所风险控制管理办法》第八条、《中国金融期货交易所沪深300股指期货合约交易细则》第二十一条、《中国金融期货交易所上证50股指期货合约交易细则》第二十一条和《中国金融期货交易所中证500股指期货合约交易细则》第二十一条中的熔断制度暂停实施；
+      二、《沪深300股指期货合约》、《上证50股指期货合约》和《中证500股指期货合约》中的每日价格最大波动限制由“上一个交易日结算价的±7%”调整为“上一个交易日结算价的±10%”。 《中国金融期货交易所沪深300股指期货合约交易细则》第二十二条第一款、《中国金融期货交易所上证50股指期货合约交易细则》第二十二条第一款和《中国金融期货交易所中证500股指期货合约交易细则》第二十二条第一款“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±7%”调整为“本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±10%”；
+      三、
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  - url: http://www.cffex.com.cn/u/cms/www/202003/27165943rkyd.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2016年1月7日修订）
+    date: '2016-01-07'
+    kind: official
+    quote: 第二十二条 本合约的每日价格最大波动限制是指其每 日价格涨跌停板幅度，为上一交易日结算价的±10%。 到期月份合约最后交易日涨跌停板幅度为上一交易日 结算价的±20%。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: 1a12c889d90b1d9da9a7508cfaca553ec0330f6690c249b95ef973a9c3cc5d89
+    hash_kind: bytes
+  notes: The 2016-01-07 notice suspends circuit breakers from 2016-01-08 and restores the ordinary band from ±7% to ±10% of
+    the previous trading day's settlement price. The last-trading-day band remains ±20% (contract trading rules revised 2016-01-07,
+    art. 22; downloaded evidence in evidence/). The 2017 and 2018 versions retain the ordinary 10% band; no other ordinary-band
+    changes were found. The listing reference price is not the previous trading day's settlement price. This record excludes
+    listing days and does not extend the deleted quarterly- contract first-day 20% provision to the present.
+- id: cn.futures.session_schedule.cffex_ic.2015-04-16
+  scope: cffex_ic
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:10
+    - 09:15
+    continuous:
+    - - 09:15
+      - '11:30'
+    - - '13:00'
+      - '15:15'
+    close_call: null
+  effective_from: '2015-04-16'
+  effective_to: '2016-01-01'
+  published_at: '2015-03-30'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/oldsys/W020150327602765131821.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年首次发布）
+    date: '2015-03-27'
+    kind: official
+    quote: 第十三条 本合约采用集合竞价和连续竞价两种 交易 方式。 集合竞价时间为每个交易日 9:10-9:15，其中 9:10-9:14 为指令申报时间，9:14-9:15 为指令撮合时间。 连续竞价 时间为每个交易日 9:15-11:30（第一节）和
+      13:00-15:15（第二节）， 最后交易日连续竞价时间为 9:15-11:30 （第一节）和 13:00-15:00（第二节）。 第四章 结算业务
+    content_sha256: ee1e223653b75eb9d9bb0c3cd509026a87e3864a7941321d0d473f7b809bde25
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: 'Beijing time, ordinary trading days (2015-03-27 contract trading rules art. 13). The opening call auction takes
+    orders for the first four minutes and matches in the final minute. On the last trading day, the afternoon session is 13:00–15:00,
+    closing 15 minutes earlier; no separate record is encoded. close_call=null: the rules use an opening call auction and
+    continuous trading; the closing price is the last transaction price of the day.'
+- id: cn.futures.session_schedule.cffex_ic.2016-01-01
+  scope: cffex_ic
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:00'
+    close_call: null
+  effective_from: '2016-01-01'
+  effective_to: null
+  published_at: '2015-12-04'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2716592504mf.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第十三条 本合约采用集合竞价和连续竞价两种交易 方式。 集合竞价时间为每个交易日 9:25-9:30，其中 9:25-9:29 3 为指令申报时间， 9:29-9:30 为指令撮合时间。 连续竞价时间为每个交易日 9:30-11:30（第一节）和
+      13:00-15:00（第二节）。 第四章 结算业务
+    content_sha256: babc2715d838ed085f5a56b2192300a385219078b3fc5634eede5e03355f0619
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/u/cms/www/202003/2716592504mf.pdf
+    publisher: 中国金融期货交易所
+    title: 中证500股指期货合约交易细则（2015年12月4日修订）
+    date: '2015-12-04'
+    kind: official
+    quote: 第二十六条 本细则自 2016 年 1 月 1 日起实施。
+    content_sha256: babc2715d838ed085f5a56b2192300a385219078b3fc5634eede5e03355f0619
+    hash_kind: bytes
+  - url: http://www.cffex.com.cn/cn/jystz/20160107/19584.html
+    publisher: 中国金融期货交易所
+    title: 关于暂停实施股指期货熔断制度的通知
+    date: '2016-01-07'
+    kind: official
+    quote: 三、沪深300、上证50、中证500股指期货合约的交易时间继续与股票市场保持一致。集合竞价时间为每个交易日9:25-9:30，其中9:25-9:29为指令申报时间，9:29-9:30为指令撮合时间；连续竞价时间为每个交易日9:30-11:30（第一节）和13:00-15:00（第二节）；
+    content_sha256: 48240551eb3532e5eda3beac53fb5d201e5d85271401710181d0c54e1af8280b
+    hash_kind: text
+  notes: Beijing time; orders 09:25–09:29, matching 09:29–09:30, with no closing call auction (2015-12-04 contract trading
+    rules art. 13). Art. 26 sets effectiveness at 2016-01-01; the first actual trading day was 2016-01-04. The last trading
+    day also closes at 15:00. Item 3 of the 2016-01-07 notice retains these hours after circuit breakers are suspended on
+    2016-01-08. Circuit breakers could end trading early on 2016-01-04 through 2016-01-07; this value represents the regular
+    planned schedule, not actual halts or reopening auctions.
+- id: cn.futures.min_holding_days.cffex_ic.2015-04-16
+  scope: cffex_ic
+  rule: min_holding_days
+  value: 0
+  effective_from: '2015-04-16'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20150825/19246.html
+    publisher: 中国金融期货交易所
+    title: 关于调整股指期货手续费标准的通知
+    date: '2015-08-25'
+    kind: official
+    quote: 经研究决定，自2015年8月26日（星期三）起，沪深300、上证50、中证500股指期货各合约平今仓交易手续费标准调整为成交金额的万分之一点一五。
+    content_sha256: a75604c66c30865fc8c2780d0a937d7ba2d8ad7c0c1af3be1dc78b2ba2518fce
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/hs300wd/20180202/21454.html
+    publisher: 中国金融期货交易所
+    title: 中金所在计算平今仓交易手续费时，平今仓数量是如何计算的？
+    date: '2018-02-02'
+    kind: official
+    quote: 我所上市产品在计算平今仓交易手续费时，对当日平仓成交按成交时间先后顺序，逐笔采取“先平当日新开仓，再平历史仓”的方式计算平今仓数量，每笔成交的平今仓数量为该笔成交中平当日新开仓数量。
+    content_sha256: cec12c084af99825532eb9968041cab8da0def95fffe5a1eaf0a7c91280c0520
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20150330/18795.html
+    publisher: 中国金融期货交易所
+    title: 关于上证50、中证500股指期货合约上市交易有关事项的通知
+    date: '2015-03-30'
+    kind: official
+    quote: 上证50、中证500股指期货合约自2015年4月16日（星期四）起上市交易。
+    content_sha256: 57f808b8729fc0ab8bbd5c6af45d90edaf819aed8428c89dacb4993a33f02a47
+    hash_kind: text
+  notes: 'Inference, not an explicit provision: the 2015-08-25 notice charges for closing positions opened the same day, and
+    the 2018-02-02 official FAQ calculates fees by closing newly opened positions before historical positions. These support
+    an inference of same-day round trips. No direct provision establishing this permission from the product''s listing day
+    was found. effective_from is backdated to the listing day as part of that inference (single-source); published_at=null
+    because no publication establishing that historical start was located. The start is not verified. Checked the 2010 trading
+    rules, trading implementing details and settlement rules, the 2020 trading implementing details, eight pages of CSI 300
+    FAQs and four pages of market-entry risk guidance, plus listing and fee notices.'
+- id: cn.futures.price_limit_pct_of_prev_settlement.cffex_im.2022-07-22
+  scope: cffex_im
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.1
+  effective_from: '2022-07-22'
+  effective_to: null
+  published_at: '2022-07-18'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/ssxz/20220718/43093.html
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所中证1000股指期货合约交易细则
+    date: '2022-07-18'
+    kind: official
+    quote: 第十九条 本合约的每日价格最大波动限制是指其每日价格涨跌停板幅度，为上一交易日结算价的±10%。 到期月份合约最后交易日涨跌停板幅度为上一交易日结算价的±20%。 交易所有权根据市场风险状况调整涨跌停板幅度。
+    content_sha256: 29656a49ad081123e5b41cb75a3dd8e731ea90144c1fde378927353b1985a6ee
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28850.html
+    publisher: 中国金融期货交易所
+    title: 关于发布中证1000股指期货和股指期权合约及相关业务规则的通知
+    date: '2022-07-18'
+    kind: official
+    quote: 以上合约、细则自2022年7月22日起实施。
+    content_sha256: bfd5d2557f065b6beeef58b9522c25202b661501521491fe15b5b900a62c5e24
+    hash_kind: text
+  notes: Ordinary-day band of ±10% of the previous trading day's settlement price; the expiring contract's last- trading-day
+    band is ±20% (IM contract trading rules published 2022-07-18, art. 19, effective 2022-07-22 under art. 23). No separate
+    special-day scope is encoded. IM rules do not contain the old IF/IH/IC quarterly- contract listing-day ±20% clause. Listing-day
+    limits use the listing reference price and cannot be replaced by this ordinary-day record. The 2022-07-18 listing notice
+    and 2022-07-21 listing-reference-price notice were checked; no separate IM first-day 20% provision was found, which does
+    not prove the absence of all special arrangements.
+- id: cn.futures.session_schedule.cffex_im.2022-07-22
+  scope: cffex_im
+  rule: session_schedule
+  value:
+    open_call:
+    - 09:25
+    - 09:30
+    continuous:
+    - - 09:30
+      - '11:30'
+    - - '13:00'
+      - '15:00'
+    close_call: null
+  effective_from: '2022-07-22'
+  effective_to: null
+  published_at: '2022-07-18'
+  recorded_at: '2026-11-03'
+  verification: verified
+  sources:
+  - url: http://www.cffex.com.cn/cn/ssxz/20220718/43093.html
+    publisher: 中国金融期货交易所
+    title: 中国金融期货交易所中证1000股指期货合约交易细则
+    date: '2022-07-18'
+    kind: official
+    quote: 第十一条 本合约采用集合竞价和连续竞价两种交易方式。 集合竞价时间为每个交易日9:25-9:30，其中9:25-9:29为指令申报时间，9:29-9:30为指令撮合时间。 连续竞价时间为每个交易日9:30-11:30（第一节）和
+      13:00-15:00 （第二节）。 第四章 结算业务
+    content_sha256: 29656a49ad081123e5b41cb75a3dd8e731ea90144c1fde378927353b1985a6ee
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28850.html
+    publisher: 中国金融期货交易所
+    title: 关于发布中证1000股指期货和股指期权合约及相关业务规则的通知
+    date: '2022-07-18'
+    kind: official
+    quote: 以上合约、细则自2022年7月22日起实施。
+    content_sha256: bfd5d2557f065b6beeef58b9522c25202b661501521491fe15b5b900a62c5e24
+    hash_kind: text
+  notes: Beijing time; orders 09:25–09:29, matching 09:29–09:30 (IM contract trading rules published 2022-07-18, art. 11,
+    effective 2022-07-22 under art. 23). No closing call auction. The last trading day also closes at 15:00; the rules specify
+    no earlier close.
+- id: cn.futures.min_holding_days.cffex_im.2022-07-22
+  scope: cffex_im
+  rule: min_holding_days
+  value: 0
+  effective_from: '2022-07-22'
+  effective_to: null
+  published_at: '2022-07-18'
+  recorded_at: '2026-11-03'
+  verification: single-source
+  sources:
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28855.html
+    publisher: 中国金融期货交易所
+    title: 关于中证1000股指期货和股指期权合约上市交易有关事项的通知
+    date: '2022-07-18'
+    kind: official
+    quote: 中证1000股指期货各合约的平今仓交易手续费标准为成交金额的万分之三点四五。
+    content_sha256: 3d0f38ca2183e7b9dbdb28ec5b3335004735ea659d6de2bd2e5ecbd828323f1f
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/jystz/20220718/28855.html
+    publisher: 中国金融期货交易所
+    title: 关于中证1000股指期货和股指期权合约上市交易有关事项的通知
+    date: '2022-07-18'
+    kind: official
+    quote: 中证1000股指期货和股指期权合约自2022年7月22日（星期五）起上市交易。
+    content_sha256: 3d0f38ca2183e7b9dbdb28ec5b3335004735ea659d6de2bd2e5ecbd828323f1f
+    hash_kind: text
+  - url: http://www.cffex.com.cn/cn/hs300wd/20180202/21454.html
+    publisher: 中国金融期货交易所
+    title: 中金所在计算平今仓交易手续费时，平今仓数量是如何计算的？
+    date: '2018-02-02'
+    kind: official
+    quote: 我所上市产品在计算平今仓交易手续费时，对当日平仓成交按成交时间先后顺序，逐笔采取“先平当日新开仓，再平历史仓”的方式计算平今仓数量，每笔成交的平今仓数量为该笔成交中平当日新开仓数量。
+    content_sha256: cec12c084af99825532eb9968041cab8da0def95fffe5a1eaf0a7c91280c0520
+    hash_kind: text
+  notes: Same-day closing is inferred from the 2022-07-18 IM listing notice specifying both the listing date and close- today
+    fees, together with the 2018-02-02 official FAQ defining closure of positions opened the same day. No direct IM same-day-round-trip
+    provision was found, so this remains single-source; the listing-day start is inferred, not directly verified. published_at=null
+    because no publication of a direct provision establishing that permission and start was located. Checked the IM listing
+    notice and the official close-today FAQ; the broader search covered the 2010 trading rules, trading implementing details
+    and settlement rules, the 2020 trading implementing details, eight pages of CSI 300 FAQs and four pages of market-entry
+    risk guidance, plus listing and fee notices.

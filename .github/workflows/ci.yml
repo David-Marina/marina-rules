@@ -1,0 +1,42 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: { python: ["3.9", "3.12"] }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -e . pytest
+      - name: schema + semantics tests
+        run: pytest -q
+      - name: capabilities.json and decision schema are generated from data and committed
+        shell: bash
+        run: |
+          python -m marina_rules.contract --capabilities | python -c "import json,sys;d=json.load(sys.stdin);d.pop('ruleset_hash');print(json.dumps(d,sort_keys=True))" > /tmp/a
+          python -c "import json;d=json.load(open('capabilities.json'));d.pop('ruleset_hash');print(json.dumps(d,sort_keys=True))" > /tmp/b
+          diff /tmp/a /tmp/b
+          python -m marina_rules.contract --schema | diff - docs/decision.schema.json
+      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash)
+        run: python scripts/check_release_metadata.py
+      - name: release notes render from CHANGELOG.md
+        run: python scripts/release_notes.py "$(python -c 'import marina_rules;print(marina_rules.VERSION)')" > /dev/null
+      - name: conformance vectors (independent oracles)
+        run: python conformance/run.py
+      - name: coverage report (blocking — fails on any gap not listed under `unresolved`)
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/coverage_report.py --markdown | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: audit sample bars against rules
+        run: python scripts/audit_bars.py data/samples/cn_bars
+      - name: check example fill logs
+        run: |
+          python -m marina_rules.check examples/fills_ok.csv > /dev/null
+          ! python -m marina_rules.check examples/fills_bad.csv > /dev/null
+      - name: dataset digest
+        run: python -c "import sys; sys.path.insert(0,'src'); import marina_rules as m; print(m.citation(short=False))"

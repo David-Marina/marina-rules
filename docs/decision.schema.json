@@ -1,0 +1,180 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/David-Marina/marina-rules/contract/v1",
+ "title": "Marina Rule Decision",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "contract_version",
+  "status",
+  "rule",
+  "trade_date",
+  "scope",
+  "result",
+  "record_id",
+  "required_context",
+  "missing_context",
+  "context_conflicts",
+  "known_gap_ids",
+  "evidence_refs",
+  "verification",
+  "ruleset_version",
+  "ruleset_hash",
+  "reason"
+ ],
+ "properties": {
+  "contract_version": {
+   "const": "1"
+  },
+  "status": {
+   "enum": [
+    "DETERMINED",
+    "MISSING_CONTEXT",
+    "OUT_OF_COVERAGE",
+    "CONFLICT",
+    "UNVERIFIED",
+    "NOT_YET_PUBLISHED",
+    "UNKNOWN_PUBLICATION"
+   ]
+  },
+  "rule": {
+   "type": "string"
+  },
+  "trade_date": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  "market": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "scope": {
+   "type": "string"
+  },
+  "as_of": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  "result": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "properties": {
+    "value": {},
+    "effective_from": {
+     "type": "string"
+    },
+    "effective_to": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "published_at": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "contracts": {
+     "type": "object",
+     "description": "present only when the record covers part of the product's contracts (docs/SCHEMA.md, Contract selectors)"
+    }
+   }
+  },
+  "record_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "required_context": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "missing_context": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "context_conflicts": {
+   "type": "array",
+   "items": {
+    "type": "object"
+   }
+  },
+  "known_gap_ids": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "pattern": "^G-([A-Z]{2}-)?\\d{4}$"
+   }
+  },
+  "evidence_refs": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "url": {
+      "type": "string"
+     },
+     "publisher": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "kind": {
+      "enum": [
+       "official",
+       "secondary",
+       null
+      ]
+     },
+     "content_sha256": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "verification": {
+   "enum": [
+    "verified",
+    "single-source",
+    "unverified",
+    null
+   ]
+  },
+  "ruleset_version": {
+   "type": "string"
+  },
+  "ruleset_hash": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "reason": {
+   "type": "string"
+  }
+ }
+}

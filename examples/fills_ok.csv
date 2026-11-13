@@ -1,0 +1,4 @@
+date,code,side,price,prev_close,scope,market,fee,turnover
+2021-03-01,300001,buy,11.50,10.00,chinext,XSHE,5.10,115000
+2021-03-04,300001,sell,12.80,11.90,chinext,XSHE,141.0,128000
+2024-01-30,603375,buy,25.00,30.12,ipo_first5_main,XSHG,6.0,250000

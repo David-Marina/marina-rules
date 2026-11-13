@@ -1,0 +1,841 @@
+[
+ {
+  "id": "ASOF-0001",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "as_of": "2026-04-23"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2026-04-24《上交所修订发布〈上海证券交易所交易规则〉》：三是将主板风险警示股票价格涨跌幅限制比例由5%调整为10%……《交易规则》于2026年7月6日起正式实施；深交所 2026-04-24 深证上〔2026〕551号：本规则自2026年7月6日起施行 → 公布日 2026-04-24；as_of 2026-04-23 早于公布日",
+  "tags": [
+   "as_of",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0002",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "as_of": "2026-04-24"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2026-04-24《上交所修订发布〈上海证券交易所交易规则〉》：三是将主板风险警示股票价格涨跌幅限制比例由5%调整为10%……《交易规则》于2026年7月6日起正式实施；深交所 2026-04-24 深证上〔2026〕551号：本规则自2026年7月6日起施行 → 公布日 2026-04-24；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0003",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2026-07-06",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "as_of": "2026-10-26"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2026-04-24《上交所修订发布〈上海证券交易所交易规则〉》：三是将主板风险警示股票价格涨跌幅限制比例由5%调整为10%……《交易规则》于2026年7月6日起正式实施；深交所 2026-04-24 深证上〔2026〕551号：本规则自2026年7月6日起施行 → 公布日 2026-04-24；as_of 晚于公布日",
+  "tags": [
+   "as_of",
+   "after-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0004",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2023-08-28",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2023-08-26"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "财政部 税务总局公告2023年第39号（中国政府网，2023-08-27）：自2023年8月28日起，证券交易印花税实施减半征收 → 公布日 2023-08-27，0.001/2 = 0.0005；as_of 2023-08-26 早于公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0005",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2023-08-28",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2023-08-27"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0005
+  },
+  "oracle": "财政部 税务总局公告2023年第39号（中国政府网，2023-08-27）：自2023年8月28日起，证券交易印花税实施减半征收 → 公布日 2023-08-27，0.001/2 = 0.0005；as_of = 公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0006",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 900
+   },
+   "as_of": "2020-06-11"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "深交所 2020-06-12《关于发布〈深圳证券交易所创业板交易特别规定〉的通知》2.1：创业板股票竞价交易实行价格涨跌幅限制，涨跌幅限制比例为20% → 公布日 2020-06-12；施行 2020-08-24（深交所 2020-08-21 发布会）；as_of 2020-06-11 早于公布日",
+  "tags": [
+   "as_of",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0007",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-08-24",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 900
+   },
+   "as_of": "2020-06-12"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深交所 2020-06-12《关于发布〈深圳证券交易所创业板交易特别规定〉的通知》2.1：创业板股票竞价交易实行价格涨跌幅限制，涨跌幅限制比例为20% → 公布日 2020-06-12；施行 2020-08-24（深交所 2020-08-21 发布会）；as_of = 公布日（早于施行日 73 天，提前公布的规则可见）",
+  "tags": [
+   "as_of",
+   "publication-day",
+   "announced-in-advance"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0008",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2020-09-01",
+   "scope": "chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": false,
+    "listing_day_index": 900
+   },
+   "as_of": "2020-07-01"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.2
+  },
+  "oracle": "深交所 2020-06-12《关于发布〈深圳证券交易所创业板交易特别规定〉的通知》2.1：创业板股票竞价交易实行价格涨跌幅限制，涨跌幅限制比例为20% → 公布日 2020-06-12；施行 2020-08-24（深交所 2020-08-21 发布会）；as_of 2020-07-01 早于交易日 2020-09-01（前瞻性问题，允许）",
+  "tags": [
+   "as_of",
+   "forward-looking"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0009",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2008-04-24",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2008-04-22"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "财政部 2008-04-23《从4月24日起证券交易印花税税率下调为千分之一》：从２００８年４月２４日起……由现行３‰调整为１‰ → 公布日 2008-04-23；as_of 2008-04-22 早于公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0010",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "2008-04-24",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2008-04-23"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "财政部 2008-04-23《从4月24日起证券交易印花税税率下调为千分之一》：从２００８年４月２４日起……由现行３‰调整为１‰ → 公布日 2008-04-23；as_of = 公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0011",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-29",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2022-04-27"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "中国结算 2022-04-28《关于降低股票交易过户费收费标准的通知》：自 2022 年 4 月 29 日起……统一下调为按照成交金额 0.01‰ 双向收取 → 公布日 2022-04-28，0.01‰ = 0.00001；as_of 2022-04-27 早于公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0012",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2022-04-29",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "2022-04-28"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1e-05
+  },
+  "oracle": "中国结算 2022-04-28《关于降低股票交易过户费收费标准的通知》：自 2022 年 4 月 29 日起……统一下调为按照成交金额 0.01‰ 双向收取 → 公布日 2022-04-28，0.01‰ = 0.00001；as_of = 公布日",
+  "tags": [
+   "as_of",
+   "fees",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0013",
+  "query": {
+   "rule": "transfer_fee_each_side",
+   "trade_date": "2010-06-01",
+   "scope": "stock",
+   "market": "XSHE",
+   "context": {},
+   "as_of": "2010-06-01"
+  },
+  "expect": {
+   "status": "UNKNOWN_PUBLICATION"
+  },
+  "oracle": "深市 A 股过户费 0.0255‰（2006-07-01 起记录）：中国结算 2012-04-30 / 2012-08-02 通知只称“现行收费标准为按交易额的0.0255‰收取”，引入该费率的原始通知及其发布日未能定位 → published_at 未知，as_of 下不能判定（原 ASOF-0013 指向的主板 10% 已于本版定出公布日 1996-12-13）",
+  "tags": [
+   "as_of",
+   "publication-unknown"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0014",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-14",
+   "scope": "st_main",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": true
+   },
+   "as_of": "2024-06-14"
+  },
+  "expect": {
+   "status": "UNKNOWN_PUBLICATION"
+  },
+  "oracle": "主板 ST 5%（1998-04-22 起）：来源为深交所 2018-03-28 回顾（1998年4月27日…调整为5%）与上交所 1998 年大事记（2015 年刊出）、深交所 2005 研究文章；原通知发布日未能定位 → published_at 未知",
+  "tags": [
+   "as_of",
+   "publication-unknown"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0015",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "st_main",
+   "trade_date": "2026-07-06",
+   "market": "XSHG",
+   "as_of": "2026-04-24"
+  },
+  "expect": {
+   "limit_up": 11.0,
+   "limit_down": 9.0
+  },
+  "oracle": "上交所 2026-04-24《上交所修订发布〈上海证券交易所交易规则〉》：三是将主板风险警示股票价格涨跌幅限制比例由5%调整为10%……《交易规则》于2026年7月6日起正式实施；深交所 2026-04-24 深证上〔2026〕551号：本规则自2026年7月6日起施行 → 公布日 2026-04-24；10×(1±10%) = 11.00 / 9.00，按 0.01 四舍五入（上交所交易规则 3.3.17）",
+  "tags": [
+   "as_of",
+   "limit_price",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0016",
+  "query": {
+   "prev_close": 10.0,
+   "scope": "st_main",
+   "trade_date": "2026-07-06",
+   "market": "XSHG",
+   "as_of": "2026-04-23"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2026-04-24《上交所修订发布〈上海证券交易所交易规则〉》：三是将主板风险警示股票价格涨跌幅限制比例由5%调整为10%……《交易规则》于2026年7月6日起正式实施；深交所 2026-04-24 深证上〔2026〕551号：本规则自2026年7月6日起施行 → 公布日 2026-04-24；as_of 早于公布日，涨跌停价不可知（不得退回旧的 5% 记录）",
+  "tags": [
+   "as_of",
+   "limit_price",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0017",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 900
+   },
+   "as_of": "1996-12-12"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 0.1；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0018",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "main_board",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false,
+    "listing_day_index": 900
+   },
+   "as_of": "1996-12-13"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 0.1；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0019",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_constituents": "mixed"
+   },
+   "as_of": "1996-12-12"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10%（通知名“股票、基金”/“股票和基金”）→ 0.1；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0020",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "etf",
+   "market": "XSHG+XSHE",
+   "context": {
+    "fund_constituents": "mixed"
+   },
+   "as_of": "1996-12-13"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10%（通知名“股票、基金”/“股票和基金”）→ 0.1；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0021",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "b_share",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "as_of": "1996-12-12"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10%（每只证券，含 B 股）→ 0.1；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0022",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "b_share",
+   "market": "XSHG+XSHE",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "as_of": "1996-12-13"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.1
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10%（每只证券，含 B 股）→ 0.1；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0023",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "ipo_day1_main",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   },
+   "as_of": "1996-12-12"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 上市首日除外 → unlimited；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0024",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "ipo_day1_main",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   },
+   "as_of": "1996-12-13"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 上市首日除外 → unlimited；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0025",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "ipo_day1_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   },
+   "as_of": "1996-12-12"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 上市首日除外 → unlimited；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0026",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "1996-12-16",
+   "scope": "ipo_day1_main",
+   "market": "XSHE",
+   "context": {
+    "board": "main_board",
+    "listing_day_index": 1,
+    "issue_regime": "approval"
+   },
+   "as_of": "1996-12-13"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": "unlimited"
+  },
+  "oracle": "上交所 2003-06-28《关于废止部分业务规则的公告（第一批）》目录第94项：关于对股票、基金交易实行价格涨跌幅限制的通知（1996.12.13上证交（96）字第036号）；深交所 2003-09-17 第一批目录第97项：(1996.12.13 深证发 (96)477)；深交所 1996 年大事记：12月13日…发出《关于对股票和基金交易实行价格涨跌幅限制的通知》 → 公布日 1996-12-13；内容：深交所《深市涨跌停板制度的由来》：要求除上市首日的证券外，每只证券的交易价格相对于上一交易日收市价的涨跌幅度不得超过10% → 上市首日除外 → unlimited；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0027",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2009-10-30",
+   "scope": "st_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": true
+   },
+   "as_of": "2009-10-25"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "深交所 2009-10-26《关于创业板上市证券交易有关事项的通知》：创业板上市证券的交易，适用《深圳证券交易所交易规则》中除第 3.3.15 条第二款、第 3.4.3 条第二款以外的规定；2006 版交易规则 3.3.14：其中ST和*ST股票价格涨跌幅比例为5% → 公布日 2009-10-26，0.05；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0028",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2009-10-30",
+   "scope": "st_chinext",
+   "market": "XSHE",
+   "context": {
+    "board": "chinext",
+    "st_status": true
+   },
+   "as_of": "2009-10-26"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.05
+  },
+  "oracle": "深交所 2009-10-26《关于创业板上市证券交易有关事项的通知》：创业板上市证券的交易，适用《深圳证券交易所交易规则》中除第 3.3.15 条第二款、第 3.4.3 条第二款以外的规定；2006 版交易规则 3.3.14：其中ST和*ST股票价格涨跌幅比例为5% → 公布日 2009-10-26，0.05；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0029",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2011-02-28",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "as_of": "2006-05-14"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所交易规则（2006年版，上证交字[2006]3号，日期：2006-05-15）3.4.11：B股交易为0.001美元 → 该规则至迟 2006-05-15 已公布，0.001；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0030",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2011-02-28",
+   "scope": "b_share",
+   "market": "XSHG",
+   "context": {
+    "board": "main_board",
+    "st_status": false
+   },
+   "as_of": "2006-05-15"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.001
+  },
+  "oracle": "上交所交易规则（2006年版，上证交字[2006]3号，日期：2006-05-15）3.4.11：B股交易为0.001美元 → 该规则至迟 2006-05-15 已公布，0.001；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0031",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "1995-01-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "1994-12-07"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所 2003-06-28 第一批废止目录第85项：关于实行股票交易T＋1交收制度有关事项的通知（1994.12.8上证交（94）字第3023号）；深交所 1995 年大事记：A 股及基金交易由 T+0 交收改为 T+1 交收 → 公布日 1994-12-08，T+1 = 1；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0032",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "1995-01-03",
+   "scope": "stock",
+   "market": "XSHG+XSHE",
+   "context": {},
+   "as_of": "1994-12-08"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上交所 2003-06-28 第一批废止目录第85项：关于实行股票交易T＋1交收制度有关事项的通知（1994.12.8上证交（94）字第3023号）；深交所 1995 年大事记：A 股及基金交易由 T+0 交收改为 T+1 交收 → 公布日 1994-12-08，T+1 = 1；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0033",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-06-03",
+   "scope": "etf_money",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "money_market"
+   },
+   "as_of": "2006-05-14"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "上交所交易规则（2006年版，2006-05-15 发布）3.1.4：投资者买入的证券，在交收前不得卖出，但实行回转交易的除外；3.1.5 当日回转只列债券和权证 → 货币 ETF 适用 T+1 = 1，公布日 2006-05-15；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0034",
+  "query": {
+   "rule": "min_holding_days",
+   "trade_date": "2013-06-03",
+   "scope": "etf_money",
+   "market": "XSHG",
+   "context": {
+    "fund_type": "money_market"
+   },
+   "as_of": "2006-05-15"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 1
+  },
+  "oracle": "上交所交易规则（2006年版，2006-05-15 发布）3.1.4：投资者买入的证券，在交收前不得卖出，但实行回转交易的除外；3.1.5 当日回转只列债券和权证 → 货币 ETF 适用 T+1 = 1，公布日 2006-05-15；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0035",
+  "query": {
+   "rule": "delivery_fee_rate",
+   "trade_date": "2018-12-21",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {},
+   "as_of": "2015-03-29"
+  },
+  "expect": {
+   "status": "NOT_YET_PUBLISHED"
+  },
+  "oracle": "中金所 2015-03-30《关于上证50、中证500股指期货合约上市交易有关事项的通知》：交割手续费标准为交割金额的万分之一（IF 同为万分之一：中金所办字【2010】36号，2010-03-26）→ 公布日取两者较晚者 2015-03-30，0.0001；as_of 早于公布日",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "day-before-publication"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ },
+ {
+  "id": "ASOF-0036",
+  "query": {
+   "rule": "delivery_fee_rate",
+   "trade_date": "2018-12-21",
+   "scope": "cffex_index_futures",
+   "market": "CCFX",
+   "context": {},
+   "as_of": "2015-03-30"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.0001
+  },
+  "oracle": "中金所 2015-03-30《关于上证50、中证500股指期货合约上市交易有关事项的通知》：交割手续费标准为交割金额的万分之一（IF 同为万分之一：中金所办字【2010】36号，2010-03-26）→ 公布日取两者较晚者 2015-03-30，0.0001；as_of = 公布日，可见",
+  "tags": [
+   "as_of",
+   "published-at-research",
+   "publication-day"
+  ],
+  "ruleset_version_min": "2026.11.13"
+ }
+]

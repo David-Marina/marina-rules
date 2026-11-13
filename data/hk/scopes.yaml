@@ -1,0 +1,48 @@
+# Scope registry · Hong Kong securities market (SEHK, MIC XHKG)
+# A scope names *which securities* a rule applies to. Each scope declares what the caller must already
+# know about the security to legitimately select it. Marina never infers this context (it holds rules,
+# not security histories); it refuses to answer when the context is missing — see coverage().
+#
+# requires vocabulary:
+#   spread_table       part_a | part_b | part_d — which Part of the Second Schedule to the Rules of the Exchange (spread
+#                      table) the ETF traded under on that date. A per-security, per-date fact (before 2020-06-01
+#                      fixed-income and currency ETFs used Part B, other ETFs Part A; from 2020-06-01 ETFs use Part D,
+#                      or Part B for a fixed-income ETF whose manager chose it). Supplied by the caller; Marina never
+#                      infers it. Needed only for tick_size_table under hk_etf (rule_asserts) and by hk_etf_part_b.
+# hk_stock and hk_etf are otherwise selected by instrument type alone. Where a rule would depend on other per-security
+# context (CAS phase-in 2016-07-25..2019-10-08, ETF stamp duty before 2015-02-13), a known gap is declared instead of a
+# context key. closing_auction_limit_pct and vcm_trigger_pct describe CAS / VCM securities only; whether a security is
+# one (index membership, the HKEX VCM list) is the caller's to determine, as their notes say. Likewise
+# short_sale_price_test describes designated securities for short selling only; the designation and exemption lists are
+# the caller's (Marina stores no security list).
+#
+# excludes: scopes that must NOT be simultaneously selected for the same security/date; selecting two
+# scopes that are mutually exclusive is a caller error. hk_etf_part_b does not exclude hk_etf: the same Part B ETF is
+# hk_etf for every other rule (fees, sessions, VCM …) and hk_etf_part_b for its spread table.
+#
+# asserts / rule_asserts: same grammar as data/cn/scopes.yaml (see its header).
+#
+# Not covered (no scope, no record): REITs, derivative warrants, callable bull/bear contracts, inline warrants,
+# equity warrants and rights, debt securities, leveraged and inverse products.
+schema: 1.1
+market: XHKG
+scopes:
+  hk_stock:
+    description: SEHK ordinary shares listed on the Main Board and GEM, including H shares and red chips; Marina coverage from 2010-01-01.
+    requires: []
+    excludes: [hk_etf]
+  hk_etf:
+    description: Exchange-traded funds listed on the SEHK securities market, excluding leveraged and inverse products; Marina coverage from 2010-01-01.
+    requires: []
+    excludes: [hk_stock]
+    rule_asserts:
+      # the spread table of an ETF on Part A (before 2020-06-01) or Part D (from 2020-06-01); a Part B ETF is hk_etf_part_b
+      tick_size_table:
+        requires: [spread_table]
+        asserts:
+          spread_table: [{eq: part_a, to: '2020-06-01'}, {eq: part_d, from: '2020-06-01'}]
+  hk_etf_part_b:
+    description: ETFs (as hk_etf) traded on Part B of the Second Schedule — before 2020-06-01 fixed-income and currency ETFs, from 2020-06-01 fixed-income ETFs whose manager kept Part B. Spread table (tick_size_table) only; every other rule is under hk_etf. Marina coverage from 2010-01-01.
+    requires: [spread_table]
+    excludes: [hk_stock]
+    asserts: {spread_table: part_b}

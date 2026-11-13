@@ -1,0 +1,484 @@
+{
+ "capabilities_version": "1",
+ "ruleset_version": "2026.11.13",
+ "ruleset_hash": "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e",
+ "entrypoints": {
+  "python": {
+   "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None)",
+   "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None)",
+   "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
+   "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
+   "check": "python -m marina_rules.check fills.csv"
+  },
+  "statuses": [
+   "DETERMINED",
+   "MISSING_CONTEXT",
+   "OUT_OF_COVERAGE",
+   "CONFLICT",
+   "UNVERIFIED",
+   "NOT_YET_PUBLISHED",
+   "UNKNOWN_PUBLICATION"
+  ],
+  "as_of": "optional ISO date on record_at/rule_at/coverage/resolve/limit_price/tick_size: answer only from rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → UNKNOWN_PUBLICATION; never falls back to an older record",
+  "decision_schema": "python -m marina_rules.contract --schema"
+ },
+ "preflight": [
+  "coverage() over the whole window before any computation",
+  "supply every key in scope.requires per security per day; Marina never infers them",
+  "stop on any status other than DETERMINED; cite known_gap_ids when present",
+  "put citation() into every result"
+ ],
+ "rules": {
+  "cat_fee_per_share": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2024-09-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 10
+   }
+  },
+  "cat_historical_assessment_per_share": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2024-10-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 6
+   }
+  },
+  "extended_hours": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS"
+   ],
+   "earliest_effective_from": "2013-03-18",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "finra_taf_sell": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "single-source": 18
+   }
+  },
+  "luld_band": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2013-12-08",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 6
+   }
+  },
+  "min_holding_days": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "min_quote_increment": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2006-01-31",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "mwcb_decline_levels": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2,
+    "verified": 2
+   }
+  },
+  "pattern_day_trader_min_equity": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2001-09-28",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "sec_fee_rate_sell": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 36,
+    "verified": 4
+   }
+  },
+  "session_schedule": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 3
+   }
+  },
+  "settlement_cycle_days": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "1995-06-07",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2,
+    "verified": 4
+   }
+  },
+  "short_sale_price_test": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2007-07-06",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2,
+    "verified": 2
+   }
+  },
+  "single_stock_pause_pct": {
+   "scopes": [
+    "us_etf",
+    "us_stock"
+   ],
+   "markets": [
+    "XNAS",
+    "XNYS"
+   ],
+   "earliest_effective_from": "2011-08-08",
+   "has_open_interval": false,
+   "records_by_verification": {
+    "verified": 2
+   }
+  }
+ },
+ "scopes": {
+  "us_etf": {
+   "description": "Exchange-listed ETFs that are NMS stocks; ordinary secondary-market share transactions, excluding creation/redemption baskets. Marina coverage from 2010-01-01.",
+   "requires": [],
+   "excludes": [
+    "us_stock"
+   ],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "us_stock": {
+   "description": "Exchange-listed NMS common stocks; ordinary secondary-market transactions. Marina coverage from 2010-01-01.",
+   "requires": [],
+   "excludes": [
+    "us_etf"
+   ],
+   "asserts": {},
+   "rule_asserts": {}
+  }
+ },
+ "context_constraints": {
+  "grammar": "data/<market>/scopes.yaml header: scalar = equality; {eq|in|not_in|min|max} with qualifiers from/to (trade-date window), unless/when (context condition), required; a list = every applicable entry must hold; null value = not supplied",
+  "on_violation": "MISSING_CONTEXT with context_conflicts / missing_context"
+ },
+ "tick_families": {
+  "rule": "tick_size",
+  "map": {
+   "b_share": "b_share",
+   "bse": "bse_stock",
+   "bse_stock": "bse_stock",
+   "convertible": "convertible",
+   "convertible_day1": "convertible",
+   "delisting_bse": "bse_stock",
+   "delisting_day1_bse": "bse_stock",
+   "etf": "etf",
+   "etf_20pct": "etf",
+   "etf_bond": "etf",
+   "etf_commodity": "etf",
+   "etf_crossborder": "etf",
+   "etf_gold": "etf",
+   "etf_money": "etf",
+   "ipo_day1_bse": "bse_stock",
+   "reits": "etf",
+   "reits_day1": "etf",
+   "st_b_share": "b_share",
+   "st_bse": "bse_stock"
+  },
+  "default": "stock"
+ },
+ "context_vocabulary": [],
+ "known_gaps": [
+  {
+   "gap_id": "G-US-0001",
+   "market": "XNYS+XNAS",
+   "scope": "us_stock",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0002",
+   "market": "XNYS+XNAS",
+   "scope": "us_etf",
+   "rule": "price_limit_pct",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0003",
+   "market": "XNAS",
+   "scope": "us_stock",
+   "rule": "extended_hours",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2013-03-18"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0004",
+   "market": "XNAS",
+   "scope": "us_etf",
+   "rule": "extended_hours",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2013-03-18"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0005",
+   "market": "XNYS+XNAS",
+   "scope": "us_stock",
+   "rule": "luld_band",
+   "interval": {
+    "from": "2013-04-08",
+    "to": "2013-12-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0006",
+   "market": "XNYS+XNAS",
+   "scope": "us_etf",
+   "rule": "luld_band",
+   "interval": {
+    "from": "2013-04-08",
+    "to": "2013-12-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0007",
+   "market": "XNYS",
+   "scope": "us_etf",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0008",
+   "market": "XNYS",
+   "scope": "us_stock",
+   "rule": "extended_hours",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0009",
+   "market": "XNYS",
+   "scope": "us_etf",
+   "rule": "extended_hours",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0010",
+   "market": "XNYS+XNAS",
+   "scope": "us_stock",
+   "rule": "single_stock_pause_pct",
+   "interval": {
+    "from": "2010-06-11",
+    "to": "2011-08-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0011",
+   "market": "XNYS+XNAS",
+   "scope": "us_stock",
+   "rule": "single_stock_pause_pct",
+   "interval": {
+    "from": "2013-04-08",
+    "to": "2013-12-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0012",
+   "market": "XNYS+XNAS",
+   "scope": "us_etf",
+   "rule": "single_stock_pause_pct",
+   "interval": {
+    "from": "2010-09-14",
+    "to": "2011-08-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0013",
+   "market": "XNYS+XNAS",
+   "scope": "us_etf",
+   "rule": "single_stock_pause_pct",
+   "interval": {
+    "from": "2013-04-08",
+    "to": "2013-12-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0014",
+   "market": "XNYS+XNAS",
+   "scope": "us_stock",
+   "rule": "pattern_day_trader_min_equity",
+   "interval": {
+    "from": "2026-06-04",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-US-0015",
+   "market": "XNYS+XNAS",
+   "scope": "us_etf",
+   "rule": "pattern_day_trader_min_equity",
+   "interval": {
+    "from": "2026-06-04",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  }
+ ],
+ "not_in_scope": [
+  "market data",
+  "security master",
+  "point-in-time ST / listing histories",
+  "matching, slippage, strategy"
+ ]
+}

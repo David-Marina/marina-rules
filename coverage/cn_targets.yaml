@@ -1,0 +1,1469 @@
+# Coverage targets · China A-share (XSHG, XSHE, BJSE) — the denominator of scripts/coverage_report.py.
+#
+# Maintainer decision 2026-10-25: coverage of China A-shares must be 100% from 2006-07-01 onward;
+# earlier dates are out of scope. CFFEX futures (CCFX), SHFE futures (XSGE), INE futures (XINE), CZCE futures (XZCE) and GFEX futures (GFEX) are not part of this target;
+# nor are Hong Kong equities (XHKG, data/hk/) or US equities (XNYS, XNAS, data/us/).
+#
+# A target is (market, scope, rule, start[, end]). For every calendar day in [start, end or today] exactly one
+# record must answer marina_rules.record_at(rule, day, scope, market). start = max(2006-07-01, the date
+# the board / product / regime first existed), taken from `existence` (source URL next to each date;
+# `existence_source: TODO` = best-known date, not yet sourced in the repo).
+#
+# `scope` is the scope the data records the rule under. Rules that do not distinguish boards are recorded
+# under a family scope (fees and T+1 under `stock`, fund tick/session under `etf`, B-share tick under
+# `b_share`); `applies_to` lists the registry scopes that family target answers for. Every A-share scope in
+# scopes.yaml appears as a target scope or in some applies_to (tests/test_coverage_targets.py).
+#
+# A target may carry `not_applicable:` when the rule provably does not apply to the product; such a target counts as
+# covered and the report lists it separately. Form: {reason: "...", sources: [{url, content_sha256 (64 hex, computed
+# with scripts/hash_source.py), hash_kind, quote}]}.
+#
+# Transfer-fee mapping (step 2). For each market and day exactly one transfer-fee rule is expected:
+#   XSHG  2006-07-01..2015-08-01  transfer_fee_par_value   (fraction of traded PAR VALUE, CSDC portion)
+#   XSHG  2015-08-01..            transfer_fee_each_side   (fraction of turnover)
+#   XSHE  2006-07-01..            transfer_fee_each_side   (0.0255‰ of turnover inside the SZSE handling fee until 2015-08-01)
+#   BJSE  2021-11-15..2022-04-29  transfer_fee_each_side under scope bse_stock (BSE-only 0.025‰)
+#   BJSE  2022-04-29..            transfer_fee_each_side under scope stock (national 0.01‰ record, XSHG+XSHE+BJSE)
+# The basis change on 2015-08-01 is CSDC's notice of 2015-07-09 (existence key sse_transfer_fee_turnover).
+# The BJSE scope change on 2022-04-29 is CSDC's notice of 2022-04-28 (existence key bse_transfer_fee_unified).
+#
+# `new_rules` lists rule names targeted before their first record exists (none now: stamp_duty_buy and
+# transfer_fee_par_value landed in step 2 and are registered in docs/SCHEMA.md).
+schema: 1.1
+market: XSHG+XSHE+BJSE
+new_rules: {}
+existence:
+  a_share_floor:
+    date: '2006-07-01'
+    source: "maintainer decision 2026-10-25: Marina covers China A-shares from 2006-07-01 (scope floor, not an existence date)"
+  chinext:
+    date: '2009-10-30'
+    source: "https://www.szse.cn/aboutus/trends/news/t20091102_517893.html"
+  star:
+    date: '2019-07-22'
+    source: "http://star.sse.com.cn/star/media/news/c/c_20190705_4858655.shtml"
+  bse:
+    date: '2021-11-15'
+    source: "https://www.bse.cn/important_news/200011021.html"
+  chinext_registration:
+    date: '2020-08-24'
+    source: "https://www.szse.cn/aboutus/trends/conference/t20200821_580925.html"
+    note: "ChiNext registration reform; ipo_first5_chinext begins, ChiNext listing day leaves ipo_day1_main."
+  main_registration:
+    date: '2023-04-10'
+    source: "http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20250612_10824490.shtml"
+    note: "First registration-regime main-board listing day; ipo_first5_main begins and ipo_day1_main (approval regime) ends."
+  delisting_period_szse:
+    date: '2012-12-17'
+    source: "https://www.szse.cn/disclosure/notice/general/t20121130_501042.html"
+    note: "SZSE 2012 trading-rules revision introduced the delisting arrangement period (退市整理期). Known gap G-0010 notes an earlier arrangement is not ruled out by a source; step 2/3 must confirm none existed 2006-07-01..2012-12-17."
+  delisting_period_sse:
+    date: '2013-01-01'
+    source: "http://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20150912_3988629.shtml"
+    note: "SSE risk-warning-board measures effective 2013-01-01. Same caveat as SZSE: no source yet rules out an earlier SSE delisting-period arrangement after 2006-07-01."
+  etf_20pct_sse:
+    date: '2020-08-21'
+    source: "http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20200821_10785117.shtml"
+    note: "The scope is defined by the 20% fund band; G-0003 (wontfix) covers 2019-07-22..2020-08-21 when no such fund existed."
+  etf_20pct_szse:
+    date: '2020-08-24'
+    source: "https://www.szse.cn/aboutus/trends/conference/t20200821_580925.html"
+  reits_sse:
+    date: '2021-01-29'
+    source: "http://bond.sse.com.cn/lawrule/sserules/issue/c/5702612.shtml"
+    note: "REITs measures effective 2021-01-29 (the rule predates any instrument; first REITs listed 2021-06-21). The earlier date is used so the denominator is not shrunk."
+  sse_transfer_fee_turnover:
+    date: '2015-08-01'
+    source: "https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml"
+    note: "CSDC: from 2015-08-01 the SSE A-share transfer fee is charged on turnover instead of par value. Before it, XSHG is targeted under transfer_fee_par_value."
+  bse_transfer_fee_unified:
+    date: '2022-04-29'
+    source: "http://www.chinaclear.cn/zdjs/gszb/202204/837e3c5031104aa099d6597ba381342a.shtml"
+    note: "CSDC: from 2022-04-29 the 沪深 A-share 0.02‰ and 北京市场 0.025‰ transfer fees are unified at 0.01‰ (one XSHG+XSHE+BJSE record under scope stock). Before it, BJSE is targeted under the family scope bse_stock."
+  etf_bond_sse:
+    date: '2013-03-25'
+    source: "http://big5.sse.com.cn/aboutus/publication/yearly/documents/c/10801255/files/02acb566841a48f0b2ca8941c73f4541.pdf"
+    note: "SSE statistical yearbook fund list: 511010 国债 ETF listed 2013-03-25 — first bond ETF. Same-day rule from 2013-03-15 (cn.settle.etf_bond.sse.2013-03-15)."
+  etf_bond_szse:
+    date: '2013-08-05'
+    source: "http://static.cninfo.com.cn/finalpage/2015-03-31/1200772000.PDF"
+    note: "159926 嘉实中证金边中期国债ETF 上市日期 2013年8月5日 (fund annual report on the CSRC-designated disclosure site; SZSE explainer investor.szse.cn t20170504_538834 names it 深交所首只债券ETF). Same day the SZSE 2013 rules (bond ETFs same-day) took effect."
+  etf_money_sse:
+    date: '2013-01-28'
+    source: "http://big5.sse.com.cn/aboutus/publication/yearly/documents/c/10801255/files/02acb566841a48f0b2ca8941c73f4541.pdf"
+    note: "SSE yearbook: 511990 华宝添益 listed 2013-01-28 — first exchange-traded money-market fund."
+  etf_money_szse:
+    date: '2014-10-20'
+    source: "http://www.szse.cn/aboutus/trends/news/t20141021_518519.html"
+    note: "SZSE: 10 月 20 日，深交所正式推出首批交易型货币市场基金."
+  etf_gold_sse:
+    date: '2013-07-29'
+    source: "http://big5.sse.com.cn/aboutus/publication/yearly/documents/c/10801255/files/02acb566841a48f0b2ca8941c73f4541.pdf"
+    note: "SSE yearbook: 518800 / 518880 listed 2013-07-29 — first gold ETFs."
+  etf_gold_szse:
+    date: '2013-12-16'
+    source: "http://www.szse.cn/disclosure/notice/t20131210_501156.html"
+    note: "SZSE: 黄金 ETF 业务将于 2013 年 12 月 16 日 启用 (159934 listed that day)."
+  reits_szse:
+    date: '2021-01-29'
+    existence_source: TODO
+    note: "SZSE REITs measures assumed same-day as SSE's (record cn.limit.reits.szse.2021-01-29 is single-source; the SZSE notice itself is not hashed). First listing 2021-06-21 is also unsourced in the repo."
+  star_growth_tier:
+    date: '2025-07-13'
+    source: "https://www.sse.com.cn/lawandrules/sselawsrules/bond/convertible/trading/c/c_20250711_10784585.shtml"
+    note: "SSE notice 上证函〔2025〕2218号 dated 2025-07-13, in force on publication; the same-day SSE press Q&A says the 32 existing unprofitable STAR companies enter the growth tier from that day. Scopes star_growth_new / star_growth_legacy begin; they carry only the suitability rule (band, tick, session stay under the STAR scopes)."
+targets:
+- id: XSHG:main_board:price_limit_pct
+  market: XSHG
+  scope: main_board
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:main_board:price_limit_pct
+  market: XSHE
+  scope: main_board
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:st_main:price_limit_pct
+  market: XSHG
+  scope: st_main
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:st_main:price_limit_pct
+  market: XSHE
+  scope: st_main
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:b_share:price_limit_pct
+  market: XSHG
+  scope: b_share
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:b_share:price_limit_pct
+  market: XSHE
+  scope: b_share
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:st_b_share:price_limit_pct
+  market: XSHG
+  scope: st_b_share
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:st_b_share:price_limit_pct
+  market: XSHE
+  scope: st_b_share
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:etf:price_limit_pct
+  market: XSHG
+  scope: etf
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHE:etf:price_limit_pct
+  market: XSHE
+  scope: etf
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHG:convertible:price_limit_pct
+  market: XSHG
+  scope: convertible
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:convertible:price_limit_pct
+  market: XSHE
+  scope: convertible
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:convertible_day1:price_limit_pct_of_issue_price
+  market: XSHG
+  scope: convertible_day1
+  rule: price_limit_pct_of_issue_price
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:convertible_day1:price_limit_pct_of_issue_price
+  market: XSHE
+  scope: convertible_day1
+  rule: price_limit_pct_of_issue_price
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:ipo_day1_main:price_limit_pct
+  market: XSHG
+  scope: ipo_day1_main
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+  end: '2023-04-10'
+  end_source: "http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20250612_10824490.shtml"
+  note: "Approval-regime listing day (main board; ChiNext before 2020-08-24). Ends when registration-regime main-board IPOs start (data records end 2023-04-10)."
+- id: XSHE:ipo_day1_main:price_limit_pct
+  market: XSHE
+  scope: ipo_day1_main
+  rule: price_limit_pct
+  start: '2006-07-01'
+  existence: a_share_floor
+  end: '2023-04-10'
+  end_source: "http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20250612_10824490.shtml"
+  note: "Approval-regime listing day (main board; ChiNext before 2020-08-24). Ends when registration-regime main-board IPOs start (data records end 2023-04-10)."
+- id: XSHG:ipo_first5_main:price_limit_pct
+  market: XSHG
+  scope: ipo_first5_main
+  rule: price_limit_pct
+  start: '2023-04-10'
+  existence: main_registration
+- id: XSHE:ipo_first5_main:price_limit_pct
+  market: XSHE
+  scope: ipo_first5_main
+  rule: price_limit_pct
+  start: '2023-04-10'
+  existence: main_registration
+- id: XSHE:chinext:price_limit_pct
+  market: XSHE
+  scope: chinext
+  rule: price_limit_pct
+  start: '2009-10-30'
+  existence: chinext
+- id: XSHE:st_chinext:price_limit_pct
+  market: XSHE
+  scope: st_chinext
+  rule: price_limit_pct
+  start: '2009-10-30'
+  existence: chinext
+- id: XSHE:ipo_first5_chinext:price_limit_pct
+  market: XSHE
+  scope: ipo_first5_chinext
+  rule: price_limit_pct
+  start: '2020-08-24'
+  existence: chinext_registration
+- id: XSHG:star:price_limit_pct
+  market: XSHG
+  scope: star
+  rule: price_limit_pct
+  start: '2019-07-22'
+  existence: star
+- id: XSHG:st_star:price_limit_pct
+  market: XSHG
+  scope: st_star
+  rule: price_limit_pct
+  start: '2019-07-22'
+  existence: star
+- id: XSHG:ipo_first5_star:price_limit_pct
+  market: XSHG
+  scope: ipo_first5_star
+  rule: price_limit_pct
+  start: '2019-07-22'
+  existence: star
+- id: XSHG:delisting_star:price_limit_pct
+  market: XSHG
+  scope: delisting_star
+  rule: price_limit_pct
+  start: '2019-07-22'
+  existence: star
+- id: XSHG:delisting_day1_star:price_limit_pct
+  market: XSHG
+  scope: delisting_day1_star
+  rule: price_limit_pct
+  start: '2019-07-22'
+  existence: star
+- id: BJSE:bse:price_limit_pct
+  market: BJSE
+  scope: bse
+  rule: price_limit_pct
+  start: '2021-11-15'
+  existence: bse
+- id: BJSE:st_bse:price_limit_pct
+  market: BJSE
+  scope: st_bse
+  rule: price_limit_pct
+  start: '2021-11-15'
+  existence: bse
+- id: BJSE:ipo_day1_bse:price_limit_pct
+  market: BJSE
+  scope: ipo_day1_bse
+  rule: price_limit_pct
+  start: '2021-11-15'
+  existence: bse
+- id: BJSE:delisting_bse:price_limit_pct
+  market: BJSE
+  scope: delisting_bse
+  rule: price_limit_pct
+  start: '2021-11-15'
+  existence: bse
+- id: BJSE:delisting_day1_bse:price_limit_pct
+  market: BJSE
+  scope: delisting_day1_bse
+  rule: price_limit_pct
+  start: '2021-11-15'
+  existence: bse
+- id: XSHG:delisting:price_limit_pct
+  market: XSHG
+  scope: delisting
+  rule: price_limit_pct
+  start: '2013-01-01'
+  existence: delisting_period_sse
+- id: XSHE:delisting:price_limit_pct
+  market: XSHE
+  scope: delisting
+  rule: price_limit_pct
+  start: '2012-12-17'
+  existence: delisting_period_szse
+- id: XSHG:delisting_day1:price_limit_pct
+  market: XSHG
+  scope: delisting_day1
+  rule: price_limit_pct
+  start: '2013-01-01'
+  existence: delisting_period_sse
+- id: XSHE:delisting_day1:price_limit_pct
+  market: XSHE
+  scope: delisting_day1
+  rule: price_limit_pct
+  start: '2012-12-17'
+  existence: delisting_period_szse
+- id: XSHE:delisting_chinext:price_limit_pct
+  market: XSHE
+  scope: delisting_chinext
+  rule: price_limit_pct
+  start: '2012-12-17'
+  existence: delisting_period_szse
+- id: XSHE:delisting_chinext_pre0824:price_limit_pct
+  market: XSHE
+  scope: delisting_chinext_pre0824
+  rule: price_limit_pct
+  start: '2020-08-24'
+  end: '2020-12-31'
+  existence: chinext_registration
+  note: "深证上〔2020〕620号 item 1: ChiNext stocks already in the delisting period on 2020-08-24 keep 10%. The scope exists only for this window."
+- id: XSHE:delisting_chinext_post0824:price_limit_pct
+  market: XSHE
+  scope: delisting_chinext_post0824
+  rule: price_limit_pct
+  start: '2020-08-24'
+  end: '2020-12-31'
+  existence: chinext_registration
+  note: "深证上〔2020〕620号 item 2: ChiNext stocks entering the delisting period on/after 2020-08-24 trade at 20%. The scope exists only for this window."
+- id: XSHG:etf_20pct:price_limit_pct
+  market: XSHG
+  scope: etf_20pct
+  rule: price_limit_pct
+  start: '2020-08-21'
+  existence: etf_20pct_sse
+- id: XSHE:etf_20pct:price_limit_pct
+  market: XSHE
+  scope: etf_20pct
+  rule: price_limit_pct
+  start: '2020-08-24'
+  existence: etf_20pct_szse
+- id: XSHG:reits:price_limit_pct
+  market: XSHG
+  scope: reits
+  rule: price_limit_pct
+  start: '2021-01-29'
+  existence: reits_sse
+- id: XSHE:reits:price_limit_pct
+  market: XSHE
+  scope: reits
+  rule: price_limit_pct
+  start: '2021-01-29'
+  existence: reits_szse
+- id: XSHG:reits_day1:price_limit_pct
+  market: XSHG
+  scope: reits_day1
+  rule: price_limit_pct
+  start: '2021-01-29'
+  existence: reits_sse
+- id: XSHE:reits_day1:price_limit_pct
+  market: XSHE
+  scope: reits_day1
+  rule: price_limit_pct
+  start: '2021-01-29'
+  existence: reits_szse
+- id: XSHG:stock:stamp_duty_sell
+  market: XSHG
+  scope: stock
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:stamp_duty_sell
+  market: XSHE
+  scope: stock
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:stock:stamp_duty_sell
+  market: BJSE
+  scope: stock
+  rule: stamp_duty_sell
+  start: '2021-11-15'
+  existence: bse
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:stamp_duty_buy
+  market: XSHG
+  scope: stock
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:stamp_duty_buy
+  market: XSHE
+  scope: stock
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:stock:stamp_duty_buy
+  market: BJSE
+  scope: stock
+  rule: stamp_duty_buy
+  start: '2021-11-15'
+  existence: bse
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:transfer_fee_par_value
+  market: XSHG
+  scope: stock
+  rule: transfer_fee_par_value
+  start: '2006-07-01'
+  existence: a_share_floor
+  end: '2015-08-01'
+  end_source: "https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml"
+  note: "SSE A-share transfer fee by traded par value until the 2015-08-01 switch to turnover (transfer-fee mapping in the header)."
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:transfer_fee_each_side
+  market: XSHG
+  scope: stock
+  rule: transfer_fee_each_side
+  start: '2015-08-01'
+  existence: sse_transfer_fee_turnover
+  note: "Before 2015-08-01 the SSE fee had a par-value basis: target XSHG:stock:transfer_fee_par_value."
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:transfer_fee_each_side
+  market: XSHE
+  scope: stock
+  rule: transfer_fee_each_side
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:bse_stock:transfer_fee_each_side
+  market: BJSE
+  scope: bse_stock
+  rule: transfer_fee_each_side
+  start: '2021-11-15'
+  existence: bse
+  end: '2022-04-29'
+  end_source: "http://www.chinaclear.cn/zdjs/gszb/202204/837e3c5031104aa099d6597ba381342a.shtml"
+  note: "BSE-only rate 0.025‰ until the 2022-04-29 unification (transfer-fee mapping in the header); from then target BJSE:stock:transfer_fee_each_side."
+  applies_to: [bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:stock:transfer_fee_each_side
+  market: BJSE
+  scope: stock
+  rule: transfer_fee_each_side
+  start: '2022-04-29'
+  existence: bse_transfer_fee_unified
+  note: "Before 2022-04-29 the BSE rate lived under family scope bse_stock: target BJSE:bse_stock:transfer_fee_each_side."
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:commission_cap
+  market: XSHG
+  scope: stock
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:commission_cap
+  market: XSHE
+  scope: stock
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:stock:commission_cap
+  market: BJSE
+  scope: stock
+  rule: commission_cap
+  start: '2021-11-15'
+  existence: bse
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:commission_min_per_order_cny
+  market: XSHG
+  scope: stock
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:commission_min_per_order_cny
+  market: XSHE
+  scope: stock
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:stock:commission_min_per_order_cny
+  market: BJSE
+  scope: stock
+  rule: commission_min_per_order_cny
+  start: '2021-11-15'
+  existence: bse
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:min_holding_days
+  market: XSHG
+  scope: stock
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:min_holding_days
+  market: XSHE
+  scope: stock
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:bse_stock:min_holding_days
+  market: BJSE
+  scope: bse_stock
+  rule: min_holding_days
+  start: '2021-11-15'
+  existence: bse
+  note: "BSE-only record under family scope bse_stock (a BJSE record under stock collided with the XSHG/XSHE record on market-less lookups)."
+  applies_to: [bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:session_schedule
+  market: XSHG
+  scope: stock
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:session_schedule
+  market: XSHE
+  scope: stock
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:bse_stock:session_schedule
+  market: BJSE
+  scope: bse_stock
+  rule: session_schedule
+  start: '2021-11-15'
+  existence: bse
+  note: "BSE-only record under family scope bse_stock (a BJSE record under stock collided with the XSHG/XSHE record on market-less lookups)."
+  applies_to: [bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:tick_size
+  market: XSHG
+  scope: stock
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHE:stock:tick_size
+  market: XSHE
+  scope: stock
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: BJSE:bse_stock:tick_size
+  market: BJSE
+  scope: bse_stock
+  rule: tick_size
+  start: '2021-11-15'
+  existence: bse
+  note: "BSE-only record under family scope bse_stock (a BJSE record under stock collided with the XSHG/XSHE record on market-less lookups)."
+  applies_to: [bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:stock:limit_price_min_tick
+  market: XSHG
+  scope: stock
+  rule: limit_price_min_tick
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse, etf, etf_20pct, reits, reits_day1, convertible, convertible_day1]
+  note: "limit_price() looks up the requested scope first and falls back to scope stock, so the stock target answers every scope."
+- id: XSHE:stock:limit_price_min_tick
+  market: XSHE
+  scope: stock
+  rule: limit_price_min_tick
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [main_board, st_main, chinext, st_chinext, star, st_star, ipo_day1_main, ipo_first5_main, ipo_first5_chinext, ipo_first5_star, b_share, st_b_share, delisting, delisting_day1, delisting_chinext, delisting_star, delisting_day1_star, bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse, etf, etf_20pct, reits, reits_day1, convertible, convertible_day1]
+  note: "limit_price() looks up the requested scope first and falls back to scope stock, so the stock target answers every scope."
+- id: BJSE:bse_stock:limit_price_min_tick
+  market: BJSE
+  scope: bse_stock
+  rule: limit_price_min_tick
+  start: '2021-11-15'
+  existence: bse
+  note: "BSE-only record under family scope bse_stock; limit_price() with market BJSE looks up the requested scope, then bse_stock, then stock."
+  applies_to: [bse, st_bse, ipo_day1_bse, delisting_bse, delisting_day1_bse]
+- id: XSHG:b_share:min_holding_days
+  market: XSHG
+  scope: b_share
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [st_b_share]
+- id: XSHE:b_share:min_holding_days
+  market: XSHE
+  scope: b_share
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [st_b_share]
+- id: XSHG:b_share:tick_size
+  market: XSHG
+  scope: b_share
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [st_b_share]
+- id: XSHE:b_share:tick_size
+  market: XSHE
+  scope: b_share
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [st_b_share]
+- id: XSHG:etf:stamp_duty_sell
+  market: XSHG
+  scope: etf
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Listed funds (etf/lof, closed-end funds) are neither, on either side of the trade. Closed-end funds are explicitly exempt (财税〔2004〕173号). The CSDC SSE/SZSE fee tables (2026-01-01)
+      list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+    - url: https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2004zcfb/200805/t20080524_34539.htm
+      content_sha256: 2523e7be83c6c834fc062fc4f9d7fe9b5fd233e99dd61be29691a0775310ea5f
+      hash_kind: text
+      quote: 继续对投资者(包括个人和机构)买卖封闭式证券投资基金免征印花税
+- id: XSHE:etf:stamp_duty_sell
+  market: XSHE
+  scope: etf
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Listed funds (etf/lof, closed-end funds) are neither, on either side of the trade. Closed-end funds are explicitly exempt (财税〔2004〕173号). The CSDC SSE/SZSE fee tables (2026-01-01)
+      list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+    - url: https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2004zcfb/200805/t20080524_34539.htm
+      content_sha256: 2523e7be83c6c834fc062fc4f9d7fe9b5fd233e99dd61be29691a0775310ea5f
+      hash_kind: text
+      quote: 继续对投资者(包括个人和机构)买卖封闭式证券投资基金免征印花税
+- id: XSHG:etf:stamp_duty_buy
+  market: XSHG
+  scope: etf
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Listed funds (etf/lof, closed-end funds) are neither, on either side of the trade. Closed-end funds are explicitly exempt (财税〔2004〕173号). The CSDC SSE/SZSE fee tables (2026-01-01)
+      list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+    - url: https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2004zcfb/200805/t20080524_34539.htm
+      content_sha256: 2523e7be83c6c834fc062fc4f9d7fe9b5fd233e99dd61be29691a0775310ea5f
+      hash_kind: text
+      quote: 继续对投资者(包括个人和机构)买卖封闭式证券投资基金免征印花税
+- id: XSHE:etf:stamp_duty_buy
+  market: XSHE
+  scope: etf
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Listed funds (etf/lof, closed-end funds) are neither, on either side of the trade. Closed-end funds are explicitly exempt (财税〔2004〕173号). The CSDC SSE/SZSE fee tables (2026-01-01)
+      list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+    - url: https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2004zcfb/200805/t20080524_34539.htm
+      content_sha256: 2523e7be83c6c834fc062fc4f9d7fe9b5fd233e99dd61be29691a0775310ea5f
+      hash_kind: text
+      quote: 继续对投资者(包括个人和机构)买卖封闭式证券投资基金免征印花税
+- id: XSHG:etf:transfer_fee_each_side
+  market: XSHG
+  scope: etf
+  rule: transfer_fee_each_side
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on listed funds (ETF/LOF, closed-end funds): the CSDC SSE/SZSE fee
+      tables (2026-01-01) list 交易过户费 only for those items. Historical: the SSE 2008 fee table lists 过户费 only for A shares (funds: commission only); PBC Wuhan 2013: 基金交易目前不收过户费. Inference across dates: no
+      official text found that ever introduced a trading transfer fee for this product; the snapshots cited are consistent with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+    - url: http://www.sse.com.cn/aboutus/publication/factbook/documents/c/10170574/files/977f9c4f930746c18732b7d063f5676a.pdf
+      content_sha256: 7c36fd9910f202c7b39fa8a4c31d39d17d533c0903042c527c0945941c5b32f6
+      hash_kind: bytes
+      quote: 证券投资基金（封闭式基 金、ETF ） 佣金 不超过成交金额的 0.3% ，起点 5 元 投资者交证券公司
+    - url: https://wuhan.pbc.gov.cn/wuhan/2929354/123527/2764733/index.html
+      content_sha256: ee09e103b9fa0025d3bb834e1d859d0b92309a9cdd02102d3ed9eb8c8c7d56fc
+      hash_kind: text
+      quote: 基金交易目前不收过户费。
+- id: XSHE:etf:transfer_fee_each_side
+  market: XSHE
+  scope: etf
+  rule: transfer_fee_each_side
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on listed funds (ETF/LOF, closed-end funds): the CSDC SSE/SZSE fee
+      tables (2026-01-01) list 交易过户费 only for those items. Historical: the SSE 2008 fee table lists 过户费 only for A shares (funds: commission only); PBC Wuhan 2013: 基金交易目前不收过户费. Inference across dates: no
+      official text found that ever introduced a trading transfer fee for this product; the snapshots cited are consistent with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+    - url: http://www.sse.com.cn/aboutus/publication/factbook/documents/c/10170574/files/977f9c4f930746c18732b7d063f5676a.pdf
+      content_sha256: 7c36fd9910f202c7b39fa8a4c31d39d17d533c0903042c527c0945941c5b32f6
+      hash_kind: bytes
+      quote: 证券投资基金（封闭式基 金、ETF ） 佣金 不超过成交金额的 0.3% ，起点 5 元 投资者交证券公司
+    - url: https://wuhan.pbc.gov.cn/wuhan/2929354/123527/2764733/index.html
+      content_sha256: ee09e103b9fa0025d3bb834e1d859d0b92309a9cdd02102d3ed9eb8c8c7d56fc
+      hash_kind: text
+      quote: 基金交易目前不收过户费。
+- id: XSHG:etf:commission_cap
+  market: XSHG
+  scope: etf
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHE:etf:commission_cap
+  market: XSHE
+  scope: etf
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHG:etf:commission_min_per_order_cny
+  market: XSHG
+  scope: etf
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHE:etf:commission_min_per_order_cny
+  market: XSHE
+  scope: etf
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHG:etf:tick_size
+  market: XSHG
+  scope: etf
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder, reits, reits_day1]
+  note: "tick_size() maps every fund scope and the REIT scopes to family etf."
+- id: XSHE:etf:tick_size
+  market: XSHE
+  scope: etf
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder, reits, reits_day1]
+  note: "tick_size() maps every fund scope and the REIT scopes to family etf."
+- id: XSHG:etf:session_schedule
+  market: XSHG
+  scope: etf
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHE:etf:session_schedule
+  market: XSHE
+  scope: etf
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [etf_20pct, etf_bond, etf_money, etf_gold, etf_commodity, etf_crossborder]
+- id: XSHG:etf:min_holding_days
+  market: XSHG
+  scope: etf
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:etf:min_holding_days
+  market: XSHE
+  scope: etf
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:etf_bond:min_holding_days
+  market: XSHG
+  scope: etf_bond
+  rule: min_holding_days
+  start: '2013-03-25'
+  existence: etf_bond_sse
+- id: XSHE:etf_bond:min_holding_days
+  market: XSHE
+  scope: etf_bond
+  rule: min_holding_days
+  start: '2013-08-05'
+  existence: etf_bond_szse
+- id: XSHG:etf_money:min_holding_days
+  market: XSHG
+  scope: etf_money
+  rule: min_holding_days
+  start: '2013-01-28'
+  existence: etf_money_sse
+- id: XSHE:etf_money:min_holding_days
+  market: XSHE
+  scope: etf_money
+  rule: min_holding_days
+  start: '2014-10-20'
+  existence: etf_money_szse
+- id: XSHG:etf_gold:min_holding_days
+  market: XSHG
+  scope: etf_gold
+  rule: min_holding_days
+  start: '2013-07-29'
+  existence: etf_gold_sse
+- id: XSHE:etf_gold:min_holding_days
+  market: XSHE
+  scope: etf_gold
+  rule: min_holding_days
+  start: '2013-12-16'
+  existence: etf_gold_szse
+- id: XSHG:etf_commodity:min_holding_days
+  market: XSHG
+  scope: etf_commodity
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:etf_commodity:min_holding_days
+  market: XSHE
+  scope: etf_commodity
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:etf_crossborder:min_holding_days
+  market: XSHG
+  scope: etf_crossborder
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHE:etf_crossborder:min_holding_days
+  market: XSHE
+  scope: etf_crossborder
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+- id: XSHG:etf_20pct:min_holding_days
+  market: XSHG
+  scope: etf_20pct
+  rule: min_holding_days
+  start: '2020-08-21'
+  existence: etf_20pct_sse
+- id: XSHE:etf_20pct:min_holding_days
+  market: XSHE
+  scope: etf_20pct
+  rule: min_holding_days
+  start: '2020-08-24'
+  existence: etf_20pct_szse
+- id: XSHG:reits:stamp_duty_sell
+  market: XSHG
+  scope: reits
+  rule: stamp_duty_sell
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Public infrastructure reits (公开募集基础设施证券投资基金) are neither, on either side of the trade. REITs are 证券投资基金, not shares. The CSDC SSE/SZSE fee tables (2026-01-01) list stamp duty only
+      for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHE:reits:stamp_duty_sell
+  market: XSHE
+  scope: reits
+  rule: stamp_duty_sell
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Public infrastructure reits (公开募集基础设施证券投资基金) are neither, on either side of the trade. REITs are 证券投资基金, not shares. The CSDC SSE/SZSE fee tables (2026-01-01) list stamp duty only
+      for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHG:reits:stamp_duty_buy
+  market: XSHG
+  scope: reits
+  rule: stamp_duty_buy
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Public infrastructure reits (公开募集基础设施证券投资基金) are neither, on either side of the trade. REITs are 证券投资基金, not shares. The CSDC SSE/SZSE fee tables (2026-01-01) list stamp duty only
+      for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHE:reits:stamp_duty_buy
+  market: XSHE
+  scope: reits
+  rule: stamp_duty_buy
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Public infrastructure reits (公开募集基础设施证券投资基金) are neither, on either side of the trade. REITs are 证券投资基金, not shares. The CSDC SSE/SZSE fee tables (2026-01-01) list stamp duty only
+      for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHG:reits:transfer_fee_each_side
+  market: XSHG
+  scope: reits
+  rule: transfer_fee_each_side
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on public infrastructure REITs (公开募集基础设施证券投资基金): the CSDC SSE/SZSE
+      fee tables (2026-01-01) list 交易过户费 only for those items. Inference across dates: no official text found that ever introduced a trading transfer fee for this product; the snapshots cited are consistent
+      with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+- id: XSHE:reits:transfer_fee_each_side
+  market: XSHE
+  scope: reits
+  rule: transfer_fee_each_side
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on public infrastructure REITs (公开募集基础设施证券投资基金): the CSDC SSE/SZSE
+      fee tables (2026-01-01) list 交易过户费 only for those items. Inference across dates: no official text found that ever introduced a trading transfer fee for this product; the snapshots cited are consistent
+      with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+- id: XSHG:reits:commission_cap
+  market: XSHG
+  scope: reits
+  rule: commission_cap
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+- id: XSHE:reits:commission_cap
+  market: XSHE
+  scope: reits
+  rule: commission_cap
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+- id: XSHG:reits:commission_min_per_order_cny
+  market: XSHG
+  scope: reits
+  rule: commission_min_per_order_cny
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+- id: XSHE:reits:commission_min_per_order_cny
+  market: XSHE
+  scope: reits
+  rule: commission_min_per_order_cny
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+- id: XSHG:reits:min_holding_days
+  market: XSHG
+  scope: reits
+  rule: min_holding_days
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+- id: XSHE:reits:min_holding_days
+  market: XSHE
+  scope: reits
+  rule: min_holding_days
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+- id: XSHG:reits:session_schedule
+  market: XSHG
+  scope: reits
+  rule: session_schedule
+  start: '2021-01-29'
+  existence: reits_sse
+  applies_to: [reits_day1]
+- id: XSHE:reits:session_schedule
+  market: XSHE
+  scope: reits
+  rule: session_schedule
+  start: '2021-01-29'
+  existence: reits_szse
+  applies_to: [reits_day1]
+- id: XSHG:convertible:stamp_duty_sell
+  market: XSHG
+  scope: convertible
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Convertible bonds are neither, on either side of the trade. Only the conversion of exchangeable bonds into shares (可交换公司债换股) is taxed, as a share transfer. The CSDC SSE/SZSE fee tables
+      (2026-01-01) list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHE:convertible:stamp_duty_sell
+  market: XSHE
+  scope: convertible
+  rule: stamp_duty_sell
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Convertible bonds are neither, on either side of the trade. Only the conversion of exchangeable bonds into shares (可交换公司债换股) is taxed, as a share transfer. The CSDC SSE/SZSE fee tables
+      (2026-01-01) list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHG:convertible:stamp_duty_buy
+  market: XSHG
+  scope: convertible
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Convertible bonds are neither, on either side of the trade. Only the conversion of exchangeable bonds into shares (可交换公司债换股) is taxed, as a share transfer. The CSDC SSE/SZSE fee tables
+      (2026-01-01) list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHE:convertible:stamp_duty_buy
+  market: XSHE
+  scope: convertible
+  rule: stamp_duty_buy
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'Securities-transaction stamp duty is levied only on transfers of shares: the MOF notices 2005–2008 name A股、B股股权转让书据 as the taxable object; from 2022-07-01 the Stamp Duty Law art.3 limits 证券交易
+      to 股票和以股票为基础的存托凭证. Convertible bonds are neither, on either side of the trade. Only the conversion of exchangeable bonds into shares (可交换公司债换股) is taxed, as a share transfer. The CSDC SSE/SZSE fee tables
+      (2026-01-01) list stamp duty only for A/B shares, preferred shares, exchangeable-bond conversion and depositary receipts. Applies to stamp_duty_sell and stamp_duty_buy alike.'
+    sources:
+    - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+      content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+      hash_kind: text
+      quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+      content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+      hash_kind: text
+      quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 证券交易印花税 A 股、B股、优先股、可 交换公司债换股、科创板 存托凭证 按成交金额的 1‰向出让方收取，减半征收。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 证券交易印花税 A股、B 股、优先股、 存托凭证、可交换公司 债换股 按成交金额的 1‰向出让方收取，减半征收。
+- id: XSHG:convertible:transfer_fee_each_side
+  market: XSHG
+  scope: convertible
+  rule: transfer_fee_each_side
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on convertible bonds: the CSDC SSE/SZSE fee tables (2026-01-01) list
+      交易过户费 only for those items. The CSDC 2015-07-09 notice concerns A-share transfer fees only. Inference across dates: no official text found that ever introduced a trading transfer fee for this product;
+      the snapshots cited are consistent with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+- id: XSHE:convertible:transfer_fee_each_side
+  market: XSHE
+  scope: convertible
+  rule: transfer_fee_each_side
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  not_applicable:
+    reason: 'The trading transfer fee (交易过户费) is charged by CSDC on A shares (and exchangeable-bond conversion, depositary receipts), not on convertible bonds: the CSDC SSE/SZSE fee tables (2026-01-01) list
+      交易过户费 only for those items. The CSDC 2015-07-09 notice concerns A-share transfer fees only. Inference across dates: no official text found that ever introduced a trading transfer fee for this product;
+      the snapshots cited are consistent with none.'
+    sources:
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/922adc26c2ff4865930c7fb77688bb8a/files/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: 84a99e563cb8e84e264c88e3bea2df5f4ac50b1e95330417ec30e2b2566d862f
+      hash_kind: bytes
+      quote: 交易过户费 A股 按照成交金额的 0.01‰向买卖双方收取。 投资者 可交换公司债换股 按照成交金额的 0.01‰向买卖双方收取。
+    - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/a59388fbfa714c5fa546784891a42e30/files/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+      content_sha256: dff4a06ce20e180f4a85ddae138211dcf7dd3246fb84775453cfd21cbaec6573
+      hash_kind: bytes
+      quote: 交易过户费 A股 1、按照成交金额的 0.01‰向买卖双方收取。
+    - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+      content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+      hash_kind: text
+      quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+- id: XSHG:convertible:commission_cap
+  market: XSHG
+  scope: convertible
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHE:convertible:commission_cap
+  market: XSHE
+  scope: convertible
+  rule: commission_cap
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHG:convertible:commission_min_per_order_cny
+  market: XSHG
+  scope: convertible
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHE:convertible:commission_min_per_order_cny
+  market: XSHE
+  scope: convertible
+  rule: commission_min_per_order_cny
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHG:convertible:tick_size
+  market: XSHG
+  scope: convertible
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  note: "Filled from 2022-08-01 by cn.tick.convertible.2022-08-01 (0.001 元, both exchanges); 2006-07-01..2022-08-01 is known gap G-0025 (pre-2022 债券 tick differed by exchange, no text names convertibles)."
+- id: XSHE:convertible:tick_size
+  market: XSHE
+  scope: convertible
+  rule: tick_size
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+  note: "Filled from 2022-08-01 by cn.tick.convertible.2022-08-01 (0.001 元, both exchanges); 2006-07-01..2022-08-01 is known gap G-0025 (pre-2022 债券 tick differed by exchange, no text names convertibles)."
+- id: XSHG:convertible:min_holding_days
+  market: XSHG
+  scope: convertible
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHE:convertible:min_holding_days
+  market: XSHE
+  scope: convertible
+  rule: min_holding_days
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHG:convertible:session_schedule
+  market: XSHG
+  scope: convertible
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHE:convertible:session_schedule
+  market: XSHE
+  scope: convertible
+  rule: session_schedule
+  start: '2006-07-01'
+  existence: a_share_floor
+  applies_to: [convertible_day1]
+- id: XSHG:star_growth_new:retail_risk_disclosure_required
+  market: XSHG
+  scope: star_growth_new
+  rule: retail_risk_disclosure_required
+  start: '2025-07-13'
+  existence: star_growth_tier
+- id: XSHG:star_growth_legacy:retail_risk_disclosure_required
+  market: XSHG
+  scope: star_growth_legacy
+  rule: retail_risk_disclosure_required
+  start: '2025-07-13'
+  existence: star_growth_tier
+# Gaps accepted as unresolvable from official sources. Format (one entry per interval):
+#   - target: XSHG:stock:stamp_duty_sell   # a target id above
+#     from: 'YYYY-MM-DD'                   # inclusive
+#     to: 'YYYY-MM-DD'                     # exclusive; null = open-ended
+#     reason: "what was searched, why no official source exists"
+# Listed gaps still count as NOT covered in the percentage; they only stop the checker from failing.
+unresolved:
+- target: XSHG:convertible:commission_cap
+  from: '2021-12-31'
+  to: null
+  reason: "上证财字〔2010〕6号 was repealed on 2021-12-31 by 上证发〔2021〕95号 (attachment 2, item 4). The replacing 收费管理规则适用指引第1号 (2021, and its 2023-08 revision) and the current SSE 收费项目、收费标准一览表 (2025-12-31) list exchange fees only — no commission cap or minimum for bonds/convertibles (checked again 2026-10-29: neither text contains 佣金). sse.com.cn search API (固定收益类产品收费标准, 交易佣金, 可转换公司债券 佣金) found no later SSE commission text. Broker schedules (0.2‰, 1元) are not official. Searched 2026-10-29 (step 4): szse.cn search API (titles/content: 佣金, 交易佣金, 收费标准, 可转换公司债券, 可转债, 收费一览表) — only exchange-fee notices (深证会〔2007〕108号 债券现货 0.2‰ without 可转债; 2012-04-30; 深证会〔2015〕233号 listing fees; 深证上〔2022〕720号 可转债 fee list = handling and listing fees only); current szse.cn payFees page and English Trading Fees page (exchange fees only, no 佣金 section); web.archive.org captures of szse.cn/main/aboutus/service/sjssf/ 2007–2017 and szse.cn/main/en/Products/Trading/TradingFees/ 2011–2019 (佣金 section present until the 2013-11-14 version, absent from the 2014-08-25 version on); CSRC Order 204 证券经纪业务管理办法 (2022-12, in force 2023-02-28) art. 28 — brokers must publish their schedule and not charge 明显低于服务成本; it sets no cap and does not say commissions are uncapped, and its 征求意见稿 was not used. No official text says convertible commissions are freely negotiated / 不设上限, so no 'unlimited' value is recorded."
+- target: XSHG:convertible:commission_min_per_order_cny
+  from: '2021-12-31'
+  to: null
+  reason: "上证财字〔2010〕6号 was repealed on 2021-12-31 by 上证发〔2021〕95号 (attachment 2, item 4). The replacing 收费管理规则适用指引第1号 (2021, and its 2023-08 revision) and the current SSE 收费项目、收费标准一览表 (2025-12-31) list exchange fees only — no commission cap or minimum for bonds/convertibles (checked again 2026-10-29: neither text contains 佣金). sse.com.cn search API (固定收益类产品收费标准, 交易佣金, 可转换公司债券 佣金) found no later SSE commission text. Broker schedules (0.2‰, 1元) are not official. Searched 2026-10-29 (step 4): szse.cn search API (titles/content: 佣金, 交易佣金, 收费标准, 可转换公司债券, 可转债, 收费一览表) — only exchange-fee notices (深证会〔2007〕108号 债券现货 0.2‰ without 可转债; 2012-04-30; 深证会〔2015〕233号 listing fees; 深证上〔2022〕720号 可转债 fee list = handling and listing fees only); current szse.cn payFees page and English Trading Fees page (exchange fees only, no 佣金 section); web.archive.org captures of szse.cn/main/aboutus/service/sjssf/ 2007–2017 and szse.cn/main/en/Products/Trading/TradingFees/ 2011–2019 (佣金 section present until the 2013-11-14 version, absent from the 2014-08-25 version on); CSRC Order 204 证券经纪业务管理办法 (2022-12, in force 2023-02-28) art. 28 — brokers must publish their schedule and not charge 明显低于服务成本; it sets no cap and does not say commissions are uncapped, and its 征求意见稿 was not used. No official text says convertible commissions are freely negotiated / 不设上限, so no 'unlimited' value is recorded."
+- target: XSHE:convertible:commission_cap
+  from: '2006-07-01'
+  to: '2006-12-30'
+  reason: "SZSE 2006-07-01..2006-12-30: the earliest official SZSE statement of the convertible commission found is the fee table dated 2006-12-30 (cn.fee.commission_cap.convertible.szse.2006-12-30, 不超过成交金额的 0.1%); web.archive.org has no capture of the SZSE fee page before 2007-02 and no SZSE notice setting the convertible commission (证监发〔2002〕21号 art. 2 filing) was found. Not back-dated. Searched 2026-10-29 (step 4): szse.cn search API (titles/content: 佣金, 交易佣金, 收费标准, 可转换公司债券, 可转债, 收费一览表) — only exchange-fee notices (深证会〔2007〕108号 债券现货 0.2‰ without 可转债; 2012-04-30; 深证会〔2015〕233号 listing fees; 深证上〔2022〕720号 可转债 fee list = handling and listing fees only); current szse.cn payFees page and English Trading Fees page (exchange fees only, no 佣金 section); web.archive.org captures of szse.cn/main/aboutus/service/sjssf/ 2007–2017 and szse.cn/main/en/Products/Trading/TradingFees/ 2011–2019 (佣金 section present until the 2013-11-14 version, absent from the 2014-08-25 version on); CSRC Order 204 证券经纪业务管理办法 (2022-12, in force 2023-02-28) art. 28 — brokers must publish their schedule and not charge 明显低于服务成本; it sets no cap and does not say commissions are uncapped, and its 征求意见稿 was not used. No official text says convertible commissions are freely negotiated / 不设上限, so no 'unlimited' value is recorded."
+- target: XSHE:convertible:commission_cap
+  from: '2014-08-25'
+  to: null
+  reason: "SZSE from 2014-08-25: the SZSE fee table dropped its whole 佣金 section in the 2014-08-25 version (also the A-share 3‰ row), and every later SZSE page (2015–2026, incl. the current payFees page and 深证上〔2022〕720号) lists only exchange fees. No SZSE or CSRC text repealing, changing or re-stating the convertible commission was found, and none says it is uncapped; the 1‰ is therefore not extended past the last official statement. Broker schedules still show 不超过成交金额的0.1%/1‰ but are not official. Searched 2026-10-29 (step 4): szse.cn search API (titles/content: 佣金, 交易佣金, 收费标准, 可转换公司债券, 可转债, 收费一览表) — only exchange-fee notices (深证会〔2007〕108号 债券现货 0.2‰ without 可转债; 2012-04-30; 深证会〔2015〕233号 listing fees; 深证上〔2022〕720号 可转债 fee list = handling and listing fees only); current szse.cn payFees page and English Trading Fees page (exchange fees only, no 佣金 section); web.archive.org captures of szse.cn/main/aboutus/service/sjssf/ 2007–2017 and szse.cn/main/en/Products/Trading/TradingFees/ 2011–2019 (佣金 section present until the 2013-11-14 version, absent from the 2014-08-25 version on); CSRC Order 204 证券经纪业务管理办法 (2022-12, in force 2023-02-28) art. 28 — brokers must publish their schedule and not charge 明显低于服务成本; it sets no cap and does not say commissions are uncapped, and its 征求意见稿 was not used. No official text says convertible commissions are freely negotiated / 不设上限, so no 'unlimited' value is recorded."
+- target: XSHE:convertible:commission_min_per_order_cny
+  from: '2006-07-01'
+  to: null
+  reason: "SZSE: no official text states a minimum (起点) for 可转债 commission. The SZSE fee tables 2006-12-30..2013-11-14 give 起点 5 元 for A shares, funds and warrants but no 起点 for 可转债 (row: 可转债 不超过成交金额的 0.1%); absence of a stated minimum is not recorded as 0 or as 'no minimum'. Searched 2026-10-29 (step 4): szse.cn search API (titles/content: 佣金, 交易佣金, 收费标准, 可转换公司债券, 可转债, 收费一览表) — only exchange-fee notices (深证会〔2007〕108号 债券现货 0.2‰ without 可转债; 2012-04-30; 深证会〔2015〕233号 listing fees; 深证上〔2022〕720号 可转债 fee list = handling and listing fees only); current szse.cn payFees page and English Trading Fees page (exchange fees only, no 佣金 section); web.archive.org captures of szse.cn/main/aboutus/service/sjssf/ 2007–2017 and szse.cn/main/en/Products/Trading/TradingFees/ 2011–2019 (佣金 section present until the 2013-11-14 version, absent from the 2014-08-25 version on); CSRC Order 204 证券经纪业务管理办法 (2022-12, in force 2023-02-28) art. 28 — brokers must publish their schedule and not charge 明显低于服务成本; it sets no cap and does not say commissions are uncapped, and its 征求意见稿 was not used. No official text says convertible commissions are freely negotiated / 不设上限, so no 'unlimited' value is recorded."
+- target: BJSE:stock:commission_cap
+  from: '2021-11-15'
+  to: null
+  reason: "No official text found that sets a statutory cap / minimum for brokerage commission on BSE stocks. 证监发〔2002〕21号 covers a股、b股、证券投资基金 on the exchanges of 2002; whether BSE stocks (former NEEQ select-tier shares, settled by CSDC Beijing) fall under it is not stated by any CSRC/BSE/CSDC text located. Broker fee schedules disagree (some state a 3‰ cap with ¥5 minimum, others 2‰ or no minimum) and are not official. bse.cn / bseinfo.net / neeq.com.cn searched for 佣金 rules; only exchange handling fees (北证公告〔2021〕49号) were found. The BSE trading rules (2021 trial 9.1, 2026 9.1) say only 投资者买卖证券成交的，应当按规定向会员交纳佣金 and 9.3 收费…按有关规定执行 — no level. Searched again 2026-10-29 (step 4): CSRC Order 204 证券经纪业务管理办法 (in force 2023-02-28) art. 28 requires brokers to publish and follow their own schedule and forbids commissions 明显低于服务成本 — no cap, and no statement that commission is uncapped; art. 51 extends it to 国务院批准的其他证券交易场所 by analogy only. NEEQ 股转系统公告〔2013〕7号 (fee schedule) attachments: neeq.com.cn returns 403 to non-browser clients and no archived copy exists; a 2015 broker document claims NEEQ applied the 2002 3‰ cap (not official, and NEEQ ≠ BSE). bse.cn search for 佣金 returns only company disclosures."
+- target: BJSE:stock:commission_min_per_order_cny
+  from: '2021-11-15'
+  to: null
+  reason: "No official text found that sets a statutory cap / minimum for brokerage commission on BSE stocks. 证监发〔2002〕21号 covers a股、b股、证券投资基金 on the exchanges of 2002; whether BSE stocks (former NEEQ select-tier shares, settled by CSDC Beijing) fall under it is not stated by any CSRC/BSE/CSDC text located. Broker fee schedules disagree (some state a 3‰ cap with ¥5 minimum, others 2‰ or no minimum) and are not official. bse.cn / bseinfo.net / neeq.com.cn searched for 佣金 rules; only exchange handling fees (北证公告〔2021〕49号) were found. The BSE trading rules (2021 trial 9.1, 2026 9.1) say only 投资者买卖证券成交的，应当按规定向会员交纳佣金 and 9.3 收费…按有关规定执行 — no level. Searched again 2026-10-29 (step 4): CSRC Order 204 证券经纪业务管理办法 (in force 2023-02-28) art. 28 requires brokers to publish and follow their own schedule and forbids commissions 明显低于服务成本 — no cap, and no statement that commission is uncapped; art. 51 extends it to 国务院批准的其他证券交易场所 by analogy only. NEEQ 股转系统公告〔2013〕7号 (fee schedule) attachments: neeq.com.cn returns 403 to non-browser clients and no archived copy exists; a 2015 broker document claims NEEQ applied the 2002 3‰ cap (not official, and NEEQ ≠ BSE). bse.cn search for 佣金 returns only company disclosures."
+- target: XSHE:delisting_chinext:price_limit_pct
+  from: '2020-08-24'
+  to: '2020-12-31'
+  reason: 'Answered by the split scopes delisting_chinext_pre0824 (10%) / delisting_chinext_post0824 (20%), selected by context key delisting_entry_before_2020_08_24 (深证上〔2020〕620号; both targets complete). The context-free scope delisting_chinext cannot answer this window because the band depended on the entry date (G-0016). Kept as a target and counted as not covered by maintainer decision 2026-10-26.'

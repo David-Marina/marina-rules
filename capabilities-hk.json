@@ -1,0 +1,464 @@
+{
+ "capabilities_version": "1",
+ "ruleset_version": "2026.11.13",
+ "ruleset_hash": "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e",
+ "entrypoints": {
+  "python": {
+   "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None)",
+   "coverage": "marina_rules.coverage(market, scope, rules, start, end, as_of=None, contract=None)",
+   "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
+   "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
+   "check": "python -m marina_rules.check fills.csv"
+  },
+  "statuses": [
+   "DETERMINED",
+   "MISSING_CONTEXT",
+   "OUT_OF_COVERAGE",
+   "CONFLICT",
+   "UNVERIFIED",
+   "NOT_YET_PUBLISHED",
+   "UNKNOWN_PUBLICATION"
+  ],
+  "as_of": "optional ISO date on record_at/rule_at/coverage/resolve/limit_price/tick_size: answer only from rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → UNKNOWN_PUBLICATION; never falls back to an older record",
+  "decision_schema": "python -m marina_rules.contract --schema"
+ },
+ "preflight": [
+  "coverage() over the whole window before any computation",
+  "supply every key in scope.requires per security per day; Marina never infers them",
+  "stop on any status other than DETERMINED; cite known_gap_ids when present",
+  "put citation() into every result"
+ ],
+ "rules": {
+  "afrc_levy_each_side": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2022-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "closing_auction_limit_pct": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2016-07-25",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "investor_compensation_levy_each_side": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2005-12-19",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "min_holding_days": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "opening_auction_limit_pct": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2020-10-19",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "order_price_multiple_limit": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "order_spread_limit": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2005-07-04",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "price_limit_pct": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "session_schedule": {
+   "scopes": [
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 5
+   }
+  },
+  "settlement_cycle_days": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 2
+   }
+  },
+  "settlement_fee_each_side": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "short_sale_price_test": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2002-03-25",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 8
+   }
+  },
+  "stamp_duty_buy": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2001-09-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 1,
+    "verified": 3
+   }
+  },
+  "stamp_duty_sell": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2001-09-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 1,
+    "verified": 3
+   }
+  },
+  "tick_size_table": {
+   "scopes": [
+    "hk_etf",
+    "hk_etf_part_b",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 6
+   }
+  },
+  "trading_fee_each_side": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "trading_tariff_per_trade": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2010-01-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  },
+  "transaction_levy_each_side": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2006-12-01",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 6
+   }
+  },
+  "vcm_trigger_pct": {
+   "scopes": [
+    "hk_etf",
+    "hk_stock"
+   ],
+   "markets": [
+    "XHKG"
+   ],
+   "earliest_effective_from": "2016-08-22",
+   "has_open_interval": true,
+   "records_by_verification": {
+    "single-source": 4
+   }
+  }
+ },
+ "scopes": {
+  "hk_etf": {
+   "description": "Exchange-traded funds listed on the SEHK securities market, excluding leveraged and inverse products; Marina coverage from 2010-01-01.",
+   "requires": [],
+   "excludes": [
+    "hk_stock"
+   ],
+   "asserts": {},
+   "rule_asserts": {
+    "tick_size_table": {
+     "requires": [
+      "spread_table"
+     ],
+     "asserts": {
+      "spread_table": [
+       {
+        "eq": "part_a",
+        "to": "2020-06-01"
+       },
+       {
+        "eq": "part_d",
+        "from": "2020-06-01"
+       }
+      ]
+     }
+    }
+   }
+  },
+  "hk_etf_part_b": {
+   "description": "ETFs (as hk_etf) traded on Part B of the Second Schedule — before 2020-06-01 fixed-income and currency ETFs, from 2020-06-01 fixed-income ETFs whose manager kept Part B. Spread table (tick_size_table) only; every other rule is under hk_etf. Marina coverage from 2010-01-01.",
+   "requires": [
+    "spread_table"
+   ],
+   "excludes": [
+    "hk_stock"
+   ],
+   "asserts": {
+    "spread_table": "part_b"
+   },
+   "rule_asserts": {}
+  },
+  "hk_stock": {
+   "description": "SEHK ordinary shares listed on the Main Board and GEM, including H shares and red chips; Marina coverage from 2010-01-01.",
+   "requires": [],
+   "excludes": [
+    "hk_etf"
+   ],
+   "asserts": {},
+   "rule_asserts": {}
+  }
+ },
+ "context_constraints": {
+  "grammar": "data/<market>/scopes.yaml header: scalar = equality; {eq|in|not_in|min|max} with qualifiers from/to (trade-date window), unless/when (context condition), required; a list = every applicable entry must hold; null value = not supplied",
+  "on_violation": "MISSING_CONTEXT with context_conflicts / missing_context"
+ },
+ "tick_families": {
+  "rule": "tick_size",
+  "map": {
+   "b_share": "b_share",
+   "bse": "bse_stock",
+   "bse_stock": "bse_stock",
+   "convertible": "convertible",
+   "convertible_day1": "convertible",
+   "delisting_bse": "bse_stock",
+   "delisting_day1_bse": "bse_stock",
+   "etf": "etf",
+   "etf_20pct": "etf",
+   "etf_bond": "etf",
+   "etf_commodity": "etf",
+   "etf_crossborder": "etf",
+   "etf_gold": "etf",
+   "etf_money": "etf",
+   "ipo_day1_bse": "bse_stock",
+   "reits": "etf",
+   "reits_day1": "etf",
+   "st_b_share": "b_share",
+   "st_bse": "bse_stock"
+  },
+  "default": "stock"
+ },
+ "context_vocabulary": [
+  "spread_table"
+ ],
+ "known_gaps": [
+  {
+   "gap_id": "G-HK-0001",
+   "market": "XHKG",
+   "scope": "hk_stock",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2016-07-25",
+    "to": "2019-10-08"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-HK-0002",
+   "market": "XHKG",
+   "scope": "hk_etf",
+   "rule": "stamp_duty_buy",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2015-02-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-HK-0003",
+   "market": "XHKG",
+   "scope": "hk_etf",
+   "rule": "stamp_duty_sell",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2015-02-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-HK-0004",
+   "market": "XHKG",
+   "scope": "hk_etf",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2010-01-01",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-HK-0005",
+   "market": "XHKG",
+   "scope": "hk_stock",
+   "rule": "opening_auction_limit_pct",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2020-10-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-HK-0006",
+   "market": "XHKG",
+   "scope": "hk_etf",
+   "rule": "opening_auction_limit_pct",
+   "interval": {
+    "from": "2010-01-01",
+    "to": "2020-10-19"
+   },
+   "severity": "medium",
+   "status": "open"
+  }
+ ],
+ "not_in_scope": [
+  "market data",
+  "security master",
+  "point-in-time ST / listing histories",
+  "matching, slippage, strategy"
+ ]
+}

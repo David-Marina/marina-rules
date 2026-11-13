@@ -1,0 +1,1047 @@
+schema: 1.1
+market: XSHG+XSHE
+asset_class: equity
+records:
+- id: cn.fee.stamp_duty_sell.2008-09-19
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.001
+  effective_from: 2008-09-19
+  published_at: '2008-09-19'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+    publisher: 财政部
+    title: 9月19日起证券交易印花税改为单边征收
+    date: '2008-09-19'
+    kind: official
+    quote: 从２００８年９月１９日起……调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+    hash_kind: text
+    fetched_sha256: 4edaa053cbc7c2727e183a27f2e974aabb3534e4485522e3675f40ca7a6d8263
+  notes: Unilateral (seller) 0.1%, A and B shares, SSE and SZSE. Preceded by the bilateral record
+    cn.fee.stamp_duty_sell.2008-04-24; the buy side is 0 from this date (cn.fee.stamp_duty_buy.2008-09-19).
+    Closed 2021-11-15 (was 2023-08-28) only so that BJSE can join; the same 0.1% continues for XSHG/XSHE as
+    cn.fee.stamp_duty_sell.2021-11-15 (XSHG+XSHE+BJSE). No value changed for any SSE/SZSE date.
+  effective_to: '2021-11-15'
+- id: cn.fee.stamp_duty_sell.2023-08-28
+  market: XSHG+XSHE+BJSE
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.0005
+  effective_from: 2023-08-28
+  published_at: '2023-08-27'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: https://www.gov.cn/zhengce/zhengceku/202308/content_6900443.htm
+    publisher: 财政部 税务总局（中国政府网政策文件库）
+    title: 关于减半征收证券交易印花税的公告（财政部 税务总局公告2023年第39号）
+    date: '2023-08-27'
+    kind: official
+    quote: 为活跃资本市场、提振投资者信心，自2023年8月28日起，证券交易印花税实施减半征收。
+    content_sha256: cb0fd0782129e6d7aa81c7ff9461d9bcf3e2530f42b69bc4241ce2c4fb886cdc
+    hash_kind: text
+    fetched_sha256: 66704a735da25e688a0b94f32a5afd3e4afaf0a71855e1931a24da2ba7951522
+  - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/cbcf7d603e7444b382ce7ca8017105b8/files/%E5%8C%97%E4%BA%AC%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+    publisher: 中国结算
+    title: 北京市场证券登记结算业务收费及代收税费一览表（2026年1月1日更新）
+    date: '2026-01-01'
+    kind: official
+    quote: 证券交易印花税 A 股、挂牌公司股份、优先股、退市板块股份 按成交金额的 1‰向出让方收取，减半征收。
+    content_sha256: c36ce244bf0c615b9a8837360b76717af6ec4d8986390d59614df16d36012229
+    hash_kind: bytes
+  notes: Halved to 0.05%. MOF/STA Announcement 2023 No.39 says 减半 (halved); 0.0005 is the arithmetic result, not a figure
+    printed in the notice. The announcement halves securities-transaction stamp duty as a whole, so it covers BSE too;
+    market extended to XSHG+XSHE+BJSE in step 2 (the CSDC Beijing fee table states the halved seller rate for BSE
+    A shares). PDF quote is pypdf-extracted text with line breaks collapsed to spaces.
+- id: cn.fee.transfer_fee_each_side.2015-08-01
+  scope: stock
+  rule: transfer_fee_each_side
+  value: 2.0e-05
+  effective_from: 2015-08-01
+  published_at: '2015-07-09'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准有关事项的通知
+    date: '2015-07-09'
+    kind: official
+    quote: 于2015年8月1日起……A股交易过户费由沪市按照成交面值0.3‰、深市按照成交金额0.0255‰向买卖双方投资者分别收取，统一调整为按照成交金额0.02‰向买卖双方投资者分别收取。
+    content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+    hash_kind: text
+    fetched_sha256: 2fb942940a0aaabf7849b134a9e5c7597df8b92c9f2adb08004c82e8c7df4dca
+  notes: SSE+SZSE unified at 0.02‰ of turnover, each side. Before 2015-08-01 SSE charged by par value (rule
+    transfer_fee_par_value, cn.fee.transfer_fee_par_value.sse.*) and SZSE 0.0255‰ of turnover inside the exchange
+    handling fee (cn.fee.transfer_fee_each_side.szse.2006-07-01). BJSE 2021-11-15..2022-04-29 is a separate record
+    under family scope bse_stock (cn.fee.transfer_fee_each_side.bjse.2021-11-15, 0.025‰).
+  effective_to: '2022-04-29'
+- id: cn.fee.transfer_fee_each_side.2022-04-29
+  market: XSHG+XSHE+BJSE
+  scope: stock
+  rule: transfer_fee_each_side
+  value: 1.0e-05
+  effective_from: 2022-04-29
+  published_at: '2022-04-28'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: http://www.chinaclear.cn/zdjs/gszb/202204/837e3c5031104aa099d6597ba381342a.shtml
+    publisher: 中国结算
+    title: 中国结算关于降低股票交易过户费收费标准的通知
+    date: '2022-04-28'
+    kind: official
+    quote: 自 2022 年 4 月 29 日起，将股票交易过户费总体下调 50% ，即股票交易过户费由现行沪深市场 A 股按照成交金额 0.02‰ 、北京市场 A 股和挂牌公司股份按照成交金额 0.025‰ 双向 收取，统一下调为按照成交金额 0.01‰ 双向 收取。
+    content_sha256: 2e43de1e6d65611418bf009cd6017ba7bc5ab1288992643cf782862ae47e8a01
+    hash_kind: text
+    fetched_sha256: dc581a20c55baa89c7d29a4b0c412be0f08b3de7c0ce58895afdd7b2b57f7d07
+  - url: http://www.chinaclear.cn/zdjs/fbzyls/202512/cbcf7d603e7444b382ce7ca8017105b8/files/%E5%8C%97%E4%BA%AC%E5%B8%82%E5%9C%BA%E8%AF%81%E5%88%B8%E7%99%BB%E8%AE%B0%E7%BB%93%E7%AE%97%E4%B8%9A%E5%8A%A1%E6%94%B6%E8%B4%B9%E5%8F%8A%E4%BB%A3%E6%94%B6%E7%A8%8E%E8%B4%B9%E4%B8%80%E8%A7%88%E8%A1%A8.pdf
+    publisher: 中国结算
+    title: 北京市场证券登记结算业务收费及代收税费一览表（2026年1月1日更新）
+    date: '2026-01-01'
+    kind: official
+    quote: 股份过户费 A股、挂牌公司股份 按成交金额的 0.01‰双边收取。
+    content_sha256: c36ce244bf0c615b9a8837360b76717af6ec4d8986390d59614df16d36012229
+    hash_kind: bytes
+  notes: Halved to 0.01‰ for SSE/SZSE (from 0.02‰) and BSE (北京市场 A 股, from 0.025‰). The notice names the
+    Beijing market, so the market was extended to XSHG+XSHE+BJSE in step 2; still current per the CSDC Beijing fee
+    table (2026-01-01). PDF quote is pypdf-extracted text with line breaks collapsed to spaces.
+- id: cn.fee.commission_cap.2002-05-01
+  scope: stock
+  rule: commission_cap
+  value: 0.003
+  effective_from: 2002-05-01
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+    fetched_sha256: cf021cd77d560641c6fda0621ddbf8da2fb2097d57877f48aaed7bbd55bfc79a
+  - url: https://neris.csrc.gov.cn/falvfagui/rdqsHeader/mainbody?navbarId=1&secFutrsLawId=b25a17fb262742f2aea99515380cf3bb
+    publisher: 证监会法律法规库
+    title: 关于调整证券交易佣金收取标准的通知
+    date: '2002-04-04'
+    kind: official
+    quote: 不得高于证券交易金额的3‰，也不得低于代收的证券交易监管费和证券交易所手续费等。
+    content_sha256: 16de9eeabc251c168fdbc93856782c41082e9d6c121104005d69be9d52201841
+    hash_kind: text
+    fetched_sha256: eff7f0ad744dc2afc5c85d8cf9efd0060be0a286e660bcbc141810e009209c0c
+  notes: 'Floating-commission reform (证监发〔2002〕21号, art. 8: 自2002年5月1日起执行): cap 3‰, floor = regulatory fees.'
+- id: cn.fee.commission_min_per_order_cny.2002-05-01
+  scope: stock
+  rule: commission_min_per_order_cny
+  value: 5
+  effective_from: 2002-05-01
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-24'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+    fetched_sha256: cf021cd77d560641c6fda0621ddbf8da2fb2097d57877f48aaed7bbd55bfc79a
+  - url: https://neris.csrc.gov.cn/falvfagui/rdqsHeader/mainbody?navbarId=1&secFutrsLawId=b25a17fb262742f2aea99515380cf3bb
+    publisher: 证监会法律法规库
+    title: 关于调整证券交易佣金收取标准的通知
+    date: '2002-04-04'
+    kind: official
+    quote: 不得高于证券交易金额的3‰，也不得低于代收的证券交易监管费和证券交易所手续费等。
+    content_sha256: 16de9eeabc251c168fdbc93856782c41082e9d6c121104005d69be9d52201841
+    hash_kind: text
+    fetched_sha256: eff7f0ad744dc2afc5c85d8cf9efd0060be0a286e660bcbc141810e009209c0c
+  notes: 'Same notice: minimum CNY 5 per order for A shares (B shares USD 1 / HKD 1).'
+- id: cn.fee.stamp_duty_sell.2005-01-24
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.001
+  effective_from: '2005-01-24'
+  effective_to: '2007-05-30'
+  published_at: '2005-01-24'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/gkml/caizhengwengao/caizhengbuwengao2005/caizhengbuwengao20053/200805/t20080525_42735.htm
+    publisher: 财政部 国家税务总局
+    title: 财政部国家税务总局关于调整证券(股票)交易印花税税率的通知（财税[2005]11号）
+    date: '2005-01-24'
+    kind: official
+    quote: 经国务院批准，决定从2005年1月24日起，调整证券(股票)交易印花税税率。对买卖、继承、赠与所书立的A股、B股股权转让书据，由立据双方当事人分别按1‰的税率缴纳证券(股票)交易印花税。
+    content_sha256: 74e817eb4625cdef2721b86aa6463e180b2dd0b8ea5a841e9f567d1c396498ec
+    hash_kind: text
+  notes: '财税〔2005〕11号: 1‰ on each party (立据双方当事人分别) of A/B share transfer documents, SSE and SZSE. The MOF page serves the
+    digit "1" (U+0031) before ‰ — checked byte-level in the fetched HTML, so it is quoted as "1‰"; an earlier note that the
+    page prints a lowercase "l‰" is not borne out by the page as served on 2026-10-26. Value 0.001. Dates before 2006-07-01
+    are outside the coverage target; the record starts on the notice date.'
+- id: cn.fee.stamp_duty_sell.2007-05-30
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.003
+  effective_from: '2007-05-30'
+  effective_to: '2008-04-24'
+  published_at: '2007-05-29'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200805/t20080519_26343.htm
+    publisher: 财政部新闻办公室
+    title: 证券交易印花税税率由1‰调整为3‰
+    date: '2007-05-29'
+    kind: official
+    quote: 财政部决定从2007年5月30日起，调整证券（股票）交易印花税税率,由现行1‰调整为3‰。即对买卖、继承、赠与所书立的A股、B股股权转让书据，由立据双方当事人分别按3‰的税率缴纳证券（股票）交易印花税。
+    content_sha256: 87715bb323321bf7bbb8cf4e78fda4fe680c9d6152da1edba91907718fa7fd74
+    hash_kind: text
+  notes: 3‰ on each party from 2007-05-30 (MOF press office release dated 2007-05-29).
+- id: cn.fee.stamp_duty_sell.2008-04-24
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.001
+  effective_from: '2008-04-24'
+  effective_to: '2008-09-19'
+  published_at: '2008-04-23'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200805/t20080519_29133.htm
+    publisher: 财政部
+    title: 从4月24日起证券交易印花税税率下调为千分之一
+    date: '2008-04-23'
+    kind: official
+    quote: 财政部、国家税务总局决定从２００８年４月２４日起，调整证券（股票）交易印花税税率，由现行３‰调整为１‰。即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据，由立据双方当事人分别按１‰的税率缴纳证券（股票）交易印花税。
+    content_sha256: 2572a668f7402c45c9f40d673761ae371e9d054210b79ee8d5d6f730e42af021
+    hash_kind: text
+  notes: 1‰ on each party from 2008-04-24 (MOF/STA, dated 2008-04-23). Ends when the buy side is abolished on 2008-09-19.
+- id: cn.fee.stamp_duty_buy.2005-01-24
+  scope: stock
+  rule: stamp_duty_buy
+  value: 0.001
+  effective_from: '2005-01-24'
+  effective_to: '2007-05-30'
+  published_at: '2005-01-24'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/gkml/caizhengwengao/caizhengbuwengao2005/caizhengbuwengao20053/200805/t20080525_42735.htm
+    publisher: 财政部 国家税务总局
+    title: 财政部国家税务总局关于调整证券(股票)交易印花税税率的通知（财税[2005]11号）
+    date: '2005-01-24'
+    kind: official
+    quote: 经国务院批准，决定从2005年1月24日起，调整证券(股票)交易印花税税率。对买卖、继承、赠与所书立的A股、B股股权转让书据，由立据双方当事人分别按1‰的税率缴纳证券(股票)交易印花税。
+    content_sha256: 74e817eb4625cdef2721b86aa6463e180b2dd0b8ea5a841e9f567d1c396498ec
+    hash_kind: text
+  notes: '财税〔2005〕11号: 1‰ on each party (立据双方当事人分别) of A/B share transfer documents, SSE and SZSE. The MOF page serves the
+    digit "1" (U+0031) before ‰ — checked byte-level in the fetched HTML, so it is quoted as "1‰"; an earlier note that the
+    page prints a lowercase "l‰" is not borne out by the page as served on 2026-10-26. Value 0.001. Dates before 2006-07-01
+    are outside the coverage target; the record starts on the notice date.'
+- id: cn.fee.stamp_duty_buy.2007-05-30
+  scope: stock
+  rule: stamp_duty_buy
+  value: 0.003
+  effective_from: '2007-05-30'
+  effective_to: '2008-04-24'
+  published_at: '2007-05-29'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200805/t20080519_26343.htm
+    publisher: 财政部新闻办公室
+    title: 证券交易印花税税率由1‰调整为3‰
+    date: '2007-05-29'
+    kind: official
+    quote: 财政部决定从2007年5月30日起，调整证券（股票）交易印花税税率,由现行1‰调整为3‰。即对买卖、继承、赠与所书立的A股、B股股权转让书据，由立据双方当事人分别按3‰的税率缴纳证券（股票）交易印花税。
+    content_sha256: 87715bb323321bf7bbb8cf4e78fda4fe680c9d6152da1edba91907718fa7fd74
+    hash_kind: text
+  notes: 3‰ on each party from 2007-05-30 (MOF press office release dated 2007-05-29).
+- id: cn.fee.stamp_duty_buy.2008-04-24
+  scope: stock
+  rule: stamp_duty_buy
+  value: 0.001
+  effective_from: '2008-04-24'
+  effective_to: '2008-09-19'
+  published_at: '2008-04-23'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200805/t20080519_29133.htm
+    publisher: 财政部
+    title: 从4月24日起证券交易印花税税率下调为千分之一
+    date: '2008-04-23'
+    kind: official
+    quote: 财政部、国家税务总局决定从２００８年４月２４日起，调整证券（股票）交易印花税税率，由现行３‰调整为１‰。即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据，由立据双方当事人分别按１‰的税率缴纳证券（股票）交易印花税。
+    content_sha256: 2572a668f7402c45c9f40d673761ae371e9d054210b79ee8d5d6f730e42af021
+    hash_kind: text
+  notes: 1‰ on each party from 2008-04-24 (MOF/STA, dated 2008-04-23). Ends when the buy side is abolished on 2008-09-19.
+- id: cn.fee.stamp_duty_buy.2008-09-19
+  scope: stock
+  rule: stamp_duty_buy
+  value: 0
+  effective_from: '2008-09-19'
+  effective_to: '2021-11-15'
+  published_at: '2008-09-19'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+    publisher: 财政部
+    title: 9月19日起证券交易印花税改为单边征收
+    date: '2008-09-19'
+    kind: official
+    quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+    hash_kind: text
+  notes: 'Buy side abolished from 2008-09-19: 对受让方不再征税 (A and B shares, SSE and SZSE). Value 0 = no buy-side duty, as stated.
+    Closed 2021-11-15 only so that BJSE joins in cn.fee.stamp_duty_buy.2021-11-15 (same value).'
+- id: cn.fee.stamp_duty_buy.2021-11-15
+  market: XSHG+XSHE+BJSE
+  scope: stock
+  rule: stamp_duty_buy
+  value: 0
+  effective_from: '2021-11-15'
+  published_at: '2021-11-14'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+    publisher: 财政部
+    title: 9月19日起证券交易印花税改为单边征收
+    date: '2008-09-19'
+    kind: official
+    quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/zhengceku/2021-11/15/content_5650955.htm
+    publisher: 财政部 税务总局（中国政府网政策文件库）
+    title: 关于北京证券交易所税收政策适用问题的公告（财政部 税务总局公告2021年第33号）
+    date: '2021-11-14'
+    kind: official
+    quote: 投资北交所上市公司涉及的个人所得税、印花税相关政策，暂按照现行新三板适用的税收规定执行。
+    content_sha256: 098f913848fd0b407409144f0993e456c894cbaa248a5ef7ef3bed7810a10a90
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/2014-05/27/content_5023451.htm
+    publisher: 财政部 国家税务总局（中国政府网）
+    title: 财政部 国家税务总局关于在全国中小企业股份转让系统转让股票有关证券（股票）交易印花税政策的通知（财税[2014]47号）
+    date: '2014-05-27'
+    kind: official
+    quote: 在全国中小企业股份转让系统买卖、继承、赠与股票所书立的股权转让书据，依书立时实际成交金额，由出让方按 1‰的税率计算缴纳证券（股票）交易印花税。
+    content_sha256: f41698f351fdfbb1b367890a64101f95235161e0a6b948a938f98e908f7bd71e
+    hash_kind: text
+  - url: https://www.bse.cn/important_news/200011021.html
+    publisher: 北京证券交易所
+    title: 北京证券交易所开市工作准备就绪
+    date: '2021-11-12'
+    kind: official
+    quote: 目前，北交所开市各项工作已准备就绪，定于2021年11月15日开市。
+    content_sha256: 7d0da830a2ab75d5ab9e98d59f6a91e52ba34ca325cacec711d2ba6f806e3ebb
+    hash_kind: text
+  - url: https://fgk.chinatax.gov.cn/zcfgk/c100009/c5193058/content.html
+    publisher: 国家税务总局政策法规库（全国人大常委会通过）
+    title: 中华人民共和国印花税法
+    date: '2021-06-10'
+    kind: official
+    quote: 本法所称证券交易，是指转让在依法设立的证券交易所、国务院批准的其他全国性证券交易场所交易的股票和以股票为基础的存托凭证。 证券交易印花税对证券交易的出让方征收，不对受让方征收。
+    content_sha256: 66fe946219e679d25ecd14c5396ba0604bac4d51b30861f0231055a03a8140f1
+    hash_kind: text
+  notes: 'No buy-side duty. XSHG/XSHE: continuation of the 2008-09-19 notice. BJSE from its opening day: MOF/STA 2021 No.33
+    applies the NEEQ stamp-duty rule to BSE; 财税〔2014〕47号 levies it on the seller only (由出让方). From 2022-07-01 the Stamp Duty
+    Law art.3: 不对受让方征收.'
+- id: cn.fee.stamp_duty_sell.2021-11-15
+  market: XSHG+XSHE+BJSE
+  scope: stock
+  rule: stamp_duty_sell
+  value: 0.001
+  effective_from: '2021-11-15'
+  effective_to: '2023-08-28'
+  published_at: '2021-11-14'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/200809/t20080919_76432.htm
+    publisher: 财政部
+    title: 9月19日起证券交易印花税改为单边征收
+    date: '2008-09-19'
+    kind: official
+    quote: 调整为单边征税，即对买卖、继承、赠与所书立的Ａ股、Ｂ股股权转让书据的出让方按千分之一的税率征收证券（股票）交易印花税，对受让方不再征税。
+    content_sha256: 531c64dde8a5d3f931159b4587eb3ab411b0e69ae9b35c94a4482e70388e2e87
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/zhengceku/2021-11/15/content_5650955.htm
+    publisher: 财政部 税务总局（中国政府网政策文件库）
+    title: 关于北京证券交易所税收政策适用问题的公告（财政部 税务总局公告2021年第33号）
+    date: '2021-11-14'
+    kind: official
+    quote: 投资北交所上市公司涉及的个人所得税、印花税相关政策，暂按照现行新三板适用的税收规定执行。
+    content_sha256: 098f913848fd0b407409144f0993e456c894cbaa248a5ef7ef3bed7810a10a90
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/2014-05/27/content_5023451.htm
+    publisher: 财政部 国家税务总局（中国政府网）
+    title: 财政部 国家税务总局关于在全国中小企业股份转让系统转让股票有关证券（股票）交易印花税政策的通知（财税[2014]47号）
+    date: '2014-05-27'
+    kind: official
+    quote: 在全国中小企业股份转让系统买卖、继承、赠与股票所书立的股权转让书据，依书立时实际成交金额，由出让方按 1‰的税率计算缴纳证券（股票）交易印花税。
+    content_sha256: f41698f351fdfbb1b367890a64101f95235161e0a6b948a938f98e908f7bd71e
+    hash_kind: text
+  - url: https://www.bse.cn/important_news/200011021.html
+    publisher: 北京证券交易所
+    title: 北京证券交易所开市工作准备就绪
+    date: '2021-11-12'
+    kind: official
+    quote: 目前，北交所开市各项工作已准备就绪，定于2021年11月15日开市。
+    content_sha256: 7d0da830a2ab75d5ab9e98d59f6a91e52ba34ca325cacec711d2ba6f806e3ebb
+    hash_kind: text
+  notes: 'Seller 1‰. XSHG/XSHE: continuation of the 2008-09-19 regime (cn.fee.stamp_duty_sell.2008-09-19 now closes here;
+    value unchanged). BJSE from its opening day: MOF/STA 2021 No.33 applies the NEEQ stamp-duty rule to BSE, and 财税〔2014〕47号
+    sets it at 1‰ on the seller. The Stamp Duty Law (2022-07-01) kept the rate.'
+- id: cn.fee.transfer_fee_each_side.szse.2006-07-01
+  market: XSHE
+  scope: stock
+  rule: transfer_fee_each_side
+  value: 2.55e-05
+  effective_from: '2006-07-01'
+  effective_to: '2015-08-01'
+  published_at: null
+  recorded_at: '2026-10-26'
+  verification: single-source
+  sources:
+  - url: http://www.chinaclear.cn/old_files/1335773025208.pdf
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准的通知
+    date: '2012-04-30'
+    kind: official
+    quote: 二、深圳市场A 股交易过户费（从深圳市场 A 股交易经手费中分成）的现行收费标准为按交易额的 0.0255‰收取，维持不变。
+    content_sha256: c569a05620befe5bd008d3bb9aed07c883d2e30b82fbb6b88ba46e626e4aab60
+    hash_kind: bytes
+  - url: http://www.chinaclear.cn/old_files/1343899420865.pdf
+    publisher: 中国结算
+    title: 关于进一步调整A股交易过户费收费标准有关事项的通知
+    date: '2012-08-02'
+    kind: official
+    quote: 二、深圳市场A股交易过户费的现行收费标准为按交易额的0.0255‰收取，维持不变。
+    content_sha256: 755ec86ff5974f62c9b001f5a5a7f4fa46e91ff8b2181ebadbfe8abb45657e6e
+    hash_kind: bytes
+  - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准有关事项的通知
+    date: '2015-07-09'
+    kind: official
+    quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+    content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+    hash_kind: text
+  - url: https://wuhan.pbc.gov.cn/wuhan/2929354/123527/2764733/index.html
+    publisher: 中国人民银行武汉分行（湖北省分行）
+    title: 证券交易知识：交易费用
+    date: '2013-12-25'
+    kind: official
+    quote: 深圳交易所A股过户费包含在交易经手费中,不向投资者单独收取。
+    content_sha256: ee09e103b9fa0025d3bb834e1d859d0b92309a9cdd02102d3ed9eb8c8c7d56fc
+    hash_kind: text
+  notes: 'SZSE A shares: 0.0255‰ of turnover per side, collected by CSDC as a share of the SZSE handling fee (从深圳市场A股交易经手费中分成) — not a separate line item for investors (PBC Wuhan). The rate is confirmed as 现行 on 2012-04-30 and 2012-08-02 and as the rate replaced on 2015-08-01; no official text dates its introduction, so effective_from is the coverage floor 2006-07-01 and the record is single-source. As a lower bound on what an investor paid it is valid (the handling fee is inside the commission). PDF quotes are pypdf-extracted text with line breaks collapsed to single spaces (verified against the hashed bytes). published_at: not located (2026-10-29 search: chinaclear.cn notices and fee tables incl. old_files/, SSE/SZSE repeal registers batches 1–7 and chronicles 1994–2012, MOF/CSRC archives). The CSDC texts cited only call the rate 现行; no founding notice found.'
+- id: cn.fee.transfer_fee_par_value.sse.2006-07-01
+  market: XSHG
+  scope: stock
+  rule: transfer_fee_par_value
+  value: 0.0005
+  effective_from: '2006-07-01'
+  effective_to: '2012-06-01'
+  published_at: null
+  recorded_at: '2026-10-26'
+  verification: single-source
+  sources:
+  - url: http://www.chinaclear.cn/old_files/1335773025208.pdf
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准的通知
+    date: '2012-04-30'
+    kind: official
+    quote: 经中国证券监督管理委员会批准，我公司从 2012 年 6 月 1 日起对 A 股交易过户费收费标准作如下调整： 一、我公司收取的上海市场A 股交易过户费现行标准为按成交面额的 0.5‰收取，调整降为按成交面额的 0.375‰收取。
+    content_sha256: c569a05620befe5bd008d3bb9aed07c883d2e30b82fbb6b88ba46e626e4aab60
+    hash_kind: bytes
+  - url: http://www.sse.com.cn/aboutus/publication/factbook/documents/c/10170574/files/977f9c4f930746c18732b7d063f5676a.pdf
+    publisher: 上海证券交易所
+    title: 上海证券交易所 2008 市场资料（沪市证券交易及相关业务费用表 表一）
+    date: '2008-01-01'
+    kind: official
+    quote: 交易 A股 佣金 不超过成交金额的 0.3% ，起点 5 元 投资者交证券公司 过户费 成交面额的 0.1%， 起点 1 元 投资者交登记结算公司
+    content_sha256: 7c36fd9910f202c7b39fa8a4c31d39d17d533c0903042c527c0945941c5b32f6
+    hash_kind: bytes
+  notes: 'SSE A shares: fraction of traded PAR VALUE (成交面额) per side, CSDC portion. CSDC 2012-04-30: 现行标准为按成交面额的0.5‰. No official text dates its introduction → effective_from is the coverage floor and the record is single-source. The investor-facing SSE fee was higher: SSE 2008 factbook lists 过户费 成交面额的0.1%（1‰）, 起点1元; the 2012-08-02 CSDC notice confirms a separate broker-retained part (证券公司收取并留存), whose size no CSDC text states — not modelled. PDF quotes are pypdf-extracted text with line breaks collapsed to single spaces (verified against the hashed bytes). published_at: not located (2026-10-29 search: chinaclear.cn notices and fee tables incl. old_files/, SSE/SZSE repeal registers batches 1–7 and chronicles 1994–2012, MOF/CSRC archives). The CSDC texts cited only call the rate 现行; no founding notice found.'
+- id: cn.fee.transfer_fee_par_value.sse.2012-06-01
+  market: XSHG
+  scope: stock
+  rule: transfer_fee_par_value
+  value: 0.000375
+  effective_from: '2012-06-01'
+  effective_to: '2012-09-01'
+  published_at: '2012-04-30'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.chinaclear.cn/old_files/1335773025208.pdf
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准的通知
+    date: '2012-04-30'
+    kind: official
+    quote: 经中国证券监督管理委员会批准，我公司从 2012 年 6 月 1 日起对 A 股交易过户费收费标准作如下调整： 一、我公司收取的上海市场A 股交易过户费现行标准为按成交面额的 0.5‰收取，调整降为按成交面额的 0.375‰收取。
+    content_sha256: c569a05620befe5bd008d3bb9aed07c883d2e30b82fbb6b88ba46e626e4aab60
+    hash_kind: bytes
+  notes: CSDC portion lowered to 0.375‰ of traded par value per side. Broker-retained part not modelled (see sse.2006-07-01).
+    PDF quotes are pypdf-extracted text with line breaks collapsed to single spaces (verified against the hashed bytes).
+- id: cn.fee.transfer_fee_par_value.sse.2012-09-01
+  market: XSHG
+  scope: stock
+  rule: transfer_fee_par_value
+  value: 0.0003
+  effective_from: '2012-09-01'
+  effective_to: '2015-08-01'
+  published_at: '2012-08-02'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.chinaclear.cn/old_files/1343899420865.pdf
+    publisher: 中国结算
+    title: 关于进一步调整A股交易过户费收费标准有关事项的通知
+    date: '2012-08-02'
+    kind: official
+    quote: 我公司从 2012 年 9 月 1 日起，对A 股交易过户费的收费标准作进一步调整。现将有关事项通知如下： 一、我公司在上海市场向买卖双方投资者分别收取的 A 股交易过户费下调 20%，从按成交面额的 0.375‰收取，调整降为按成交面额的
+      0.3‰收取。证券公司收取并留存的上海市场 A 股交易过户费，同比例下调 20%。
+    content_sha256: 755ec86ff5974f62c9b001f5a5a7f4fa46e91ff8b2181ebadbfe8abb45657e6e
+    hash_kind: bytes
+  - url: https://www.chinaclear.cn/zdjs/gszb/201507/59ccd4176d2645f8b60b2d30fc3631bf.shtml
+    publisher: 中国结算
+    title: 关于调整A股交易过户费收费标准有关事项的通知
+    date: '2015-07-09'
+    kind: official
+    quote: A 股交易过户费由沪市按照成交面值 0.3 ‰、深市按照成交金额 0.0255 ‰向买卖双方投资者分别收取，统一调整为按照成交金额 0.02 ‰向买卖双方投资者分别收取。
+    content_sha256: 957ae21a54fa26cec0a7d0cd655baae43ae5318f9f6dd53c315e4fd9fb0f65ee
+    hash_kind: text
+  notes: CSDC portion 0.3‰ of traded par value per side (向买卖双方投资者分别收取); broker-retained part cut by the same 20% (amount not
+    stated). Replaced on 2015-08-01 by a turnover rate (cn.fee.transfer_fee_each_side.2015-08-01), from which brokers retain
+    nothing. PDF quotes are pypdf-extracted text with line breaks collapsed to single spaces (verified against the hashed
+    bytes).
+- id: cn.fee.transfer_fee_each_side.bjse.2021-11-15
+  market: BJSE
+  scope: bse_stock
+  rule: transfer_fee_each_side
+  value: 2.5e-05
+  effective_from: '2021-11-15'
+  effective_to: '2022-04-29'
+  published_at: null
+  recorded_at: '2026-10-26'
+  verification: single-source
+  sources:
+  - url: http://www.chinaclear.cn/zdjs/gszb/202204/837e3c5031104aa099d6597ba381342a.shtml
+    publisher: 中国结算
+    title: 中国结算关于降低股票交易过户费收费标准的通知
+    date: '2022-04-28'
+    kind: official
+    quote: 自 2022 年 4 月 29 日起，将股票交易过户费总体下调 50% ，即股票交易过户费由现行沪深市场 A 股按照成交金额 0.02‰ 、北京市场 A 股和挂牌公司股份按照成交金额 0.025‰ 双向 收取，统一下调为按照成交金额
+      0.01‰ 双向 收取。
+    content_sha256: 2e43de1e6d65611418bf009cd6017ba7bc5ab1288992643cf782862ae47e8a01
+    hash_kind: text
+  - url: https://www.bse.cn/important_news/200011021.html
+    publisher: 北京证券交易所
+    title: 北京证券交易所开市工作准备就绪
+    date: '2021-11-12'
+    kind: official
+    quote: 目前，北交所开市各项工作已准备就绪，定于2021年11月15日开市。
+    content_sha256: 7d0da830a2ab75d5ab9e98d59f6a91e52ba34ca325cacec711d2ba6f806e3ebb
+    hash_kind: text
+  - url: http://web.archive.org/web/20220122000014id_/http://www.chinaclear.cn/zdjs/editor_file/20211102171333314.pdf
+    publisher: 中国结算（chinaclear.cn 页面，web.archive.org 存档）
+    title: 北京市场证券登记结算业务收费及代收税费一览表（2021 年11 月2 日更新；存档 2022-01-22）
+    date: '2021-11-02'
+    kind: official
+    quote: 股份过户费 … 按成交金额的 0.025‰双边收取。
+    content_sha256: fe9a3f40de754581929f99224080491b2ce6ddb70fe2fdbe38bb980834df26d4
+    hash_kind: bytes
+  notes: 'BSE A shares 0.025‰ of turnover each side: stated by CSDC as the 现行 rate on 2022-04-28. The 2021-11-02 CSDC Beijing
+    fee table (北京市场证券登记结算业务收费及代收税费一览表, 2021 年11 月2 日更新) states 0.025‰ 双边 but has been withdrawn from chinaclear.cn (404) and
+    is cited from a web.archive.org capture, so at most single-source; it carries an update date, not an effective date, and
+    the CSDC Beijing notices of 2021-11-02 (施行 2021-11-15) do not state the rate → effective_from is the BSE opening date. published_at:
+    not located (2026-10-29 search: chinaclear.cn — the 2021-11-02 北京市场证券登记结算业务收费及代收税费一览表 editor_file/20211102171333314.pdf
+    returns 404; CSDC notice lists; bse.cn notices). Press (not used) cites that table for 0.025‰.'
+- id: cn.fee.commission_cap.etf.2002-05-01
+  scope: etf
+  rule: commission_cap
+  value: 0.003
+  effective_from: '2002-05-01'
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 一、a股、b股、证券投资基金的交易佣金实行最高上限向下浮动制度，证券公司向客户收取的佣金（包括代收的证券交易监管费和证券交易所手续费等）不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+  notes: '证监发〔2002〕21号 art. 1 covers 证券投资基金 with the same 3‰ cap as A shares (art. 8: from 2002-05-01).'
+- id: cn.fee.commission_min_per_order_cny.etf.2002-05-01
+  scope: etf
+  rule: commission_min_per_order_cny
+  value: 5
+  effective_from: '2002-05-01'
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 一、a股、b股、证券投资基金的交易佣金实行最高上限向下浮动制度，证券公司向客户收取的佣金（包括代收的证券交易监管费和证券交易所手续费等）不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+  notes: '证监发〔2002〕21号 art. 1: 证券投资基金每笔交易佣金不足5元的，按5元收取.'
+  unit: CNY
+- id: cn.fee.commission_cap.reits.2002-05-01
+  scope: reits
+  rule: commission_cap
+  value: 0.003
+  effective_from: '2002-05-01'
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 一、a股、b股、证券投资基金的交易佣金实行最高上限向下浮动制度，证券公司向客户收取的佣金（包括代收的证券交易监管费和证券交易所手续费等）不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/zhengceku/2020-08/08/content_5533339.htm
+    publisher: 证监会（中国政府网政策文件库）
+    title: 公开募集基础设施证券投资基金指引（试行）（证监会公告〔2020〕54号）
+    date: '2020-08-06'
+    kind: official
+    quote: 现公布《公开募集基础设施证券投资基金指引（试行）》，自公布之日起施行。
+    content_sha256: 6212b48d818553b9d15395e13f6986fc12aa0539ef43651129c6d8fc466446a3
+    hash_kind: text
+  notes: '证监发〔2002〕21号 art. 1 covers 证券投资基金 with the same 3‰ cap as A shares (art. 8: from 2002-05-01). Public infrastructure
+    REITs are 公开募集基础设施证券投资基金 (CSRC Announcement 〔2020〕54号, title), i.e. 证券投资基金 under art. 1.'
+- id: cn.fee.commission_min_per_order_cny.reits.2002-05-01
+  scope: reits
+  rule: commission_min_per_order_cny
+  value: 5
+  effective_from: '2002-05-01'
+  published_at: '2002-04-04'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: https://www.chinatax.gov.cn/chinatax/n810341/n810765/n812203/200202/c1209808/content.html
+    publisher: 国家税务总局（转载证监会/国家计委/税务总局联合通知）
+    title: 关于调整证券交易佣金收取标准的通知（证监发[2002]21号）
+    date: '2002-04-04'
+    kind: official
+    quote: 一、a股、b股、证券投资基金的交易佣金实行最高上限向下浮动制度，证券公司向客户收取的佣金（包括代收的证券交易监管费和证券交易所手续费等）不得高于证券交易金额的3‰也不得低于代收的证券交易监管费和证券交易所手续费等。a股、证券投资基金每笔交易佣金不足5元的，按5元收取
+    content_sha256: a9114f30f86cc643947d79cc7ca36e0a8ff0526b4bf06a7ee07b71c621acf9be
+    hash_kind: text
+  - url: https://www.gov.cn/zhengce/zhengceku/2020-08/08/content_5533339.htm
+    publisher: 证监会（中国政府网政策文件库）
+    title: 公开募集基础设施证券投资基金指引（试行）（证监会公告〔2020〕54号）
+    date: '2020-08-06'
+    kind: official
+    quote: 现公布《公开募集基础设施证券投资基金指引（试行）》，自公布之日起施行。
+    content_sha256: 6212b48d818553b9d15395e13f6986fc12aa0539ef43651129c6d8fc466446a3
+    hash_kind: text
+  notes: '证监发〔2002〕21号 art. 1: 证券投资基金每笔交易佣金不足5元的，按5元收取. Public infrastructure REITs are 公开募集基础设施证券投资基金 (CSRC Announcement
+    〔2020〕54号, title), i.e. 证券投资基金 under art. 1.'
+  unit: CNY
+- id: cn.fee.commission_cap.convertible.sse.2006-07-01
+  market: XSHG
+  scope: convertible
+  rule: commission_cap
+  value: 0.001
+  effective_from: '2006-07-01'
+  effective_to: '2007-10-12'
+  published_at: '2005-08-31'
+  recorded_at: '2026-10-29'
+  verification: single-source
+  sources:
+  - url: http://web.archive.org/web/20060702233720id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一：A股、基金、权证、债券交易费用一览表（时间：2005 年 8 月；存档 2006-07-02）
+    date: '2005-08-31'
+    kind: official
+    quote: 债券 (国债、企业债券、可转换公司债券等) 佣金 不超过成交金额的 0.1%，起点5元
+    content_sha256: fab82aa34d159816c01c3e9b62855036a89aa93b3e0a9a4169e96739f7429f8c
+    hash_kind: text
+  - url: http://web.archive.org/web/20060702233720id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一：A股、基金、权证、债券交易费用一览表（时间：2005 年 8 月；存档 2006-07-02）
+    date: '2005-08-31'
+    kind: official
+    quote: 时间： 2005 年 8 月
+    content_sha256: fab82aa34d159816c01c3e9b62855036a89aa93b3e0a9a4169e96739f7429f8c
+    hash_kind: text
+  - url: http://web.archive.org/web/20070703183915id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 5 月 30 日；存档 2007-07-03）
+    date: '2007-05-30'
+    kind: official
+    quote: 佣金 不超过成交金额的 0.1% ，起点 5 元
+    content_sha256: 40b125e6d52d3f024d856040f621d4664371834adfe96370ab06a3bfcb23272e
+    hash_kind: text
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 债券 ( 国债、企业债、可转换公司债券、分离交易的可转换公司债券、公司债、专项资产管理计划等 ) 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 上述标准自2007年10月12日起执行
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  notes: "SSE bonds incl. 可转换公司债券 before the 2007 fixed-income fee change: commission not more than 0.1% of turnover, minimum CNY 5 (起点5元), per the SSE investor fee table (sse.com.cn/ps/zhs/sczn/jyfy.shtml, table dated 2005 年 8 月; Wayback captures 2006-04-08 and 2006-07-02 show it as the current table, so it was in force on the 2006-07-01 coverage floor; the 2007-05-30 version repeats it). This is the exchange-set bond commission that 证监发〔2002〕21号 art. 2 delegates to the exchanges. single-source: effective_from is the coverage floor (the founding filing was not found) and the official text is a summary table read from web.archive.org captures (hashes computed on the archived copies). Ends 2007-10-12: SSE 关于调整固定收益类产品收费标准的通知 (dated 2007-10-11, full text reprinted in 上海证券报; 自2007年10月12日起执行) and the SSE table dated 2007 年 10 月 12 日. published_at: 2005-08-31 is the conservative (latest) day of the table's month (only 2005 年 8 月 is stated)."
+- id: cn.fee.commission_min_per_order_cny.convertible.sse.2006-07-01
+  market: XSHG
+  scope: convertible
+  rule: commission_min_per_order_cny
+  value: 5
+  unit: CNY
+  effective_from: '2006-07-01'
+  effective_to: '2007-10-12'
+  published_at: '2005-08-31'
+  recorded_at: '2026-10-29'
+  verification: single-source
+  sources:
+  - url: http://web.archive.org/web/20060702233720id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一：A股、基金、权证、债券交易费用一览表（时间：2005 年 8 月；存档 2006-07-02）
+    date: '2005-08-31'
+    kind: official
+    quote: 债券 (国债、企业债券、可转换公司债券等) 佣金 不超过成交金额的 0.1%，起点5元
+    content_sha256: fab82aa34d159816c01c3e9b62855036a89aa93b3e0a9a4169e96739f7429f8c
+    hash_kind: text
+  - url: http://web.archive.org/web/20060702233720id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一：A股、基金、权证、债券交易费用一览表（时间：2005 年 8 月；存档 2006-07-02）
+    date: '2005-08-31'
+    kind: official
+    quote: 时间： 2005 年 8 月
+    content_sha256: fab82aa34d159816c01c3e9b62855036a89aa93b3e0a9a4169e96739f7429f8c
+    hash_kind: text
+  - url: http://web.archive.org/web/20070703183915id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 5 月 30 日；存档 2007-07-03）
+    date: '2007-05-30'
+    kind: official
+    quote: 佣金 不超过成交金额的 0.1% ，起点 5 元
+    content_sha256: 40b125e6d52d3f024d856040f621d4664371834adfe96370ab06a3bfcb23272e
+    hash_kind: text
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 债券 ( 国债、企业债、可转换公司债券、分离交易的可转换公司债券、公司债、专项资产管理计划等 ) 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 上述标准自2007年10月12日起执行
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  notes: "SSE bonds incl. 可转换公司债券 before the 2007 fixed-income fee change: commission not more than 0.1% of turnover, minimum CNY 5 (起点5元), per the SSE investor fee table (sse.com.cn/ps/zhs/sczn/jyfy.shtml, table dated 2005 年 8 月; Wayback captures 2006-04-08 and 2006-07-02 show it as the current table, so it was in force on the 2006-07-01 coverage floor; the 2007-05-30 version repeats it). This is the exchange-set bond commission that 证监发〔2002〕21号 art. 2 delegates to the exchanges. single-source: effective_from is the coverage floor (the founding filing was not found) and the official text is a summary table read from web.archive.org captures (hashes computed on the archived copies). Ends 2007-10-12: SSE 关于调整固定收益类产品收费标准的通知 (dated 2007-10-11, full text reprinted in 上海证券报; 自2007年10月12日起执行) and the SSE table dated 2007 年 10 月 12 日. published_at: 2005-08-31 is the conservative (latest) day of the table's month (only 2005 年 8 月 is stated). 起点5元 = minimum CNY 5 per order."
+- id: cn.fee.commission_cap.convertible.sse.2007-10-12
+  market: XSHG
+  scope: convertible
+  rule: commission_cap
+  value: 0.0002
+  effective_from: '2007-10-12'
+  effective_to: '2010-12-01'
+  published_at: '2007-10-11'
+  recorded_at: '2026-10-29'
+  verification: single-source
+  sources:
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 债券 ( 国债、企业债、可转换公司债券、分离交易的可转换公司债券、公司债、专项资产管理计划等 ) 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 时间：2007 年 10 月 12 日
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://web.archive.org/web/20090223174146id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2008 年 09 月 19 日；存档 2009-02-23）
+    date: '2008-09-19'
+    kind: official
+    quote: 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: 52a9c6efebc29c57f6e0a7ab017ee34b84f0e7362c356dadba89121faf1f3f8a
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 1、交易佣金：按不超过成交金额的0.2％。收取，起点：1元。
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 上述标准自2007年10月12日起执行
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  notes: "SSE bonds incl. 可转换公司债券 and 分离交易的可转换公司债券: commission not more than 0.02% (0.2‰) of turnover, minimum CNY 1 (起点 1 元), from 2007-10-12. single-source: the notice itself is only a press reprint and the official SSE text is read from a web.archive.org capture (SSE 关于调整固定收益类产品收费标准的通知 dated 2007-10-11: 交易佣金：按不超过成交金额的0.2‰收取，起点1元 … 自2007年10月12日起执行; the notice text is a 上海证券报 reprint, the value and date are also in the official SSE fee table headed 时间：2007 年 10 月 12 日, read from a web.archive.org capture of sse.com.cn; the 2008-09-19 table repeats it). The SSE filing of 2010-11-30 (上证财字〔2010〕6号, cn.fee.*.convertible.sse.2010-12-01) restated the same 0.2‰ / 1 元 from 2010-12-01, so this record ends there with no change in value."
+- id: cn.fee.commission_min_per_order_cny.convertible.sse.2007-10-12
+  market: XSHG
+  scope: convertible
+  rule: commission_min_per_order_cny
+  value: 1
+  unit: CNY
+  effective_from: '2007-10-12'
+  effective_to: '2010-12-01'
+  published_at: '2007-10-11'
+  recorded_at: '2026-10-29'
+  verification: single-source
+  sources:
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 债券 ( 国债、企业债、可转换公司债券、分离交易的可转换公司债券、公司债、专项资产管理计划等 ) 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://web.archive.org/web/20071026015133id_/http://www.sse.com.cn/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2007 年 10 月 12 日；存档 2007-10-26）
+    date: '2007-10-12'
+    kind: official
+    quote: 时间：2007 年 10 月 12 日
+    content_sha256: dea5024fc5bb947c7a53aac8f45bacc36727cef8f6dde04a50903cb61c7b3661
+    hash_kind: text
+  - url: http://web.archive.org/web/20090223174146id_/http://www.sse.com.cn:80/ps/zhs/sczn/jyfy.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 上海证券交易所 交易费用 表一（时间：2008 年 09 月 19 日；存档 2009-02-23）
+    date: '2008-09-19'
+    kind: official
+    quote: 佣金 不超过成交金额的 0.02% ，起点 1 元
+    content_sha256: 52a9c6efebc29c57f6e0a7ab017ee34b84f0e7362c356dadba89121faf1f3f8a
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 1、交易佣金：按不超过成交金额的0.2％。收取，起点：1元。
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  - url: http://paper.cnstock.com/html/2007-10/12/content_59318173.htm
+    publisher: 上海证券报（转载上交所通知）
+    title: 关于调整固定收益类产品收费标准的通知（上海证券交易所，二○○七年十月十一日）
+    date: '2007-10-11'
+    kind: secondary
+    quote: 上述标准自2007年10月12日起执行
+    content_sha256: 851402596503d2f160708362e27e74e7d1a0f9ee38e4927aa4f34119af14a4b7
+    hash_kind: text
+  notes: "SSE bonds incl. 可转换公司债券 and 分离交易的可转换公司债券: commission not more than 0.02% (0.2‰) of turnover, minimum CNY 1 (起点 1 元), from 2007-10-12. single-source: the notice itself is only a press reprint and the official SSE text is read from a web.archive.org capture (SSE 关于调整固定收益类产品收费标准的通知 dated 2007-10-11: 交易佣金：按不超过成交金额的0.2‰收取，起点1元 … 自2007年10月12日起执行; the notice text is a 上海证券报 reprint, the value and date are also in the official SSE fee table headed 时间：2007 年 10 月 12 日, read from a web.archive.org capture of sse.com.cn; the 2008-09-19 table repeats it). The SSE filing of 2010-11-30 (上证财字〔2010〕6号, cn.fee.*.convertible.sse.2010-12-01) restated the same 0.2‰ / 1 元 from 2010-12-01, so this record ends there with no change in value. 起点 1 元 = minimum CNY 1 per order."
+- id: cn.fee.commission_cap.convertible.szse.2006-12-30
+  market: XSHE
+  scope: convertible
+  rule: commission_cap
+  value: 0.001
+  effective_from: '2006-12-30'
+  effective_to: '2014-08-25'
+  published_at: '2006-12-30'
+  recorded_at: '2026-10-29'
+  verification: single-source
+  sources:
+  - url: http://web.archive.org/web/20070407211726id_/http://www.szse.cn:80/main/aboutus/service/sjssf/200311063357.shtml
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（2006-12-30；存档 2007-04-07）
+    date: '2006-12-30'
+    kind: official
+    quote: 可转债 不超过成交金额的 0.1%
+    content_sha256: 3b50985004deb0c5054749f1bceb6e217c60a2e916de7fb4ce45c3f505257cfc
+    hash_kind: text
+  - url: http://web.archive.org/web/20070407211726id_/http://www.szse.cn:80/main/aboutus/service/sjssf/200311063357.shtml
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（2006-12-30；存档 2007-04-07）
+    date: '2006-12-30'
+    kind: official
+    quote: 2006-12-30
+    content_sha256: 3b50985004deb0c5054749f1bceb6e217c60a2e916de7fb4ce45c3f505257cfc
+    hash_kind: text
+  - url: http://web.archive.org/web/20071116160805id_/http://www.szse.cn/main/aboutus/service/sjssf/
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（更新日期 2007-11-12；存档 2007-11-16）
+    date: '2007-11-12'
+    kind: official
+    quote: 可转债 不超过成交金额的 0.1%
+    content_sha256: 85f052843821f1bb6923b3272e0a51f131186662aaf6c668ce3fbf95bbe28a85
+    hash_kind: text
+  - url: http://web.archive.org/web/20140703045339id_/http://www.szse.cn/main/aboutus/service/sjssf/
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（更新日期 2013-11-14；存档 2014-07-03）
+    date: '2013-11-14'
+    kind: official
+    quote: 可转债 不超过成交金额的 0.1%
+    content_sha256: c64ce0389c61a9a7bd5e98ee1e8ddcab0814283db3374121ffe456d5d482cce4
+    hash_kind: text
+  - url: http://web.archive.org/web/20140703045339id_/http://www.szse.cn/main/aboutus/service/sjssf/
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（更新日期 2013-11-14；存档 2014-07-03）
+    date: '2013-11-14'
+    kind: official
+    quote: 更新日期： 2013-11-14
+    content_sha256: c64ce0389c61a9a7bd5e98ee1e8ddcab0814283db3374121ffe456d5d482cce4
+    hash_kind: text
+  - url: http://web.archive.org/web/20150118015431id_/http://www.szse.cn/main/aboutus/service/sjssf/
+    publisher: 深交所（szse.cn 页面，web.archive.org 存档）
+    title: 深圳证券交易所收费（及代收税费）明细表（更新日期 2014-08-25；存档 2015-01-18）—— 佣金栏已删除
+    date: '2014-08-25'
+    kind: official
+    quote: 更新日期： 2014-08-25
+    content_sha256: a00d5e6a37671eb7c59d9cb0737b1e431fd11876d222986a99697ea7a83bacff
+    hash_kind: text
+  notes: "SZSE 可转债: commission not more than 0.1% (1‰) of turnover — SZSE's own fee table 深圳证券交易所收费（及代收税费）明细表 (szse.cn/main/aboutus/service/sjssf/, row 佣金 / 可转债, payer 投资者交证券公司), read from web.archive.org captures of szse.cn: the version dated 2006-12-30, the 2007-11-12 update (after the 2007-11-12 fixed-income fee change 深证会〔2007〕108号, which lowered 债券现货 to 0.2‰ but did not cover 可转债) and the 2013-11-14 update all state it. This is the exchange-set convertible commission delegated by 证监发〔2002〕21号 art. 2. single-source: dates are the table's own dates, not a filing's effective date; the founding filing was not found. effective_from 2006-12-30 = the earliest dated official statement (2006-07-01..2006-12-30 stays unresolved rather than back-dated). effective_to 2014-08-25 = the table version that no longer has a 佣金 section at all (the A-share 3‰ row disappeared too, so the removal looks editorial, not a repeal) — after it no official SZSE text states a convertible commission; that period is unresolved, not 'no cap'. No minimum (起点) is stated for 可转债 (A shares: 起点 5 元); the minimum is NOT recorded from that silence (unresolved)."
+- id: cn.fee.commission_cap.convertible.sse.2010-12-01
+  market: XSHG
+  scope: convertible
+  rule: commission_cap
+  value: 0.0002
+  effective_from: '2010-12-01'
+  effective_to: '2021-12-31'
+  published_at: '2010-11-30'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: （一）交易佣金：按照不超过成交金额的 0.2 ‰收取，起点 1 元。
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: 债券（含国债、企业债、公司债、可转换公司债券、分离交易的可转换公司债券等，下同）
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: 上述标准自 2010 年 12 月 1 日起开始执行
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/repeal/rules/c/10118697/files/4e0eadfb56ae4ce79af2aa511c7469ea.doc
+    publisher: 上交所
+    title: 上证发〔2021〕95号 附件2 集中废止的收费业务通知清单
+    date: '2021-12-31'
+    kind: official
+    quote: 上证财字[2010]6号
+    content_sha256: 122c0a3bda73d9c4786939a1d1d5e582336b1eab301039a7466e14b93cdefc97
+    hash_kind: bytes
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/repeal/rules/c/c_20220729_5706488.shtml
+    publisher: 上交所
+    title: 【失效】关于发布《上海证券交易所收费管理规则适用指引第1号——收费项目及标准》的通知（上证发〔2021〕95号）
+    date: '2021-12-31'
+    kind: official
+    quote: 本所前期发布的相关收费业务通知（详见附件2）同时废止。
+    content_sha256: 5d569fe5b6ea0166ee326151cbf4cf608ceddc39bccb3fe7852a515bfa02de5d
+    hash_kind: text
+  notes: SSE fixed-income fee notice 上证财字〔2010〕6号 sets the bond spot-trading commission — bonds explicitly including 可转换公司债券 —
+    at not more than 0.2‰ of turnover, minimum CNY 1, from 2010-12-01; this is the exchange filing that 证监发〔2002〕21号 art. 2 delegates
+    to the exchanges. Repealed on 2021-12-31 by 上证发〔2021〕95号 (list item 4); the replacing fee guide states no commission level,
+    so no record after 2021-12-31 (unresolved). The same 0.2‰ / 1 元 applied from 2007-10-12 (cn.fee.*.convertible.sse.2007-10-12).
+- id: cn.fee.commission_min_per_order_cny.convertible.sse.2010-12-01
+  market: XSHG
+  scope: convertible
+  rule: commission_min_per_order_cny
+  value: 1
+  unit: CNY
+  effective_from: '2010-12-01'
+  effective_to: '2021-12-31'
+  published_at: '2010-11-30'
+  recorded_at: '2026-10-26'
+  verification: verified
+  sources:
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: （一）交易佣金：按照不超过成交金额的 0.2 ‰收取，起点 1 元。
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: 债券（含国债、企业债、公司债、可转换公司债券、分离交易的可转换公司债券等，下同）
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: http://www.sse.com.cn/lawandrules/sselawsrules2025/repeal/rules/c/c_20120918_10784960.shtml
+    publisher: 上交所
+    title: 【失效】关于调整固定收益类产品收费标准的通知（上证财字〔2010〕6号）
+    date: '2010-11-30'
+    kind: official
+    quote: 上述标准自 2010 年 12 月 1 日起开始执行
+    content_sha256: 4a3458a76a5c6054c97b8aee8d1c9abfac700a0ff3730f1738500062dfdaaebb
+    hash_kind: text
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/repeal/rules/c/10118697/files/4e0eadfb56ae4ce79af2aa511c7469ea.doc
+    publisher: 上交所
+    title: 上证发〔2021〕95号 附件2 集中废止的收费业务通知清单
+    date: '2021-12-31'
+    kind: official
+    quote: 上证财字[2010]6号
+    content_sha256: 122c0a3bda73d9c4786939a1d1d5e582336b1eab301039a7466e14b93cdefc97
+    hash_kind: bytes
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/repeal/rules/c/c_20220729_5706488.shtml
+    publisher: 上交所
+    title: 【失效】关于发布《上海证券交易所收费管理规则适用指引第1号——收费项目及标准》的通知（上证发〔2021〕95号）
+    date: '2021-12-31'
+    kind: official
+    quote: 本所前期发布的相关收费业务通知（详见附件2）同时废止。
+    content_sha256: 5d569fe5b6ea0166ee326151cbf4cf608ceddc39bccb3fe7852a515bfa02de5d
+    hash_kind: text
+  notes: SSE fixed-income fee notice 上证财字〔2010〕6号 sets the bond spot-trading commission — bonds explicitly including 可转换公司债券 —
+    at not more than 0.2‰ of turnover, minimum CNY 1, from 2010-12-01; this is the exchange filing that 证监发〔2002〕21号 art. 2 delegates
+    to the exchanges. Repealed on 2021-12-31 by 上证发〔2021〕95号 (list item 4); the replacing fee guide states no commission level,
+    so no record after 2021-12-31 (unresolved). The same 0.2‰ / 1 元 applied from 2007-10-12 (cn.fee.*.convertible.sse.2007-10-12). 起点 1 元 = minimum
+    CNY 1 per order.

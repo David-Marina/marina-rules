@@ -1,0 +1,82 @@
+# China A-share investor suitability (MIC XSHG): requirements a broker must check before accepting an ordinary
+# investor's orders. Rule: retail_risk_disclosure_required (boolean). Scopes: star_growth_new, star_growth_legacy
+# (STAR Market growth tier, from 2025-07-13); membership is the caller's per-security fact (context key
+# star_growth_tier, data/cn/scopes.yaml). Sources: SSE notice and the SSE's same-day press Q&A.
+schema: 1.1
+market: XSHG
+asset_class: equity
+records:
+- id: cn.suitability.star_growth_new.2025-07-13
+  scope: star_growth_new
+  rule: retail_risk_disclosure_required
+  value: true
+  effective_from: 2025-07-13
+  published_at: '2025-07-13'
+  recorded_at: '2026-11-08'
+  verification: single-source
+  sources:
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/bond/convertible/trading/c/c_20250711_10784585.shtml
+    publisher: 上海证券交易所
+    title: 关于发布《上海证券交易所科创板科创成长层企业股票投资风险揭示书必备条款》的通知（上证函〔2025〕2218号）
+    date: '2025-07-13'
+    kind: official
+    quote: 自本通知发布之日起，普通投资者首次参与新注册的科创板科创成长层股票、存托凭证（以下统称科创成长层股票）的申购、交易（以下统称交易）前，证券公司应当充分告知相关风险，并要求其以纸面或电子形式签署《科创成长层风险揭示书》。投资者未签署的，证券公司不得接受其相关委托。……上海证券交易所 2025年7月13日
+    content_sha256: d7bdb1f38cee100ab382085dd45f1a2899debf66a5eb777eadaf227244ae3cf5
+    hash_kind: text
+  - url: https://www.sse.com.cn/star/media/news/c/c_20250711_10786935.shtml
+    publisher: 上海证券交易所
+    title: 上交所就发布实施进一步深化科创板改革配套业务规则答记者问
+    date: '2025-07-13'
+    kind: official
+    quote: 本次改革没有对个人投资者参与科创成长层股票交易新增投资交易门槛，仍为具备“50万元资产＋2年经验”的资金门槛和投资经验即可。……对于已开通科创板交易权限的存量普通投资者，只有在签署《科创成长层风险揭示书》后，方可参与新注册的科创成长层股票的申购、交易。……科创成长层股票简称后增加了特殊标识“U”。……对新注册科创成长层股票添加标签“成”，提示信息为“新注册科创成长层股票”；对存量科创成长层股票添加标签“成1”
+    content_sha256: a183a2f691de47ce6919cab58fb31f770502963fd01c0d75bf997390d50bba80
+    hash_kind: text
+  notes: >-
+    Ordinary (non-professional) investors only, before their first subscription or trade in a newly registered STAR
+    growth-tier share or depositary receipt: the broker must explain the risks and have the investor sign the
+    growth-tier risk disclosure statement (on paper or electronically), and must not accept the investor's orders
+    until it is signed. Investors who already hold STAR trading permission must also sign before trading these
+    stocks. Unchanged and not encoded here: the STAR account threshold (CNY 500k in assets and 2 years of trading
+    experience) and the general STAR risk disclosure signed when that permission is opened. Callers can tell
+    membership from the exchange's markings: growth-tier names carry the suffix U, and quote and trading terminals
+    label newly registered growth-tier stocks 成 and existing ones 成1. A stock leaves the tier once it meets the
+    exit conditions; whether it is in the tier on a date is the caller's fact (context key star_growth_tier). The
+    notice is dated 2025-07-13 and takes effect on publication (the page URL carries 20250711). Both texts are from
+    one publisher, the SSE, hence single-source; the CSRC opinion the notice implements was not fetched. No record
+    before 2025-07-13: the growth tier did not exist.
+- id: cn.suitability.star_growth_legacy.2025-07-13
+  scope: star_growth_legacy
+  rule: retail_risk_disclosure_required
+  value: false
+  effective_from: 2025-07-13
+  published_at: '2025-07-13'
+  recorded_at: '2026-11-08'
+  verification: single-source
+  sources:
+  - url: https://www.sse.com.cn/lawandrules/sselawsrules/bond/convertible/trading/c/c_20250711_10784585.shtml
+    publisher: 上海证券交易所
+    title: 关于发布《上海证券交易所科创板科创成长层企业股票投资风险揭示书必备条款》的通知（上证函〔2025〕2218号）
+    date: '2025-07-13'
+    kind: official
+    quote: 投资者参与本通知发布前已上市且上市后尚未首次实现盈利的科创板公司股票、存托凭证交易的，无需签署《科创成长层风险揭示书》。……上海证券交易所 2025年7月13日
+    content_sha256: d7bdb1f38cee100ab382085dd45f1a2899debf66a5eb777eadaf227244ae3cf5
+    hash_kind: text
+  - url: https://www.sse.com.cn/star/media/news/c/c_20250711_10786935.shtml
+    publisher: 上海证券交易所
+    title: 上交所就发布实施进一步深化科创板改革配套业务规则答记者问
+    date: '2025-07-13'
+    kind: official
+    quote: 存量32家未盈利企业将自指引发布实施之日起进入科创成长层……存量企业调出条件保持不变，仍为上市后首次实现盈利……科创成长层股票简称后增加了特殊标识“U”。……对存量科创成长层股票添加标签“成1”
+    content_sha256: a183a2f691de47ce6919cab58fb31f770502963fd01c0d75bf997390d50bba80
+    hash_kind: text
+  notes: >-
+    STAR shares and depositary receipts listed before the notice and not yet profitable since listing, which entered
+    the growth tier on 2025-07-13: no growth-tier risk disclosure statement is needed to trade them. The exemption is
+    stated by the notice; false is a sourced fact, not a default. Unchanged and not encoded here: the STAR account
+    threshold (CNY 500k in assets and 2 years of trading experience) and the general STAR risk disclosure, which still
+    apply. Callers can tell membership from the exchange's markings: growth-tier names carry the suffix U, and quote
+    and trading terminals label these existing growth-tier stocks 成1. Such a stock leaves the tier once it first
+    turns a profit after listing (the exit condition for existing members); whether it is in the tier on a date is
+    the caller's fact (context key star_growth_tier). Both texts are from one publisher, the SSE, hence
+    single-source; the CSRC opinion the notice implements was not fetched. No record before 2025-07-13: the growth
+    tier did not exist.

@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+ops/logs/
+ops/reports/
+
+# vendored copy for wheels (scripts/vendor_data.py); never commit
+src/marina_rules/data/
+dist/
+build/
+*.egg-info/
+uv.lock

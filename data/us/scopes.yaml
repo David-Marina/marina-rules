@@ -1,0 +1,33 @@
+# Scope registry · US equities (NYSE, MIC XNYS; Nasdaq, MIC XNAS)
+# A scope names *which securities* a rule applies to. Each scope declares what the caller must already
+# know about the security to legitimately select it. Marina never infers this context (it holds rules,
+# not security histories); it refuses to answer when the context is missing — see coverage().
+#
+# requires vocabulary: none yet. Both scopes below are selected by instrument type alone; no rule recorded for
+# them depends on per-security, per-date context held here. luld_band is a tier map: the security's LULD tier and
+# a leveraged ETP's ratio are the caller's to determine, as its notes say; likewise single_stock_pause_pct is a group
+# map, and index or designated-ETP membership is the caller's (Marina stores no constituents). Where one value cannot
+# describe the whole scope (the LULD phase-in 2013-04-08..2013-12-08; the trading-pause pilot's per-security activation
+# before 2011-08-08 and its replacement by LULD; the broker-by-broker move from the pattern-day-trader requirement to
+# intraday margin from 2026-06-04), a known gap is declared instead of a context key. Marina stores no broker either.
+# session_schedule / extended_hours are recorded per exchange: market XNYS or XNAS means the security's primary listing
+# exchange (the caller knows it); trading of the same security on other exchanges is not modelled.
+#
+# excludes: scopes that must NOT be simultaneously selected for the same security/date; selecting two
+# scopes that are mutually exclusive is a caller error.
+#
+# asserts / rule_asserts: same grammar as data/cn/scopes.yaml (see its header); none are declared here yet.
+#
+# Not covered (no scope, no record): preferred shares, warrants, rights, closed-end funds, ETNs and other non-ETF
+# exchange-traded products, OTC equities, options; ETF creation and redemption baskets.
+schema: 1.1
+market: XNYS+XNAS
+scopes:
+  us_stock:
+    description: Exchange-listed NMS common stocks; ordinary secondary-market transactions. Marina coverage from 2010-01-01.
+    requires: []
+    excludes: [us_etf]
+  us_etf:
+    description: Exchange-listed ETFs that are NMS stocks; ordinary secondary-market share transactions, excluding creation/redemption baskets. Marina coverage from 2010-01-01.
+    requires: []
+    excludes: [us_stock]
