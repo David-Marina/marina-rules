@@ -270,8 +270,9 @@ tested against them in CI; the first run caught a real defect. `python conforman
 `scripts/build_site.py` turns the data into static pages, one per market family, scope and rule: every record of that
 rule with its interval, value, verification level, sources, verbatim quotes and content hashes, plus the known gaps,
 the tracked-through date and the exact call that answers it. Definitions are copied from the rule tables in
-[docs/SCHEMA.md](docs/SCHEMA.md); nothing on a page is written by hand. Each page also has a Markdown twin, and
-`llms.txt` lists them all. Two builds of the same data are byte-identical.
+[docs/SCHEMA.md](docs/SCHEMA.md); no statement about a rule is written by hand (only fixed labels and headings
+are). Each page also has a Markdown twin, and `llms.txt` lists them all. Two builds of the same data are
+byte-identical.
 
 ```bash
 python scripts/build_site.py --out site

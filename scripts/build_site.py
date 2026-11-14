@@ -54,12 +54,14 @@ table{border-collapse:collapse;margin:.5rem 0}
 th,td{border:1px solid var(--line);padding:.25rem .45rem;text-align:left;vertical-align:top}
 th{background:var(--head)}
 td{overflow-wrap:anywhere}
+td:first-child{white-space:nowrap}
+p,li{overflow-wrap:anywhere}
 table table{margin:0;font-size:.92em}
 blockquote{margin:.4rem 0;padding:.4rem .8rem;border-left:4px solid var(--line);background:var(--quote);
 white-space:pre-wrap;overflow-wrap:anywhere}
 .muted{color:var(--muted)}
-dl{display:grid;grid-template-columns:max-content 1fr;gap:.15rem .8rem}
-dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}
+dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.15rem .8rem}
+dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere;overflow-x:auto}
 ul.src{padding-left:1.1rem}
 """.strip()
 
