@@ -66,11 +66,15 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
 - **Statutory fees of a fill**: `statutory_fee_floor(turnover, side, date, market)` and
   `statutory_fee_components(...)` (per rule, with record ids).
 - **One command line**, `marina-rules` (= `python -m marina_rules`): `query`, `rules`, `scopes`, `fees`, `check`,
-  `adapt`, `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
+  `adapt`, `mcp`, `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
 - **`marina-check`**: `--no-tick`, `--band-tolerance-pct`, `--assume-seasoned` (relaxed runs: no stamp), `--rows`,
   `--top-codes`; the scope may be left empty and chosen from `board`, `st`, `listing_day_index` / `list_date`
   (`board_for_code` fills the board from the code); optional `day_high` / `day_low` add `PRICE_OUTSIDE_DAY_RANGE`;
   `hints` for price-basis mismatches; `summary` by scope, year, side and code.
+- **MCP server** for AI assistants: `pip install "marina-rules[mcp]"` (Python 3.10+), then `marina-rules-mcp` (or
+  `marina-rules mcp`). Read-only tools `resolve`, `limit_price`, `statutory_fees`, `coverage`, `list_scopes`,
+  `list_rules`, `check_fills`, `citation`; every answer carries the citation, and a refusal is returned as an error
+  that says what to ask instead. Nothing changes for code that does not use it.
 - **Engine exports** — `marina-rules adapt`, and `marina-check FILE --format NAME`: reads the trades of RQAlpha,
   vn.py, backtrader, 掘金 gm or any table with common column names (`generic`; `--map`, `--side-values`,
   `--side-from-sign`, `--date-format`), and joins what an engine does not export — previous close, day high / low,
