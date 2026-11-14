@@ -17,7 +17,7 @@ def test(id,group,expected,fn):
  except Exception as e: got={'error':type(e).__name__,'message':str(e)};ok=False
  R.append(dict(id=id,group=group,expected=expected,actual=got,status='PASS' if ok else 'FAIL'))
 def ra(scope,date,market='XSHE',rule='price_limit_pct'):
- if m.DATA_VERSION=='2026.10.24b':
+ if m.VERSION=='2026.10.24b':
   scope='ipo_first5' if scope.startswith('ipo_first5_') else ('ipo_day1' if scope=='ipo_day1_main' else scope)
  return m.rule_at(rule,date,scope,market)
 def res(scope,ctx,rule='price_limit_pct',date='2024-06-14',market='XSHE'):
@@ -44,7 +44,7 @@ test('ASOF-resolve','as_of',True,lambda:resolve is not None and 'as_of' in inspe
 from marina_rules.check import check_rows
 base={'date':'2024-06-14','code':'000001','side':'buy','price':10,'prev_close':10,'scope':'main_board','market':'XSHE'}
 test('CHECK-OFFTICK','fill_validation',False,lambda:check_rows([{**base,'price':10.001}])['rules_verified'])
-test('CHECK-NAN-UNLIMITED','fill_validation',False,lambda:check_rows([{**base,'price':'nan','scope':'ipo_first5' if m.DATA_VERSION=='2026.10.24b' else 'ipo_first5_main'}])['rules_verified'])
+test('CHECK-NAN-UNLIMITED','fill_validation',False,lambda:check_rows([{**base,'price':'nan','scope':'ipo_first5' if m.VERSION=='2026.10.24b' else 'ipo_first5_main'}])['rules_verified'])
 test('STAMP-FEE','stamp',False,lambda:check_rows([{**base,'fee':1,'turnover':10000}])['stamp']==check_rows([{**base,'fee':2,'turnover':10000}])['stamp'])
 test('STAMP-MARKET','stamp',False,lambda:check_rows([base])['stamp']==check_rows([{**base,'market':'XSHG'}])['stamp'])
 if True:
@@ -60,4 +60,4 @@ def overlap():
 test('OVERLAP-MARKET','conflict','CONFLICT',overlap)
 repo=Path(sys.argv[1]);spec=importlib.util.spec_from_file_location('auditbars',repo/'scripts/audit_bars.py');ab=importlib.util.module_from_spec(spec);spec.loader.exec_module(ab)
 test('AUDIT-IPO-DATE','bar_audit',['ipo_day1_main','XSHG+XSHE'],lambda:list(ab.scope_cn_a('sh.603000','2023-03-01',0)))
-print(json.dumps({'version':m.DATA_VERSION,'digest':m.dataset_digest(),'summary':dict(Counter(x['status'] for x in R)),'tests':R},ensure_ascii=False,indent=2))
+print(json.dumps({'version':m.VERSION,'digest':m.dataset_digest(),'summary':dict(Counter(x['status'] for x in R)),'tests':R},ensure_ascii=False,indent=2))

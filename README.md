@@ -9,7 +9,7 @@ Use it to check that a backtest applied the rules in force on each day — China
 > **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md)。
 
 ```
-rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae
+rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
@@ -27,15 +27,19 @@ A shared, cited, versioned table fixes this the way tzdata fixed time zones: not
 ## Use
 
 ```bash
-pip install marina-rules      # the code; pip installs the dataset (marina-rules-data) with it — nothing is fetched at run time
-pip install -U marina-rules-data   # later: newer rules under the same code
+pip install marina-rules       # the rules, and (as a dependency) the code that reads them — nothing is fetched at run time
+pip install -U marina-rules    # every week or so: newer rules; the code is upgraded only when they need it
 # or take the JSON / SQLite dump attached to each data release on GitHub — same bytes, same digest
 ```
 
-Marina is two packages, like the time-zone database and its readers: **`marina-rules-data`** holds the rules
-(versioned by date, `YYYY.MM.DD`, released whenever the data changes) and **`marina-rules`** is the code that reads
-them (semantic versions, released only when the code changes). Upgrading one does not require upgrading the other;
-the code checks at import that it can read the installed data and, if not, says which package to upgrade.
+Marina is two packages, like the time-zone database and its readers. **`marina-rules`** is the one you install and
+upgrade: it holds the rules and is versioned by date (`YYYY.MM.DD`), with a release whenever the data changes —
+usually weekly. **`marina-rules-core`** is the code that reads them (lookups, the fill checker, the adapters, the
+command line): semantic versions from `1.0.0`, released only when a feature or a fix is ready. `marina-rules` depends
+on it, so `pip install marina-rules` installs both; `pip install -U marina-rules-core` takes a new code release
+without waiting for the next data release. You import `marina_rules` either way. At import the code checks that it can
+read the installed data and, if not, says which of the two packages to upgrade. Releases up to 2026.11.16 were one
+package holding both; `pip install -U marina-rules` upgrades from them like from any other version.
 
 ```python
 import marina_rules as mr
@@ -45,7 +49,7 @@ mr.rule_at("price_limit_pct", "2020-08-23", "chinext", "XSHE")   # 0.10
 mr.limit_price(10.00, "chinext", "2021-03-01", "XSHE") # (12.0, 8.0)  — exchange rounding
 mr.limit_price(10.00, "ipo_first5_main", "2024-01-30", "XSHG+XSHE")  # None — unlimited band
 mr.rule_at("stamp_duty_sell", "2005-01-01")            # KeyError — no defaults, ever
-mr.citation()   # 'rules: marina-rules-data@<data version> sha256:<16 hex> code: marina-rules@<code version>'
+mr.citation()   # 'rules: marina-rules@<data version> sha256:<16 hex> code: marina-rules-core@<code version>'
 
 # Pre-flight a whole backtest window before running it:
 mr.coverage("XSHE", "chinext", ["price_limit_pct"], "2019-01-01", "2026-10-19")
@@ -105,19 +109,36 @@ The data is plain YAML under [`data/`](https://github.com/David-Marina/marina-ru
 
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes.
 
+```
+rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0
+```
+
+`marina-rules@…` is the data version (`mr.VERSION`, the version of the `marina-rules` package) and `sha256:…` the
+first 16 hex of `mr.dataset_digest()`, computed over the rule files themselves: two results citing the same digest ran
+against byte-identical rules. `code: marina-rules-core@…` is the code that read them (`mr.__version__`); a code release
+changes how questions are answered only where its CHANGELOG entry says so. `marina-rules version` prints the same line.
+Tools that read the line up to the digest keep working: the code version is appended after it.
+
 ### Which version to use
 
-A release goes out most Mondays: rule changes, corrections, and the date through which each market's sources were
-checked. Old versions stay installable — that is what makes a citation re-runnable.
+A data release goes out most Mondays: rule changes, corrections, and the date through which each market's sources were
+checked. The code changes far less often, when a new function or a fix is ready; a data release that needs newer code
+requires it, and pip installs it. Old versions of both stay installable — that is what makes a citation re-runnable.
 
-- **Research you will publish or compare later:** pin the exact version (`marina-rules==<version>`) and cite it.
-- **Anything that asks about recent or current dates:** upgrade weekly and pass `require_tracked=True`. An installed
+- **Research you will publish or compare later:** pin both versions the citation names
+  (`pip install "marina-rules==<data version>" "marina-rules-core==<code version>"`) and cite it. A citation without
+  `code:` comes from a release up to 2026.11.16, which carried its own code: `marina-rules==<version>` alone pins it.
+- **Anything that asks about recent or current dates:** upgrade weekly (`pip install -U marina-rules`) and pass
+  `require_tracked=True`. An installed
   version knows the last date its sources were checked (`tracked_through`); asked about a later date it warns that
   the answer is carried forward, and with `require_tracked=True` it refuses instead.
 - **After upgrading:** each
   [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md) entry opens with three lines: which rules changed, what was corrected, and whether
   anything is incompatible. In a clone of the repository, `python -m marina_rules.diff <old tag> <new tag>` lists every
   changed record and the intervals to re-run.
+- **The code:** `pip install -U marina-rules` upgrades it only when the new data requires it. To take a code release
+  sooner — a new function, a fix — run `pip install -U marina-rules-core`; its CHANGELOG entry
+  (`## [marina-rules-core X.Y.Z]`) says what changed and whether any answer differs.
 
 A published version is not deleted. When one turns out to give wrong answers, the release that fixes it says so at
 the top of its [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md) entry, with what to re-run.
@@ -307,12 +328,12 @@ on that date), **coverage_added**, **rename**, **bookkeeping** or **metadata**. 
 `(market, scope, rule, interval)` list you must re-run. Both versions are pinned by dataset digest.
 Marina does not estimate P&L impact; that is what the interval is for.
 
-With the packages installed, compare the dataset you had with the one you have now. Before upgrading, note the data
+With the package installed, compare the dataset you had with the one you have now. Before upgrading, note the data
 version (`marina-rules version`); afterwards fetch the old one and diff the two directories:
 
 ```bash
-pip download "marina-rules-data==<old version>" --no-deps -d old/ && python -m zipfile -e old/*.whl old/
-python -m marina_rules.diff old/marina_rules_data/data "$(python -c 'import marina_rules as mr; print(mr.DATA_DIR)')"
+pip download "marina-rules==<old version>" --no-deps -d old/ && python -m zipfile -e old/*.whl old/
+python -m marina_rules.diff old/marina_rules/data "$(python -c 'import marina_rules as mr; print(mr.DATA_DIR)')"
 ```
 
 ## Conformance vectors — check *your* implementation, in any language
@@ -362,8 +383,8 @@ The China A-share timeline was cross-checked against the rule histories compiled
 
 ## License
 
-Data (`data/`, `docs/`): [CC0 1.0](https://github.com/David-Marina/marina-rules/blob/main/LICENSE-DATA) — no rights reserved.
-Code (`src/`, `scripts/`, `tests/`): [MIT](https://github.com/David-Marina/marina-rules/blob/main/LICENSE).
+Data (`data/`, `docs/`; in the `marina-rules` package): [CC0 1.0](https://github.com/David-Marina/marina-rules/blob/main/LICENSE-DATA) — no rights reserved.
+Code (`src/`, `scripts/`, `tests/`; the `marina-rules-core` package and the module `marina_rules`): [MIT](https://github.com/David-Marina/marina-rules/blob/main/LICENSE).
 
 ## About the name
 

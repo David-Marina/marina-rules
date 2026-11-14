@@ -78,7 +78,7 @@ def test_fact_page_count_matches_the_data(built, manifest):
         assert f"{pfx}/{scope}/{rule}.html" in built["files"] and f"{pfx}/{scope}/{rule}.md" in built["files"]
     assert manifest["counts"]["records"] == len(mr.records())
     assert manifest["citation"] == mr.citation()
-    assert manifest["data_version"] == mr.DATA_VERSION and manifest["code_version"] == mr.__version__
+    assert manifest["version"] == mr.VERSION and manifest["code_version"] == mr.__version__
 
 
 def test_build_reports_pages_and_time(built):

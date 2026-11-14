@@ -11,12 +11,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "${{ matrix.python }}" }
-      - name: install both packages from this checkout (marina-rules-data is generated from data/)
+      - name: install both packages from this checkout (the code first; marina-rules is generated from data/)
         run: |
           pip install pytest pyyaml
           python scripts/vendor_data.py
-          pip install ./packages/marina-rules-data
           pip install -e .
+          pip install ./packages/marina-rules
       - name: schema + semantics tests
         run: pytest -q
       - name: capabilities.json and decision schema are generated from data and committed

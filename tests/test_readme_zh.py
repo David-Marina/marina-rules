@@ -29,7 +29,7 @@ def test_both_readmes_link_to_each_other():
 
 def test_no_release_specific_numbers_to_go_stale():
     zh = _read("README.zh-CN.md")
-    assert mr.DATA_VERSION not in zh and mr.__version__ not in zh and mr.dataset_digest()[:16] not in zh
+    assert mr.VERSION not in zh and mr.__version__ not in zh and mr.dataset_digest()[:16] not in zh
     assert str(len(mr.records())) not in zh
 
 
@@ -141,8 +141,11 @@ def test_check_help_prints_the_canonical_form_literally(capsys):
 
 
 def test_packaging_metadata_names_both_licences_and_the_search_words():
-    py = _read("pyproject.toml")
+    # the PyPI page people find is marina-rules (the dataset, packages/marina-rules/); marina-rules-core is the code
+    py = _read("packages/marina-rules/pyproject.toml")
     assert 'license = "MIT AND CC0-1.0"' in py and 'license-files = ["LICENSE", "LICENSE-DATA"]' in py
+    core = _read("pyproject.toml")
+    assert 'license = "MIT"' in core and 'license-files = ["LICENSE"]' in core
     for word in ("A-share", "涨跌停", "backtests", "AI agents"):
         assert word in re.search(r'^description = "(.*)"$', py, flags=re.M).group(1)
     for word in ("涨跌停", "印花税", "回测", "price-limit", "stamp-duty", "a-share", "backtest-validation"):

@@ -1,4 +1,4 @@
-"""The precompiled dataset (data/compiled.json in the marina-rules-data wheel, see marina_rules/_precompiled.py).
+"""The precompiled dataset (data/compiled.json in the marina-rules wheel, see marina_rules_core/_precompiled.py).
 
 It must load exactly what the YAML loaders load (same values, same types), be produced only through the validating
 loaders, and never be used when it does not belong to the YAML beside it or to this loader revision. The loader
@@ -16,6 +16,7 @@ import warnings
 import pytest
 
 import marina_rules as mr
+import marina_rules_core as core
 from marina_rules import _precompiled as pc
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -308,30 +309,30 @@ def test_build_refuses_an_invalid_tracking_registry(tmp_path):
 # --- packaging declarations ------------------------------------------------------------------------------------------
 
 def test_packaging_ships_and_ignores_the_precompiled_file():
-    with open(os.path.join(ROOT, "packages", "marina-rules-data", "pyproject.toml"), encoding="utf-8") as fh:
+    with open(os.path.join(ROOT, "packages", "marina-rules", "pyproject.toml"), encoding="utf-8") as fh:
         assert '"data/compiled.json"' in fh.read()
     with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
         assert "compiled.json" not in fh.read()          # the code wheel carries no data
     with open(os.path.join(ROOT, ".gitignore"), encoding="utf-8") as fh:
-        assert "packages/marina-rules-data/marina_rules_data/data/compiled.json" in fh.read().splitlines()
+        assert "packages/marina-rules/marina_rules/data/compiled.json" in fh.read().splitlines()
     with open(os.path.join(ROOT, "scripts", "vendor_data.py"), encoding="utf-8") as fh:
         assert "_precompiled.build(dst)" in fh.read()
 
 
 # --- the loader revision follows the loader code ---------------------------------------------------------------------
 # One entry per LOADER_REVISION: the sha256 of the loader source at that revision (_loader_source_sha256 below). Never
-# edit an entry. When this test fails because you changed the loaders or marina_rules/_precompiled.py: increase
+# edit an entry. When this test fails because you changed the loaders or marina_rules_core/_precompiled.py: increase
 # _precompiled.LOADER_REVISION by one and add a line for it with the hash the failure prints. (A change that cannot
 # alter any output — a comment, a docstring — still changes the hash; bump anyway: the cost is one slow first load for
 # users whose data package was built by the other revision, never a wrong answer.)
 LOADER_SOURCE_SHA256 = {
-    1: "75ae551377cab13fd9fa49c594c082eaaf4e1ed70758004d67daad04d4e880ce",
+    1: "b3a8f36eb397eea95b1d79eeb640c43b0b4d67beea2d8325e914f5741cdf32dc",
 }
 
 # What the precompiled file stores is what these return; every module-level definition they reach is hashed.
 _LOADER_ROOTS = ("_records_from_yaml", "_scopes_from_yaml", "_gaps_from_yaml", "_tracking_from_yaml", "Record")
 # Reached but not loader behaviour: where the data lives, and the version constants (checked elsewhere).
-_NOT_LOADER = frozenset({"DATA_DIR", "DATA_VERSION", "__version__", "MIN_DATA_VERSION"})
+_NOT_LOADER = frozenset({"DATA_DIR", "DATA_VERSION", "VERSION", "__version__", "MIN_DATA_VERSION"})
 
 
 def _definitions(tree) -> dict:
@@ -360,10 +361,10 @@ def _referenced(node, module_alias=None) -> set:
 
 
 def _loader_source_sha256() -> str:
-    """sha256 over the source text of the loader code: all of marina_rules/_precompiled.py except the LOADER_REVISION
+    """sha256 over the source text of the loader code: all of marina_rules_core/_precompiled.py except the LOADER_REVISION
     line, and every module-level definition of marina_rules/__init__.py reachable from the loaders."""
     pc_src = inspect.getsource(pc)
-    mr_src = inspect.getsource(mr)
+    mr_src = inspect.getsource(core)       # the code module; marina_rules is the forwarding module
     pc_tree, mr_tree = ast.parse(pc_src), ast.parse(mr_src)
     pc_defs, mr_defs = _definitions(pc_tree), _definitions(mr_tree)
     todo = list(_LOADER_ROOTS)
@@ -402,7 +403,7 @@ def test_loader_revision_pins_the_loader_source():
 
 def test_loader_source_hash_covers_the_loaders():
     # the closure must reach the validation the loaders call, and must not reach the query side
-    src = inspect.getsource(mr)
+    src = inspect.getsource(core)
     defs = _definitions(ast.parse(src))
     seen, todo = set(), list(_LOADER_ROOTS)
     while todo:

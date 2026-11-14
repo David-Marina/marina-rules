@@ -205,7 +205,7 @@ def run(until: str | None = None, brute: bool = False, path: str = TARGETS) -> d
                                 "sources": [x["url"] for x in r["not_applicable"]["sources"]]}
                                for r in rows if r["not_applicable"]],
             "rows": rows,
-            "data_version": mr.DATA_VERSION, "code_version": mr.__version__, "dataset_digest": mr.dataset_digest()}
+            "marina_version": mr.VERSION, "code_version": mr.__version__, "dataset_digest": mr.dataset_digest()}
 
 
 def _gap_groups(rep: dict) -> list:
@@ -222,7 +222,7 @@ def _gap_groups(rep: dict) -> list:
 def _fmt(rep: dict, markdown: bool) -> str:
     L = []
     head = (f"Coverage of China A-shares (XSHG, XSHE, BJSE) from {rep['scope_floor']} to {rep['until']} (inclusive) — "
-            f"marina-rules-data@{rep['data_version']} sha256:{rep['dataset_digest'][:16]} code: marina-rules@{rep['code_version']}")
+            f"marina-rules@{rep['marina_version']} sha256:{rep['dataset_digest'][:16]} code: marina-rules-core@{rep['code_version']}")
     summary = (f"targets: {rep['targets']}, complete: {rep['targets_complete']}, "
                f"target-days covered: {rep['covered_days']}/{rep['target_days']} = {rep['coverage_pct']}%")
     groups = _gap_groups(rep)

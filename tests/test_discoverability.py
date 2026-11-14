@@ -211,13 +211,15 @@ def test_python_dash_m_runs_the_same_cli():
 
 
 def test_packaging_declares_the_script_and_the_notes():
+    # the commands come with marina-rules (packages/marina-rules/), the usage notes with the code (marina-rules-core)
+    with open(os.path.join(ROOT, "packages", "marina-rules", "pyproject.toml"), encoding="utf-8") as fh:
+        assert 'marina-rules = "marina_rules.cli:main"' in fh.read()
     with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
-        text = fh.read()
-    assert 'marina-rules = "marina_rules.cli:main"' in text and '"SKILL.md"' in text
+        assert 'marina_rules_core = ["SKILL.md"]' in fh.read()
     with open(os.path.join(ROOT, "scripts", "vendor_data.py"), encoding="utf-8") as fh:
         assert "SKILL.md" in fh.read()
     with open(os.path.join(ROOT, ".gitignore"), encoding="utf-8") as fh:
-        assert "src/marina_rules/SKILL.md" in fh.read()
+        assert "src/marina_rules_core/SKILL.md" in fh.read()
 
 
 # --- the stock tick must not answer for a scope that is not a mainland security -----------------------------------

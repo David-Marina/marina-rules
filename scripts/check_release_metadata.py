@@ -1,21 +1,23 @@
 """Release-metadata guard: the versions and dataset hash every reader sees must agree.
 
     python scripts/check_release_metadata.py                  # exit 0 = consistent, 1 = list of problems
-    python scripts/check_release_metadata.py --release data   # releasing marina-rules-data (tag YYYY.MM.DD[.N])
-    python scripts/check_release_metadata.py --release code   # releasing marina-rules (tag vX.Y.Z)
+    python scripts/check_release_metadata.py --release data   # releasing marina-rules, the dataset (tag YYYY.MM.DD[.N])
+    python scripts/check_release_metadata.py --release code   # releasing marina-rules-core, the code (tag core-vX.Y.Z)
 
-Two packages, two versions: the dataset (marina-rules-data, ``marina_rules.DATA_VERSION`` = data/VERSION) and the code
-(marina-rules, ``marina_rules.__version__``). Checks, against those and marina_rules.dataset_digest():
-  (a) CHANGELOG.md has a ``## [DATA_VERSION]`` section;
-  (b) pyproject.toml ``version`` equals the code version; README's ``> **Status: X.**`` line equals the data version;
-      README's example citation ``rules: marina-rules-data@X sha256:<16 hex> code: marina-rules@Y`` names the data
-      version, the first 16 hex of dataset_digest() and the code version;
+Two packages, two versions: the dataset (marina-rules, ``marina_rules.VERSION`` = ``DATA_VERSION`` = data/VERSION) and
+the code (marina-rules-core, ``marina_rules.__version__``). Checks, against those and marina_rules.dataset_digest():
+  (a) CHANGELOG.md has a ``## [VERSION]`` section;
+  (b) pyproject.toml ``version`` equals the code version; packages/marina-rules/pyproject.toml requires
+      ``marina-rules-core>=A,<B`` with A <= the code version < B (the dataset must be installable with this code);
+      README's ``> **Status: X.**`` line equals the data version; README's example citation
+      ``rules: marina-rules@X sha256:<16 hex> code: marina-rules-core@Y`` names the data version, the first 16 hex of
+      dataset_digest() and the code version;
   (c) SKILL.md names no concrete version: it ships inside the code wheel, and the data under it is upgraded separately;
   (d) tracking registry (data/<prefix>/tracking.yaml): no ``tracked_through`` or ``updated`` after today (Asia/Tokyo),
       and with ``--release data`` none after the release date (the date in CHANGELOG.md's
-      ``## [DATA_VERSION] - YYYY-MM-DD`` heading). The age of every entry is printed. An old date is not an error:
+      ``## [VERSION] - YYYY-MM-DD`` heading). The age of every entry is printed. An old date is not an error:
       staleness is information;
-  (e) with ``--release code``: CHANGELOG.md has a dated ``## [marina-rules X.Y.Z] - YYYY-MM-DD`` section.
+  (e) with ``--release code``: CHANGELOG.md has a dated ``## [marina-rules-core X.Y.Z] - YYYY-MM-DD`` section.
 """
 from __future__ import annotations
 
@@ -27,9 +29,11 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 STATUS = re.compile(r"^> \*\*Status: (?P<v>[^*]+?)\.\*\*", re.M)
-CITATION = re.compile(r"rules: marina-rules-data@(?P<v>[0-9][0-9A-Za-z.]*[0-9A-Za-z]) sha256:(?P<h>[0-9a-f]{16})\b"
-                      r" code: marina-rules@(?P<c>[0-9][0-9A-Za-z.]*[0-9A-Za-z])")
-VERSIONED_REF = re.compile(r"marina-rules(?:-data)?@[0-9][0-9A-Za-z.]*")
+CITATION = re.compile(r"rules: marina-rules@(?P<v>[0-9][0-9A-Za-z.]*[0-9A-Za-z]) sha256:(?P<h>[0-9a-f]{16})\b"
+                      r"(?: code: marina-rules-core@(?P<c>[0-9][0-9A-Za-z.]*[0-9A-Za-z]))?")
+VERSIONED_REF = re.compile(r"marina-rules(?:-core)?@[0-9][0-9A-Za-z.]*")
+CORE_REQ = re.compile(r'"marina-rules-core>=(?P<lo>[0-9][0-9.]*),<(?P<hi>[0-9][0-9.]*)"')
+DATA_PYPROJECT = os.path.join("packages", "marina-rules", "pyproject.toml")
 PYPROJECT = re.compile(r'^version\s*=\s*"(?P<v>[^"]+)"', re.M)
 HEADING = re.compile(r"^## \[(?P<v>[^\]]+)\]", re.M)
 DATED_HEADING = re.compile(r"^## \[(?P<v>[^\]]+)\] - (?P<d>\d{4}-\d{2}-\d{2})", re.M)
@@ -37,8 +41,12 @@ JST = dt.timezone(dt.timedelta(hours=9))
 
 
 def code_heading(code_version: str) -> str:
-    """The CHANGELOG.md heading name of a code release: ``marina-rules X.Y.Z``."""
-    return f"marina-rules {code_version}"
+    """The CHANGELOG.md heading name of a code release: ``marina-rules-core X.Y.Z``."""
+    return f"marina-rules-core {code_version}"
+
+
+def _semver(v: str) -> tuple:
+    return tuple(int(x) for x in v.split("."))
 
 
 def _read(root: str, name: str) -> str:
@@ -57,6 +65,13 @@ def check(root: str, data_version: str, code_version: str, digest: str) -> list[
     if not m or m.group("v") != code_version:
         errors.append(f"pyproject.toml version {m.group('v') if m else None!r} != code version {code_version!r}")
 
+    req = CORE_REQ.search(_read(root, DATA_PYPROJECT))
+    if not req:
+        errors.append(f"{DATA_PYPROJECT} has no dependency '\"marina-rules-core>=A,<B\"'")
+    elif not _semver(req.group("lo")) <= _semver(code_version) < _semver(req.group("hi")):
+        errors.append(f"{DATA_PYPROJECT} requires marina-rules-core>={req.group('lo')},<{req.group('hi')}, "
+                      f"which excludes the code version {code_version!r}")
+
     readme = _read(root, "README.md")
     statuses = [s.group("v") for s in STATUS.finditer(readme)]
     if not statuses:
@@ -68,13 +83,16 @@ def check(root: str, data_version: str, code_version: str, digest: str) -> list[
     cites = list(CITATION.finditer(readme))
     if not cites:
         errors.append("README.md has no example citation "
-                      "'rules: marina-rules-data@<data version> sha256:<16 hex> code: marina-rules@<code version>'")
+                      "'rules: marina-rules@<data version> sha256:<16 hex> code: marina-rules-core@<code version>'")
     for c in cites:
         if c.group("v") != data_version:
             errors.append(f"README.md citation data version {c.group('v')!r} != {data_version!r}")
         if c.group("h") != digest[:16]:
             errors.append(f"README.md citation hash {c.group('h')} != dataset_digest()[:16] {digest[:16]}")
-        if c.group("c") != code_version:
+        if c.group("c") is None:
+            errors.append(f"README.md citation {c.group(0)!r} does not name the code version "
+                          f"(' code: marina-rules-core@{code_version}')")
+        elif c.group("c") != code_version:
             errors.append(f"README.md citation code version {c.group('c')!r} != {code_version!r}")
 
     for ref in sorted(set(VERSIONED_REF.findall(_read(root, "SKILL.md")))):
@@ -123,12 +141,12 @@ def main(argv: list | None = None) -> int:
             return 2
     sys.path.insert(0, os.path.join(ROOT, "src"))
     import marina_rules as mr
-    errors = check(ROOT, mr.DATA_VERSION, mr.__version__, mr.dataset_digest())
+    errors = check(ROOT, mr.VERSION, mr.__version__, mr.dataset_digest())
     release = None
     if kind == "data":
-        release = release_date(ROOT, mr.DATA_VERSION)
+        release = release_date(ROOT, mr.VERSION)
         if release is None:
-            errors.append(f"CHANGELOG.md has no dated heading '## [{mr.DATA_VERSION}] - YYYY-MM-DD'")
+            errors.append(f"CHANGELOG.md has no dated heading '## [{mr.VERSION}] - YYYY-MM-DD'")
     elif kind == "code" and release_date(ROOT, code_heading(mr.__version__)) is None:
         errors.append(f"CHANGELOG.md has no dated heading '## [{code_heading(mr.__version__)}] - YYYY-MM-DD'")
     t_errors, t_lines = check_tracking(mr.tracking_registry(), dt.datetime.now(JST).date().isoformat(), release)

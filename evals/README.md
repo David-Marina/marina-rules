@@ -25,7 +25,7 @@ correctness is tested in `tests/` and `conformance/`.
 
 ## Running it
 
-1. Build the two wheels of the release under test (`marina-rules-data` and `marina-rules`) and install them, alone,
+1. Build the two wheels of the release under test (`marina-rules`, the dataset, and `marina-rules-core`, the code) and install them, alone,
    into a fresh virtual environment.
 2. For each run, make an empty directory and copy into it: `tasks.json`, the two CSVs from `files/`,
    `ANSWER_FORMAT.md`, and, for condition B only, `SKILL.md` from the repository root. Nothing else: not

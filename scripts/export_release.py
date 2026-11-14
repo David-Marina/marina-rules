@@ -1,12 +1,13 @@
 """Write the artefacts of a data release next to its tag: machine-readable dumps of the same bytes the
-marina-rules-data wheel ships.
+marina-rules wheel (the dataset) ships.
 
     python scripts/export_release.py dist/
 
-Produces marina-rules-data-<data version>.json (all records, scopes, known gaps, digest), .sqlite (same, queryable),
+Produces marina-rules-<data version>.json (all records, scopes, known gaps, digest), .sqlite (same, queryable),
 capabilities.json (China), capabilities-hk.json (Hong Kong) and capabilities-us.json (US equities),
 decision.schema.json, conformance vectors, and SHA256SUMS. Nothing here is a second source of truth: every file
-carries the dataset digest and can be regenerated from the YAML.
+carries the dataset digest and can be regenerated from the YAML. ``code_version`` is the marina-rules-core that
+wrote them; it does not change their content.
 """
 import datetime, glob, hashlib, json, os, sqlite3, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
@@ -28,7 +29,7 @@ def main(out: str) -> int:
     os.makedirs(out, exist_ok=True)
     all_scopes = {k: v for pfx in PREFIXES for k, v in mr.scopes(pfx).items()}
     all_gaps = [g for pfx in PREFIXES for g in mr.known_gaps(pfx)]
-    ver, dg = mr.DATA_VERSION, mr.dataset_digest()
+    ver, dg = mr.VERSION, mr.dataset_digest()
     recs = [{**{k: getattr(r, k) for k in ("id", "market", "scope", "rule", "value", "effective_from", "effective_to",
                                             "published_at", "recorded_at", "verification", "notes", "file", "unit", "contracts")},
              "sources": list(r.sources)} for r in mr.records()]
@@ -37,12 +38,12 @@ def main(out: str) -> int:
             "records": recs, "scopes": all_scopes, "known_gaps": all_gaps,
             "tracking": mr.tracking_registry()}   # not part of dataset_sha256 (docs/SCHEMA.md, Tracking registry)
     files = {}
-    p = os.path.join(out, f"marina-rules-data-{ver}.json")
+    p = os.path.join(out, f"marina-rules-{ver}.json")
     with open(p, "w", encoding="utf-8") as fh:
         json.dump(dump, fh, ensure_ascii=False, indent=1, default=_json_default)
     files[p] = 1
     # sqlite
-    p = os.path.join(out, f"marina-rules-data-{ver}.sqlite")
+    p = os.path.join(out, f"marina-rules-{ver}.sqlite")
     if os.path.exists(p): os.remove(p)
     con = sqlite3.connect(p); c = con.cursor()
     c.execute("create table meta(key text primary key, value text)")

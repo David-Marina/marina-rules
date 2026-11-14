@@ -290,11 +290,11 @@ def _citation(answers: dict, dataset: dict) -> tuple:
     c = answers.get("citation")
     if not isinstance(c, str) or not c.strip():
         return "missing", "no top-level citation"
-    m = re.search(r"marina-rules-data@(\S+?)\s+sha256:([0-9a-f]{16,64})", c)
+    m = re.search(r"marina-rules@(\S+?)\s+sha256:([0-9a-f]{16,64})", c)
     if not m:
         return "mismatch", f"not a marina-rules citation: {c!r}"
-    if m.group(1) != dataset["data_version"] or not dataset["digest"].startswith(m.group(2)):
-        return "mismatch", f"{c!r} does not name {dataset['data_version']} / {dataset['digest'][:16]}"
+    if m.group(1) != dataset["version"] or not dataset["digest"].startswith(m.group(2)):
+        return "mismatch", f"{c!r} does not name {dataset['version']} / {dataset['digest'][:16]}"
     return "ok", ""
 
 

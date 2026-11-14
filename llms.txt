@@ -16,7 +16,8 @@ futures, crypto. ST status, board and listing date of a security are supplied by
 
 ## Install and ask
 
-- `pip install marina-rules` — the dataset ships inside the package; no network is used at run time.
+- `pip install marina-rules` — the dataset ships inside the package, with the code (`marina-rules-core`) as a dependency;
+  no network is used at run time. `pip install -U marina-rules` upgrades the rules, usually weekly.
 - `marina-rules` lists the subcommands; `marina-rules skill` prints the usage notes for agents; `marina-rules capabilities`
   prints everything that can be asked, as JSON.
 - Python: `import marina_rules as mr`; `mr.rule_at("price_limit_pct", "2020-08-24", "chinext", "XSHE")`;

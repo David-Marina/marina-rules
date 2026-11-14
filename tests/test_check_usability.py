@@ -8,7 +8,7 @@ import os
 
 import pytest
 
-from marina_rules import dataset_digest, DATA_VERSION
+from marina_rules import dataset_digest, VERSION
 from marina_rules.check import (CANON_FIELDS, HINT_MIN_ROWS, canonical_row, check_rows, main, scope_help)
 from marina_rules.equity import board_for_code, checkable_scopes, equity_scopes, pick_scope
 
@@ -30,7 +30,7 @@ def _stamp_by_hand(rows, strict=False):
     for r in rows:
         c = canonical_row(r)
         h.update((json.dumps([c[k] for k in CANON_FIELDS], ensure_ascii=False, separators=(",", ":")) + "\n").encode())
-    return f"rules-verified@{DATA_VERSION}:" + hashlib.sha256((dataset_digest() + "\n" + h.hexdigest()).encode()).hexdigest()[:32]
+    return f"rules-verified@{VERSION}:" + hashlib.sha256((dataset_digest() + "\n" + h.hexdigest()).encode()).hexdigest()[:32]
 
 
 # --- default behaviour is unchanged --------------------------------------------------------------------------------

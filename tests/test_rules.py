@@ -141,8 +141,8 @@ def test_limit_price_examples():
 def test_citation_pins_bytes():
     c = mr.citation(short=False)
     dg = mr.dataset_digest()
-    assert c == f"rules: marina-rules-data@{mr.DATA_VERSION} sha256:{dg} code: marina-rules@{mr.__version__}"
-    assert mr.citation() == f"rules: marina-rules-data@{mr.DATA_VERSION} sha256:{dg[:16]} code: marina-rules@{mr.__version__}"
+    assert c == f"rules: marina-rules@{mr.VERSION} sha256:{dg} code: marina-rules-core@{mr.__version__}"
+    assert mr.citation() == f"rules: marina-rules@{mr.VERSION} sha256:{dg[:16]} code: marina-rules-core@{mr.__version__}"
 
 
 def test_scope_registry_covers_every_scope_in_data():

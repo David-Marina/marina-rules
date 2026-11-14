@@ -33,9 +33,9 @@ records:
 Two one-line text files describe the dataset as a whole. Neither is YAML, so neither enters `dataset_digest()`.
 
 - `data/VERSION` — the dataset version, `YYYY.MM.DD` (`YYYY.MM.DD.N` for a further release on the same day). It is
-  the version of the `marina-rules-data` package and the version a citation names
-  (`rules: marina-rules-data@<VERSION> sha256:… code: marina-rules@…`).
-- `data/SCHEMA` — the data format: the highest `schema:` of any data file (today `1.2`). The `marina-rules` code
+  the version of the `marina-rules` package (`marina_rules.VERSION`) and the version a citation names
+  (`rules: marina-rules@<VERSION> sha256:… code: marina-rules-core@…`).
+- `data/SCHEMA` — the data format: the highest `schema:` of any data file (today `1.2`). The code (`marina-rules-core`)
   declares the schemas it reads (`marina_rules.DATA_SCHEMAS`) and the oldest dataset it reads
   (`marina_rules.MIN_DATA_VERSION`); at import it refuses a dataset whose `SCHEMA` it does not read (upgrade the code)
   or whose `VERSION` is older than that minimum (upgrade the data), and the YAML loader refuses any single file with an
