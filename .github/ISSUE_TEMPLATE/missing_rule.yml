@@ -1,0 +1,43 @@
+name: A rule is missing
+description: Marina refuses (OUT_OF_COVERAGE / KeyError) for a rule, market or period you need.
+title: "Missing rule: <market> / <scope> / <rule>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening this, check that the rule is not recorded under another name or scope:
+        `marina-rules rules <scope> [market]` lists what a scope has, and the refusal itself names close matches.
+        Marina holds rules only — prices, ST or suspension lists, constituents and trading calendars are out of scope.
+  - type: input
+    id: query
+    attributes:
+      label: What you asked
+      description: The call or command, with the date written YYYY-MM-DD.
+    validations:
+      required: true
+  - type: textarea
+    id: refusal
+    attributes:
+      label: What Marina answered
+      description: The status and the reason text, or the KeyError message.
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: What you need
+      description: Market, instrument type, rule and the period your backtest or agent covers.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source, if you know one
+      description: A link to the official text that sets the rule makes it much faster to add.
+  - type: input
+    id: citation
+    attributes:
+      label: Rules version
+      description: The output of `marina-rules version`.
+    validations:
+      required: true

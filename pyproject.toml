@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "marina-rules"
 version = "2026.11.16"
-description = "Point-in-time exchange trading rules as data: China A-share price limits (涨跌停), stamp duty, fees, ticks, sessions; futures, Hong Kong, US. For backtests and AI agents; every record cites its source."
+description = "Auditable backtests: the exchange trading rules in force on each day, with sources — China A-share price limits (涨跌停), stamp duty, fees, ticks, sessions; futures, Hong Kong, US. Fill checks for backtests and AI agents."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT AND CC0-1.0"

@@ -1,8 +1,10 @@
 # Marina — point-in-time trading rules (marina-rules)
 
-**Point-in-time trading rules for financial markets, as data.**
+**Auditable backtests: the exchange trading rules in force on each day, as data with sources.**
 
-Price limits, fees, trading sessions, settlement — every record says *when* it took effect and *where* it was published. Any backtest or trading agent can cite the exact rules it ran under, and anyone can re-run it against byte-identical rules.
+Price limits, fees, trading sessions, ticks, settlement — every record says *when* a rule took effect and *where* it was published. A backtest asks for the rule of each trade date instead of hard-coding today's; `marina-check` then verifies every fill against the rules of its day and, on a strict pass, emits a stamp that anyone holding the same fill log and the same rules version can recompute; `citation()` names the exact, byte-pinned rules a result ran under.
+
+What a stamp certifies is deliberately narrow: the fills respected these rules. It says nothing about look-ahead in prices, survivorship or overfitting. `as_of` closes one more gap: it answers only from rules that had been published by a given date, so a backtest cannot use a rule change before it was announced (a rule whose publication date was not located is refused, not assumed).
 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
 
@@ -396,7 +398,7 @@ Every record carries one of three levels, in the data, in the open:
 
 ## Contributing
 
-Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](https://github.com/David-Marina/marina-rules/blob/main/CONTRIBUTING.md) and [GOVERNANCE.md](https://github.com/David-Marina/marina-rules/blob/main/GOVERNANCE.md).
+Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](https://github.com/David-Marina/marina-rules/blob/main/CONTRIBUTING.md) and [GOVERNANCE.md](https://github.com/David-Marina/marina-rules/blob/main/GOVERNANCE.md). Found a wrong rule, a missing one, or a rule an exchange has just changed? [Open an issue](https://github.com/David-Marina/marina-rules/issues/new/choose) — the forms ask for the official source and nothing else you would have to look up.
 
 ## Acknowledgements
 

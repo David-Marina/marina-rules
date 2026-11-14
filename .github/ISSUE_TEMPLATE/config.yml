@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: What can be asked, and under which names
+    url: https://github.com/David-Marina/marina-rules/blob/main/README.md#find-out-what-can-be-asked
+    about: Rule and scope names, and how to read a refusal, before reporting a missing rule.
+  - name: One page per rule, with every record and its sources
+    url: https://david-marina.github.io/marina-rules/
+    about: Check what Marina records for a rule and where each value comes from.

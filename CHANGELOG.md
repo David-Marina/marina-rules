@@ -106,6 +106,10 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
 - Bookkeeping: `cn.fee.commission_min_per_order_cny.2002-05-01` gained `unit: CNY` (the value is unchanged; `diff`
   does not compare `unit` and so does not list it); `hk.order_spread_limit.hk_stock.2025-08-04` listed one source
   twice.
+- README, PyPI summary and llms.txt lead with what the package is for — making a backtest checkable by someone else
+  (rules by trade date, fill checks with a recomputable stamp, a pinned citation, `as_of`) — and say what a stamp does
+  not certify.
+- Issue forms for a wrong rule, a missing rule and a rule an exchange has changed; each asks for the official source.
 - README states up front that maturity differs by market (A-share, CFFEX, SHFE and INE mostly `verified`; CZCE,
   GFEX, Hong Kong and US mostly `single-source`); more PyPI keywords.
 - The weekly source watch checks listing pages only.
