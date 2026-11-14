@@ -79,6 +79,16 @@ python -m marina_rules.check fills.csv
 
 逐笔核对回测或实盘的成交：买入价不高于涨停价、卖出价不低于跌停价、价格落在当日有效的最小报价单位上、费用不低于法定下限。目前只检查 A 股成交。`prev_close` 必须和成交价同一口径（都不复权；除权除息日用交易所公布的除权参考价）。全部选项和各类发现的含义见英文版的 [Check a fill log](README.md#check-a-fill-log)。
 
+回测引擎自己导出的成交记录不用手工改格式，直接读：
+
+```bash
+marina-check trades.csv --format rqalpha --bars daily.csv --bars-format tushare \
+             --listing stock_basic.csv --listing-format tushare --st stock_st.csv --st-format tushare
+marina-rules adapt --list-formats      # 全部格式、各自读哪些列、依据是什么
+```
+
+`--format` 支持 RQAlpha、vn.py、backtrader、掘金，以及按常见列名识别的通用表格（`generic`，列名不同时用 `--map 字段=列名` 指明）。成交记录里没有的前收盘价、ST 状态、上市日期，从行情数据源的表里补：`--bars`（Tushare `daily`、baostock、RQData 的日线）、`--st`、`--listing`。日线必须是不复权的；前收盘价只取数据源明确标为「前收盘」的那一列，不会用别的列推算。没有 ST 信息时这些行会报「范围无法确定」，加 `--assume-not-st` 可以按非 ST 检查，但那是放宽模式，不给验证印章。聚宽、米筐平台、PTrade、QMT 的导出格式没能从一手资料查实，暂时没有专门的格式，用 `generic` 加 `--map`。
+
 ## 覆盖范围
 
 | 市场 | 记录的规则 | 起始 |

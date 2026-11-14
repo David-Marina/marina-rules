@@ -24,6 +24,10 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 registry's windows end within 5 trading days; 60 days exceeds that even across a three-week market
                 closure); a trade within the margin stays SCOPE_UNDETERMINED unless ``listing_day_index`` is given.
                 A stock suspended for weeks inside its own first five trading days needs ``listing_day_index``.
+  * an engine's own export (RQAlpha, vn.py, backtrader, 掘金 …) is read with ``--format NAME`` and, for the previous
+                close, ST status and listing dates, ``--bars`` / ``--st`` / ``--listing`` tables from a data vendor:
+                see ``marina-rules adapt --help``. The rows checked (and stamped) are the adapted ones; the output
+                carries the adapter's report under ``adapter``.
   * day_high / day_low   optional, SAME PRICE BASIS as ``price``: the day's traded high and low. When both are given,
                 the fill price must lie within them (PRICE_OUTSIDE_DAY_RANGE). This is a DATA-CONSISTENCY check, not
                 an exchange rule: it catches a price-basis mismatch that stays inside a wide band. It says the fill price and the
@@ -77,6 +81,10 @@ Model-price logs (backtests fill at quote ± slippage, not on the exchange grid)
   --assume-seasoned            a row whose scope is derived and that has neither ``listing_day_index`` nor
                                ``list_date`` is treated as past every listing window; ``assumed_seasoned`` counts the
                                rows whose scope depended on it and ``row_status`` marks them.
+  --assume-not-st              a row whose scope is derived and that carries no ``st`` / ``st_status`` cell is treated
+                               as not ST / *ST when its scope cannot be chosen otherwise; ``assumed_not_st`` counts
+                               the rows whose scope depended on it. An ST stock is then checked against the wider
+                               ordinary band, so a fill beyond the ST band can pass unnoticed.
 Any of these makes the run RELAXED: ``options`` in the output states what was used, ``rules_verified`` is false and
 no stamp is issued (``stamp_withheld`` says why), because a stamp certifies strict compliance.
 The tolerance also absorbs small price-basis errors: rows of an affected stock that exceed a limit by less than the
@@ -84,7 +92,7 @@ tolerance pass. Read a relaxed run together with ``hints`` and ``summary.by_code
 
 Exit codes: 0 = no findings under the options used (``clean``; in a relaxed run this is NOT a verification),
 1 = findings, 2 = usage error (bad option, unreadable file). Scripts should read ``relaxed``, ``within_tolerance``
-and ``assumed_seasoned`` from the JSON rather than rely on the exit code alone.
+``assumed_seasoned`` and ``assumed_not_st`` from the JSON rather than rely on the exit code alone.
 
 Tracking (not findings, never affect the stamp or the exit code): ``tracking`` counts the checked rows dated after
 the ``tracked_through`` date of their market and scope (``rows_beyond_tracked_through``) and the rows whose market is not
@@ -328,16 +336,18 @@ def _uses_day_range(rows: list) -> bool:
 
 
 def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, band_tolerance_pct: float = 0.0,
-               per_row: bool = False, assume_seasoned: bool = False, top_codes: int = TOP_CODES) -> dict:
+               per_row: bool = False, assume_seasoned: bool = False, top_codes: int = TOP_CODES,
+               assume_not_st: bool = False) -> dict:
     """Check fills (see module docstring). ``tick=False`` skips PRICE_OFF_TICK; ``band_tolerance_pct`` > 0 lets a
     fill outside the band (or the day's range) by at most that percent of the violated bound pass (counted in
-    ``within_tolerance``); ``assume_seasoned`` treats rows without listing information as past the listing window.
+    ``within_tolerance``); ``assume_seasoned`` treats rows without listing information as past the listing window;
+    ``assume_not_st`` treats rows without an ST cell as not ST when the scope cannot be chosen otherwise.
     Any of these makes the run relaxed: no stamp. ``per_row=True`` adds ``row_status`` and full hint row lists;
     ``top_codes`` sets the length of ``summary.by_code``."""
     tol = _validate_tolerance(band_tolerance_pct)
     if isinstance(top_codes, bool) or not isinstance(top_codes, int) or top_codes < 0:
         raise ValueError(f"top_codes must be an integer >= 0, got {top_codes!r}")
-    relaxed = (not tick) or tol > 0 or bool(assume_seasoned)
+    relaxed = (not tick) or tol > 0 or bool(assume_seasoned) or bool(assume_not_st)
     day_range = _uses_day_range(rows)
     fields = CANON_FIELDS + (DAY_RANGE_FIELDS if day_range else ())
     findings: list[dict] = []
@@ -347,7 +357,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     per_code: dict = {}
     buckets: dict = {}
     out_of_range: dict = {}
-    n_flagged = n_tol = n_assumed = 0
+    n_flagged = n_tol = n_assumed = n_not_st = 0
     trk_beyond = trk_untracked = 0
     trk_dates: dict = {}
     head = (f"marina-check-canon/3 strict={int(bool(strict))} day_range=1\n" if day_range
@@ -359,7 +369,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
             c[k] = _s(r.get(k))
         row_f: list[dict] = []
         within: list = []
-        derived = assumed = False
+        derived = assumed = not_st = False
         if c["date"]:
             try:
                 _check_date(c["date"])
@@ -367,6 +377,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "ROW_INVALID", str(e))))
         if not row_f and not _s(r.get("scope")) and _row_context(r):
             sc, why, assumed = derive_scope(r, c["date"], assume_seasoned)
+            if sc is None and assume_not_st and "st_status" not in _row_context(r):
+                sc2, why2, assumed2 = derive_scope(dict(r, st_status="false"), c["date"], assume_seasoned)
+                if sc2 is not None:
+                    sc, why, assumed, not_st = sc2, why2 + " (--assume-not-st: no ST cell, taken as not ST)", assumed2, True
             derived = True
             if sc is None:
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "SCOPE_UNDETERMINED", why)))
@@ -392,6 +406,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         n_flagged += bool(checks)
         n_tol += bool(within)
         n_assumed += assumed
+        n_not_st += not_st
         for w in within:
             b = _bucket(w["excess_pct"])
             buckets[b] = buckets.get(b, 0) + 1
@@ -414,6 +429,8 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 st["scope_derived"] = True
             if assumed:
                 st["assumed_seasoned"] = True
+            if not_st:
+                st["assumed_not_st"] = True
             row_status.append(st)
     dg = dataset_digest()
     clean = not findings
@@ -439,9 +456,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         "disclaimer": "Checks fills against price-limit and fee rules only. Not a statement about "
                       "look-ahead bias, survivorship, capacity, or statistical validity.",
         "options": {"strict": bool(strict), "tick": bool(tick), "band_tolerance_pct": tol,
-                    "assume_seasoned": bool(assume_seasoned)},
+                    "assume_seasoned": bool(assume_seasoned), "assume_not_st": bool(assume_not_st)},
         "relaxed": relaxed, "clean": clean,
         "rows_with_findings": n_flagged, "within_tolerance": n_tol, "assumed_seasoned": n_assumed,
+        "assumed_not_st": n_not_st,
         "summary": summary,
         "hints": _basis_hints(out_of_range, per_row),
         "tracking": {"rows_beyond_tracked_through": trk_beyond, "rows_untracked": trk_untracked,
@@ -452,7 +470,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     if relaxed:
         out["stamp_withheld"] = ("relaxed run (" + ", ".join(
             ([] if tick else ["no tick check"]) + ([f"band tolerance {tol:g}%"] if tol > 0 else []) +
-            (["assume seasoned"] if assume_seasoned else [])) +
+            (["assume seasoned"] if assume_seasoned else []) + (["assume not ST"] if assume_not_st else [])) +
             "): a rules-verified stamp is issued only for a strict run")
     if per_row:
         out["row_status"] = row_status
@@ -565,7 +583,8 @@ def scope_help() -> str:
 
 
 USAGE = ("usage: marina-check FILLS.csv [--strict] [--no-tick] [--band-tolerance-pct X] [--assume-seasoned]\n"
-         "                    [--rows] [--top-codes N]\n"
+         "                    [--assume-not-st] [--rows] [--top-codes N]\n"
+         "                    [--format NAME [--bars FILE --bars-format NAME] …]   (see: marina-rules adapt --help)\n"
          "       marina-check --list-scopes\n"
          "exit: 0 = no findings under the options used, 1 = findings, 2 = usage error")
 
@@ -576,7 +595,14 @@ def main(argv: list[str] | None = None) -> int:
         print(USAGE + "\n\n" + __doc__ + "\n" + scope_help()); return 0
     if "--list-scopes" in argv:
         print(scope_help()); return 0
+    from . import adapt
+    try:
+        adapter, argv = adapt.split_options(argv)
+    except ValueError as e:
+        print(f"marina-check: {e}\n{USAGE}", file=sys.stderr); return 2
+    use_adapter = any(v for v in adapter.values())
     tick, strict, tol, per_row, seasoned, top, paths = True, False, 0.0, False, False, TOP_CODES, []
+    not_st = False
     it = iter(argv)
     for a in it:
         if a == "--strict":
@@ -587,6 +613,8 @@ def main(argv: list[str] | None = None) -> int:
             per_row = True
         elif a == "--assume-seasoned":
             seasoned = True
+        elif a == "--assume-not-st":
+            not_st = True
         elif a in ("--band-tolerance-pct", "--top-codes") or a.startswith(("--band-tolerance-pct=", "--top-codes=")):
             name, v = (a.split("=", 1) if "=" in a else (a, next(it, None)))
             try:
@@ -604,13 +632,21 @@ def main(argv: list[str] | None = None) -> int:
             paths.append(a)
     if len(paths) != 1:
         print(USAGE, file=sys.stderr); return 2
+    report = None
     try:
-        with open(paths[0], newline="", encoding="utf-8") as fh:
-            rows = list(csv.DictReader(fh))
+        if use_adapter:      # an engine's export: rewrite it into checker rows first (marina_rules.adapt)
+            rows, report = adapt.adapt_files(paths[0], adapter)
+        else:
+            with open(paths[0], newline="", encoding="utf-8-sig") as fh:
+                rows = list(csv.DictReader(fh))
     except OSError as e:
-        print(f"marina-check: cannot read {paths[0]}: {e.strerror}", file=sys.stderr); return 2
+        print(f"marina-check: cannot read {e.filename or paths[0]}: {e.strerror}", file=sys.stderr); return 2
+    except ValueError as e:
+        print(f"marina-check: {e}", file=sys.stderr); return 2
     out = check_rows(rows, strict=strict, tick=tick, band_tolerance_pct=tol, per_row=per_row,
-                     assume_seasoned=seasoned, top_codes=top)
+                     assume_seasoned=seasoned, top_codes=top, assume_not_st=not_st)
+    if report is not None:
+        out["adapter"] = report
     print(json.dumps(out, ensure_ascii=False, indent=2))
     return 0 if out["clean"] else 1
 

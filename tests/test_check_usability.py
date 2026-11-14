@@ -47,7 +47,7 @@ def test_default_output_on_examples_unchanged():
         (1, "LIMIT_BUY_ABOVE_UP", "price 11.5 > limit_up 11.0"),
         (1, "PRICE_OUTSIDE_BAND", "11.5 not in [9.0, 11.0]"),
         (2, "FEE_BELOW_STATUTORY", "fee 20.00 < statutory minimum 98.98")]
-    assert bad["options"] == {"strict": False, "tick": True, "band_tolerance_pct": 0.0, "assume_seasoned": False} and bad["relaxed"] is False
+    assert bad["options"] == {"strict": False, "tick": True, "band_tolerance_pct": 0.0, "assume_seasoned": False, "assume_not_st": False} and bad["relaxed"] is False
     assert bad["rows_with_findings"] == 2 and "row_status" not in bad and "stamp_withheld" not in bad
     # a non-band finding carries exactly the old keys
     assert set(bad["findings"][2]) == {"row", "code", "date", "check", "detail"}
@@ -117,7 +117,7 @@ def test_bad_tolerance_is_rejected(capsys):
 def test_cli_relaxed_run(capsys):
     rc = main([os.path.join(ROOT, "examples", "fills_ok.csv"), "--no-tick", "--band-tolerance-pct=0.5", "--rows"])
     out = json.loads(capsys.readouterr().out)
-    assert rc == 0 and out["stamp"] is None and out["options"] == {"strict": False, "tick": False, "band_tolerance_pct": 0.5, "assume_seasoned": False}
+    assert rc == 0 and out["stamp"] is None and out["options"] == {"strict": False, "tick": False, "band_tolerance_pct": 0.5, "assume_seasoned": False, "assume_not_st": False}
     assert [r["row"] for r in out["row_status"]] == [1, 2, 3]
 
 

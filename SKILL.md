@@ -252,12 +252,20 @@ China A-share fills only: a Hong Kong or US row is reported as `MARKET_UNSUPPORT
   `board_for_code` fills a missing board from the code prefix (A-share stocks only; a convenience, not a record).
   No listing index: `list_date` (past every listing window when > 60 calendar days earlier; inside 60 days it stays
   undetermined), or `--assume-seasoned` (a relaxation; `assumed_seasoned` counts the rows that relied on it).
+  No ST cell: the scope stays undetermined unless you pass `--assume-not-st` (a relaxation; `assumed_not_st`) —
+  never fill in `st=false` yourself for rows you have no ST history for.
+- An engine's own export (RQAlpha, vn.py, backtrader, 掘金, or any table): do not rewrite it by hand. Pass
+  `--format NAME` and, for the previous close / ST / listing dates the engine did not export, `--bars FILE
+  --bars-format NAME`, `--st FILE`, `--listing FILE` (`marina-rules adapt --list-formats` lists the layouts and what
+  each reading rests on; `marina-rules adapt` writes the adapted rows). Read `adapter` in the output: it counts the
+  cells that could not be read and the fills that found no bar. A fill without a previous close is `ROW_INVALID`,
+  not a pass. Bars must be unadjusted; never compute a previous close from other columns.
 - Model prices (quote ± slippage): `--no-tick`, `--band-tolerance-pct X`. A relaxed run never gets a stamp; say
   which options you used. The tolerance also hides small price-basis errors: read `hints` and `summary.by_code` too.
   `counts` counts findings (`LIMIT_*` ⊂ `PRICE_OUTSIDE_BAND`); `rows_with_findings`, `summary` (by scope / year /
   side / code) and `--rows` (`row_status`, one per input row) count rows.
 - Exit 0 = no findings under the options used, 1 = findings, 2 = usage error. Read `relaxed`, `within_tolerance` and
-  `assumed_seasoned` from the JSON; exit 0 from a relaxed run is not a verification.
+  `assumed_seasoned` / `assumed_not_st` from the JSON; exit 0 from a relaxed run is not a verification.
 
 ## What this skill never does
 

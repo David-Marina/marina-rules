@@ -401,11 +401,13 @@ def capabilities(market_prefix: str = "cn") -> dict:
                        "statutory_fee_floor": "marina_rules.statutory_fee_floor(turnover, side, date, market=None); "
                                               "statutory_fee_components(...) for the per-rule amounts and record ids",
                        "skill_text": "marina_rules.skill_text() — the usage notes shipped with the package",
-                       "cli": "marina-rules | python -m marina_rules: query, rules, scopes, fees, check, capabilities, "
+                       "cli": "marina-rules | python -m marina_rules: query, rules, scopes, fees, check, adapt, capabilities, "
                               "schema, skill, version",
                        "limit_price": "marina_rules.limit_price(prev_close, scope, date, market, as_of=None)",
                        "diff": "python -m marina_rules.diff <from_tag> <to_tag>",
-                       "check": "python -m marina_rules.check fills.csv"},
+                       "check": "python -m marina_rules.check fills.csv",
+                       "adapt": "marina-rules adapt trades.csv --format NAME [--bars FILE --bars-format NAME] — an "
+                                "engine's trade export as checker rows; marina_rules.adapt.adapt_rows(...) in process"},
             "statuses": list(STATUSES),
             "as_of": "optional ISO date on record_at/rule_at/coverage/resolve/limit_price/tick_size: answer only from "
                      "rules with published_at <= as_of; published later → NOT_YET_PUBLISHED, published_at null → "

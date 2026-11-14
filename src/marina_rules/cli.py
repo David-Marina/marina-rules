@@ -9,12 +9,16 @@
   fees <turnover> <buy|sell> <date> [market]
                               statutory fees of one A-share stock fill: components, records, and their sum
   check <fills.csv> […]       check a fill log against the rules (same as marina-check; --help for its options)
+  adapt <trades.csv> […]      rewrite an engine's trade export (RQAlpha, vn.py, backtrader, 掘金, any table) into the
+                              rows check reads, joining previous close / ST / listing dates from a data vendor's
+                              tables (--help; --list-formats)
   capabilities [cn|hk|us]     everything that can be asked, as JSON
   schema                      JSON Schema of the decision returned by query
   skill                       the usage notes shipped with the package (SKILL.md)
   version                     the citation line: package version and dataset digest
 
-Exit codes: 0 answered, 1 findings (check only), 2 usage error. Output is JSON except for skill, version and this help.
+Exit codes: 0 answered, 1 findings (check only), 2 usage error. Output is JSON except for adapt (CSV rows; its report is
+JSON on stderr), skill, version and this help.
 """
 from __future__ import annotations
 
@@ -43,6 +47,9 @@ def main(argv: list[str] | None = None) -> int:
     if cmd == "check":
         from .check import main as check_main
         return check_main(rest)
+    if cmd == "adapt":
+        from .adapt import main as adapt_main
+        return adapt_main(rest)
     if cmd == "capabilities":
         from .contract import capabilities
         _dump(capabilities(rest[0] if rest else "cn"))

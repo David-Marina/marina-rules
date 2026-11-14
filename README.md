@@ -100,9 +100,29 @@ Put `mr.citation()` in every result you publish. A result without it cannot be r
 ### Check a fill log
 
 ```bash
-python -m marina_rules.check fills.csv [--strict] [--no-tick] [--band-tolerance-pct X] [--assume-seasoned] [--rows] [--top-codes N]
+python -m marina_rules.check fills.csv [--strict] [--no-tick] [--band-tolerance-pct X] [--assume-seasoned] [--assume-not-st] [--rows] [--top-codes N]
 python -m marina_rules.check --list-scopes
+
+# an engine's own trade export: adapt it and check it in one go (or write the adapted rows with `marina-rules adapt`)
+marina-check trades.csv --format rqalpha --bars daily.csv --bars-format tushare \
+             --listing stock_basic.csv --listing-format tushare --st stock_st.csv --st-format tushare
+marina-rules adapt --list-formats
 ```
+
+**Engine exports.** `--format` reads the trades of RQAlpha (`trades.csv` of `--report`), vn.py (`TradeData` rows),
+backtrader (the `Transactions` analyzer), 掘金 gm (execution reports) or — `generic`, the default — any table with
+common column names, with `--map field=column`, `--side-values`, `--side-from-sign` and `--date-format` for the rest.
+What an engine does not export is joined from a data vendor's tables: `--bars` (previous close, day high / low and,
+for baostock, ST) in the layout of Tushare `daily`, baostock or RQData; `--listing` (listing dates); `--st` (one row
+per security and day on which it was ST, e.g. Tushare `stock_st`). Each format is a declared reading of named columns
+and states what that reading rests on (`--list-formats`); JoinQuant, the RiceQuant platform, PTrade and QMT have no
+format because their exports could not be read from a primary source, Qlib because it writes no fill log and trades
+at adjusted prices. No row is dropped and nothing is guessed: a cell that cannot be read is left empty, the checker
+reports the row, and the adapter's report (`adapter` in the output) counts such cells by reason. The previous close
+is taken only from a column the vendor documents as the day's limit reference — never computed — and the bars must be
+unadjusted. Without ST information a main-board, ChiNext or STAR row is `SCOPE_UNDETERMINED`; `--assume-not-st`
+treats such rows as not ST (a relaxation: no stamp, `assumed_not_st` counts them, and an ST stock is then checked
+against the wider ordinary band). The stamp of an adapted run commits to the adapted rows.
 
 Verifies each fill against the rules in force that day — no buys above limit-up, no sells below limit-down, prices on the tick in force, fees not below the statutory floor — and emits a `rules-verified@<version>:<hash>` stamp when clean. The stamp is recomputable by anyone holding the same log and the same rules version, and commits to every column a check used (date, code, side, price, prev_close, scope, market, decimals, fee, turnover, and day_high / day_low when the log has them — canonical row format in the `marina_rules.check` docstring).
 
@@ -123,9 +143,9 @@ No listing-day index? Give `list_date` instead: Marina has no trading calendar, 
 **Reading the output.** `counts` counts findings: an out-of-band buy above limit-up is both `LIMIT_BUY_ABOVE_UP` and `PRICE_OUTSIDE_BAND` (the `LIMIT_*` rows are a subset). `rows_with_findings` counts rows; `summary` breaks rows, rows with findings and findings down by scope, year and side, lists the top 20 codes (`--top-codes N`) by rows with findings with their median excess (`by_code`), and buckets tolerated excesses (`within_tolerance_excess`: ≤0.1 %, ≤0.25 %, ≤0.5 %, ≤1 %, >1 %). Band findings carry `limit_up`, `limit_down`, `violated_limit`, `excess` and `excess_pct` as numbers. `--rows` adds `row_status`, one entry per input row in order (`row`, `scope`, `status`: ok / within_tolerance / findings + `checks`), to join back to the log, and lists every row index in `hints` (otherwise the first 20 plus the total).
 
 ```json
-{"options": {"strict": false, "tick": false, "band_tolerance_pct": 0.5, "assume_seasoned": false},
+{"options": {"strict": false, "tick": false, "band_tolerance_pct": 0.5, "assume_seasoned": false, "assume_not_st": false},
  "relaxed": true, "clean": false, "rules_verified": false, "stamp": null,
- "rows_with_findings": 1, "within_tolerance": 1, "assumed_seasoned": 0,
+ "rows_with_findings": 1, "within_tolerance": 1, "assumed_seasoned": 0, "assumed_not_st": 0,
  "row_status": [{"row": 1, "scope": "chinext", "status": "within_tolerance",
                  "within_tolerance": [{"check": "PRICE_OUTSIDE_BAND", "limit_up": 12.0, "limit_down": 8.0,
                                        "violated_limit": "limit_up", "excess": 0.04, "excess_pct": 0.333333}]},
