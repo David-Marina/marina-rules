@@ -35,6 +35,20 @@ stocks and funds carry `price_limit_pct` (fraction of the previous close), futur
 ask again under the listed name if — and only if — it is the quantity you need; "not covered" is the right answer
 only after that check. The same listing from a shell: `marina-rules rules <scope> [market]`, `marina-rules scopes`.
 
+Markets are ISO 10383 codes (`XSHG`, `XSHE`, `BJSE`, `XHKG`, `XNYS`, `XNAS`, `CCFX`, `XSGE`, `XINE`, `XZCE`, `GFEX`),
+not exchange abbreviations: `SZSE` or `SSE` is refused, and the refusal lists the codes the scope is recorded on
+(`alternatives.markets`).
+
+**Dates are `YYYY-MM-DD`.** A `date` / `datetime` object is accepted, and so is a timestamp string that starts with the
+ISO day. Everything else raises `ValueError` — `20200102`, `2020/1/2`, an integer, `None` — because intervals are
+compared as ISO text and another spelling would pick the wrong period. Convert before asking, never after a refusal
+by trial and error:
+
+```python
+day = f"{s[:4]}-{s[4:6]}-{s[6:]}"          # s = "20200102" (the usual A-share data-vendor format)
+day = ts.date()                            # a pandas Timestamp / datetime works as it is
+```
+
 ## 1–2. Pre-flight the window, don't discover gaps mid-run
 
 ```python
@@ -223,7 +237,7 @@ python -m marina_rules.check fills.csv --strict      # [--no-tick] [--band-toler
 ```
 
 Emits `rules-verified@<version>:<hash>` when every fill respects the price band, the tick in force
-(`PRICE_OFF_TICK`) and the statutory fee floor that day; non-finite prices are `ROW_INVALID`. The stamp
+(`PRICE_OFF_TICK`) and the statutory fee floor that day; non-finite prices and dates not written `YYYY-MM-DD` are `ROW_INVALID`. The stamp
 commits to every input column (date, code, side, price, prev_close, scope, market, decimals, fee,
 turnover; canonical form in `marina_rules/check.py`). The stamp says nothing about look-ahead, survivorship, or statistics.
 China A-share fills only: a Hong Kong or US row is reported as `MARKET_UNSUPPORTED` and not checked.

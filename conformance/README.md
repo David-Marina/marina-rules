@@ -28,6 +28,11 @@ record's interval).
 For `limit_price` vectors `query.prev_close` is set and `expect.limit_up` / `expect.limit_down` are the
 expected prices; the oracle quotes the exchange's formula and rounding rule.
 
+`expect.error` (`vectors/dates.json`) means the call must be **refused as bad input** and no answer of any kind
+returned — a trade date that is not an ISO `YYYY-MM-DD` calendar date. The value is the exception class of the
+reference implementation (`ValueError`); another implementation passes by refusing in its own way. Nothing else in
+`expect` is compared for such a vector.
+
 **Coverage of this first batch (103 vectors):** every regime switch one day before and on the day;
 ST vs non-ST on both main board bands; IPO first-5 / listing-day scopes under both regimes; STAR /
 ChiNext / BSE; one-tick floor on both exchanges around their adoption dates; funds and convertibles;

@@ -21,7 +21,7 @@ import datetime as _dt
 import re
 from functools import lru_cache
 
-from . import records, scopes as _scopes, tick_family
+from . import _check_date, records, scopes as _scopes, tick_family
 from .contract import check_context
 
 _TRUE = frozenset({"true", "t", "yes", "y", "1"})
@@ -133,7 +133,7 @@ def pick_scope(trade_date: str, board: str | None = None, st_status: bool | None
     A stock in a delisting arrangement period also fits its ordinary or ST scope unless that is ruled out, so such a
     row is usually AMBIGUOUS: give its scope explicitly.
     """
-    date = str(trade_date)[:10]
+    date = _check_date(trade_date, "trade_date")
     ctx = {k: v for k, v in dict(context, board=board, st_status=st_status,
                                 listing_day_index=listing_day_index).items() if v is not None}
     reg = scopes("cn")

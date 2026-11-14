@@ -102,6 +102,9 @@ def main(argv: list[str] | None = None) -> int:
         except KeyError as e:
             _dump({"status": "OUT_OF_COVERAGE", "reason": e.args[0] if e.args else str(e), "citation": mr.citation()})
             return 0
+        except ValueError as e:   # a date that is not YYYY-MM-DD, an unknown side
+            print(f"error: {e}")
+            return 2
         _dump({"status": "DETERMINED", "turnover": turnover, "side": rest[1], "date": rest[2], "market": market,
                "components": comps, "statutory_fee_floor": mr.statutory_fee_floor(turnover, rest[1], rest[2], market),
                "note": "statutory components only (stamp duty, transfer fee); commission is not included; a component "

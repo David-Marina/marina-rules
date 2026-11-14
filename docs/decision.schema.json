@@ -129,7 +129,7 @@
   "alternatives": {
    "type": "object",
    "additionalProperties": false,
-   "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the rule names the scope has, names close to the one asked, the intervals the asked rule does have, or scope names close to an unknown scope. A similar name is a different rule: read its definition before using it",
+   "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the rule names the scope has, names close to the one asked, the intervals the asked rule does have, scope names close to an unknown scope, or the market codes the scope is recorded on when it is not recorded on the one asked. A similar name is a different rule: read its definition before using it",
    "properties": {
     "scope_rules": {
      "type": "array",
@@ -150,6 +150,12 @@
      }
     },
     "similar_scopes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "markets": {
      "type": "array",
      "items": {
       "type": "string"

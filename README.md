@@ -45,6 +45,11 @@ mr.coverage("XSHE", "chinext", ["price_limit_pct"], "2019-01-01", "2026-10-19")
 #  'required_context': ['board', 'st_status', 'listing_day_index'], 'excludes': [...], ...}
 ```
 
+Dates are ISO `YYYY-MM-DD` strings or `date` / `datetime` objects (a timestamp such as `2020-08-23 09:30:00` counts as
+its day). Any other spelling — `20200823`, `2020/8/23`, an integer — raises `ValueError` and names the ISO form. It is
+refused rather than parsed because record intervals are compared as ISO text: read as given, `20200102` would select
+the rule of a later period.
+
 ```bash
 python -m marina_rules.diff <old> <new>     # what changed, and what must be re-run; git tags or data directories
 ```
@@ -101,7 +106,7 @@ python -m marina_rules.check --list-scopes
 
 Verifies each fill against the rules in force that day — no buys above limit-up, no sells below limit-down, prices on the tick in force, fees not below the statutory floor — and emits a `rules-verified@<version>:<hash>` stamp when clean. The stamp is recomputable by anyone holding the same log and the same rules version, and commits to every column a check used (date, code, side, price, prev_close, scope, market, decimals, fee, turnover, and day_high / day_low when the log has them — canonical row format in the `marina_rules.check` docstring).
 
-Findings: `ROW_INVALID` (missing field, or price / prev_close not a finite number — also for unlimited scopes), `PRICE_OFF_TICK` (price not a multiple of the instrument family's `tick_size` that day, exact decimal comparison), `LIMIT_BUY_ABOVE_UP`, `LIMIT_SELL_BELOW_DOWN`, `PRICE_OUTSIDE_BAND`, `FEE_BELOW_STATUTORY`, `RULE_MISSING`, `MARKET_REQUIRED`, `MARKET_UNSUPPORTED` (the checks are China A-share only: a Hong Kong or US row — market `XHKG`, `XNYS`, `XNAS` or scope `hk_stock` / `hk_etf` / `us_stock` / `us_etf` — is reported, not checked), `SCOPE_UNDETERMINED`, `PRICE_OUTSIDE_DAY_RANGE`, `DAY_RANGE_INVALID`.
+Findings: `ROW_INVALID` (missing field, price / prev_close not a finite number — also for unlimited scopes — or a date that is not `YYYY-MM-DD`), `PRICE_OFF_TICK` (price not a multiple of the instrument family's `tick_size` that day, exact decimal comparison), `LIMIT_BUY_ABOVE_UP`, `LIMIT_SELL_BELOW_DOWN`, `PRICE_OUTSIDE_BAND`, `FEE_BELOW_STATUTORY`, `RULE_MISSING`, `MARKET_REQUIRED`, `MARKET_UNSUPPORTED` (the checks are China A-share only: a Hong Kong or US row — market `XHKG`, `XNYS`, `XNAS` or scope `hk_stock` / `hk_etf` / `us_stock` / `us_etf` — is reported, not checked), `SCOPE_UNDETERMINED`, `PRICE_OUTSIDE_DAY_RANGE`, `DAY_RANGE_INVALID`.
 
 **`prev_close` must be on the same price basis as `price`** — both unadjusted, as traded. On an ex-rights / ex-dividend day it is the exchange's ex-rights reference price, never a back- or forward-adjusted close. A log that mixes bases is off by a constant factor per stock. The output's `hints` name such codes (a hint, not a finding): either ≥ 3 rows of one code beyond the band by ≥ 5 % of the limit, or ≥ 20 rows on one side whose median excess is ≥ 1.5 % — in both cases with price / prev_close ratios within a factor 1.5 of each other. Slippage of a few tenths of a percent never reaches either threshold; a single bad row never fires.
 

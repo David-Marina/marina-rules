@@ -98,12 +98,12 @@ def test_alternatives_never_carry_a_value():
     # the refusal lists names only; the caller has to ask again to get a value
     d = resolve("price_limit_pct", "2024-06-03", "cffex_if", "CCFX")
     assert d["result"] is None and d["record_id"] is None and d["evidence_refs"] == []
-    assert set(d["alternatives"]) <= {"scope_rules", "similar_rules", "rule_intervals", "similar_scopes"}
+    assert set(d["alternatives"]) <= {"scope_rules", "similar_rules", "rule_intervals", "similar_scopes", "markets"}
 
 
 def test_schema_declares_alternatives():
     props = contract_schema()["properties"]
-    assert set(props["alternatives"]["properties"]) == {"scope_rules", "similar_rules", "rule_intervals", "similar_scopes"}
+    assert set(props["alternatives"]["properties"]) == {"scope_rules", "similar_rules", "rule_intervals", "similar_scopes", "markets"}
 
 
 # --- statutory fees ----------------------------------------------------------------------------------------------

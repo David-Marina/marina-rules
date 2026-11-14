@@ -41,7 +41,7 @@ __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for"
            "citation", "dataset_digest", "DATA_DIR", "VERSION", "Record", "RuleConflict", "NotYetPublished",
            "PublicationUnknown", "ContractRequired", "parse_contract", "contract_matches", "tracked_through",
            "tracking_registry", "tracking_state", "BeyondTracking", "rules_for", "statutory_fee_floor",
-           "statutory_fee_components", "skill_text"]
+           "statutory_fee_components", "skill_text", "markets_recorded"]
 
 VERSION = "2026.11.13"
 DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
@@ -471,7 +471,8 @@ def parse_contract(code: str, trade_date: str, scope: str | None = None) -> tupl
     month = int(digits[-2:])
     if not 1 <= month <= 12:
         raise ValueError(f"contract {code!r}: month {month:02d} is not 01-12")
-    ty, tm = int(str(trade_date)[:4]), int(str(trade_date)[5:7])
+    trade_date = _check_date(trade_date, "trade_date")
+    ty, tm = int(trade_date[:4]), int(trade_date[5:7])
     if len(digits) == 4:
         year = 2000 + int(digits[:2])
     else:
@@ -511,8 +512,8 @@ def _clause_holds(clause: dict, code: str, year: int, month: int, date: str) -> 
 
 def contract_matches(selector: dict, contract: str, date: str, scope: str | None = None) -> bool:
     """Does a ``contracts`` selector cover ``contract`` on trade date ``date``? (``scope`` checks the product.)"""
-    _, year, month = parse_contract(contract, date, scope)
-    d = str(date)[:10]
+    d = _check_date(date)
+    _, year, month = parse_contract(contract, d, scope)
     if "any" in selector:
         return any(_clause_holds(c, contract, year, month, d) for c in selector["any"])
     return not any(_clause_holds(c, contract, year, month, d) for c in selector["none"])
@@ -819,6 +820,58 @@ def _check_as_of(as_of) -> str | None:
     return as_of
 
 
+_DAY_RE = _re.compile(r"^(\d{4}-\d{2}-\d{2})(?:[T ].*)?$", _re.S)
+_LOOSE_DAY_RE = _re.compile(r"^(\d{4})([-/.]?)(\d{1,2})\2(\d{1,2})$")
+
+
+def _date_hint(text: str) -> str:
+    """' — did you mean ...?' for the common non-ISO spellings (20200102, 2020/1/2, 2020-1-2), else ''."""
+    import datetime as _dt
+    t = text.strip()
+    m = _LOOSE_DAY_RE.match(t)
+    if not m or (m.group(2) == "" and len(t) != 8):
+        return ""
+    try:
+        return f" — did you mean {_dt.date(int(m.group(1)), int(m.group(3)), int(m.group(4))).isoformat()!r}?"
+    except ValueError:
+        return ""
+
+
+@lru_cache(maxsize=8192)
+def _iso_day(text: str, name: str) -> str:
+    import datetime as _dt
+    m = _DAY_RE.match(text)
+    if m:
+        try:
+            _dt.date.fromisoformat(m.group(1))
+            return m.group(1)
+        except ValueError:
+            pass
+    raise ValueError(f"{name} must be an ISO date 'YYYY-MM-DD' (or a datetime.date / datetime), got {text!r}"
+                     + _date_hint(text))
+
+
+def _check_date(date, name: str = "date") -> str:
+    """The query date as ``YYYY-MM-DD``, or ValueError. Never a guess.
+
+    Accepted: an ISO ``YYYY-MM-DD`` string, optionally followed by a time (``2020-01-02 09:30:00``,
+    ``2020-01-02T09:30:00``); a ``datetime.date`` / ``datetime`` (pandas Timestamp included); any other object whose
+    ``str()`` is such a string (numpy datetime64). Everything else is refused — ``20200102``, ``2020/01/02``,
+    ``2020-1-2``, an int, None: dates are compared as ISO text, so a different spelling would silently select the
+    wrong rule interval rather than fail."""
+    import datetime as _dt
+    if type(date) is str:
+        return _iso_day(date, name)
+    if isinstance(date, _dt.datetime):
+        return _iso_day(str(date.date()), name)
+    if isinstance(date, _dt.date):
+        return _iso_day(date.isoformat(), name)
+    if date is None or isinstance(date, (bool, int, float)):
+        raise ValueError(f"{name} must be an ISO date 'YYYY-MM-DD' (or a datetime.date / datetime), got {date!r}"
+                         + _date_hint(str(date)))
+    return _iso_day(str(date), name)
+
+
 def publication_state(rec: "Record", as_of: str | None) -> str:
     """'visible' | 'unknown' (published_at null) | 'not_yet' (published after as_of). as_of None → 'visible'."""
     if as_of is None:
@@ -874,6 +927,11 @@ def gaps_for(market: str | None, scope: str, rule: str, start: str, end: str, ma
     ``market_prefix`` None: the registry of ``market`` (``market_prefix_for``). With ``contract``, a gap that carries
     a ``contracts`` selector counts only if it covers that contract on ``start`` (callers cut ranges at month
     boundaries, where selector features change); without one, every overlapping gap counts."""
+    start = _check_date(start, "start")
+    if isinstance(end, str) and end.endswith("\x00"):
+        _check_date(end[:-1], "end")   # [d, d + "\x00"): the single day d, as resolve() asks
+    else:
+        end = _check_date(end, "end")
     hits = []
     for g in known_gaps(market_prefix or market_prefix_for(market)):
         if g["scope"] != scope or g["rule"] != rule:
@@ -1021,7 +1079,7 @@ def tracking_state(market: str | None, scope: str | None, date: str) -> dict:
     """``{tracked_through, beyond}`` for a query date: ``beyond`` is True when ``date`` > tracked_through, False when on
     or before it, None when the market (or scope) is untracked."""
     tt = tracked_through(market, scope)
-    return {"tracked_through": tt, "beyond": None if tt is None else str(date)[:10] > tt}
+    return {"tracked_through": tt, "beyond": None if tt is None else _check_date(date) > tt}
 
 
 class BeyondTracking(KeyError):
@@ -1074,7 +1132,7 @@ def record_at(rule: str, date: str, scope: str = "stock", market: str | None = N
     See docs/SCHEMA.md "Tracking registry".
     """
     as_of = _check_as_of(as_of)
-    d = str(date)[:10]
+    d = _check_date(date)
     if contract is not None:
         parse_contract(contract, d, scope)
     hits: list[Record] = []
@@ -1159,7 +1217,7 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
     as_of = _check_as_of(as_of)
     market_prefix = market_prefix or market_prefix_for(market)
     rules = list(rules)
-    s0, s1 = _dt.date.fromisoformat(str(start)[:10]), _dt.date.fromisoformat(str(end)[:10])
+    s0, s1 = _dt.date.fromisoformat(_check_date(start, "start")), _dt.date.fromisoformat(_check_date(end, "end"))
     if s1 <= s0:
         raise ValueError("end must be after start (half-open interval)")
     reg = scopes(market_prefix).get(scope)
@@ -1293,6 +1351,22 @@ def rules_for(scope: str = "stock", market: str | None = None) -> dict:
     return dict(sorted(out.items()))
 
 
+@lru_cache(maxsize=None)
+def _market_codes() -> tuple:
+    """Every market code a record carries (ISO 10383 MICs), sorted; a '+'-joined market counts once per code."""
+    return tuple(sorted({m for r in records() for m in r.market.split("+")}))
+
+
+@lru_cache(maxsize=None)
+def _scopes_recording(rule: str) -> tuple:
+    return tuple(sorted({r.scope for r in records() if r.rule == rule}))
+
+
+def markets_recorded(scope: str) -> list:
+    """Market codes on which the dataset holds any record stored under ``scope`` (sorted; [] = none)."""
+    return sorted({m for r in records() if r.scope == scope for m in r.market.split("+")})
+
+
 def _family_scope(rule: str, scope: str, market: str | None) -> str | None:
     """The family scope holding ``rule`` for ``scope`` when that is another scope, else None (see tick_family)."""
     if rule not in _FAMILY_RULES:
@@ -1326,10 +1400,19 @@ def _miss_hint(rule: str, scope: str, market: str | None, date: str) -> str:
     if fam:
         return f"; {rule} is recorded per instrument family — ask under scope {fam!r} (tick_size() and resolve() do this)"
     if not have:
+        on = markets_recorded(scope) if market else []
+        if on:   # the scope is recorded, only not on this market: say where, and whether the code is one we use at all
+            known = market in _market_codes()
+            return (f"; scope {scope!r} is recorded on market(s) {', '.join(on)}, not on {market!r}"
+                    + ("" if known else f" — {market!r} is not a market code used in the dataset (codes are ISO 10383 "
+                                        f"MICs: {', '.join(_market_codes())})"))
         return f"; the dataset holds no rule at all for {where}"
     close = similar_names(rule, have)
+    others = _scopes_recording(rule)
     return (f"; {where} has no rule named {rule!r}" + (f" — closest name(s): {', '.join(close)}" if close else "")
-            + f"; rules recorded for it: {', '.join(have)}")
+            + f"; rules recorded for it: {', '.join(have)}"
+            + (f"; {rule} is recorded under scope(s): {', '.join(others[:5])}"
+               + (f" and {len(others) - 5} more" if len(others) > 5 else "") if others else ""))
 
 
 def _par_value_fee_record(date: str, market: str | None, strict: bool):
@@ -1467,7 +1550,7 @@ def tick_size(scope: str, date: str, market: str | None = None, strict: bool = F
     convertible; BSE board scopes, and family stock with market BJSE, map to ``bse_stock``).
     Raises ``KeyError`` when no tick is recorded for that date — callers must not assume 0.01.
     """
-    return rule_at("tick_size", date, lookup_scope("tick_size", scope, market), market, strict, as_of=as_of)
+    return rule_at("tick_size", _check_date(date), lookup_scope("tick_size", scope, market), market, strict, as_of=as_of)
 
 
 def _agreed_tick(scope: str, date: str, market: str | None = None, strict: bool = False,
@@ -1482,7 +1565,7 @@ def _agreed_tick(scope: str, date: str, market: str | None = None, strict: bool 
             raise
         fam = lookup_scope("tick_size", scope, market)
         active = [r for r in records() if r.rule == "tick_size" and r.scope == fam
-                  and r.active_on(str(date)[:10]) and not (strict and r.verification == "unverified")]
+                  and r.active_on(_check_date(date)) and not (strict and r.verification == "unverified")]
         vals = {(r.value, r.unit) for r in active}
         if len(vals) != 1:
             raise
@@ -1519,7 +1602,7 @@ def min_tick_band(scope: str, date: str, market: str | None = None, *, as_of: st
     """
     if market is None:
         raise ValueError("min_tick_band needs an explicit market: SSE and SZSE adopted the floor 12 years apart")
-    return bool(_min_tick_value(scope, date, market, _check_as_of(as_of)))
+    return bool(_min_tick_value(scope, _check_date(date), market, _check_as_of(as_of)))
 
 
 def limit_price(prev_close: float, scope: str, date: str, market: str | None = None,
@@ -1539,6 +1622,7 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
     ``NotYetPublished`` / ``PublicationUnknown`` propagate — the 0.01 pre-2006 tick fallback never masks them.
     """
     as_of = _check_as_of(as_of)
+    date = _check_date(date)
     v = rule_at("price_limit_pct", date, scope, market, strict, as_of=as_of)
     if v == "unlimited":
         return None

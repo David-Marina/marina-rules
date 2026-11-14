@@ -35,7 +35,9 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
 
 Checks (each produces a finding on failure):
   ROW_INVALID             missing date/code/side, or price / prev_close missing or not a finite number
-                          (nan, inf, empty) — reported even when the band is unlimited
+                          (nan, inf, empty) — reported even when the band is unlimited; or a date that is not
+                          YYYY-MM-DD (20200102, 2020/1/2): dates are compared as ISO text, so another spelling
+                          would be checked against the wrong rule interval — the row is refused, not guessed
   PRICE_OFF_TICK          price is not an integer multiple of the tick in force for the scope's instrument family
                           (tick_size: stock 0.01, fund 0.001, convertible 0.001 from 2022-08-01 …), compared in
                           Decimal on the price as written. Skipped when no tick is recorded for that date.
@@ -129,7 +131,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
-               tracked_through, VERSION, _agreed_tick, statutory_fee_floor)
+               tracked_through, VERSION, _agreed_tick, _check_date, statutory_fee_floor)
 from .equity import (LIST_DATE_MARGIN_DAYS, board_for_code, checkable_scopes, context_keys, equity_scopes,
                      listing_index_from_list_date, parse_context_value, pick_scope, seasoned_listing_day_index)
 
@@ -358,7 +360,12 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         row_f: list[dict] = []
         within: list = []
         derived = assumed = False
-        if not _s(r.get("scope")) and _row_context(r):
+        if c["date"]:
+            try:
+                _check_date(c["date"])
+            except ValueError as e:
+                row_f.append(_finding(Finding(i, c["code"], c["date"], "ROW_INVALID", str(e))))
+        if not row_f and not _s(r.get("scope")) and _row_context(r):
             sc, why, assumed = derive_scope(r, c["date"], assume_seasoned)
             derived = True
             if sc is None:

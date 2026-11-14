@@ -44,7 +44,7 @@ import json
 from functools import lru_cache
 from typing import Any
 
-from . import (VERSION, rules_for, similar_names, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of,
+from . import (VERSION, rules_for, similar_names, markets_recorded, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of, _check_date,
                dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, records, scopes, tracked_through,
                tracking_registry, tracking_state)
 
@@ -146,7 +146,7 @@ def check_context(asserts: dict, ctx: dict, date: str) -> tuple[list, list]:
 
 
 def _base(rule, date, scope, market) -> dict:
-    return {"contract_version": CONTRACT_VERSION, "status": None, "rule": rule, "trade_date": str(date)[:10],
+    return {"contract_version": CONTRACT_VERSION, "status": None, "rule": rule, "trade_date": _check_date(date, "trade_date"),
             "market": market, "scope": scope, "result": None, "record_id": None,
             "required_context": [], "missing_context": [], "context_conflicts": [],
             "known_gap_ids": [], "evidence_refs": [], "verification": None,
@@ -197,6 +197,7 @@ def _resolve(rule, trade_date, scope, market, context, min_verification, market_
     if min_verification not in _LEVEL:
         raise ValueError(f"min_verification must be one of {sorted(_LEVEL)}")
     as_of = _check_as_of(as_of)
+    trade_date = _check_date(trade_date, "trade_date")
     market_prefix = market_prefix or market_prefix_for(market)
     out = _base(rule, trade_date, scope, market)
     if as_of is not None:
@@ -232,7 +233,9 @@ def _resolve(rule, trade_date, scope, market, context, min_verification, market_
     m2, c2 = check_context(rule_spec.get("asserts") or {}, ctx, d)
     conflicts += c2
     missing += [k for k in m1 + m2 if k not in missing]
-    if missing or conflicts:
+    # A rule the dataset does not hold for this scope / market cannot be answered whatever context is supplied:
+    # fall through to the lookup, which reports OUT_OF_COVERAGE with what does exist, instead of asking for context.
+    if (missing or conflicts) and rule in rules_for(scope, market):
         out["status"] = "MISSING_CONTEXT"; out["missing_context"] = missing; out["context_conflicts"] = conflicts
         bits = []
         if missing:
@@ -286,6 +289,9 @@ def _resolve(rule, trade_date, scope, market, context, min_verification, market_
             alt["rule_intervals"] = have[rule]
         else:
             alt["similar_rules"] = similar_names(rule, have)
+        on = markets_recorded(scope) if market else []
+        if on and not set(market.split("+")) <= set(on):
+            alt["markets"] = on
         out["alternatives"] = alt
         return out
 
@@ -339,12 +345,14 @@ def contract_schema() -> dict:
             "alternatives": {"type": "object", "additionalProperties": False,
                              "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the "
                                             "rule names the scope has, names close to the one asked, the intervals the "
-                                            "asked rule does have, or scope names close to an unknown scope. A similar "
-                                            "name is a different rule: read its definition before using it",
+                                            "asked rule does have, scope names close to an unknown scope, or the market codes "
+                                            "the scope is recorded on when it is not recorded on the one asked. A "
+                                            "similar name is a different rule: read its definition before using it",
                              "properties": {"scope_rules": {"type": "array", "items": {"type": "string"}},
                                             "similar_rules": {"type": "array", "items": {"type": "string"}},
                                             "rule_intervals": {"type": "array", "items": {"type": "array"}},
-                                            "similar_scopes": {"type": "array", "items": {"type": "string"}}}},
+                                            "similar_scopes": {"type": "array", "items": {"type": "string"}},
+                                            "markets": {"type": "array", "items": {"type": "string"}}}},
             "record_id": nullable("string"),
             "required_context": {"type": "array", "items": {"type": "string"}},
             "missing_context": {"type": "array", "items": {"type": "string"}},
@@ -408,11 +416,14 @@ def capabilities(market_prefix: str = "cn") -> dict:
                         "CARRY_FORWARD_UNTRACKED) — a carry-forward, not a finding; require_tracked=True refuses it as "
                         "BEYOND_TRACKING (record_at / rule_at raise BeyondTracking)",
         },
-        "preflight": ["coverage() over the whole window before any computation",
+        "preflight": ["pass dates as ISO 'YYYY-MM-DD' strings or date / datetime objects; any other spelling "
+                      "(20200102, 2020/1/2, an int) raises ValueError — it is refused, never guessed",
+                      "coverage() over the whole window before any computation",
                       "supply every key in scope.requires per security per day; Marina never infers them",
                       "stop on any status other than DETERMINED; cite known_gap_ids when present",
                       "on OUT_OF_COVERAGE read alternatives: the scope may hold the rule under another name "
-                      "(scope_rules, similar_rules) — a different name is a different rule, check its definition",
+                      "(scope_rules, similar_rules) or on another market code (markets) — a different name is a different "
+                      "rule, check its definition",
                       "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond "
                       "the date the sources were checked, or pass require_tracked=True",
                       "put citation() into every result"],

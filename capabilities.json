@@ -30,10 +30,11 @@
   "tracking": "every decision carries tracking {tracked_through, beyond}; a DETERMINED answer from an open-ended record after tracked_through warns CARRY_FORWARD_BEYOND_TRACKED (untracked market: CARRY_FORWARD_UNTRACKED) — a carry-forward, not a finding; require_tracked=True refuses it as BEYOND_TRACKING (record_at / rule_at raise BeyondTracking)"
  },
  "preflight": [
+  "pass dates as ISO 'YYYY-MM-DD' strings or date / datetime objects; any other spelling (20200102, 2020/1/2, an int) raises ValueError — it is refused, never guessed",
   "coverage() over the whole window before any computation",
   "supply every key in scope.requires per security per day; Marina never infers them",
   "stop on any status other than DETERMINED; cite known_gap_ids when present",
-  "on OUT_OF_COVERAGE read alternatives: the scope may hold the rule under another name (scope_rules, similar_rules) — a different name is a different rule, check its definition",
+  "on OUT_OF_COVERAGE read alternatives: the scope may hold the rule under another name (scope_rules, similar_rules) or on another market code (markets) — a different name is a different rule, check its definition",
   "when tracking.beyond is true or warnings is not empty, say the answer is carried forward beyond the date the sources were checked, or pass require_tracked=True",
   "put citation() into every result"
  ],

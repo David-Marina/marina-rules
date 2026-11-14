@@ -37,7 +37,10 @@ def run():
                         if k in e: got[k] = d.get(k)
             except Exception as ex:
                 got = {"error": type(ex).__name__, "message": str(ex)[:120]}
-            ok = all(got.get(k) == v for k, v in e.items()) and not got.get("error")
+            if "error" in e:   # the call must be refused as bad input (the exception class of this implementation)
+                ok = got.get("error") == e["error"]
+            else:
+                ok = all(got.get(k) == v for k, v in e.items()) and not got.get("error")
             if "missing_context" in e and ok:
                 ok = set(got.get("missing_context", [])) == set(e["missing_context"])
             if not ok:
