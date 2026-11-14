@@ -353,7 +353,7 @@ Code (`src/`, `scripts/`, `tests/`): [MIT](https://github.com/David-Marina/marin
 
 ## About the name
 
-Marina is named after my wife, Marina. This repository was published on **13 November 2026**, our wedding anniversary.
+This project is named after my wife, Marina. This repository was published on **13 November 2026**, our wedding anniversary.
 
 A rules table is an unglamorous thing: a few hundred lines of dates, percentages, and citations. But every one of those lines is a mistake that someone, somewhere, no longer has to make. If this table spares even a few people a wrong number, a bad trade, or a wasted week, then it has done what I hoped it would do on the day it was named — bring a little more good into the world, in her name.
 
