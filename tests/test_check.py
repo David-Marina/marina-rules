@@ -1,4 +1,4 @@
-"""``marina check`` behaviour."""
+"""``marina-check`` behaviour."""
 import csv, io
 from marina_rules.check import check_rows
 

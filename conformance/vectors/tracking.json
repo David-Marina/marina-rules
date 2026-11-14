@@ -21,7 +21,7 @@
    "within",
    "last-checked-day"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0002",
@@ -47,7 +47,7 @@
    "beyond",
    "open-ended"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0003",
@@ -67,7 +67,7 @@
    "beyond",
    "opt-in-refusal"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0004",
@@ -94,7 +94,7 @@
    "beyond",
    "first-day-beyond"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0005",
@@ -118,7 +118,7 @@
    "tracking",
    "within"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0006",
@@ -142,7 +142,7 @@
    "beyond",
    "closed-record"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0007",
@@ -164,7 +164,7 @@
    "closed-record",
    "opt-in"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0008",
@@ -191,7 +191,7 @@
    "untracked",
    "open-ended"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0009",
@@ -211,7 +211,7 @@
    "untracked",
    "opt-in-refusal"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0010",
@@ -238,7 +238,7 @@
    "closed-record",
    "opt-in"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0011",
@@ -265,7 +265,7 @@
    "a-share",
    "opt-in"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0012",
@@ -292,7 +292,7 @@
    "beyond",
    "a-share"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0013",
@@ -313,7 +313,7 @@
    "a-share",
    "opt-in-refusal"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "TRK-0014",
@@ -340,6 +340,6 @@
    "mixed-market",
    "no-market"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  }
 ]

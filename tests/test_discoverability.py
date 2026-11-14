@@ -55,9 +55,10 @@ def test_date_outside_every_interval_names_the_intervals():
 
 
 def test_family_rule_under_a_board_scope_points_to_the_family():
-    with pytest.raises(KeyError) as e:
-        mr.rule_at("tick_size", "2024-01-02", "chinext")
+    with pytest.raises(KeyError) as e:                  # the exact-scope lookup points to the family …
+        mr.record_at("tick_size", "2024-01-02", "chinext")
     assert "'stock'" in e.value.args[0]
+    assert mr.rule_at("tick_size", "2024-01-02", "chinext") == 0.01      # … and rule_at goes there itself
 
 
 def test_miss_inside_an_interval_adds_nothing():

@@ -1,4 +1,4 @@
-"""``marina check`` — verify a fill log against the rules in force on each day.
+r"""``marina-check`` — verify a fill log against the rules in force on each day.
 
 Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, fee, turnover, decimals]
                           [, board, st, listing_day_index, list_date, … other scope context keys]
@@ -496,7 +496,7 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
     market = c["market"] or None
     if market_prefix_for(market) != "cn" or scope in foreign:
         # A-share tick, band and fee composition must never be applied to another market's fill.
-        add("MARKET_UNSUPPORTED", f"marina check covers China A-share fills only (market {market}, scope {scope})")
+        add("MARKET_UNSUPPORTED", f"marina-check covers China A-share fills only (market {market}, scope {scope})")
         return
     price, pc = _f(c["price"]), _f(c["prev_close"])
     try:

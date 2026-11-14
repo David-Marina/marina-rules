@@ -1071,7 +1071,7 @@ Timelines (`hk_stock` and `hk_etf` share every fee record's value and sources un
 - **T+1 settlement**: HKEX's 2026-10-16 roadmap targets the second half of 2028, subject to market readiness and
   regulatory approval; not implemented, so `settlement_cycle_days` stays 2 (open-ended) and no future record is added.
 
-**Fill checks.** `marina check` composes A-share rules (tick family, band, stamp duty and transfer fee under scope `stock`)
+**Fill checks.** `marina-check` composes A-share rules (tick family, band, stamp duty and transfer fee under scope `stock`)
 and does not support Hong Kong: a row with market `XHKG` or scope `hk_stock` / `hk_etf` / `hk_etf_part_b` is reported as
 `MARKET_UNSUPPORTED` and no other check runs on it.
 
@@ -1346,7 +1346,7 @@ own analysis), ETP-specific cross price thresholds and the closing-price fallbac
   [2026 filing](https://www.govinfo.gov/content/pkg/FR-2026-10-08/html/2026-20605.htm)): after the window, not
   encoded.
 
-**Fill checks.** `marina check` does not support US equities either: a row with market `XNYS` / `XNAS` or scope
+**Fill checks.** `marina-check` does not support US equities either: a row with market `XNYS` / `XNAS` or scope
 `us_stock` / `us_etf` is reported as `MARKET_UNSUPPORTED` and no other check runs on it.
 
 ## Coverage targets (`coverage/cn_targets.yaml`)
@@ -1369,7 +1369,7 @@ and exits 1 on any gap not listed in `unresolved`.
 | rule | value | basis |
 |---|---|---|
 | `stamp_duty_buy` | fraction | stamp duty on **buy** turnover. Bilateral regime: 1‰ from 2005-01-24 (财税〔2005〕11号), 3‰ from 2007-05-30, 1‰ from 2008-04-24; **0** from 2008-09-19 (对受让方不再征税; Stamp Duty Law art.3 from 2022-07-01: 不对受让方征收). `0` is a sourced fact, not a default. |
-| `transfer_fee_par_value` | fraction | SSE A-share transfer fee per side as a fraction of **traded par value** (成交面额), CSDC portion — XSHG 2006-07-01..2015-08-01 (0.5‰, 0.375‰ from 2012-06-01, 0.3‰ from 2012-09-01). A broker-retained part existed (CSDC 2012-08-02) but no official text states its size; it is not modelled. **Never multiply it by turnover**: a fill log does not carry par value, so `marina check` leaves it out of the statutory fee floor (`statutory_fee_floor`). From 2015-08-01 SSE charges on turnover (`transfer_fee_each_side`). |
+| `transfer_fee_par_value` | fraction | SSE A-share transfer fee per side as a fraction of **traded par value** (成交面额), CSDC portion — XSHG 2006-07-01..2015-08-01 (0.5‰, 0.375‰ from 2012-06-01, 0.3‰ from 2012-09-01). A broker-retained part existed (CSDC 2012-08-02) but no official text states its size; it is not modelled. **Never multiply it by turnover**: a fill log does not carry par value, so `marina-check` leaves it out of the statutory fee floor (`statutory_fee_floor`). From 2015-08-01 SSE charges on turnover (`transfer_fee_each_side`). |
 
 `transfer_fee_each_side` remains a fraction of **turnover**. Before 2015-08-01 it exists only for XSHE (0.0255‰,
 collected by CSDC out of the SZSE handling fee — not a separate investor line item); for XSHG on those dates query
@@ -1382,7 +1382,7 @@ covers all three (records with `market: XSHG+XSHE+BJSE`); where its rate differe
 family scope `bse_stock` (Beijing Stock Exchange shares, no context required — like `stock`):
 `cn.fee.transfer_fee_each_side.bjse.2021-11-15`, 0.025‰, 2021-11-15..2022-04-29. So on those dates a `stock` lookup
 without a market answers the SSE/SZSE 0.02‰ record, `stock` + `BJSE` is `KeyError` (no record), and the BSE value is
-`rule_at("transfer_fee_each_side", d, "bse_stock", "BJSE")`. `marina check` looks up BJSE fills under `bse_stock`
+`rule_at("transfer_fee_each_side", d, "bse_stock", "BJSE")`. `marina-check` looks up BJSE fills under `bse_stock`
 first, then `stock`. From 2022-04-29 the national `stock` record (XSHG+XSHE+BJSE) answers BJSE.
 
 `bse_stock` also holds the other BSE-only stock records (from 2021-11-15): `tick_size` 0.01, `min_holding_days` 1,
@@ -1500,7 +1500,7 @@ rule keywords reviewed by title, not every notice read); `XSGE`, `XINE`, `XZCE`,
 | `contract.resolve()` | `tracking: {tracked_through, beyond}` on every decision (`beyond` = `trade_date` > `tracked_through`; both `null` when untracked; the market is the query's, else the answering record's). `warnings`: `CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED` on a DETERMINED answer from an open-ended record beyond tracking / on an untracked market | that answer becomes status `BEYOND_TRACKING`: `result` null, `record_id` / evidence kept |
 | `record_at()` / `rule_at()` | unchanged | `BeyondTracking` (subclass of `KeyError`; `record`, `date`, `tracked_through`) in the same case |
 | `coverage()` | `tracking: {tracked_through, beyond: {from, to} \| null}` and `beyond_tracking` [{rule, from, to, record_ids}]: ranges answered by an open-ended record after `tracked_through` (anywhere when untracked); `status` unchanged | non-empty `beyond_tracking` → `partial` |
-| `marina check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked` (a row without a market counts as untracked), `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
+| `marina-check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked` (a row without a market counts as untracked), `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
 | capabilities | `tracking`: `entries`, `untracked_markets` | — |
 
 `scripts/check_release_metadata.py` fails on a `tracked_through` or `updated` after today (Asia/Tokyo), and with

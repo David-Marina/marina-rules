@@ -15,7 +15,7 @@
    "futures",
    "no-market"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0002",
@@ -33,7 +33,7 @@
    "futures",
    "no-market"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0003",
@@ -51,7 +51,7 @@
    "tick-family",
    "futures"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0004",
@@ -69,7 +69,7 @@
    "tick-family",
    "regression"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0005",
@@ -98,7 +98,7 @@
    "alternatives",
    "wrong-rule-name"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0006",
@@ -116,7 +116,7 @@
   "tags": [
    "alternatives"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0007",
@@ -141,7 +141,7 @@
    "alternatives",
    "unknown-scope"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  },
  {
   "id": "DSC-0008",
@@ -159,6 +159,6 @@
    "alternatives",
    "before-first-record"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.16"
  }
 ]

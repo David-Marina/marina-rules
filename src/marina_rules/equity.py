@@ -2,7 +2,7 @@
 
     pick_scope(trade_date, board=..., st_status=..., listing_day_index=..., **context) -> dict
     equity_scopes() -> tuple of scope names pick_scope chooses from
-    checkable_scopes() -> {scope: description} every A-share scope ``marina check`` can check a price band for
+    checkable_scopes() -> {scope: description} every A-share scope ``marina-check`` can check a price band for
     board_for_code(code) -> (board, market) | None
 
 ``pick_scope`` is data-driven: it evaluates each candidate scope's own ``requires`` and ``asserts`` from
@@ -44,7 +44,7 @@ def _price_limit_scopes() -> frozenset:
 
 def checkable_scopes() -> dict:
     """{scope: description} for every China A-share registry scope that has a ``price_limit_pct`` record — the scopes
-    whose price band ``marina check`` can check. Generated from the registry and the records, in registry order."""
+    whose price band ``marina-check`` can check. Generated from the registry and the records, in registry order."""
     have = _price_limit_scopes()
     return {k: v["description"] for k, v in scopes("cn").items() if k in have}
 
@@ -60,7 +60,7 @@ def equity_scopes() -> tuple:
 
 @lru_cache(maxsize=None)
 def context_keys() -> tuple:
-    """Context keys the candidate scopes require or assert (the optional CSV columns ``marina check`` reads)."""
+    """Context keys the candidate scopes require or assert (the optional CSV columns ``marina-check`` reads)."""
     reg = scopes("cn")
     keys: dict = {}
     for s in equity_scopes():
