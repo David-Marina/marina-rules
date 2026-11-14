@@ -35,6 +35,8 @@ futures, crypto. ST status, board and listing date of a security are supplied by
 - [docs/decision.schema.json](https://github.com/David-Marina/marina-rules/blob/main/docs/decision.schema.json): JSON Schema of a decision
 - [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md): what changed in each release and what to re-run
 
+- [Rule pages](https://david-marina.github.io/marina-rules/): one page per market, scope and rule, with every record, its sources and quotes; its own llms.txt lists them as Markdown
+
 ## Optional
 
 - [conformance vectors](https://github.com/David-Marina/marina-rules/tree/main/conformance): input → expected pairs for checking another implementation

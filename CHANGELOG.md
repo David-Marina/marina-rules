@@ -92,8 +92,11 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
   expect a refusal (`expect.error`).
 - **`evals/`**: 14 tasks for testing an assistant that has only the installed package, with expected answers
   generated from the library and a grader.
-- **`scripts/build_site.py`**: generates one static page per (market family, scope, rule) from the data. The pages
-  are not published anywhere.
+- **Rule pages**: `scripts/build_site.py` generates one static page per (market family, scope, rule) from the
+  data — every record with its interval, value, sources and quotes — and they are published at
+  <https://david-marina.github.io/marina-rules/>, rebuilt at each release.
+- **`examples/hardcoded_vs_marina.py`**: six fills at rule changes, each computed with today's rule and with the
+  rule of the trade date.
 
 ### Changed
 - Bookkeeping: `cn.fee.commission_min_per_order_cny.2002-05-01` gained `unit: CNY` (the value is unchanged; `diff`

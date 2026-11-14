@@ -8,7 +8,7 @@ nothing depends on the date of the build: two builds of the same data are byte-i
 absolute URL of the site is written anywhere (sitemap.xml needs one, so it is written only with --base-url).
 
 Output: index.html, <prefix>/index.html, <prefix>/<scope>/index.html, <prefix>/<scope>/<rule>.html and .md,
-llms.txt, site.json and, with --base-url, sitemap.xml. Known gaps whose (scope, rule) has records are on that fact
+llms.txt, site.json and, with --base-url, sitemap.xml and robots.txt. Known gaps whose (scope, rule) has records are on that fact
 page; the others are on their scope page, or on the family index when the scope is not in the registry.
 """
 from __future__ import annotations
@@ -234,6 +234,10 @@ def table_md(head: list, rows: list) -> str:
     return "\n".join(lines)
 
 
+PYPI_URL = "https://pypi.org/project/marina-rules/"
+REPO_URL = "https://github.com/David-Marina/marina-rules"
+
+
 def page(title: str, h1: str, body: str, *, path: str, description: str, nav: list, base_url: str | None) -> str:
     """nav: [(label, site-relative target path or None)]."""
     crumbs = " / ".join(f'<a href="{esc(rel(path, t))}">{esc(lab)}</a>' if t else esc(lab) for lab, t in nav)
@@ -242,7 +246,9 @@ def page(title: str, h1: str, body: str, *, path: str, description: str, nav: li
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f"<title>{esc(title)}</title>\n<meta name=\"description\" content=\"{esc(description)}\">\n{canon}"
             f"<style>\n{CSS}\n</style>\n</head>\n<body>\n<main>\n<nav>{crumbs}</nav>\n<h1>{esc(h1)}</h1>\n"
-            f"{body}\n</main>\n</body>\n</html>\n")
+            f"{body}\n<p>marina-rules — point-in-time trading rules as data. "
+            f'<a href="{PYPI_URL}">Install from PyPI</a> · <a href="{REPO_URL}">source, data and how to cite</a> · '
+            f"CC0 data, MIT code.</p>\n</main>\n</body>\n</html>\n")
 
 
 def rel(src_page: str, target: str) -> str:
@@ -591,6 +597,7 @@ def build(base_url: str | None = None) -> dict:
         files["sitemap.xml"] = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                 + "".join(f"<url><loc>{esc(base_url + p)}</loc></url>\n" for p in locs) + "</urlset>\n")
+        files["robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {base_url}sitemap.xml\n"
 
     missing = [k for p in PREFIXES for k in ((p, g["gap_id"]) for g in gaps[p]) if k not in placed_gaps]
     if missing:

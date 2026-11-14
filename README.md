@@ -24,6 +24,16 @@ Every backtest engine, every trading agent, and every research notebook re-imple
 
 A shared, cited, versioned table fixes this the way tzdata fixed time zones: not by being authoritative, but by being **the same for everyone** and **traceable to the source**.
 
+[`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints six such fills side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
+
+| fill | hard-coded with today's rule | rule of that day |
+|---|---|---|
+| ChiNext, 2020-08-21, previous close 10.00: limit-up / limit-down | 12.00 / 8.00 | 11.00 / 9.00 |
+| ST main-board stock, 2024-06-14, previous close 10.00 | 11.00 / 9.00 | 10.50 / 9.50 |
+| Main-board IPO in its first five days, 2024-01-30 | 11.00 / 9.00 | no limit |
+| Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
+| Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
+
 ## Use
 
 ```bash
@@ -321,6 +331,9 @@ byte-identical.
 ```bash
 python scripts/build_site.py --out site
 ```
+
+The pages of the current release are published at **<https://david-marina.github.io/marina-rules/>** (rebuilt from the
+data at each release), with a `sitemap.xml` and an `llms.txt` that lists every rule page as Markdown.
 
 ## Errata
 

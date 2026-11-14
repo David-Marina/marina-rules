@@ -147,3 +147,29 @@ def test_packaging_metadata_names_both_licences_and_the_search_words():
         assert word in re.search(r'^description = "(.*)"$', py, flags=re.M).group(1)
     for word in ("涨跌停", "印花税", "回测", "price-limit", "stamp-duty", "a-share", "backtest-validation"):
         assert f'"{word}"' in py
+
+
+def test_the_hard_coded_comparison_in_the_readme_is_what_the_example_prints():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("hardcoded_vs_marina", os.path.join(ROOT, "examples", "hardcoded_vs_marina.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    got = {c["case"].split(" (")[0]: (c["hard_coded_today"], c["marina"]) for c in mod.cases()}
+    assert got["ChiNext before the 2020-08-24 reform"] == ((12.0, 8.0), (11.0, 9.0))
+    assert got["ST stock treated as an ordinary main-board stock"] == ((11.0, 9.0), (10.5, 9.5))
+    assert got["IPO in its first five days treated as an ordinary stock"] == ((11.0, 9.0), None)
+    assert got["Convertible bond treated as a stock"] == ((110.0, 90.0), (120.004, 80.002))
+    assert got["Sell in April 2008"] == (51.0, 302.55)
+    assert got["Sell just before the 2023-08-28 cut"] == (51.0, 101.0)
+    readme = _read("README.md")
+    for cell in ("12.00 / 8.00 | 11.00 / 9.00", "11.00 / 9.00 | 10.50 / 9.50", "| 51.00 | 302.55 |", "| 51.00 | 101.00 |"):
+        assert cell in readme, cell
+    assert all(c["hard_coded_today"] != c["marina"] for c in mod.cases())
+
+
+def test_the_pages_workflow_builds_with_the_published_address():
+    wf = _read(".github/workflows/pages.yml")
+    assert "scripts/build_site.py --out _site --base-url https://david-marina.github.io/marina-rules/" in wf
+    assert "branches: [main]" in wf and "actions/deploy-pages@" in wf
+    for name in ("README.md", "llms.txt", "pyproject.toml"):
+        assert "https://david-marina.github.io/marina-rules/" in _read(name), name
