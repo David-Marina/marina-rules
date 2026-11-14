@@ -112,8 +112,10 @@ never fires. A hint can also mean a wrong scope (e.g. a 10%-band stock labelled 
 first HINT_ROW_INDEXES (20) row indexes (all with ``--rows``) and the total in ``rows``.
 
 Output: JSON with findings, counts, the dataset digest, and a ``rules-verified`` stamp when a strict run (no
-relaxation) has zero findings. The stamp is sha256(dataset_digest ‖ "\n" ‖ sha256(canonical fill log)) and can be recomputed by
-anyone holding the same log and the same rules version. It commits to every input that can change a check.
+relaxation) has zero findings: ``rules-verified@<data version>:<first 32 hex of the hash>``, where the data version
+is ``DATA_VERSION`` (the marina-rules-data release) and the hash is sha256(dataset_digest ‖ "\n" ‖ sha256(canonical
+fill log)). It can be recomputed by anyone holding the same log and the same dataset. It commits to every input that
+can change a check. The report also names the code version (``code_version``) that ran the checks.
 
 Canonical fill log (``CANON_VERSION`` = 2): the UTF-8 bytes of
     marina-check-canon/2 strict=<0|1>\n
@@ -139,7 +141,7 @@ from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
-               tracked_through, VERSION, _agreed_tick, _check_date, statutory_fee_floor)
+               tracked_through, DATA_VERSION, __version__, _agreed_tick, _check_date, statutory_fee_floor)
 from .equity import (LIST_DATE_MARGIN_DAYS, board_for_code, checkable_scopes, context_keys, equity_scopes,
                      listing_index_from_list_date, parse_context_value, pick_scope, seasoned_listing_day_index)
 
@@ -449,10 +451,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     order = [f"<={b:g}%" for b in TOLERANCE_BUCKETS] + [f">{TOLERANCE_BUCKETS[-1]:g}%"]
     summary["within_tolerance_excess"] = {b: buckets.get(b, 0) for b in order}
     out = {
-        "marina_rules_version": VERSION, "dataset_sha256": dg, "citation": citation(),
+        "data_version": DATA_VERSION, "code_version": __version__, "dataset_sha256": dg, "citation": citation(),
         "rows": len(rows), "findings": findings, "counts": counts,
         "rules_verified": ok,
-        "stamp": (f"rules-verified@{VERSION}:{stamp[:32]}" if ok else None),
+        "stamp": (f"rules-verified@{DATA_VERSION}:{stamp[:32]}" if ok else None),
         "disclaimer": "Checks fills against price-limit and fee rules only. Not a statement about "
                       "look-ahead bias, survivorship, capacity, or statistical validity.",
         "options": {"strict": bool(strict), "tick": bool(tick), "band_tolerance_pct": tol,

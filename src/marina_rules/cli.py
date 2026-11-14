@@ -15,7 +15,7 @@
   capabilities [cn|hk|us]     everything that can be asked, as JSON
   schema                      JSON Schema of the decision returned by query
   skill                       the usage notes shipped with the package (SKILL.md)
-  version                     the citation line: package version and dataset digest
+  version                     the citation line: data version, dataset digest, code version
 
 Exit codes: 0 answered, 1 findings (check only), 2 usage error. Output is JSON except for adapt (CSV rows; its report is
 JSON on stderr), skill, version and this help.

@@ -220,7 +220,8 @@ def build() -> dict:
         ids = [t["id"] for t in json.load(fh)["tasks"]]
     assert ids == sorted(tasks), (ids, sorted(tasks))
     return {"eval_version": 1,
-            "dataset": {"version": mr.VERSION, "digest": mr.dataset_digest(), "citation": mr.citation(short=False)},
+            "dataset": {"data_version": mr.DATA_VERSION, "code_version": mr.__version__, "digest": mr.dataset_digest(),
+                        "citation": mr.citation(short=False)},
             "tolerances": {"price": TOL_PRICE, "rate": TOL_RATE, "cny": TOL_CNY, "cny_per_lot": TOL_PER_LOT},
             "tasks": tasks}
 

@@ -1,8 +1,9 @@
-"""Write the release artefacts next to a tag: machine-readable dumps of the same bytes the wheel ships.
+"""Write the artefacts of a data release next to its tag: machine-readable dumps of the same bytes the
+marina-rules-data wheel ships.
 
     python scripts/export_release.py dist/
 
-Produces marina-rules-<version>.json (all records, scopes, known gaps, digest), .sqlite (same, queryable),
+Produces marina-rules-data-<data version>.json (all records, scopes, known gaps, digest), .sqlite (same, queryable),
 capabilities.json (China), capabilities-hk.json (Hong Kong) and capabilities-us.json (US equities),
 decision.schema.json, conformance vectors, and SHA256SUMS. Nothing here is a second source of truth: every file
 carries the dataset digest and can be regenerated from the YAML.
@@ -27,24 +28,26 @@ def main(out: str) -> int:
     os.makedirs(out, exist_ok=True)
     all_scopes = {k: v for pfx in PREFIXES for k, v in mr.scopes(pfx).items()}
     all_gaps = [g for pfx in PREFIXES for g in mr.known_gaps(pfx)]
-    ver, dg = mr.VERSION, mr.dataset_digest()
+    ver, dg = mr.DATA_VERSION, mr.dataset_digest()
     recs = [{**{k: getattr(r, k) for k in ("id", "market", "scope", "rule", "value", "effective_from", "effective_to",
                                             "published_at", "recorded_at", "verification", "notes", "file", "unit", "contracts")},
              "sources": list(r.sources)} for r in mr.records()]
-    dump = {"ruleset_version": ver, "dataset_sha256": dg, "citation": mr.citation(short=False),
+    dump = {"ruleset_version": ver, "dataset_sha256": dg, "code_version": mr.__version__,
+            "citation": mr.citation(short=False),
             "records": recs, "scopes": all_scopes, "known_gaps": all_gaps,
             "tracking": mr.tracking_registry()}   # not part of dataset_sha256 (docs/SCHEMA.md, Tracking registry)
     files = {}
-    p = os.path.join(out, f"marina-rules-{ver}.json")
+    p = os.path.join(out, f"marina-rules-data-{ver}.json")
     with open(p, "w", encoding="utf-8") as fh:
         json.dump(dump, fh, ensure_ascii=False, indent=1, default=_json_default)
     files[p] = 1
     # sqlite
-    p = os.path.join(out, f"marina-rules-{ver}.sqlite")
+    p = os.path.join(out, f"marina-rules-data-{ver}.sqlite")
     if os.path.exists(p): os.remove(p)
     con = sqlite3.connect(p); c = con.cursor()
     c.execute("create table meta(key text primary key, value text)")
-    c.executemany("insert into meta values(?,?)", [("ruleset_version", ver), ("dataset_sha256", dg), ("citation", dump["citation"])])
+    c.executemany("insert into meta values(?,?)", [("ruleset_version", ver), ("dataset_sha256", dg), ("code_version", mr.__version__),
+                                                         ("citation", dump["citation"])])
     c.execute("""create table records(id text primary key, market text, scope text, rule text, value_json text,
                  effective_from text, effective_to text, published_at text, recorded_at text, verification text, unit text, notes text, file text,
                  contracts_json text)""")

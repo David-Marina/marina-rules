@@ -8,11 +8,13 @@ dist/
 ops/logs/
 ops/reports/
 
-# vendored copy for wheels (scripts/vendor_data.py); never commit
-src/marina_rules/data/
+# marina-rules-data package content, generated from data/ by scripts/vendor_data.py; never commit
+packages/marina-rules-data/marina_rules_data/data/
+packages/marina-rules-data/LICENSE
 # precompiled loader output (scripts/vendor_data.py); generated, never committed
-src/marina_rules/data/compiled.json
+packages/marina-rules-data/marina_rules_data/data/compiled.json
 data/compiled.json
+# the usage notes copied into the code wheel (scripts/vendor_data.py --code); never commit
 src/marina_rules/SKILL.md
 dist/
 build/

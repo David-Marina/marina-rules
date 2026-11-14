@@ -9,8 +9,11 @@ A 股回测里最常见的一类错误不是策略写错，而是交易规则用
 ## 安装和查询
 
 ```bash
-pip install marina-rules      # 数据随安装包一起分发，不联网
+pip install marina-rules           # 代码包；数据包 marina-rules-data 作为依赖一起装上，运行时不联网
+pip install -U marina-rules-data   # 以后只升级数据：规则更新，代码不动
 ```
+
+Marina 分成两个包，做法和时区数据库一样：**`marina-rules-data`** 是规则数据，按日期编版本（`YYYY.MM.DD`），数据有变化就发；**`marina-rules`** 是读数据的代码，按语义化版本编号，只在功能变化时发。两者可以分别升级；代码在导入时会检查装着的数据能不能读，读不了就直接报错并说明该升级哪个包。
 
 ```python
 import marina_rules as mr
@@ -23,7 +26,7 @@ mr.limit_price(10.00, "chinext", "2021-03-01", "XSHE")           # (12.0, 8.0)  
 mr.limit_price(10.00, "ipo_first5_main", "2024-01-30", "XSHG+XSHE")   # None  新股上市前五日不设涨跌幅
 mr.rule_at("stamp_duty_sell", "2005-01-01")                      # KeyError  没有记录就报错，从不给默认值
 mr.statutory_fee_floor(86420.00, "sell", "2023-08-28", "XSHG")   # 44.0742  一笔卖出的印花税 + 过户费
-mr.citation()                                                    # 'rules: marina-rules@<版本> sha256:<16 位摘要>'
+mr.citation()   # 'rules: marina-rules-data@<数据版本> sha256:<16 位摘要> code: marina-rules@<代码版本>'
 ```
 
 三点约定：
@@ -117,7 +120,13 @@ API 里传 `strict=True` 会拒绝 `unverified` 的记录。
 
 ## 引用和复现
 
-把 `mr.citation()` 的输出写进你发布的每一份结果。它包含版本号和数据摘要：带着它，任何人都能用字节完全相同的规则重跑；不带它，结果无法复现。升级后用 `python -m marina_rules.diff <旧版本> <新版本>` 查看哪些规则变了、哪些回测需要重跑。
+把 `mr.citation()` 的输出写进你发布的每一份结果。这一行写明数据版本（`marina-rules-data@…`）、数据摘要（`sha256:…`，对规则文件本身计算）和读取它的代码版本（`code: marina-rules@…`）：带着它，任何人都能用字节完全相同的规则重跑；不带它，结果无法复现。命令行 `marina-rules version` 输出同一行。
+
+该用哪个版本，看用途（详见英文版的 [Which version to use](README.md#which-version-to-use)）：
+
+- **要发表的研究**：固定数据版本（`pip install marina-rules "marina-rules-data==<数据版本>"`），把 `mr.citation()` 写进结果。
+- **每天都在跑的东西**（模拟盘或实盘 Agent、每晚的回测）：每周升级数据包（`pip install -U marina-rules-data`），并打开 `require_tracked=True`，超过维护者核对日期的查询会被拒绝，而不是沿用最后一条已知规则。
+- **每次升级数据之后**：用 `python -m marina_rules.diff <旧数据目录> <新数据目录>` 查看哪些规则变了、哪些回测需要重跑，做法见英文版的 [Upgrading](README.md#upgrading-diff_rules)。
 
 ## Marina 不包含什么
 
@@ -125,6 +134,6 @@ API 里传 `strict=True` 会拒绝 `unverified` 的记录。
 
 ## 许可
 
-数据（`data/`、`docs/`）：[CC0 1.0](LICENSE-DATA)，不保留任何权利。代码（`src/`、`scripts/`、`tests/`）：[MIT](LICENSE)。
+数据（`data/`、`docs/`，即 `marina-rules-data` 包）：[CC0 1.0](LICENSE-DATA)，不保留任何权利。代码（`src/`、`scripts/`、`tests/`，即 `marina-rules` 包）：[MIT](LICENSE)。
 
 欢迎补充和纠错：每个合并请求一条记录，附一手来源链接。见 [CONTRIBUTING.md](CONTRIBUTING.md)。

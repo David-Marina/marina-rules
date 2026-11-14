@@ -1,9 +1,13 @@
-"""The precompiled dataset (data/compiled.json in a wheel, see marina_rules/_precompiled.py).
+"""The precompiled dataset (data/compiled.json in the marina-rules-data wheel, see marina_rules/_precompiled.py).
 
 It must load exactly what the YAML loaders load (same values, same types), be produced only through the validating
-loaders, and never be used when it does not belong to the YAML beside it or to this loader code.
+loaders, and never be used when it does not belong to the YAML beside it or to this loader revision. The loader
+revision is pinned to the source of the loader code below (test_loader_revision_pins_the_loader_source).
 """
+import ast
 import datetime as dt
+import hashlib
+import inspect
 import json
 import os
 import shutil
@@ -167,14 +171,52 @@ def test_added_or_removed_yaml_is_refused(copy_of):
     _refused("YAML beside it differs")
 
 
-def test_other_loader_code_is_refused(copy_of, monkeypatch):
-    monkeypatch.setattr(pc, "loader_fingerprint", lambda: "0" * 64)
-    _refused("different loader code")
+@pytest.mark.parametrize("delta", [1, -1])
+def test_other_loader_revision_is_refused_and_yaml_is_loaded(from_yaml, copy_of, monkeypatch, delta):
+    monkeypatch.setattr(pc, "LOADER_REVISION", pc.LOADER_REVISION + delta)
+    _refused("loader revision")
+    _clear()
+    with pytest.warns(RuntimeWarning, match="loader revision"):
+        recs = mr.records()
+    assert pc.same(recs, from_yaml["records"])
 
 
-def test_other_package_version_is_refused(copy_of, monkeypatch):
-    monkeypatch.setattr(mr, "VERSION", "0.0.0")
-    _refused("written by marina-rules")
+def test_other_code_version_with_the_same_loader_revision_is_used(copy_of, monkeypatch):
+    # the point of the revision: a code release that leaves the loaders alone keeps the fast path
+    monkeypatch.setattr(mr, "__version__", "99.0.0")
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert mr._compiled() is not None
+
+
+def test_header_must_name_the_dataset_version_beside_it(copy_of):
+    with open(os.path.join(copy_of, "VERSION"), "w", encoding="ascii") as fh:
+        fh.write("2099.01.01\n")
+    _refused("dataset version")
+
+
+def test_missing_dataset_version_is_refused(copy_of):
+    os.remove(os.path.join(copy_of, "VERSION"))
+    _refused("cannot read the dataset version")
+
+
+@pytest.mark.parametrize("rev", [True, "1", 1.0, None])
+def test_loader_revision_must_be_the_integer(copy_of, rev):
+    p = os.path.join(copy_of, pc.FILE)
+    head, _, body = open(p, "rb").read().partition(b"\n")
+    h = json.loads(head)
+    h["loader_revision"] = rev
+    open(p, "wb").write(json.dumps(h, sort_keys=True).encode() + b"\n" + body)
+    _refused("loader revision")
+
+
+def test_previous_file_format_is_refused(copy_of):
+    p = os.path.join(copy_of, pc.FILE)
+    head, _, body = open(p, "rb").read().partition(b"\n")
+    h = json.loads(head)
+    h["format_version"] = 1
+    open(p, "wb").write(json.dumps(h, sort_keys=True).encode() + b"\n" + body)
+    _refused("format")
 
 
 @pytest.mark.parametrize("content", [b"", b"not json\n{}", b'{"format": "something-else"}\n{}'])
@@ -200,6 +242,8 @@ _SRC = {"url": "https://example.org/x", "content_sha256": "0" * 64, "quote": "q"
 def _write_dataset(d, records, tracking=None):
     import yaml
     os.makedirs(os.path.join(d, "us"))
+    with open(os.path.join(d, "VERSION"), "w", encoding="ascii") as fh:
+        fh.write("2026.01.02\n")
     with open(os.path.join(d, "us", "equity.yaml"), "w", encoding="utf-8") as fh:
         yaml.safe_dump({"schema": 1.1, "market": "XNYS+XNAS", "records": records}, fh)
     if tracking is not None:
@@ -220,7 +264,22 @@ def test_build_writes_a_valid_small_dataset(tmp_path):
     d = str(tmp_path / "data")
     _write_dataset(d, [_rec(1, "2020-01-01", "2021-01-01"), _rec(2, "2021-01-01")])
     raw = pc.build(d)
-    assert json.loads(raw.partition(b"\n")[0])["records"] == 2
+    head = json.loads(raw.partition(b"\n")[0])
+    assert head["records"] == 2 and head["data_version"] == "2026.01.02"
+    assert head["loader_revision"] == pc.LOADER_REVISION and head["format_version"] == pc.FORMAT_VERSION
+
+
+@pytest.mark.parametrize("version", [None, "2026-01-02", "v1"])
+def test_build_refuses_a_dataset_without_a_valid_version(tmp_path, version):
+    d = str(tmp_path / "data")
+    _write_dataset(d, [_rec(1, "2020-01-01")])
+    if version is None:
+        os.remove(os.path.join(d, "VERSION"))
+    else:
+        with open(os.path.join(d, "VERSION"), "w", encoding="ascii") as fh:
+            fh.write(version)
+    with pytest.raises(ValueError, match="dataset version"):
+        pc.build(d)
 
 
 @pytest.mark.parametrize("records, match", [
@@ -249,9 +308,110 @@ def test_build_refuses_an_invalid_tracking_registry(tmp_path):
 # --- packaging declarations ------------------------------------------------------------------------------------------
 
 def test_packaging_ships_and_ignores_the_precompiled_file():
-    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
+    with open(os.path.join(ROOT, "packages", "marina-rules-data", "pyproject.toml"), encoding="utf-8") as fh:
         assert '"data/compiled.json"' in fh.read()
+    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
+        assert "compiled.json" not in fh.read()          # the code wheel carries no data
     with open(os.path.join(ROOT, ".gitignore"), encoding="utf-8") as fh:
-        assert "src/marina_rules/data/compiled.json" in fh.read().splitlines()
+        assert "packages/marina-rules-data/marina_rules_data/data/compiled.json" in fh.read().splitlines()
     with open(os.path.join(ROOT, "scripts", "vendor_data.py"), encoding="utf-8") as fh:
         assert "_precompiled.build(dst)" in fh.read()
+
+
+# --- the loader revision follows the loader code ---------------------------------------------------------------------
+# One entry per LOADER_REVISION: the sha256 of the loader source at that revision (_loader_source_sha256 below). Never
+# edit an entry. When this test fails because you changed the loaders or marina_rules/_precompiled.py: increase
+# _precompiled.LOADER_REVISION by one and add a line for it with the hash the failure prints. (A change that cannot
+# alter any output — a comment, a docstring — still changes the hash; bump anyway: the cost is one slow first load for
+# users whose data package was built by the other revision, never a wrong answer.)
+LOADER_SOURCE_SHA256 = {
+    1: "75ae551377cab13fd9fa49c594c082eaaf4e1ed70758004d67daad04d4e880ce",
+}
+
+# What the precompiled file stores is what these return; every module-level definition they reach is hashed.
+_LOADER_ROOTS = ("_records_from_yaml", "_scopes_from_yaml", "_gaps_from_yaml", "_tracking_from_yaml", "Record")
+# Reached but not loader behaviour: where the data lives, and the version constants (checked elsewhere).
+_NOT_LOADER = frozenset({"DATA_DIR", "DATA_VERSION", "__version__", "MIN_DATA_VERSION"})
+
+
+def _definitions(tree) -> dict:
+    out: dict = {}
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            out.setdefault(node.name, []).append(node)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for t in targets:
+                for n in ast.walk(t):
+                    if isinstance(n, ast.Name):
+                        out.setdefault(n.id, []).append(node)
+    return out
+
+
+def _referenced(node, module_alias=None) -> set:
+    names = set()
+    for n in ast.walk(node):
+        if isinstance(n, ast.Name):
+            names.add(n.id)
+        elif (module_alias and isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name)
+              and n.value.id == module_alias):
+            names.add(n.attr)
+    return names
+
+
+def _loader_source_sha256() -> str:
+    """sha256 over the source text of the loader code: all of marina_rules/_precompiled.py except the LOADER_REVISION
+    line, and every module-level definition of marina_rules/__init__.py reachable from the loaders."""
+    pc_src = inspect.getsource(pc)
+    mr_src = inspect.getsource(mr)
+    pc_tree, mr_tree = ast.parse(pc_src), ast.parse(mr_src)
+    pc_defs, mr_defs = _definitions(pc_tree), _definitions(mr_tree)
+    todo = list(_LOADER_ROOTS)
+    for name, nodes in pc_defs.items():           # the precompiled module reaches into marina_rules as ``mr.<name>``
+        for node in nodes:
+            todo += sorted(_referenced(node, "mr") & set(mr_defs))
+    seen: set = set()
+    while todo:
+        name = todo.pop()
+        if name in seen or name in _NOT_LOADER or name not in mr_defs:
+            continue
+        seen.add(name)
+        for node in mr_defs[name]:
+            todo += sorted(_referenced(node) & set(mr_defs))
+    h = hashlib.sha256()
+    for label, src, defs, names in (("_precompiled", pc_src, pc_defs, sorted(set(pc_defs) - {"LOADER_REVISION"})),
+                                    ("__init__", mr_src, mr_defs, sorted(seen))):
+        for name in names:
+            for node in defs[name]:
+                seg = ast.get_source_segment(src, node).encode("utf-8")
+                h.update(b"%s.%s %d:" % (label.encode(), name.encode(), len(seg)))
+                h.update(seg)
+    return h.hexdigest()
+
+
+def test_loader_revision_pins_the_loader_source():
+    assert pc.LOADER_REVISION == max(LOADER_SOURCE_SHA256), (
+        "LOADER_SOURCE_SHA256 must have one entry per loader revision, the last one for _precompiled.LOADER_REVISION")
+    assert len(set(LOADER_SOURCE_SHA256.values())) == len(LOADER_SOURCE_SHA256), "two revisions with the same hash"
+    got = _loader_source_sha256()
+    assert got == LOADER_SOURCE_SHA256[pc.LOADER_REVISION], (
+        f"the loader code changed (source hash {got}) but _precompiled.LOADER_REVISION is still "
+        f"{pc.LOADER_REVISION}. If you change the loaders you must bump the revision: set LOADER_REVISION = "
+        f"{pc.LOADER_REVISION + 1} and add `{pc.LOADER_REVISION + 1}: \"{got}\",` to LOADER_SOURCE_SHA256.")
+
+
+def test_loader_source_hash_covers_the_loaders():
+    # the closure must reach the validation the loaders call, and must not reach the query side
+    src = inspect.getsource(mr)
+    defs = _definitions(ast.parse(src))
+    seen, todo = set(), list(_LOADER_ROOTS)
+    while todo:
+        n = todo.pop()
+        if n in seen or n in _NOT_LOADER or n not in defs:
+            continue
+        seen.add(n)
+        for node in defs[n]:
+            todo += sorted(_referenced(node) & set(defs))
+    assert {"_check_band_table", "_check_contracts", "_reject_overlaps", "_load_tracking", "_iso_dates",
+            "_norm_date", "_iter_files", "DATA_SCHEMAS", "_SCHEMA_SELECTORS", "contract_matches"} <= seen
+    assert not {"rule_at", "record_at", "limit_price", "citation", "coverage", "DATA_DIR"} & seen

@@ -4,16 +4,23 @@ Every Marina release, newest first. Format: [Keep a Changelog](https://keepachan
 
 How to read an entry:
 
-- **Dataset** is the first 16 hex of the dataset digest — the hash in `mr.citation()`. Two results
+- **Dataset** is the first 16 hex of the dataset digest — the `sha256:` in `mr.citation()`. Two results
   that cite the same digest ran against byte-identical rules. The release notes carry the full 64 hex.
 - **Corrected (re-run needed)** lists every change `python -m marina_rules.diff <previous> <this>`
   classifies as `correction` (Marina was wrong about the past, or history was re-cut), with its
   interval, plus any behaviour change the diff cannot see. **Added** = `coverage_added` /
   `regime_change`; **Changed** = renames, bookkeeping, metadata, code and docs.
+- **Two packages, two kinds of entry.** `## [YYYY.MM.DD]` is a release of the dataset, the
+  `marina-rules-data` package; `## [marina-rules X.Y.Z]` is a release of the code, the `marina-rules`
+  package. They are released separately: a data release does not need a new code release, and the
+  reverse. Entries up to and including 2026.11.13 are from before the split, when one package
+  carried both; their version is the data version.
 - **Versions are names, not release dates.** The date after each heading is the release date in Asia/Tokyo.
-- **Version scheme.** `YYYY.MM.DD`, and `YYYY.MM.DD.N` for a further release on the same day — never a
-  letter suffix, which PEP 440 reads as a pre-release (GOVERNANCE.md). The release workflow refuses any
-  tag that `packaging` reports as a pre/dev release.
+- **Version scheme.** Data: `YYYY.MM.DD`, and `YYYY.MM.DD.N` for a further release on the same day — never a
+  letter suffix, which PEP 440 reads as a pre-release (GOVERNANCE.md). Code: semantic versions from
+  `1.0.0`. The release workflow refuses any tag that `packaging` reports as a pre/dev release.
+- **Compatibility.** A code entry says which data it reads (the oldest data version and the data
+  formats); a data entry that needs a newer code release says so.
 
 ## [2026.11.13] - 2026-11-13
 

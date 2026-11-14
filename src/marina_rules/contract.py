@@ -15,8 +15,8 @@ Returns a plain dict (JSON-serialisable, schema in ``contract_schema()``) whose 
   BEYOND_TRACKING   only with ``require_tracked=True``: the answer would come from an open-ended record on a date after
                     the market's ``tracked_through`` (or the market is untracked) — a carry-forward, refused
 
-Only DETERMINED carries a ``result``. Every status carries ``ruleset_version`` / ``ruleset_hash`` and a
-``reason`` in plain words.
+Only DETERMINED carries a ``result``. Every status carries ``ruleset_version`` / ``ruleset_hash`` (the
+marina-rules-data version and the dataset digest) and a ``reason`` in plain words.
 
 Every decision also carries ``tracking`` = ``{tracked_through, beyond}`` (docs/SCHEMA.md "Tracking registry"):
 the last date up to which the official sources for the market were checked for rule changes, and whether
@@ -44,7 +44,7 @@ import json
 from functools import lru_cache
 from typing import Any
 
-from . import (VERSION, rules_for, similar_names, markets_recorded, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of, _check_date,
+from . import (DATA_VERSION, rules_for, similar_names, markets_recorded, ContractRequired, RuleConflict, Record, NotYetPublished, PublicationUnknown, _check_as_of, _check_date,
                dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, records, scopes, tracked_through,
                tracking_registry, tracking_state)
 
@@ -150,7 +150,7 @@ def _base(rule, date, scope, market) -> dict:
             "market": market, "scope": scope, "result": None, "record_id": None,
             "required_context": [], "missing_context": [], "context_conflicts": [],
             "known_gap_ids": [], "evidence_refs": [], "verification": None,
-            "ruleset_version": VERSION, "ruleset_hash": dataset_digest(), "reason": "",
+            "ruleset_version": DATA_VERSION, "ruleset_hash": dataset_digest(), "reason": "",
             "tracking": {"tracked_through": None, "beyond": None}, "warnings": [], "alternatives": {}}
 
 
@@ -390,7 +390,7 @@ def capabilities(market_prefix: str = "cn") -> dict:
             e.setdefault("contract_keyed", set()).add(r.scope)
     reg = scopes(market_prefix)
     return {
-        "capabilities_version": CONTRACT_VERSION, "ruleset_version": VERSION, "ruleset_hash": dataset_digest(),
+        "capabilities_version": CONTRACT_VERSION, "ruleset_version": DATA_VERSION, "ruleset_hash": dataset_digest(),
         "entrypoints": {
             "python": {"resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, "
                                   "as_of=None, require_tracked=False)",

@@ -6,7 +6,7 @@
     >>> mr.limit_price(10.00, "chinext", "2021-03-01")
     (12.0, 8.0)
     >>> mr.citation()
-    'rules: marina-rules@<version> sha256:<16 hex>'
+    'rules: marina-rules-data@<data version> sha256:<16 hex> code: marina-rules@<code version>'
 
 Where to start (nothing here needs the network):
   * ``mr.skill_text()`` — the usage notes shipped with the package (the path to follow, when to stop).
@@ -25,12 +25,17 @@ Design rules (do not relax):
   * The dataset digest in ``citation()`` is computed over the data files only, so a result
     that cites it can be re-run against byte-identical rules. The tracking registries
     (``data/<prefix>/tracking.yaml``: how far the sources were checked) are not rules and are excluded.
+
+Two packages: this one (``marina-rules``, the code, semantic versions: ``__version__``) and ``marina-rules-data`` (the
+dataset, date versions: ``DATA_VERSION``), which is released on its own and can be upgraded without this one. A source
+checkout reads the repository's ``data/`` instead. ``citation()`` names both versions and the dataset digest.
 """
 from __future__ import annotations
 
 import hashlib
 import math
 import os
+import re as _re
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Iterable
@@ -38,18 +43,86 @@ from typing import Any, Iterable
 import yaml
 
 __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for", "coverage", "market_prefix_for", "limit_price", "tick_size", "tick_family", "lookup_scope", "min_tick_band", "round_half_up",
-           "citation", "dataset_digest", "DATA_DIR", "VERSION", "Record", "RuleConflict", "NotYetPublished",
+           "citation", "dataset_digest", "DATA_DIR", "DATA_VERSION", "MIN_DATA_VERSION", "DATA_SCHEMAS",
+           "DataNotInstalled", "IncompatibleData", "Record", "RuleConflict", "NotYetPublished",
            "PublicationUnknown", "ContractRequired", "parse_contract", "contract_matches", "tracked_through",
            "tracking_registry", "tracking_state", "BeyondTracking", "rules_for", "statutory_fee_floor",
            "statutory_fee_components", "skill_text", "markets_recorded"]
 
-VERSION = "2026.11.13"
-DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
-if not os.path.isdir(DATA_DIR):  # installed as a package: data is vendored alongside
-    DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+__version__ = "1.0.0"            # this package, the code (marina-rules); semantic versioning
+MIN_DATA_VERSION = "2026.11.13"  # the oldest marina-rules-data this code reads (pyproject.toml declares the same)
+DATA_SCHEMAS = (1, 1.1, 1.2)     # the data formats (``schema:`` of a data file, data/SCHEMA) this code reads
+
+
+class DataNotInstalled(ImportError):
+    """Neither a source checkout's data/ nor the marina-rules-data package is there."""
+
+
+class IncompatibleData(ImportError):
+    """The installed dataset and this code do not fit together; the message says which package to upgrade."""
+
+
+_VERSION_RE = _re.compile(r"^(\d{4})\.(\d{2})\.(\d{2})(?:\.(\d+))?$")
+
+
+def _version_key(v: str) -> tuple:
+    """'2026.11.13' → (2026, 11, 13, 0); '2026.11.13.2' → (2026, 11, 13, 2). Raises ValueError for anything else."""
+    m = _VERSION_RE.match(v)
+    if not m:
+        raise ValueError(f"not a dataset version (YYYY.MM.DD or YYYY.MM.DD.N): {v!r}")
+    return tuple(int(x or 0) for x in m.groups())
+
+
+def _locate_data() -> str:
+    """Where the dataset is: a source checkout's data/ (beside src/), else the installed marina-rules-data package."""
+    checkout = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data"))
+    if os.path.isfile(os.path.join(checkout, "VERSION")):
+        return checkout
+    try:
+        import marina_rules_data
+    except ImportError:
+        raise DataNotInstalled(
+            "marina_rules: the dataset is not installed. It is a separate package: pip install marina-rules-data "
+            "(a normal `pip install marina-rules` installs it; an install with --no-deps does not)") from None
+    return marina_rules_data.DATA_DIR
+
+
+def _read_data_meta(data_dir: str, name: str) -> str:
+    try:
+        with open(os.path.join(data_dir, name), encoding="ascii") as fh:
+            return fh.read().strip()
+    except (OSError, UnicodeDecodeError) as e:
+        raise IncompatibleData(f"marina_rules: the dataset in {data_dir} has no readable {name} file ({e}); "
+                               "reinstall it: pip install --force-reinstall marina-rules-data") from None
+
+
+def _check_data(data_dir: str) -> str:
+    """The version of the dataset in ``data_dir`` after checking that this code can read it (data/VERSION is at least
+    MIN_DATA_VERSION, data/SCHEMA is one of DATA_SCHEMAS). Raises IncompatibleData naming the package to upgrade."""
+    version, schema = _read_data_meta(data_dir, "VERSION"), _read_data_meta(data_dir, "SCHEMA")
+    try:
+        key = _version_key(version)
+    except ValueError as e:
+        raise IncompatibleData(f"marina_rules: the dataset in {data_dir}: {e}") from None
+    if key < _version_key(MIN_DATA_VERSION):
+        raise IncompatibleData(
+            f"marina_rules: marina-rules {__version__} needs marina-rules-data {MIN_DATA_VERSION} or later; the installed "
+            f"dataset is {version}. Upgrade the data: pip install -U marina-rules-data")
+    num = float(schema) if _re.match(r"^\d+(\.\d+)?$", schema) else None
+    if num is None or num not in DATA_SCHEMAS:
+        newer = num is not None and num > max(DATA_SCHEMAS)
+        raise IncompatibleData(
+            f"marina_rules: marina-rules-data {version} is written in data schema {schema}; marina-rules {__version__} "
+            f"reads schema {', '.join(str(x) for x in DATA_SCHEMAS)}. "
+            + ("The data is newer than this code. Upgrade the code: pip install -U marina-rules" if newer else
+               "Reinstall the data: pip install --force-reinstall marina-rules-data"))
+    return version
+
+
+DATA_DIR = _locate_data()
+DATA_VERSION = _check_data(DATA_DIR)   # the dataset's own version (data/VERSION); not part of dataset_digest()
 
 _LEVELS = ("verified", "single-source", "unverified")
-import re as _re
 _SHA_RE = _re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -614,14 +687,22 @@ def records() -> tuple[Record, ...]:
     return _records_from_yaml(DATA_DIR)
 
 
+def _schema_error(path: str, schema) -> str:
+    """Why a data file's ``schema`` cannot be read; for a newer schema, which package to upgrade."""
+    if isinstance(schema, (int, float)) and not isinstance(schema, bool) and schema > max(DATA_SCHEMAS):
+        return (f"{path}: unsupported or missing schema version: schema {schema} is newer than marina-rules "
+                f"{__version__} reads (up to {max(DATA_SCHEMAS)}). Upgrade the code: pip install -U marina-rules")
+    return f"{path}: unsupported or missing schema version"
+
+
 def _records_from_yaml(data_dir: str) -> tuple[Record, ...]:
     out: list[Record] = []
     seen: set[str] = set()
     for path in _iter_files(data_dir):
         with open(path, encoding="utf-8") as fh:
             doc = yaml.safe_load(fh) or {}
-        if doc.get("schema") not in (1, 1.1, _SCHEMA_SELECTORS):
-            raise ValueError(f"{path}: unsupported or missing schema version")
+        if doc.get("schema") not in DATA_SCHEMAS:
+            raise ValueError(_schema_error(path, doc.get("schema")))
         if "records" not in doc:
             continue  # scope registry / known gaps, handled by scopes() / known_gaps()
         default_market = doc.get("market")
@@ -1519,7 +1600,7 @@ def statutory_fee_floor(turnover: float, side: str, date: str, market: str | Non
 def skill_text() -> str:
     """The usage notes for assistants and backtest authors (SKILL.md), as shipped with this package."""
     here = os.path.dirname(__file__)
-    # a source checkout reads the repository file; an installed package reads its vendored copy (as DATA_DIR does)
+    # a source checkout reads the repository file; an installed package reads its vendored copy
     for p in (os.path.join(here, "..", "..", "SKILL.md"), os.path.join(here, "SKILL.md")):
         if os.path.isfile(p):
             with open(p, encoding="utf-8") as fh:
@@ -1703,10 +1784,11 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
 
 
 # ------------------------------------------------------------------------------------------ precompiled dataset
-# A wheel ships data/compiled.json (written by scripts/vendor_data.py through marina_rules._precompiled.build): the
-# output of the YAML loaders above, so that the first records() call does not parse YAML. It is used only when it
-# matches the YAML beside it byte for byte and was written by this exact loader code; otherwise the YAML is loaded
-# (and validated) as usual, with a warning. A source checkout has no such file and always reads the YAML.
+# The marina-rules-data wheel ships data/compiled.json (written by scripts/vendor_data.py through
+# marina_rules._precompiled.build): the output of the YAML loaders above, so that the first records() call does not
+# parse YAML. It is used only when it matches the YAML beside it byte for byte and was written by loader code of the
+# same revision as this one (_precompiled.LOADER_REVISION); otherwise the YAML is loaded (and validated) as usual,
+# with a warning. A source checkout has no such file and always reads the YAML.
 def _compiled():
     return _compiled_for(DATA_DIR)
 
@@ -1743,6 +1825,9 @@ def dataset_digest() -> str:
 
 
 def citation(short: bool = True) -> str:
-    """One line to put in any backtest result: which rules, byte-exactly."""
+    """One line to put in any backtest result: which rules, byte-exactly, and which code read them.
+
+    ``rules: marina-rules-data@<data version> sha256:<digest> code: marina-rules@<code version>`` — the digest is the
+    first 16 hex of ``dataset_digest()`` (all 64 with ``short=False``)."""
     dg = dataset_digest()
-    return f"rules: marina-rules@{VERSION} sha256:{dg[:16] if short else dg}"
+    return f"rules: marina-rules-data@{DATA_VERSION} sha256:{dg[:16] if short else dg} code: marina-rules@{__version__}"

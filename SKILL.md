@@ -198,10 +198,12 @@ A closed record (`effective_to` set) is not flagged: its end is sourced. Trackin
 
 ```python
 result["rules_citation"] = mr.citation(short=False)
-# 'rules: marina-rules@2026.11.13 sha256:<64 hex>'
+# 'rules: marina-rules-data@<data version> sha256:<64 hex> code: marina-rules@<code version>'
 ```
 
-A result without this line cannot be reproduced. The hash is over the data files only.
+A result without this line cannot be reproduced. The hash is over the data files only. The rules
+(`marina-rules-data`, date versions) and the code (`marina-rules`) are separate packages; the line
+names both. A result meant to be reproduced pins the data version it ran under.
 
 ## 6. Stopping correctly
 
@@ -210,7 +212,7 @@ number. Templates:
 
 - "Coverage for `st_main` / `price_limit_pct` is `partial`: gap 2005-01-01→2008-09-19. Narrow the window or add the record."
 - "Scope `chinext` requires `st_status`; the input has no point-in-time ST column. Excluded 197 securities flagged ST today; results for them are not computed."
-- "Scope `reits` is `unsupported` in marina-rules@2026.11.13 — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
+- "Scope `reits` is `unsupported` in marina-rules-data <data version> — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
 - "Scope `unicorn` is `unsupported` and matches no known gap — Marina has no opinion on it at all. Stop."
 - "`price_limit_pct` is not a rule of `cffex_if`; the scope's daily limit is `price_limit_pct_of_prev_settlement` (0.10 of the previous settlement price on 2024-06-03). Answered under that name." — or, if that is not the quantity asked for: "not covered; nothing substituted."
 - "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-02. Not answered."
@@ -225,6 +227,10 @@ only the first can be reported precisely. The registry is `data/cn/known_gaps.ya
 python -m marina_rules.diff <old> <new>   # git tags of this repository, or directories holding the data
 ```
 
+The rules are the `marina-rules-data` package and are upgraded on their own (`pip install -U
+marina-rules-data`); `mr.DATA_DIR` is the installed data directory. Keep the old one (or fetch it
+with `pip download "marina-rules-data==<old version>" --no-deps`) to diff against.
+
 Read the `kind` of each change: `correction` means results you computed under the old version on
 that interval used a wrong rule — re-run them and say so; `regime_change` means the rule changed on
 that date — re-run anything touching the interval; `rename`/`bookkeeping`/`metadata` change nothing
@@ -236,7 +242,7 @@ you computed. Keep both citations (old and new) in the re-run report.
 python -m marina_rules.check fills.csv --strict      # [--no-tick] [--band-tolerance-pct X] [--rows] | --list-scopes
 ```
 
-Emits `rules-verified@<version>:<hash>` when every fill respects the price band, the tick in force
+Emits `rules-verified@<data version>:<hash>` when every fill respects the price band, the tick in force
 (`PRICE_OFF_TICK`) and the statutory fee floor that day; non-finite prices and dates not written `YYYY-MM-DD` are `ROW_INVALID`. The stamp
 commits to every input column (date, code, side, price, prev_close, scope, market, decimals, fee,
 turnover; canonical form in `marina_rules/check.py`). The stamp says nothing about look-ahead, survivorship, or statistics.

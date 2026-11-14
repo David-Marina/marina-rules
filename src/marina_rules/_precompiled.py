@@ -1,22 +1,30 @@
 """Precompiled dataset: the loaders' output, saved as JSON so an installed package starts without parsing YAML.
 
 Parsing data/**/*.yaml with PyYAML is most of the cost of the first ``records()`` call. ``scripts/vendor_data.py``
-runs :func:`build` on the vendored copy right before a wheel is built and writes ``data/compiled.json`` next to the
-YAML. :func:`build` produces it by running the ordinary YAML loaders (``_records_from_yaml``, ``_scopes_from_yaml``,
-``_gaps_from_yaml``, ``_tracking_from_yaml``), so every load-time check (schema, enums, sources, overlaps, selectors,
-tracking registry) runs at build time and an invalid dataset produces no file. It then decodes what it wrote and
-compares it with the loaders' output, types included, and refuses to write a file that does not round-trip.
+runs :func:`build` on the copy of data/ it writes into the marina-rules-data package and saves ``data/compiled.json``
+next to the YAML. :func:`build` produces it by running the ordinary YAML loaders (``_records_from_yaml``,
+``_scopes_from_yaml``, ``_gaps_from_yaml``, ``_tracking_from_yaml``), so every load-time check (schema, enums, sources,
+overlaps, selectors, tracking registry) runs at build time and an invalid dataset produces no file. It then decodes what
+it wrote and compares it with the loaders' output, types included, and refuses to write a file that does not round-trip.
+
+The data and the code are separate packages that are upgraded separately, so the file cannot be tied to the exact code
+that wrote it. It is tied to :data:`LOADER_REVISION` instead: a number that names the behaviour of the loaders and of
+this module. **Whenever a change could make the loaders (or the codec below) return anything different for some
+input — a value, a type, an order, an accepted or refused file — LOADER_REVISION must go up by one.**
+``tests/test_precompiled.py`` pins a hash of the source of that code per revision and fails when the code changed and
+the revision did not.
 
 At run time :func:`load` accepts the file only if all of these hold, and raises :class:`Rejected` otherwise (the
 package then warns and loads the YAML, which is always correct, only slower):
 
-  * the header names this format and version, and the package version that wrote it;
-  * ``loader_sha256`` equals the hash of this package's loader code (``__init__.py`` and this module), so a copy
-    written by other validation code is never used;
-  * ``source_sha256`` equals a hash recomputed now over every YAML file beside it (tracking registries included,
-    unlike ``dataset_digest()``), so an edited, added or removed YAML file disables it;
+  * the header names this format and version;
+  * ``loader_revision`` equals this code's :data:`LOADER_REVISION`, so a file written by loaders that behave
+    differently is never used (a data package built by newer or older code than the installed one is read from YAML);
+  * ``data_version`` equals the dataset's ``VERSION`` file beside it;
   * ``payload_sha256`` equals the hash of the payload bytes, so an edited payload is noticed. This is an integrity
-    check, not a signature: whoever can rewrite the package can rewrite both.
+    check, not a signature: whoever can rewrite the package can rewrite both;
+  * ``source_sha256`` equals a hash recomputed now over every YAML file beside it (tracking registries included,
+    unlike ``dataset_digest()``), so an edited, added or removed YAML file disables it.
 
 File layout: one line of JSON header, a newline, then the JSON payload. Values that JSON cannot express directly
 (tuples, frozensets, dates, mappings with non-string keys) are written as ``{"__t": <type>, "v": ...}``; a plain
@@ -29,12 +37,13 @@ import hashlib
 import json
 import os
 
+# Bump by one whenever the output of the loaders or of this module could change (see the module docstring).
+LOADER_REVISION = 1
+
 FORMAT = "marina-rules-compiled"
-FORMAT_VERSION = 1
+FORMAT_VERSION = 2   # 2: the header names loader_revision and data_version (1 named the package version and code hash)
 FILE = "compiled.json"
 _TAG = "__t"
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_LOADER_FILES = ("__init__.py", "_precompiled.py")
 
 
 class Rejected(Exception):
@@ -55,20 +64,6 @@ def source_digest(data_dir: str) -> str:
             data = fh.read()
         rel = os.path.relpath(path, data_dir).replace(os.sep, "/").encode()
         h.update(b"%d:%s%d:" % (len(rel), rel, len(data)))
-        h.update(data)
-    return h.hexdigest()
-
-
-def loader_fingerprint() -> str:
-    """SHA-256 over the source of the code that loads and validates the dataset."""
-    h = hashlib.sha256()
-    for name in _LOADER_FILES:
-        try:
-            with open(os.path.join(_HERE, name), "rb") as fh:
-                data = fh.read()
-        except OSError as e:
-            raise Rejected(f"cannot read the loader source {name} to check the precompiled file: {e}") from None
-        h.update(b"%d:" % len(data))
         h.update(data)
     return h.hexdigest()
 
@@ -140,6 +135,19 @@ def same(a, b) -> bool:
     return a == b
 
 
+def _data_version(data_dir: str) -> str:
+    """The dataset's VERSION file (``YYYY.MM.DD[.N]``); raises ValueError if it is missing or malformed."""
+    import marina_rules as mr
+    path = os.path.join(data_dir, "VERSION")
+    try:
+        with open(path, encoding="ascii") as fh:
+            v = fh.read().strip()
+    except (OSError, UnicodeDecodeError) as e:
+        raise ValueError(f"{path}: cannot read the dataset version ({e})") from None
+    mr._version_key(v)   # raises ValueError for anything but YYYY.MM.DD[.N]
+    return v
+
+
 # ------------------------------------------------------------------------------------------------------------- build
 def _load_all_from_yaml(data_dir: str) -> dict:
     """Everything the loaders produce for ``data_dir``, through the YAML loaders (which validate)."""
@@ -160,6 +168,7 @@ def build(data_dir: str) -> bytes:
     rather than return a file that is not exactly what the YAML loaders produce."""
     import dataclasses
     import marina_rules as mr
+    data_version = _data_version(data_dir)
     before = source_digest(data_dir)
     loaded = _load_all_from_yaml(data_dir)
     if source_digest(data_dir) != before:
@@ -176,8 +185,8 @@ def build(data_dir: str) -> bytes:
                "known_gaps": {p: _enc(v) for p, v in loaded["known_gaps"].items()},
                "tracking": [_enc(e) for e in tracking]}
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    header = {"format": FORMAT, "format_version": FORMAT_VERSION, "package_version": mr.VERSION,
-              "loader_sha256": loader_fingerprint(), "source_sha256": before, "records": len(rows),
+    header = {"format": FORMAT, "format_version": FORMAT_VERSION, "loader_revision": LOADER_REVISION,
+              "data_version": data_version, "source_sha256": before, "records": len(rows),
               "payload_sha256": hashlib.sha256(body).hexdigest()}
     raw = json.dumps(header, sort_keys=True).encode("ascii") + b"\n" + body
     back = _decode(body, header)
@@ -215,8 +224,7 @@ def _decode(body: bytes, header: dict) -> dict:
 
 def load(path: str, data_dir: str) -> dict:
     """The loaders' output stored in ``path``, after checking that it belongs to the YAML in ``data_dir`` and to this
-    code. Raises :class:`Rejected` (with the reason) otherwise."""
-    import marina_rules as mr
+    loader revision. Raises :class:`Rejected` (with the reason) otherwise."""
     try:
         with open(path, "rb") as fh:
             raw = fh.read()
@@ -232,10 +240,15 @@ def load(path: str, data_dir: str) -> dict:
     if header.get("format") != FORMAT or header.get("format_version") != FORMAT_VERSION:
         raise Rejected(f"format {header.get('format')!r} v{header.get('format_version')!r} is not "
                        f"{FORMAT!r} v{FORMAT_VERSION}")
-    if header.get("package_version") != mr.VERSION:
-        raise Rejected(f"written by marina-rules {header.get('package_version')!r}, this is {mr.VERSION!r}")
-    if header.get("loader_sha256") != loader_fingerprint():
-        raise Rejected("written by different loader code")
+    if type(header.get("loader_revision")) is not int or header["loader_revision"] != LOADER_REVISION:
+        raise Rejected(f"written by loader revision {header.get('loader_revision')!r}, this code is revision "
+                       f"{LOADER_REVISION}")
+    try:
+        here = _data_version(data_dir)
+    except ValueError as e:
+        raise Rejected(str(e)) from None
+    if header.get("data_version") != here:
+        raise Rejected(f"written for dataset version {header.get('data_version')!r}, the VERSION beside it is {here!r}")
     if header.get("payload_sha256") != hashlib.sha256(body).hexdigest():
         raise Rejected("payload does not match its recorded hash (the file was modified)")
     if header.get("source_sha256") != source_digest(data_dir):

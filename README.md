@@ -7,7 +7,7 @@ Price limits, fees, trading sessions, settlement — every record says *when* it
 > **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](README.zh-CN.md)。
 
 ```
-rules: marina-rules@2026.11.13 sha256:a66ca0e3fe8e3659
+rules: marina-rules-data@2026.11.13 sha256:a66ca0e3fe8e3659 code: marina-rules@1.0.0
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
@@ -25,9 +25,15 @@ A shared, cited, versioned table fixes this the way tzdata fixed time zones: not
 ## Use
 
 ```bash
-pip install marina-rules      # self-contained: the dataset ships inside the wheel, byte-pinned
-# or take the JSON / SQLite dump attached to each GitHub Release — same bytes, same digest
+pip install marina-rules      # the code; pip installs the dataset (marina-rules-data) with it — nothing is fetched at run time
+pip install -U marina-rules-data   # later: newer rules under the same code
+# or take the JSON / SQLite dump attached to each data release on GitHub — same bytes, same digest
 ```
+
+Marina is two packages, like the time-zone database and its readers: **`marina-rules-data`** holds the rules
+(versioned by date, `YYYY.MM.DD`, released whenever the data changes) and **`marina-rules`** is the code that reads
+them (semantic versions, released only when the code changes). Upgrading one does not require upgrading the other;
+the code checks at import that it can read the installed data and, if not, says which package to upgrade.
 
 ```python
 import marina_rules as mr
@@ -37,7 +43,7 @@ mr.rule_at("price_limit_pct", "2020-08-23", "chinext", "XSHE")   # 0.10
 mr.limit_price(10.00, "chinext", "2021-03-01", "XSHE") # (12.0, 8.0)  — exchange rounding
 mr.limit_price(10.00, "ipo_first5_main", "2024-01-30", "XSHG+XSHE")  # None — unlimited band
 mr.rule_at("stamp_duty_sell", "2005-01-01")            # KeyError — no defaults, ever
-mr.citation()                                          # 'rules: marina-rules@<version> sha256:<16 hex>'
+mr.citation()   # 'rules: marina-rules-data@<data version> sha256:<16 hex> code: marina-rules@<code version>'
 
 # Pre-flight a whole backtest window before running it:
 mr.coverage("XSHE", "chinext", ["price_limit_pct"], "2019-01-01", "2026-10-19")
@@ -97,6 +103,27 @@ The data is plain YAML under [`data/`](data/). You do not need the Python packag
 
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes.
 
+```
+rules: marina-rules-data@2026.11.13 sha256:a66ca0e3fe8e3659 code: marina-rules@1.0.0
+```
+
+`marina-rules-data@…` is the dataset version and `sha256:…` the first 16 hex of `mr.dataset_digest()`, computed over
+the rule files themselves: two results citing the same digest ran against byte-identical rules. `code: marina-rules@…`
+is the code that read them. `marina-rules version` prints the same line.
+
+### Which version to use
+
+- **Research you will publish: pin the data and cite it.** Install a fixed dataset
+  (`pip install marina-rules "marina-rules-data==<data version>"`) and put `mr.citation()` in the result. Anyone can
+  re-run it with the two versions the line names.
+- **Something that runs every day** (a paper or live trading agent, a nightly backtest): upgrade the data every week
+  (`pip install -U marina-rules-data`) and pass `require_tracked=True` (see [What the dates mean](#what-the-dates-mean-and-dont)),
+  so a date beyond what the maintainers have checked the sources for is refused instead of answered from the last
+  known rule.
+- **After any data upgrade, run `diff`** between the old and the new dataset and re-run what it lists — see
+  [Upgrading](#upgrading-diff_rules). Upgrade the code (`pip install -U marina-rules`) when you want new functions, or
+  when it tells you the data needs it.
+
 ### Check a fill log
 
 ```bash
@@ -124,7 +151,7 @@ unadjusted. Without ST information a main-board, ChiNext or STAR row is `SCOPE_U
 treats such rows as not ST (a relaxation: no stamp, `assumed_not_st` counts them, and an ST stock is then checked
 against the wider ordinary band). The stamp of an adapted run commits to the adapted rows.
 
-Verifies each fill against the rules in force that day — no buys above limit-up, no sells below limit-down, prices on the tick in force, fees not below the statutory floor — and emits a `rules-verified@<version>:<hash>` stamp when clean. The stamp is recomputable by anyone holding the same log and the same rules version, and commits to every column a check used (date, code, side, price, prev_close, scope, market, decimals, fee, turnover, and day_high / day_low when the log has them — canonical row format in the `marina_rules.check` docstring).
+Verifies each fill against the rules in force that day — no buys above limit-up, no sells below limit-down, prices on the tick in force, fees not below the statutory floor — and emits a `rules-verified@<data version>:<hash>` stamp when clean. The stamp is recomputable by anyone holding the same log and the same dataset, and commits to every column a check used (date, code, side, price, prev_close, scope, market, decimals, fee, turnover, and day_high / day_low when the log has them — canonical row format in the `marina_rules.check` docstring).
 
 Findings: `ROW_INVALID` (missing field, price / prev_close not a finite number — also for unlimited scopes — or a date that is not `YYYY-MM-DD`), `PRICE_OFF_TICK` (price not a multiple of the instrument family's `tick_size` that day, exact decimal comparison), `LIMIT_BUY_ABOVE_UP`, `LIMIT_SELL_BELOW_DOWN`, `PRICE_OUTSIDE_BAND`, `FEE_BELOW_STATUTORY`, `RULE_MISSING`, `MARKET_REQUIRED`, `MARKET_UNSUPPORTED` (the checks are China A-share only: a Hong Kong or US row — market `XHKG`, `XNYS`, `XNAS` or scope `hk_stock` / `hk_etf` / `us_stock` / `us_etf` — is reported, not checked), `SCOPE_UNDETERMINED`, `PRICE_OUTSIDE_DAY_RANGE`, `DAY_RANGE_INVALID`.
 
@@ -275,12 +302,20 @@ and logs should see; the Python exceptions remain for in-process use.
 
 ## Upgrading: `diff_rules`
 
-`python -m marina_rules.diff <from> <to>` lists every change between two tags (or directories) and
-classifies each as **correction** (Marina was wrong about the past — results computed under the old
+`python -m marina_rules.diff <from> <to>` lists every change between two tags of this repository (or two directories
+holding the data) and classifies each as **correction** (Marina was wrong about the past — results computed under the old
 version on that interval were computed with a wrong rule), **regime_change** (the rule itself changed
 on that date), **coverage_added**, **rename**, **bookkeeping** or **metadata**. It ends with the
 `(market, scope, rule, interval)` list you must re-run. Both versions are pinned by dataset digest.
 Marina does not estimate P&L impact; that is what the interval is for.
+
+With the packages installed, compare the dataset you had with the one you have now. Before upgrading, note the data
+version (`marina-rules version`); afterwards fetch the old one and diff the two directories:
+
+```bash
+pip download "marina-rules-data==<old version>" --no-deps -d old/ && python -m zipfile -e old/*.whl old/
+python -m marina_rules.diff old/marina_rules_data/data "$(python -c 'import marina_rules as mr; print(mr.DATA_DIR)')"
+```
 
 ## Conformance vectors — check *your* implementation, in any language
 
@@ -329,8 +364,8 @@ The China A-share timeline was cross-checked against the rule histories compiled
 
 ## License
 
-Data (`data/`, `docs/`): [CC0 1.0](LICENSE-DATA) — no rights reserved.
-Code (`src/`, `scripts/`, `tests/`): [MIT](LICENSE).
+Data (`data/`, `docs/`; the `marina-rules-data` package): [CC0 1.0](LICENSE-DATA) — no rights reserved.
+Code (`src/`, `scripts/`, `tests/`; the `marina-rules` package): [MIT](LICENSE).
 
 ## About the name
 

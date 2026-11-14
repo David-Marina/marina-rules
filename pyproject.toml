@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "marina-rules"
-version = "2026.11.13"
-description = "Point-in-time trading rules for financial markets, as data. Price limits, fees, sessions, settlement — every record cites its source."
+version = "1.0.0"
+description = "Point-in-time trading rules for financial markets, as data. Price limits, fees, sessions, settlement — every record cites its source. The code; the dataset is the marina-rules-data package."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
@@ -17,7 +17,7 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Topic :: Office/Business :: Financial :: Investment",
 ]
-dependencies = ["pyyaml>=6"]
+dependencies = ["pyyaml>=6", "marina-rules-data>=2026.11.13"]   # the minimum is marina_rules.MIN_DATA_VERSION
 
 [project.urls]
 Homepage = "https://github.com/David-Marina/marina-rules"
@@ -34,11 +34,10 @@ where = ["src"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 
-# The dataset is vendored into the wheel so `pip install marina-rules` is self-contained.
-# scripts/vendor_data.py copies data/ → src/marina_rules/data/ right before build; the copy is
-# git-ignored and must byte-match data/ (checked in CI and by `marina_rules.dataset_digest()`).
-# SKILL.md (the usage notes) is copied the same way and is read by `marina_rules.skill_text()`.
-# data/compiled.json is the precompiled loader output written by the same script (see marina_rules/_precompiled.py);
-# it is used only when it matches the vendored YAML and the loader code, so a stale copy is never read.
+# This wheel is the code only. The dataset is the separate distribution marina-rules-data (packages/marina-rules-data/,
+# generated from data/ by scripts/vendor_data.py), released on its own date-numbered schedule; the dependency above
+# makes `pip install marina-rules` install it. A source checkout reads data/ directly.
+# SKILL.md (the usage notes) is copied into the package by `scripts/vendor_data.py --code` and is read by
+# `marina_rules.skill_text()`; the copy is git-ignored.
 [tool.setuptools.package-data]
-marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv", "data/compiled.json", "SKILL.md"]
+marina_rules = ["SKILL.md"]

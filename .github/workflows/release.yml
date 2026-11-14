@@ -1,41 +1,71 @@
-# On a version tag: run the full check suite, build a self-contained wheel, export JSON/SQLite dumps,
-# attach everything (with SHA256SUMS) to the GitHub Release (body = the CHANGELOG.md section, via scripts/release_notes.py), and publish to PyPI via trusted publishing
-# (no token stored anywhere; PyPI trusts this repo+workflow, configured once in PyPI's project settings).
+# Two distributions are released from this repository, each on its own tag:
+#   YYYY.MM.DD / YYYY.MM.DD.N  → marina-rules-data (the dataset; version = data/VERSION), environment `pypi-data`
+#   vX.Y.Z                     → marina-rules (the code; version = pyproject.toml / marina_rules.__version__), environment `pypi`
+# Either way: run the full check suite, build the package, install the built wheel next to the other package built
+# from this checkout and check that it reports the repository's dataset digest and reads the precompiled file, attach
+# the artefacts (with SHA256SUMS for a data release) to the GitHub Release (body = the CHANGELOG.md section, via
+# scripts/release_notes.py), and publish to PyPI via trusted publishing (no token stored anywhere; PyPI trusts this
+# repo + workflow + environment, configured once per PyPI project).
 name: release
 on:
   push:
-    tags: ["20[0-9][0-9].[0-9][0-9].[0-9][0-9]", "20[0-9][0-9].[0-9][0-9].[0-9][0-9].[0-9]*"]
+    tags: ["20[0-9][0-9].[0-9][0-9].[0-9][0-9]", "20[0-9][0-9].[0-9][0-9].[0-9][0-9].[0-9]*", "v[0-9]*.[0-9]*.[0-9]*"]
 permissions:
   contents: write
   id-token: write
 jobs:
   build:
     runs-on: ubuntu-24.04
+    outputs:
+      kind: ${{ steps.kind.outputs.kind }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -e . pytest build
+      - name: which package this tag releases
+        id: kind
+        run: |
+          case "${GITHUB_REF_NAME}" in v*) K=code ;; *) K=data ;; esac
+          echo "kind=$K" >> "$GITHUB_OUTPUT"; echo "releasing the $K package"
+      - name: install both packages from this checkout (the data package is generated from data/)
+        run: |
+          pip install build packaging pytest pyyaml
+          python scripts/vendor_data.py
+          pip install ./packages/marina-rules-data
+          pip install -e .
       - name: the tag must equal the package version and be a final PEP 440 release
         run: |
-          V=$(python -c "import marina_rules;print(marina_rules.VERSION)")
-          [ "$V" = "${GITHUB_REF_NAME}" ] || { echo "VERSION=$V but tag=${GITHUB_REF_NAME}"; exit 1; }
-          pip -q install packaging && python -c "from packaging.version import Version as X; import sys; v=X('$V'); sys.exit(1 if (v.is_prerelease or v.is_devrelease) else 0)" || { echo "$V is a pre-release under PEP 440 (letter suffix?) — use YYYY.MM.DD.N"; exit 1; }
-      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash, tracking dates)
-        run: python scripts/check_release_metadata.py --release
+          if [ "${{ steps.kind.outputs.kind }}" = data ]; then
+            V=$(cat data/VERSION); T="${GITHUB_REF_NAME}"
+          else
+            V=$(python -c "import marina_rules;print(marina_rules.__version__)"); T="${GITHUB_REF_NAME#v}"
+          fi
+          [ "$V" = "$T" ] || { echo "version=$V but tag=${GITHUB_REF_NAME}"; exit 1; }
+          python -c "from packaging.version import Version as X; import sys; v=X('$V'); sys.exit(1 if (v.is_prerelease or v.is_devrelease) else 0)" || { echo "$V is a pre-release under PEP 440 (letter suffix?)"; exit 1; }
+      - name: release metadata (CHANGELOG section, README/pyproject versions, README citation, tracking dates)
+        run: python scripts/check_release_metadata.py --release ${{ steps.kind.outputs.kind }}
       - run: pytest -q
       - run: python conformance/run.py
-      - name: build wheel with vendored data
+      - name: build the package of this tag
         run: |
-          python scripts/vendor_data.py
-          python -m build
-      - name: installed wheel must carry the same dataset digest as the repo
+          if [ "${{ steps.kind.outputs.kind }}" = data ]; then
+            python -m build packages/marina-rules-data --outdir dist/
+          else
+            python -m build --outdir dist/
+          fi
+      - name: the built wheel, installed beside the other package, must report the repository's dataset
         run: |
-          python -m venv /tmp/w && /tmp/w/bin/pip -q install dist/*.whl
-          A=$(python -c "import marina_rules;print(marina_rules.dataset_digest())")
-          B=$(cd /tmp && /tmp/w/bin/python -c "import marina_rules;print(marina_rules.dataset_digest())")
-          [ "$A" = "$B" ] || { echo "digest mismatch repo=$A wheel=$B"; exit 1; }
-      - name: export release artefacts
+          python -m venv /tmp/w
+          if [ "${{ steps.kind.outputs.kind }}" = data ]; then
+            /tmp/w/bin/pip -q install dist/*.whl && /tmp/w/bin/pip -q install .
+          else
+            /tmp/w/bin/pip -q install ./packages/marina-rules-data && /tmp/w/bin/pip -q install dist/*.whl
+          fi
+          A=$(python -c "import marina_rules as m;print(m.dataset_digest(), m.DATA_VERSION, m.__version__)")
+          B=$(cd /tmp && /tmp/w/bin/python -W error -c "import marina_rules as m;assert m._compiled() is not None;print(m.dataset_digest(), m.DATA_VERSION, m.__version__)")
+          [ "$A" = "$B" ] || { echo "mismatch repo=$A installed=$B"; exit 1; }
+      - name: export release artefacts (data releases)
+        if: steps.kind.outputs.kind == 'data'
         run: python scripts/export_release.py dist/
       - uses: actions/upload-artifact@v4
         with: { name: dist, path: dist/ }
@@ -43,19 +73,32 @@ jobs:
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           python scripts/release_notes.py "${GITHUB_REF_NAME}" > /tmp/release-notes.md
+          if [ "${{ steps.kind.outputs.kind }}" = data ]; then TITLE="Marina data ${GITHUB_REF_NAME}"; else TITLE="marina-rules ${GITHUB_REF_NAME}"; fi
           if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
             gh release edit "${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
           else
-            gh release create "${GITHUB_REF_NAME}" --title "Marina ${GITHUB_REF_NAME}" --notes-file /tmp/release-notes.md
+            gh release create "${GITHUB_REF_NAME}" --title "$TITLE" --notes-file /tmp/release-notes.md
           fi
           gh release upload "${GITHUB_REF_NAME}" dist/* --clobber
+  pypi-data:
+    needs: build
+    if: needs.build.outputs.kind == 'data'
+    runs-on: ubuntu-24.04
+    environment: pypi-data
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist/ }
+      - name: keep only the marina-rules-data sdist and wheel
+        run: cd dist && ls | grep -vE '^marina[-_]rules[-_]data-.*\.(whl|tar\.gz)$' | xargs -r rm -f && ls -la
+      - uses: pypa/gh-action-pypi-publish@release/v1
   pypi:
     needs: build
+    if: needs.build.outputs.kind == 'code'
     runs-on: ubuntu-24.04
     environment: pypi
     steps:
       - uses: actions/download-artifact@v4
         with: { name: dist, path: dist/ }
-      - name: keep only sdist and wheel
-        run: cd dist && ls | grep -vE '\.(whl|tar\.gz)$' | xargs -r rm -f && ls -la
+      - name: keep only the marina-rules sdist and wheel
+        run: cd dist && ls | grep -vE '^marina[-_]rules-[0-9].*\.(whl|tar\.gz)$' | xargs -r rm -f && ls -la
       - uses: pypa/gh-action-pypi-publish@release/v1

@@ -29,7 +29,7 @@ def test_both_readmes_link_to_each_other():
 
 def test_no_release_specific_numbers_to_go_stale():
     zh = _read("README.zh-CN.md")
-    assert mr.VERSION not in zh and mr.dataset_digest()[:16] not in zh
+    assert mr.DATA_VERSION not in zh and mr.__version__ not in zh and mr.dataset_digest()[:16] not in zh
     assert str(len(mr.records())) not in zh
 
 

@@ -11,7 +11,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "${{ matrix.python }}" }
-      - run: pip install -e . pytest
+      - name: install both packages from this checkout (marina-rules-data is generated from data/)
+        run: |
+          pip install pytest pyyaml
+          python scripts/vendor_data.py
+          pip install ./packages/marina-rules-data
+          pip install -e .
       - name: schema + semantics tests
         run: pytest -q
       - name: capabilities.json and decision schema are generated from data and committed
@@ -21,10 +26,10 @@ jobs:
           python -c "import json;d=json.load(open('capabilities.json'));d.pop('ruleset_hash');print(json.dumps(d,sort_keys=True))" > /tmp/b
           diff /tmp/a /tmp/b
           python -m marina_rules.contract --schema | diff - docs/decision.schema.json
-      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash)
+      - name: release metadata (CHANGELOG section, README/pyproject versions, README citation, SKILL.md unversioned)
         run: python scripts/check_release_metadata.py
       - name: release notes render from CHANGELOG.md
-        run: python scripts/release_notes.py "$(python -c 'import marina_rules;print(marina_rules.VERSION)')" > /dev/null
+        run: python scripts/release_notes.py "$(cat data/VERSION)" > /dev/null
       - name: conformance vectors (independent oracles)
         run: python conformance/run.py
       - name: coverage report (blocking — fails on any gap not listed under `unresolved`)

@@ -36,51 +36,92 @@ def _edit(path, old, new):
     path.write_text(s.replace(old, new), encoding="utf-8")
 
 
+DV, CV = mr.DATA_VERSION, mr.__version__
+
+
+def _check(root=ROOT, digest=None):
+    return guard.check(str(root), DV, CV, mr.dataset_digest() if digest is None else digest)
+
+
 def test_repository_is_consistent():
-    assert guard.check(ROOT, mr.VERSION, mr.dataset_digest()) == []
+    assert _check() == []
 
 
 def test_missing_changelog_section(repo):
-    _edit(repo / "CHANGELOG.md", f"## [{mr.VERSION}]", "## [0000.00.00]")
-    assert any("CHANGELOG.md has no" in e for e in guard.check(str(repo), mr.VERSION, mr.dataset_digest()))
+    _edit(repo / "CHANGELOG.md", f"## [{DV}]", "## [0000.00.00]")
+    assert any("CHANGELOG.md has no" in e for e in _check(repo))
 
 
 def test_stale_status_line(repo):
-    _edit(repo / "README.md", f"> **Status: {mr.VERSION}.**", "> **Status: 2026.10.25.**")
-    assert any("Status line" in e for e in guard.check(str(repo), mr.VERSION, mr.dataset_digest()))
+    _edit(repo / "README.md", f"> **Status: {DV}.**", "> **Status: 2026.10.25.**")
+    assert any("Status line" in e for e in _check(repo))
 
 
-def test_stale_citation_version_and_hash(repo):
+def test_stale_citation_versions_and_hash(repo):
     dg = mr.dataset_digest()
-    _edit(repo / "README.md", f"rules: marina-rules@{mr.VERSION} sha256:{dg[:16]}",
-          "rules: marina-rules@2026.10.25 sha256:8e4e9a7a7b556d6e")
-    errs = guard.check(str(repo), mr.VERSION, dg)
-    assert any("citation version" in e for e in errs)
+    _edit(repo / "README.md", f"rules: marina-rules-data@{DV} sha256:{dg[:16]} code: marina-rules@{CV}",
+          "rules: marina-rules-data@2026.10.25 sha256:8e4e9a7a7b556d6e code: marina-rules@0.9.0")
+    errs = _check(repo)
+    assert any("citation data version" in e for e in errs)
     assert any("citation hash" in e for e in errs)
+    assert any("citation code version" in e for e in errs)
+
+
+def test_citation_in_the_old_single_version_form_is_not_accepted(repo):
+    dg = mr.dataset_digest()
+    _edit(repo / "README.md", f"rules: marina-rules-data@{DV} sha256:{dg[:16]} code: marina-rules@{CV}",
+          f"rules: marina-rules@{DV} sha256:{dg[:16]}")
+    assert any("has no example citation" in e for e in _check(repo))
 
 
 def test_wrong_hash_alone(repo):
-    errs = guard.check(str(repo), mr.VERSION, "0" * 64)
-    assert len(errs) == 1 and "citation hash" in errs[0]
+    errs = _check(repo, "0" * 64)
+    assert errs and all("citation hash" in e for e in errs)   # one per example citation in README.md
 
 
-def test_stale_skill_and_pyproject(repo):
-    _edit(repo / "SKILL.md", f"marina-rules@{mr.VERSION} sha256", "marina-rules@2026.10.26.5 sha256")
-    _edit(repo / "pyproject.toml", f'version = "{mr.VERSION}"', 'version = "2026.10.26.5"')
-    errs = guard.check(str(repo), mr.VERSION, mr.dataset_digest())
-    assert any(e.startswith("SKILL.md") for e in errs)
+def test_versioned_skill_and_stale_pyproject(repo):
+    with open(repo / "SKILL.md", "a", encoding="utf-8") as fh:
+        fh.write(f"\nrules: marina-rules-data@{DV} sha256:0000 code: marina-rules@{CV}\n")
+    _edit(repo / "pyproject.toml", f'version = "{CV}"', 'version = "2026.10.26.5"')
+    errs = _check(repo)
+    assert sum(e.startswith("SKILL.md names") for e in errs) == 2
     assert any(e.startswith("pyproject.toml") for e in errs)
 
 
-def test_release_notes_for_current_version():
-    out = notes.release_notes(mr.VERSION)
+def test_code_release_needs_a_dated_code_section(repo):
+    assert guard.code_heading("1.2.3") == "marina-rules 1.2.3"
+    assert guard.release_date(str(repo), guard.code_heading("1.2.3")) is None
+    with open(repo / "CHANGELOG.md", "a", encoding="utf-8") as fh:
+        fh.write("\n## [marina-rules 1.2.3] - 2026-12-01\n\nx\n")
+    assert guard.release_date(str(repo), guard.code_heading("1.2.3")) == "2026-12-01"
+
+
+def test_release_kind_must_be_named():
+    assert guard.main(["--release"]) == 2 and guard.main(["--release", "both"]) == 2
+
+
+def test_release_notes_for_current_data_version():
+    out = notes.release_notes(DV)
     dg = mr.dataset_digest()
-    assert f"rules: marina-rules@{mr.VERSION} sha256:{dg[:16]}" in out
+    assert f"rules: marina-rules-data@{DV} sha256:{dg[:16]}" in out
     assert f"`{dg}`" in out
     assert "### Corrected (re-run needed)" in out
-    assert f"## [{mr.VERSION}]" not in out  # heading replaced by the citation block
+    assert f"## [{DV}]" not in out  # heading replaced by the citation block
     assert "## Earlier releases" not in out  # the section ends at the next level-2 heading
     assert len(out) < 125_000  # GitHub's release-body limit
+
+
+def test_release_notes_for_a_code_tag(monkeypatch, tmp_path):
+    cl = tmp_path / "CHANGELOG.md"
+    cl.write_text("# Changelog\n\n## [marina-rules 1.2.3] - 2026-12-01\n\n### Changed\n\n- a thing\n\n"
+                  "## [2026.11.13] - 2026-11-13\n\ndata\n", encoding="utf-8")
+    real = notes.changelog_section
+    monkeypatch.setattr(notes, "changelog_section", lambda v, path=str(cl): real(v, path))
+    out = notes.release_notes("v1.2.3")
+    assert "pip install marina-rules==1.2.3" in out and f"marina-rules-data {mr.MIN_DATA_VERSION} or later" in out
+    assert "- a thing" in out and "\ndata\n" not in out and "2026.11.13]" not in out
+    with pytest.raises(SystemExit):
+        notes.release_notes("v9.9.9")
 
 
 def test_current_changelog_holds_only_this_repository_releases():

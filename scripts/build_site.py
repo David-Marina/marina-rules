@@ -457,10 +457,10 @@ def build(base_url: str | None = None) -> dict:
             m += ["The CLI answers through `resolve()`, which needs the scope's context: " + ", ".join(f"`{x}`" for x in req)
                   + " (`--context key=value,…`; `marina-rules scopes` lists what each scope requires).", ""]
         b += ["<h2>Cite</h2>", f"<pre><code>{esc(citation)}</code></pre>",
-              f'<p class="muted">Generated from the data of marina-rules {esc(mr.VERSION)}. Same facts as text: '
+              f'<p class="muted">Generated from marina-rules-data {esc(mr.DATA_VERSION)}. Same facts as text: '
               f'<a href="{esc(rule)}.md">{esc(rule)}.md</a>. Treat the exchange\'s own notice as authoritative.</p>']
         m += ["## Cite", "", "```", citation, "```", "",
-              f"Generated from the data of marina-rules {mr.VERSION}. Treat the exchange's own notice as authoritative.", ""]
+              f"Generated from marina-rules-data {mr.DATA_VERSION}. Treat the exchange's own notice as authoritative.", ""]
         nav = [("marina-rules", "index.html"), (pfx, f"{pfx}/index.html"), (scope, scope_path(pfx, scope)), (rule, None)]
         files[path] = page(title, h1, "\n".join(b), path=path, description=desc, nav=nav, base_url=base_url)
         files[mdpath] = "\n".join(m).rstrip("\n") + "\n"
@@ -599,7 +599,8 @@ def build(base_url: str | None = None) -> dict:
     counts = {"records": len(recs), "fact_pages": len(facts), "scope_pages": sum(1 for x in manifest_pages if x["kind"] == "scope"),
               "family_pages": len(PREFIXES), "known_gaps": sum(len(gaps[p]) for p in PREFIXES),
               "by_family": fam_counts, "by_verification": ver_counts}
-    files["site.json"] = json.dumps({"citation": citation, "version": mr.VERSION, "counts": counts,
+    files["site.json"] = json.dumps({"citation": citation, "data_version": mr.DATA_VERSION, "code_version": mr.__version__,
+                                     "counts": counts,
                                      "pages": manifest_pages}, ensure_ascii=False, sort_keys=True, indent=1) + "\n"
     return {k: v.encode("utf-8") for k, v in sorted(files.items())}
 

@@ -255,7 +255,8 @@ def test_stamp_is_recomputable_from_the_documented_canonical_form():
     canon.update((json.dumps(["2024-06-14", "000001", "buy", "10", "10", "main_board", "XSHE", "", "5", "10000"],
                               ensure_ascii=False, separators=(",", ":")) + "\n").encode())
     stamp = hashlib.sha256((mr.dataset_digest() + "\n" + canon.hexdigest()).encode()).hexdigest()
-    assert out["stamp"] == f"rules-verified@{mr.VERSION}:{stamp[:32]}"
+    assert out["stamp"] == f"rules-verified@{mr.DATA_VERSION}:{stamp[:32]}"
+    assert out["data_version"] == mr.DATA_VERSION and out["code_version"] == mr.__version__
 
 
 # --- AUDIT-IPO-DATE ---------------------------------------------------------------------------------------------

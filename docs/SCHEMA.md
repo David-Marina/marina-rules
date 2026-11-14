@@ -28,6 +28,19 @@ records:
 - A lookup that finds no record **raises**. Consumers must not substitute defaults; the absence of a rule is information.
 - `market` with `+` means the record applies identically to each listed MIC.
 
+## Dataset version and format (`data/VERSION`, `data/SCHEMA`)
+
+Two one-line text files describe the dataset as a whole. Neither is YAML, so neither enters `dataset_digest()`.
+
+- `data/VERSION` — the dataset version, `YYYY.MM.DD` (`YYYY.MM.DD.N` for a further release on the same day). It is
+  the version of the `marina-rules-data` package and the version a citation names
+  (`rules: marina-rules-data@<VERSION> sha256:… code: marina-rules@…`).
+- `data/SCHEMA` — the data format: the highest `schema:` of any data file (today `1.2`). The `marina-rules` code
+  declares the schemas it reads (`marina_rules.DATA_SCHEMAS`) and the oldest dataset it reads
+  (`marina_rules.MIN_DATA_VERSION`); at import it refuses a dataset whose `SCHEMA` it does not read (upgrade the code)
+  or whose `VERSION` is older than that minimum (upgrade the data), and the YAML loader refuses any single file with an
+  unknown `schema:` the same way. A new schema value therefore ships together with a code release that reads it.
+
 ## Source policy: archived copies of official pages
 
 An official page that no longer exists on the live site may be cited through a **web.archive.org capture of that exact official URL** (the `…/web/<timestamp>id_/<original-url>` form, which serves the original bytes). Conditions:
@@ -1491,5 +1504,5 @@ rule keywords reviewed by title, not every notice read); `XSGE`, `XINE`, `XZCE`,
 | capabilities | `tracking`: `entries`, `untracked_markets` | — |
 
 `scripts/check_release_metadata.py` fails on a `tracked_through` or `updated` after today (Asia/Tokyo), and with
-`--release` (the release workflow) after the date of the version's CHANGELOG heading; it prints each entry's age. An old
+`--release data` (the release workflow, on a data tag) after the date of the version's CHANGELOG heading; it prints each entry's age. An old
 date is not an error.

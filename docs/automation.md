@@ -69,6 +69,18 @@ sdist and wheel go to PyPI through trusted publishing (environment `pypi`; no to
 prints is the citation of the data it ships. Anyone preferring not to run Python can take the JSON or
 SQLite dump; it carries the same digest.
 
+## Releases since the split into two packages (2026-11-14)
+
+The dataset and the code are now two distributions: `marina-rules-data` (generated from `data/` into
+`packages/marina-rules-data/` by `scripts/vendor_data.py`, with the precompiled `compiled.json`) and `marina-rules`
+(the code, no data inside; it depends on `marina-rules-data`). `.github/workflows/release.yml` tells them apart by the
+tag: a date tag (`YYYY.MM.DD`, `YYYY.MM.DD.N`, equal to `data/VERSION`) builds and publishes the data package, with
+the JSON / SQLite dumps (`marina-rules-data-<v>.json`, `.sqlite`) and the other artefacts above, through the
+environment `pypi-data`; a `vX.Y.Z` tag (equal to `marina_rules.__version__`) builds and publishes the code package
+through the environment `pypi`. Both check that the built wheel, installed beside the other package built from the
+same checkout, reports the repository's dataset digest and loads the precompiled file without a warning. The section
+above describes the single package that existed before.
+
 ## 2026-10-29: scheduled jobs no longer write to GitHub
 
 The weekly job used to `git fetch`/`pull`, push a `watch/state-DATE` branch and open/auto-merge a PR;

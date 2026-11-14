@@ -88,7 +88,8 @@ def test_expected_matches_fresh_build():
 
 
 def test_expected_pins_dataset():
-    assert EXPECTED["dataset"] == {"version": mr.VERSION, "digest": mr.dataset_digest(),
+    assert EXPECTED["dataset"] == {"data_version": mr.DATA_VERSION, "code_version": mr.__version__,
+                                   "digest": mr.dataset_digest(),
                                    "citation": mr.citation(short=False)}
 
 
@@ -165,7 +166,7 @@ def test_harmless_variation_is_tolerated():
     a["T11"]["tolerated"] = list(reversed(a["T11"]["tolerated"]))
     a["T12"] = {"status": "beyond_tracking"}
     a["T13"]["carry_forward"] = "true"
-    flat = {"citation": "rules: marina-rules@2026.11.13 sha256:" + mr.dataset_digest()[:16]}
+    flat = {"citation": f"rules: marina-rules-data@{mr.DATA_VERSION} sha256:" + mr.dataset_digest()[:16]}
     flat.update({k.lower(): v for k, v in a.items()})
     for d in (doc, flat):
         r = grade.grade(d, EXPECTED)
@@ -193,12 +194,21 @@ def test_single_cases(tid, answer, want):
 def test_missing_and_citation():
     doc = oracle(EXPECTED)
     del doc["answers"]["T05"]
-    doc["citation"] = "rules: marina-rules@2026.10.01 sha256:0000000000000000"
+    doc["citation"] = "rules: marina-rules-data@2026.10.01 sha256:0000000000000000"
     r = grade.grade(doc, EXPECTED)
     assert {t["id"]: t["grade"] for t in r["tasks"]}["T05"] == "missing"
     assert r["citation"]["grade"] == "mismatch"
     del doc["citation"]
     assert grade.grade(doc, EXPECTED)["citation"]["grade"] == "missing"
+
+
+def test_citation_must_name_the_data_package():
+    doc = oracle(EXPECTED)
+    dg, dv = mr.dataset_digest(), mr.DATA_VERSION
+    doc["citation"] = f"rules: marina-rules@{dv} sha256:{dg[:16]}"          # the single-package form
+    assert grade.grade(doc, EXPECTED)["citation"]["grade"] == "mismatch"
+    doc["citation"] = mr.citation()
+    assert grade.grade(doc, EXPECTED)["citation"]["grade"] == "ok"
 
 
 def test_cli_exit_codes(tmp_path):
