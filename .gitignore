@@ -15,3 +15,6 @@ dist/
 build/
 *.egg-info/
 uv.lock
+
+# rule fact pages (scripts/build_site.py); generated, never committed
+site/

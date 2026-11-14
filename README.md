@@ -265,6 +265,18 @@ Regime switches one day before and on the day, ST vs non-ST, IPO windows, both e
 floors, funds, convertibles, fees, missing and contradictory context, known gaps. Marina itself is
 tested against them in CI; the first run caught a real defect. `python conformance/run.py`.
 
+## Rule fact pages
+
+`scripts/build_site.py` turns the data into static pages, one per market family, scope and rule: every record of that
+rule with its interval, value, verification level, sources, verbatim quotes and content hashes, plus the known gaps,
+the tracked-through date and the exact call that answers it. Definitions are copied from the rule tables in
+[docs/SCHEMA.md](docs/SCHEMA.md); nothing on a page is written by hand. Each page also has a Markdown twin, and
+`llms.txt` lists them all. Two builds of the same data are byte-identical.
+
+```bash
+python scripts/build_site.py --out site
+```
+
 ## Errata
 
 When data contradicts a rule, so far the data has been wrong every time. [`errata/`](errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding; issuer-specific ex-rights formulas in reorganisation conversions). Contributions welcome under the same bar: sample + detector + the fact that settles it.
