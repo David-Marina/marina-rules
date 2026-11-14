@@ -38,5 +38,7 @@ testpaths = ["tests"]
 # scripts/vendor_data.py copies data/ → src/marina_rules/data/ right before build; the copy is
 # git-ignored and must byte-match data/ (checked in CI and by `marina_rules.dataset_digest()`).
 # SKILL.md (the usage notes) is copied the same way and is read by `marina_rules.skill_text()`.
+# data/compiled.json is the precompiled loader output written by the same script (see marina_rules/_precompiled.py);
+# it is used only when it matches the vendored YAML and the loader code, so a stale copy is never read.
 [tool.setuptools.package-data]
-marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv", "SKILL.md"]
+marina_rules = ["data/**/*.yaml", "data/samples/**/*.csv", "data/compiled.json", "SKILL.md"]

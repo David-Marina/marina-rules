@@ -10,6 +10,9 @@ ops/reports/
 
 # vendored copy for wheels (scripts/vendor_data.py); never commit
 src/marina_rules/data/
+# precompiled loader output (scripts/vendor_data.py); generated, never committed
+src/marina_rules/data/compiled.json
+data/compiled.json
 src/marina_rules/SKILL.md
 dist/
 build/

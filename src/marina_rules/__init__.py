@@ -604,10 +604,20 @@ def _selector_overlap(a: dict, b: dict, scope: str, start: str, end: str | None)
 
 @lru_cache(maxsize=None)
 def records() -> tuple[Record, ...]:
-    """All records across all data files. Loading validates the schema; a bad file raises."""
+    """All records across all data files. Loading validates the schema; a bad file raises.
+
+    An installed package reads the precompiled copy (``_compiled``) when it matches the YAML byte for byte; it was
+    produced by the same loader below, so the same checks ran when it was built. Otherwise the YAML is parsed."""
+    c = _compiled()
+    if c is not None:
+        return c["records"]
+    return _records_from_yaml(DATA_DIR)
+
+
+def _records_from_yaml(data_dir: str) -> tuple[Record, ...]:
     out: list[Record] = []
     seen: set[str] = set()
-    for path in _iter_files():
+    for path in _iter_files(data_dir):
         with open(path, encoding="utf-8") as fh:
             doc = yaml.safe_load(fh) or {}
         if doc.get("schema") not in (1, 1.1, _SCHEMA_SELECTORS):
@@ -676,7 +686,7 @@ def records() -> tuple[Record, ...]:
                 id=r["id"], market=r.get("market", default_market), scope=r["scope"], rule=r["rule"],
                 value=_iso_dates(r["value"]), effective_from=ef, effective_to=et, verification=r["verification"],
                 sources=tuple(_iso_dates(dict(x)) for x in (r.get("sources") or ())), notes=r.get("notes") or "",
-                file=os.path.relpath(path, DATA_DIR),
+                file=os.path.relpath(path, data_dir),
                 published_at=_norm_date(r.get("published_at")), recorded_at=_norm_date(r.get("recorded_at")),
                 unit=r.get("unit"), contracts=sel,
             ))
@@ -746,7 +756,14 @@ def scopes(market_prefix: str = "cn") -> dict:
 
     ``asserts`` / ``rule_asserts`` are the declarative context constraints checked by contract.resolve
     (see the constraint grammar at the top of data/<market>/scopes.yaml)."""
-    path = os.path.join(DATA_DIR, market_prefix, "scopes.yaml")
+    c = _compiled()
+    if c is not None and market_prefix in c["scopes"]:
+        return c["scopes"][market_prefix]
+    return _scopes_from_yaml(DATA_DIR, market_prefix)   # also any prefix the precompiled copy does not list
+
+
+def _scopes_from_yaml(data_dir: str, market_prefix: str) -> dict:
+    path = os.path.join(data_dir, market_prefix, "scopes.yaml")
     if not os.path.exists(path):
         return {}
     with open(path, encoding="utf-8") as fh:
@@ -904,7 +921,14 @@ def _market_matches(record_market: str | None, wanted: str | None) -> bool:
 @lru_cache(maxsize=None)
 def known_gaps(market_prefix: str = "cn") -> tuple:
     """Declared gaps: (market, scope, rule, interval) Marina knows it does not cover, with reason and status."""
-    path = os.path.join(DATA_DIR, market_prefix, "known_gaps.yaml")
+    c = _compiled()
+    if c is not None and market_prefix in c["known_gaps"]:
+        return c["known_gaps"][market_prefix]
+    return _gaps_from_yaml(DATA_DIR, market_prefix)
+
+
+def _gaps_from_yaml(data_dir: str, market_prefix: str) -> tuple:
+    path = os.path.join(data_dir, market_prefix, "known_gaps.yaml")
     if not os.path.exists(path):
         return ()
     with open(path, encoding="utf-8") as fh:
@@ -969,10 +993,11 @@ def _strict_date(v, where: str) -> str:
     raise ValueError(f"{where}: need a date YYYY-MM-DD, got {v!r}")
 
 
-def _expand_scopes(patterns, prefix: str, where: str) -> frozenset:
+def _expand_scopes(patterns, prefix: str, where: str, scopes_of=None) -> frozenset:
     """Scope names, or patterns ending in '*' (a scope family by name prefix, e.g. 'cffex_t*'), against the registry
-    of ``prefix``. Every name must exist and every pattern must match at least one scope."""
-    reg = scopes(prefix)
+    of ``prefix`` (``scopes_of(prefix)``, default ``scopes``). Every name must exist and every pattern must match at
+    least one scope."""
+    reg = (scopes if scopes_of is None else scopes_of)(prefix)
     out: set = set()
     if not isinstance(patterns, list) or not patterns or not all(isinstance(p, str) and p for p in patterns):
         raise ValueError(f"{where}: scopes must be a non-empty list of scope names (or 'family_*' patterns)")
@@ -984,7 +1009,8 @@ def _expand_scopes(patterns, prefix: str, where: str) -> frozenset:
     return frozenset(out)
 
 
-def _load_tracking(path: str, prefix: str, known_markets: frozenset) -> list:
+def _load_tracking(path: str, prefix: str, known_markets: frozenset, data_dir: str | None = None,
+                   scopes_of=None) -> list:
     with open(path, encoding="utf-8") as fh:
         doc = yaml.safe_load(fh) or {}
     if doc.get("schema") != 1:
@@ -1008,22 +1034,30 @@ def _load_tracking(path: str, prefix: str, known_markets: frozenset) -> list:
                              "beyond the day the entry was written)")
         if not (isinstance(e["basis"], str) and e["basis"].strip()):
             raise ValueError(f"{where}: basis must be a non-empty string (how the sources were checked)")
-        sc = None if e.get("scopes") is None else _expand_scopes(e["scopes"], prefix, where)
+        sc = None if e.get("scopes") is None else _expand_scopes(e["scopes"], prefix, where, scopes_of)
         out.append({"market": str(e["market"]), "markets": tuple(mkts), "scopes": sc,
                     "scope_patterns": None if sc is None else tuple(e["scopes"]), "tracked_through": tt,
-                    "basis": e["basis"].strip(), "updated": up, "file": os.path.relpath(path, DATA_DIR)})
+                    "basis": e["basis"].strip(), "updated": up,
+                    "file": os.path.relpath(path, DATA_DIR if data_dir is None else data_dir)})
     return out
 
 
 @lru_cache(maxsize=None)
 def _tracking_entries() -> tuple:
+    c = _compiled()
+    if c is not None:
+        return c["tracking"]
+    return _tracking_from_yaml(DATA_DIR, records(), scopes)
+
+
+def _tracking_from_yaml(data_dir: str, recs, scopes_of) -> tuple:
     out: list = []
     for prefix in TRACKING_PREFIXES:
-        path = os.path.join(DATA_DIR, prefix, TRACKING_FILE)
+        path = os.path.join(data_dir, prefix, TRACKING_FILE)
         if not os.path.exists(path):
             continue
-        known = frozenset(m for r in records() if r.file.startswith(prefix + "/") for m in (r.market or "").split("+"))
-        out += _load_tracking(path, prefix, known)
+        known = frozenset(m for r in recs if r.file.startswith(prefix + "/") for m in (r.market or "").split("+"))
+        out += _load_tracking(path, prefix, known, data_dir, scopes_of)
     _check_tracking_overlaps(out)
     return tuple(out)
 
@@ -1666,6 +1700,30 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
             if prev_close - lo < tick - 1e-12:
                 lo = round_half_up(prev_close - tick, decimals)
     return hi, lo
+
+
+# ------------------------------------------------------------------------------------------ precompiled dataset
+# A wheel ships data/compiled.json (written by scripts/vendor_data.py through marina_rules._precompiled.build): the
+# output of the YAML loaders above, so that the first records() call does not parse YAML. It is used only when it
+# matches the YAML beside it byte for byte and was written by this exact loader code; otherwise the YAML is loaded
+# (and validated) as usual, with a warning. A source checkout has no such file and always reads the YAML.
+def _compiled():
+    return _compiled_for(DATA_DIR)
+
+
+@lru_cache(maxsize=None)
+def _compiled_for(data_dir: str):
+    from . import _precompiled as pc
+    path = os.path.join(data_dir, pc.FILE)
+    if not os.path.isfile(path):
+        return None
+    try:
+        return pc.load(path, data_dir)
+    except pc.Rejected as e:
+        import warnings
+        warnings.warn(f"marina_rules: ignoring the precompiled dataset {path} ({e}); loading the YAML instead",
+                      RuntimeWarning, stacklevel=4)
+        return None
 
 
 def _digest_dir(data_dir: str) -> str:
