@@ -71,6 +71,10 @@ resolve("price_limit_pct", "2024-06-14", "st_main", "XSHE", {"board": "main_boar
 
 数据本身是 [`data/`](data/) 下的 YAML 文件，不装 Python 包也能用任何语言读。
 
+## 在 AI 助手里查：MCP 服务
+
+`pip install "marina-rules[mcp]"`（MCP 服务需要 Python 3.10+）后运行 `marina-rules-mcp`，AI 助手就能通过 Model Context Protocol 直接查询，不用写代码。在客户端配置里加 `{"mcpServers": {"marina-rules": {"command": "marina-rules-mcp"}}}`。工具有 `resolve`（某日某规则的判定）、`limit_price`（涨跌停价）、`statutory_fees`（印花税和过户费）、`coverage`、`list_scopes`、`list_rules`、`check_fills`（内联传入的成交，最多 500 笔）和 `citation`；每个结果都带引用行，查不到或参数不对时返回错误说明，不会补数。它只读、不联网，只含规则，不含行情、ST 名单和交易日历。详见英文版的 [Ask from an AI assistant](README.md#ask-from-an-ai-assistant-the-mcp-server)。
+
 ## 检查一份成交记录
 
 ```bash

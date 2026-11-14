@@ -105,6 +105,49 @@ a reason and a status, so "unsupported" can be cited rather than worked around. 
 
 The data is plain YAML under [`data/`](https://github.com/David-Marina/marina-rules/tree/main/data/). You do not need the Python package; read the files from any language.
 
+### Ask from an AI assistant: the MCP server
+
+The same questions can be put to the dataset by an AI assistant through the
+[Model Context Protocol](https://modelcontextprotocol.io), without writing code. The server runs locally over stdio.
+
+```bash
+pip install "marina-rules[mcp]"   # adds the MCP Python SDK; the server needs Python 3.10+, the rest of the package 3.9+
+marina-rules-mcp                  # the same server: marina-rules mcp, python -m marina_rules.mcp_server
+```
+
+Add it to the MCP client's configuration (most clients read this `mcpServers` shape; where the file lives differs per
+client). If the client does not start in the environment where the package is installed, give the full path to
+`marina-rules-mcp`.
+
+```json
+{
+  "mcpServers": {
+    "marina-rules": {"command": "marina-rules-mcp"}
+  }
+}
+```
+
+| tool | answers |
+|---|---|
+| `resolve` | one rule on one trading day for one scope: the decision of `resolve()`, acted on only when `status` is `DETERMINED` |
+| `limit_price` | limit-up / limit-down price from the previous close; `unlimited: true` when no daily limit applied |
+| `statutory_fees` | stamp duty and transfer fee of one A-share stock fill, per component and summed (commission not included) |
+| `coverage` | whether every (rule, day) of a backtest window can be answered for a scope, with the gaps |
+| `list_scopes` | the scopes of `cn`, `hk` or `us` and the context each requires |
+| `list_rules` | the rule names a scope holds, with their first and last dates |
+| `check_fills` | the `marina-check` checks on up to 500 fills passed inline as JSON (not a file path) |
+| `citation` | the citation line and version of the dataset |
+
+Every answer carries `citation`. Arguments the library refuses (a date not written `YYYY-MM-DD`, an unknown side) and
+questions with no record in force come back as tool errors whose text says what to change or what is missing; no value
+is filled in. The usage notes (SKILL.md) are offered as the resource `marina-rules://skill`.
+
+What it does not do: it is read-only and deterministic, uses no network, and reads no file but the dataset shipped
+in the package. Like the package, it holds rules only — no prices, ST or suspension lists, constituents or trading
+calendar; a security's board, ST status and listing day are the caller's to supply.
+
+<!-- mcp-name: io.github.David-Marina/marina-rules -->
+
 ### Cite it
 
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes.

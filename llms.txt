@@ -23,6 +23,8 @@ futures, crypto. ST status, board and listing date of a security are supplied by
   `mr.limit_price(10.0, "chinext", "2021-03-01", "XSHE")`; `mr.rules_for(scope, market)`; `mr.scopes()`.
 - One decision shape for any language: `marina-rules query <rule> <YYYY-MM-DD> <scope> [market] --context k=v`;
   act only on status `DETERMINED`.
+- MCP server for AI assistants: `pip install "marina-rules[mcp]"`, then `marina-rules-mcp` (stdio; tools resolve,
+  limit_price, statutory_fees, coverage, list_scopes, list_rules, check_fills, citation).
 - Dates are `YYYY-MM-DD`; markets are ISO 10383 codes (XSHG, XSHE, BJSE, XHKG, XNYS, XNAS, CCFX, XSGE, XINE, XZCE, GFEX).
 
 ## Documents

@@ -33,6 +33,11 @@ classifiers = [
 ]
 dependencies = ["pyyaml>=6"]
 
+[project.optional-dependencies]
+# The MCP server (marina-rules-mcp) for AI assistants. The MCP Python SDK needs Python 3.10+; on 3.9 the extra installs
+# nothing and the entry point says so. Nothing else in the package imports it.
+mcp = ['mcp>=2.3,<3; python_version >= "3.10"']
+
 [project.urls]
 Homepage = "https://github.com/David-Marina/marina-rules"
 Documentation = "https://github.com/David-Marina/marina-rules#readme"
@@ -47,6 +52,7 @@ Issues = "https://github.com/David-Marina/marina-rules/issues"
 [project.scripts]
 marina-check = "marina_rules.check:main"
 marina-rules = "marina_rules.cli:main"
+marina-rules-mcp = "marina_rules.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
