@@ -140,9 +140,9 @@ must be of that product.
 | `tick_size` | number + `unit` (CNY/USD/HKD) | minimum price increment per instrument family (`stock` / `bse_stock` / `etf` / `b_share` / `convertible`; `marina_rules.tick_family(scope, market)`). The fallback to family `stock` applies to mainland securities scopes only (scopes whose records are on XSHG / XSHE / BJSE): a futures, Hong Kong or US scope is its own family and has no `tick_size`, so the question is refused |
 | `limit_price_min_tick` | `true` \| `false` | exchange floors the band at ±1 tick when it would round to zero. **Per exchange**: XSHE `true` from 2011-02-28 (rules 3.3.16), XSHG `true` from 2023-04-10 (rules 3.3.17); `false` (rounding only — sourced from the complete rule text) XSHE 2006-07-01..2011-02-28, XSHG 2006-07-01..2023-04-10, BJSE from 2021-11-15 (2026.10.26.7). `false` and absent behave identically in `limit_price()`. |
 | `limit_price_min_tick` (scope-specific) | `{prev_close_lt \| prev_close_lte: x, band: b}` + `unit` | board-specific absolute band: when the previous close is below / at-or-below `x`, the limits are prev_close ± `b` regardless of rounding. Only the SSE delisting board uses it (scopes `delisting`, `delisting_day1`; 2013-01-01 `<0.05`, 2020-12-31 `≤0.05`, both ±¥0.01; repealed 2023-04-10). `limit_price()` looks up the requested scope first and falls back to scope `stock`. (2026.10.26.4) |
+| `stamp_duty_sell` / `transfer_fee_each_side` / `commission_cap` / `commission_min_per_order_cny` | fraction / CNY | turnover / per order |
 
 `limit_price()` composes the three: band → round to tick → apply the floor if (and only if) a `limit_price_min_tick` record is in force for that market and date (requested scope first, then `stock`). When the floor would matter and no market was given it raises `ValueError` rather than guess.
-| `stamp_duty_sell` / `transfer_fee_each_side` / `commission_cap` / `commission_min_order_cny` | fraction / CNY | turnover / per order |
 
 ## 2026.10.26.5 — sessions, same-day fund types, pre-2022 convertibles
 
