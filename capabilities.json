@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
- "ruleset_version": "2026.11.13",
- "ruleset_hash": "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e",
+ "ruleset_version": "2026.11.16",
+ "ruleset_hash": "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",

@@ -7,12 +7,12 @@ Price limits, fees, trading sessions, settlement — every record says *when* it
 > **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](README.zh-CN.md)。
 
 ```
-rules: marina-rules@2026.11.13 sha256:a66ca0e3fe8e3659
+rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
 
-> **Status: 2026.11.13.** 2873 records — 1421 `verified`, 1451 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (27 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
+> **Status: 2026.11.16.** 2873 records — 1421 `verified`, 1451 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (27 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
 
 What changed in each release, and which backtests a release asks you to re-run: [CHANGELOG.md](CHANGELOG.md).
 
@@ -96,6 +96,22 @@ The data is plain YAML under [`data/`](data/). You do not need the Python packag
 ### Cite it
 
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes.
+
+### Which version to use
+
+A release goes out most Mondays: rule changes, corrections, and the date through which each market's sources were
+checked. Old versions stay installable — that is what makes a citation re-runnable.
+
+- **Research you will publish or compare later:** pin the exact version (`marina-rules==<version>`) and cite it.
+- **Anything that asks about recent or current dates:** upgrade weekly and pass `require_tracked=True`. An installed
+  version knows the last date its sources were checked (`tracked_through`); asked about a later date it warns that
+  the answer is carried forward, and with `require_tracked=True` it refuses instead.
+- **After upgrading:** `python -m marina_rules.diff <old> <new>` lists what changed and what to re-run. Each
+  [CHANGELOG](CHANGELOG.md) entry opens with three lines: which rules changed, what was corrected, and whether
+  anything is incompatible.
+
+A version found to give wrong answers is yanked on PyPI, not deleted: a pin still installs it, and `pip` shows why
+it was withdrawn.
 
 ### Check a fill log
 
@@ -284,7 +300,7 @@ Marina does not estimate P&L impact; that is what the interval is for.
 
 ## Conformance vectors — check *your* implementation, in any language
 
-[`conformance/vectors/`](conformance/) holds 559 input→expected pairs whose expected values come from
+[`conformance/vectors/`](conformance/) holds 590 input→expected pairs whose expected values come from
 the exchange texts and hand arithmetic quoted in each vector's `oracle`, not from running Marina.
 Regime switches one day before and on the day, ST vs non-ST, IPO windows, both exchanges' one-tick
 floors, funds, convertibles, fees, missing and contradictory context, known gaps. Marina itself is

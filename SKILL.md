@@ -198,7 +198,7 @@ A closed record (`effective_to` set) is not flagged: its end is sourced. Trackin
 
 ```python
 result["rules_citation"] = mr.citation(short=False)
-# 'rules: marina-rules@2026.11.13 sha256:<64 hex>'
+# 'rules: marina-rules@2026.11.16 sha256:<64 hex>'
 ```
 
 A result without this line cannot be reproduced. The hash is over the data files only.
@@ -210,7 +210,7 @@ number. Templates:
 
 - "Coverage for `st_main` / `price_limit_pct` is `partial`: gap 2005-01-01→2008-09-19. Narrow the window or add the record."
 - "Scope `chinext` requires `st_status`; the input has no point-in-time ST column. Excluded 197 securities flagged ST today; results for them are not computed."
-- "Scope `reits` is `unsupported` in marina-rules@2026.11.13 — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
+- "Scope `reits` is `unsupported` in marina-rules@2026.11.16 — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
 - "Scope `unicorn` is `unsupported` and matches no known gap — Marina has no opinion on it at all. Stop."
 - "`price_limit_pct` is not a rule of `cffex_if`; the scope's daily limit is `price_limit_pct_of_prev_settlement` (0.10 of the previous settlement price on 2024-06-03). Answered under that name." — or, if that is not the quantity asked for: "not covered; nothing substituted."
 - "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-02. Not answered."

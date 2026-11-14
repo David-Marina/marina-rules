@@ -141,6 +141,7 @@ records:
   scope: stock
   rule: commission_min_per_order_cny
   value: 5
+  unit: CNY
   effective_from: 2002-05-01
   published_at: '2002-04-04'
   recorded_at: '2026-10-24'

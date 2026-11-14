@@ -43,7 +43,7 @@ __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for"
            "tracking_registry", "tracking_state", "BeyondTracking", "rules_for", "statutory_fee_floor",
            "statutory_fee_components", "skill_text", "markets_recorded"]
 
-VERSION = "2026.11.13"
+VERSION = "2026.11.16"
 DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
 if not os.path.isdir(DATA_DIR):  # installed as a package: data is vendored alongside
     DATA_DIR = os.path.join(os.path.dirname(__file__), "data")

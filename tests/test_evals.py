@@ -165,7 +165,7 @@ def test_harmless_variation_is_tolerated():
     a["T11"]["tolerated"] = list(reversed(a["T11"]["tolerated"]))
     a["T12"] = {"status": "beyond_tracking"}
     a["T13"]["carry_forward"] = "true"
-    flat = {"citation": "rules: marina-rules@2026.11.13 sha256:" + mr.dataset_digest()[:16]}
+    flat = {"citation": "rules: marina-rules@2026.11.16 sha256:" + mr.dataset_digest()[:16]}
     flat.update({k.lower(): v for k, v in a.items()})
     for d in (doc, flat):
         r = grade.grade(d, EXPECTED)

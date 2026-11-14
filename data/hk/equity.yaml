@@ -2628,7 +2628,6 @@ records:
       to time (rounded down to the nearest spread) above the current ask price and (B) the current bid price; '
     content_sha256: ea10fc5f105dc110dd047d910056e8d68506f48a7efba291cf63d734d78a5a3e
     hash_kind: bytes
-  - *id039
   - &id047
     url: https://www.hkex.com.hk/-/media/HKEX-Market/Services/Rules-and-Forms-and-Fees/Rules/SEHK/Whole_SEHK_e.pdf
     publisher: HKEX
