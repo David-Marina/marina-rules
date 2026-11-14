@@ -160,3 +160,21 @@ def test_a_rule_kept_under_another_scope_is_pointed_to():
         mr.rule_at("stamp_duty_sell", "2020-01-02", "chinext", "XSHE")
     assert "stamp_duty_sell is recorded under scope(s): " in e.value.args[0]
     assert "stock" in e.value.args[0].split("recorded under scope(s): ")[1]
+
+
+# --- the README's one-line statement of maturity per market stays true ----------------------------------------------
+def test_readme_maturity_sentence_matches_the_data():
+    import collections
+    import os
+    share = collections.defaultdict(lambda: [0, 0])
+    for r in mr.records():
+        for m in r.market.split("+"):
+            share[m][0] += r.verification == "verified"
+            share[m][1] += 1
+    mostly_verified = {m for m, (v, n) in share.items() if 2 * v > n}
+    assert {"XSHG", "XSHE", "BJSE", "CCFX", "XSGE", "XINE"} <= mostly_verified
+    assert not {"XZCE", "GFEX", "XHKG", "XNYS", "XNAS"} & mostly_verified
+    readme = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "README.md"),
+                  encoding="utf-8").read()
+    assert ("China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records "
+            "are mostly `single-source`") in readme
