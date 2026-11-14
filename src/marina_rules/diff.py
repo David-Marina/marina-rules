@@ -273,7 +273,12 @@ def main(argv=None) -> int:
     as_json = "--json" in a
     rule = a[a.index("--rule") + 1] if "--rule" in a else None
     scope = a[a.index("--scope") + 1] if "--scope" in a else None
-    d = diff_rules(a[0], a[1], rule=rule, scope=scope)
+    try:
+        d = diff_rules(a[0], a[1], rule=rule, scope=scope)
+    except ValueError as e:
+        print(f"marina_rules.diff: {e}\nGive two git tags (run it in a clone of the repository; an installed package has "
+              "no history) or two data directories.", file=sys.stderr)
+        return 2
     if as_json:
         print(json.dumps(d, ensure_ascii=False, indent=1)); return 0
     print(f"marina-rules {d['from']['version']} ({d['from']['records']} records, sha256:{d['from']['dataset_sha256'][:16]})")

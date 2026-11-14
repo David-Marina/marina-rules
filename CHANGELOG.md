@@ -20,7 +20,8 @@ How to read an entry:
 **In three lines.** *Rules:* none changed — no record's value or interval differs from 2026.11.13.
 *Corrections:* two defects in the code of 2026.11.13 returned wrong answers for some calls; see "Corrected" for
 what to re-run. *Compatibility:* additive (new functions, options and output keys), except that a query date not written
-`YYYY-MM-DD` now raises instead of answering, and two refusals changed status (below).
+`YYYY-MM-DD` now raises instead of answering, `tick_size` refuses where it used to answer for instruments without a
+tick record, and one refusal changed status (below).
 
 Dataset: `sha256:80188ec249ce22ae` · 2873 records (1421 `verified`, 1451 `single-source`, 1 `unverified`), the
 same records as 2026.11.13; two bookkeeping edits (under "Changed") moved the digest.
@@ -34,9 +35,9 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
   so `"20200102"`, `"2020/01/02"`, `"2020-1-2"`, an integer, `None` or any other string was not refused: it sorted
   after every ISO date of its year and was answered with a later interval — in practice the newest rule.
   `rule_at("price_limit_pct", "20200102", "chinext", "XSHE")` returned 0.2 for a day on which the band was 0.1;
-  `limit_price`, `tick_size`, `coverage`, `resolve` (status `DETERMINED`) and `marina check` behaved the same way.
+  `limit_price`, `tick_size`, `coverage`, `resolve` (status `DETERMINED`) and `marina-check` behaved the same way.
   Every entry point now accepts an ISO `YYYY-MM-DD` string (a time may follow), a `date` / `datetime`, or an object
-  whose `str()` is one, and raises `ValueError` for anything else, naming the ISO form; `marina check` reports such
+  whose `str()` is one, and raises `ValueError` for anything else, naming the ISO form; `marina-check` reports such
   a row as `ROW_INVALID`; the command line exits 2. **Re-run** anything computed with 2026.11.13 or an earlier
   release from dates in another spelling — `YYYYMMDD`, the usual data-vendor format, above all.
 - **`tick_size` answered 0.01 for instruments that have no tick record.** A scope outside the tick-family table
@@ -48,13 +49,16 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
   scope.
 - **A rule the scope does not hold is `OUT_OF_COVERAGE` even when context is missing** (was `MISSING_CONTEXT`, a
   request for context that could never help): `resolve("price_limit", d, "chinext", "XSHE")`.
+- **`rule_at("tick_size", d, <board scope>)` answers** with the tick of the scope's instrument family, as
+  `tick_size()` and `resolve()` already did (it raised `KeyError` and pointed to scope `stock`). `record_at` still
+  reads exactly the scope it is given.
 
 ### Added
 - **Tracking registry** (`data/<prefix>/tracking.yaml`): the last date for which each market's official sources
   were checked for rule changes. `tracked_through(market, scope)`, `tracking_registry()`; every decision carries
   `tracking {tracked_through, beyond}` and, for an open-ended record asked beyond that date, a `warnings` entry
   (`CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED`); `require_tracked=True` refuses such an answer
-  (`BEYOND_TRACKING`, `BeyondTracking`). `marina check` counts the rows it affects. Not part of the dataset digest.
+  (`BEYOND_TRACKING`, `BeyondTracking`). `marina-check` counts the rows it affects. Not part of the dataset digest.
 - **Finding out what can be asked.** `rules_for(scope, market)`, `markets_recorded(scope)`; a refusal says what
   exists instead — the `KeyError` text and the new optional decision key `alternatives` (`scope_rules`,
   `similar_rules`, `rule_intervals`, `similar_scopes`, `markets`): names only, never a value. A market code the
@@ -62,8 +66,8 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
 - **Statutory fees of a fill**: `statutory_fee_floor(turnover, side, date, market)` and
   `statutory_fee_components(...)` (per rule, with record ids).
 - **One command line**, `marina-rules` (= `python -m marina_rules`): `query`, `rules`, `scopes`, `fees`, `check`,
-  `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
-- **`marina check`**: `--no-tick`, `--band-tolerance-pct`, `--assume-seasoned` (relaxed runs: no stamp), `--rows`,
+  `adapt`, `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
+- **`marina-check`**: `--no-tick`, `--band-tolerance-pct`, `--assume-seasoned` (relaxed runs: no stamp), `--rows`,
   `--top-codes`; the scope may be left empty and chosen from `board`, `st`, `listing_day_index` / `list_date`
   (`board_for_code` fills the board from the code); optional `day_high` / `day_low` add `PRICE_OUTSIDE_DAY_RANGE`;
   `hints` for price-basis mismatches; `summary` by scope, year, side and code.
@@ -74,14 +78,15 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
   `--listing`). Each format is a declared reading of named columns and states what it rests on (`--list-formats`);
   no row is dropped and nothing is computed or guessed. The formats were written from the engines' source code and
   the vendors' documentation; they have not yet been run against exports from a live installation of each engine.
-  `marina check` gains `--assume-not-st` (a row without ST information is taken as not ST when its scope cannot be
+  `marina-check` gains `--assume-not-st` (a row without ST information is taken as not ST when its scope cannot be
   chosen otherwise; a relaxed run, no stamp); its output gains `assumed_not_st`, `options.assume_not_st` and, for an
   adapted run, `adapter`.
 - **Faster first load.** The wheel carries a precompiled copy of the dataset (`data/compiled.json`), so the first
   `records()` call no longer parses YAML: about 3 s before, about 0.03 s now (one machine, Python 3.12). The copy is
   used only when it matches the YAML beside it and the loader that wrote it; otherwise the YAML is loaded as before,
   with a warning. A source checkout always reads the YAML.
-- **`README.zh-CN.md`**, a Chinese entry page.
+- **`README.zh-CN.md`**, a Chinese entry page; **`llms.txt`**, a short entry page for machines: what the package
+  is, how to install and ask, what it does not contain.
 - **Erratum E-0003**: reorganisation conversions use an issuer-specific ex-rights formula.
 - **Conformance vectors**: 590 (was 559) — tracking (TRK), discovery (DSC), date formats (DAT); a vector may now
   expect a refusal (`expect.error`).
@@ -97,10 +102,18 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
 - README states up front that maturity differs by market (A-share, CFFEX, SHFE and INE mostly `verified`; CZCE,
   GFEX, Hong Kong and US mostly `single-source`); more PyPI keywords.
 - The weekly source watch checks listing pages only.
-- **Earlier releases.** 2026.10.26.5 and the releases before it are no longer on PyPI, so results that cite them
-  cannot be re-run from PyPI. From this release on a published version is not deleted; one with a wrong-answer
-  defect is yanked (still installable when pinned, with the reason shown) — as 2026.11.13 is, for the two defects
-  above.
+- Packaging: the licence metadata names both licences (`MIT AND CC0-1.0`; it said MIT only); the summary, keywords,
+  classifiers and project links say what the package covers, in English and Chinese; README links are absolute so
+  that they work on the PyPI page.
+- Command line: `marina-rules scopes <unknown registry>` exits 2 (it printed `{}`); `marina-rules rules <board
+  scope>` adds `see_also` pointing to scope `stock`, where an A-share stock's fees, sessions and holding period are
+  recorded; `python -m marina_rules.diff` outside a clone says that it needs one instead of a traceback;
+  `marina-check --help` prints the canonical-form lines literally. The command is written `marina-check` throughout
+  (some texts said `marina check`, which does not exist).
+- **Earlier releases.** 2026.11.13, the first release from this repository, stays on PyPI; its two defects above
+  are fixed here, so upgrade unless you are reproducing a result that cites it. 2026.10.26.5 and the releases before
+  it are no longer on PyPI, so results that cite them cannot be re-run from there. From now on a published version
+  is not deleted.
 
 ## [2026.11.13] - 2026-11-13
 

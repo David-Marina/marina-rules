@@ -1,6 +1,6 @@
 ---
 name: marina-rules
-description: Look up point-in-time trading rules (price limits, fees) with citations before running or trusting a backtest. Use when writing a backtest, simulating fills, computing limit prices or statutory fees for China A-shares, or when a result must be reproducible. Marina refuses to guess; this skill tells you how to stop correctly when it does.
+description: Look up point-in-time exchange trading rules (price limits, fees, ticks, sessions, margins) with citations before running or trusting a backtest. Use when writing a backtest, simulating fills, computing limit prices or statutory fees, or checking a fill log — China A-shares, China futures (CFFEX, SHFE, INE, CZCE, GFEX), Hong Kong and US equities — or when a result must be reproducible against a cited rule set.
 ---
 
 # Using Marina rules in a backtest or agent
@@ -8,6 +8,10 @@ description: Look up point-in-time trading rules (price limits, fees) with citat
 Marina is a dataset of *when* a trading rule took effect and *where* it was published. It is not a
 backtest engine and knows nothing about any particular security's history. The correct path is short
 and the order matters.
+
+Install: `pip install marina-rules` (Python ≥ 3.9; the data ships in the package, no network at run time). Covered:
+China A-shares, CFFEX / SHFE / INE / CZCE / GFEX futures, Hong Kong and US equities. Not covered: DCE, crypto, and
+anything that is data rather than a rule — prices, ST or suspension lists, constituents, trading calendars.
 
 ## The path
 
@@ -34,6 +38,10 @@ stocks and funds carry `price_limit_pct` (fraction of the previous close), futur
 `KeyError` message and the decision's `alternatives` list what the scope does have. That is a pointer, not an answer:
 ask again under the listed name if — and only if — it is the quantity you need; "not covered" is the right answer
 only after that check. The same listing from a shell: `marina-rules rules <scope> [market]`, `marina-rules scopes`.
+
+A-share board scopes (`main_board`, `chinext`, `star`, `st_main`, the listing-window and delisting scopes …) carry
+the price limit only. Stamp duty, transfer fee, commission cap, sessions and holding period of an A-share stock are
+recorded under scope `stock`; ask for them there (`mr.rules_for("stock")`, `marina-rules fees …`).
 
 Markets are ISO 10383 codes (`XSHG`, `XSHE`, `BJSE`, `XHKG`, `XNYS`, `XNAS`, `CCFX`, `XSGE`, `XINE`, `XZCE`, `GFEX`),
 not exchange abbreviations: `SZSE` or `SSE` is refused, and the refusal lists the codes the scope is recorded on
@@ -93,8 +101,9 @@ d["reason"]   # one sentence you can put in a log verbatim
 ```
 
 `python -m marina_rules.contract --schema` prints the JSON Schema; `--capabilities` prints what can be
-asked at all (rules × scopes × markets, context vocabulary, known gaps) — read that first if you are
-an agent meeting Marina for the first time. The contract never raises for data reasons; anything but
+asked at all (rules × scopes × markets, context vocabulary, known gaps). It is large (about 190 KB): an agent
+meeting Marina for the first time should start with `marina-rules scopes` and `marina-rules rules <scope> [market]`
+and open capabilities for the detail it then needs. The contract never raises for data reasons; anything but
 `DETERMINED` is a stop, and `MISSING_CONTEXT` also catches context that **contradicts** the scope
 (`st_status=True` with scope `main_board`; `board=star` with `main_board`; `listing_day_index=1` with
 `main_board` after 2023-04-10; `listing_day_index=1` with `convertible`). A key passed as `null` counts as

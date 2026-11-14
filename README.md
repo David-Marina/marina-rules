@@ -1,10 +1,12 @@
-# Marina
+# Marina — point-in-time trading rules (marina-rules)
 
 **Point-in-time trading rules for financial markets, as data.**
 
 Price limits, fees, trading sessions, settlement — every record says *when* it took effect and *where* it was published. Any backtest or trading agent can cite the exact rules it ran under, and anyone can re-run it against byte-identical rules.
 
-> **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](README.zh-CN.md)。
+Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
+
+> **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md)。
 
 ```
 rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae
@@ -14,7 +16,7 @@ Marina is to trading rules what the [tz database](https://www.iana.org/time-zone
 
 > **Status: 2026.11.16.** 2873 records — 1421 `verified`, 1451 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (27 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
 
-What changed in each release, and which backtests a release asks you to re-run: [CHANGELOG.md](CHANGELOG.md).
+What changed in each release, and which backtests a release asks you to re-run: [CHANGELOG.md](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md).
 
 ## Why
 
@@ -51,7 +53,7 @@ refused rather than parsed because record intervals are compared as ISO text: re
 the rule of a later period.
 
 ```bash
-python -m marina_rules.diff <old> <new>     # what changed, and what must be re-run; git tags or data directories
+python -m marina_rules.diff <old> <new>     # in a clone: what changed, and what must be re-run; git tags or data directories
 ```
 
 ### Find out what can be asked
@@ -87,11 +89,11 @@ family for mainland securities scopes only: a futures, Hong Kong or US scope ask
 `partial` (with the exact gaps), or `unsupported`. It also tells you what you must already know about
 each security to select the scope legitimately (`required_context`): Marina holds rules, never a
 security's ST or listing history, and it will not guess them for you. Gaps carry `known_gap_ids`
-when they match [`data/cn/known_gaps.yaml`](data/cn/known_gaps.yaml) (Hong Kong: [`data/hk/known_gaps.yaml`](data/hk/known_gaps.yaml); US: [`data/us/known_gaps.yaml`](data/us/known_gaps.yaml)) — the list of things Marina
+when they match [`data/cn/known_gaps.yaml`](https://github.com/David-Marina/marina-rules/blob/main/data/cn/known_gaps.yaml) (Hong Kong: [`data/hk/known_gaps.yaml`](https://github.com/David-Marina/marina-rules/blob/main/data/hk/known_gaps.yaml); US: [`data/us/known_gaps.yaml`](https://github.com/David-Marina/marina-rules/blob/main/data/us/known_gaps.yaml)) — the list of things Marina
 knows it does not cover (pre-2006 sessions and convertibles, the 2013 T+0 switch for bond/money/gold ETFs…), each with
-a reason and a status, so "unsupported" can be cited rather than worked around. Agents: read [SKILL.md](SKILL.md).
+a reason and a status, so "unsupported" can be cited rather than worked around. Agents: read [SKILL.md](https://github.com/David-Marina/marina-rules/blob/main/SKILL.md).
 
-The data is plain YAML under [`data/`](data/). You do not need the Python package; read the files from any language.
+The data is plain YAML under [`data/`](https://github.com/David-Marina/marina-rules/tree/main/data/). You do not need the Python package; read the files from any language.
 
 ### Cite it
 
@@ -106,12 +108,13 @@ checked. Old versions stay installable — that is what makes a citation re-runn
 - **Anything that asks about recent or current dates:** upgrade weekly and pass `require_tracked=True`. An installed
   version knows the last date its sources were checked (`tracked_through`); asked about a later date it warns that
   the answer is carried forward, and with `require_tracked=True` it refuses instead.
-- **After upgrading:** `python -m marina_rules.diff <old> <new>` lists what changed and what to re-run. Each
-  [CHANGELOG](CHANGELOG.md) entry opens with three lines: which rules changed, what was corrected, and whether
-  anything is incompatible.
+- **After upgrading:** each
+  [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md) entry opens with three lines: which rules changed, what was corrected, and whether
+  anything is incompatible. In a clone of the repository, `python -m marina_rules.diff <old tag> <new tag>` lists every
+  changed record and the intervals to re-run.
 
-A version found to give wrong answers is yanked on PyPI, not deleted: a pin still installs it, and `pip` shows why
-it was withdrawn.
+A published version is not deleted. When one turns out to give wrong answers, the release that fixes it says so at
+the top of its [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md) entry, with what to re-run.
 
 ### Check a fill log
 
@@ -176,7 +179,7 @@ No listing-day index? Give `list_date` instead: Marina has no trading calendar, 
 python scripts/audit_bars.py /path/to/daily_bars --complete-from-listing
 ```
 
-A price-limit rule is falsifiable: after it takes effect, no close may move beyond the band. This script counts violations per rule. A violation means the rule is wrong or your data is — either way you want to know. Marina was first audited this way against 9.1 million A-share bars; see [`docs/audit-2026-10-24.md`](docs/audit-2026-10-24.md). The primary-source audit that followed, and the four corrections it produced, is in [`docs/sources-audit-2026-10-24.md`](docs/sources-audit-2026-10-24.md).
+A price-limit rule is falsifiable: after it takes effect, no close may move beyond the band. This script counts violations per rule. A violation means the rule is wrong or your data is — either way you want to know. Marina was first audited this way against 9.1 million A-share bars; see [`docs/audit-2026-10-24.md`](https://github.com/David-Marina/marina-rules/blob/main/docs/audit-2026-10-24.md). The primary-source audit that followed, and the four corrections it produced, is in [`docs/sources-audit-2026-10-24.md`](https://github.com/David-Marina/marina-rules/blob/main/docs/sources-audit-2026-10-24.md).
 
 ## Coverage
 
@@ -207,7 +210,7 @@ Blank cells are blank on purpose. A missing rule raises `KeyError`; it does not 
 
 **Coverage statement (2026.11.13).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
 (687,464 / 706,888 target-days to 2026-11-13; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
-remains is listed as `unresolved` in [`coverage/cn_targets.yaml`](coverage/cn_targets.yaml) and counts as **not covered**:
+remains is listed as `unresolved` in [`coverage/cn_targets.yaml`](https://github.com/David-Marina/marina-rules/blob/main/coverage/cn_targets.yaml) and counts as **not covered**:
 convertible-bond commission cap — SZSE 2006-07-01 → 2006-12-30 and 2014-08-25 → open, SSE 2021-12-31 → open — and minimum —
 SZSE 2006-07-01 → open, SSE 2021-12-31 → open (no official text states a level, or says there is none, for those periods); BJSE
 stock commission cap / minimum 2021-11-15 → open (no official text sets one); the context-free ChiNext delisting scope
@@ -231,7 +234,7 @@ A record whose market includes BJSE (e.g. the `XSHG+XSHE+BJSE` stamp duty) is tr
 
 ## Scope — what Marina will and will not contain
 
-**In:** rules that change *whether an order fills, at what price, or at what cost* — price limits, trading hours and auction windows, tick size and lot size, price cages, T+N settlement, statutory fees, exchange margin requirements, trading calendars (delegated to `exchange_calendars`).
+**In:** rules that change *whether an order fills, at what price, or at what cost* — price limits, trading hours and auction windows, tick size and lot size, price cages, T+N settlement, statutory fees, exchange margin requirements. Trading calendars are not included: use `exchange_calendars`.
 
 **Out, permanently:** constituent lists, ST/suspension lists, borrow lists, prices, adjustment factors, anything with an owner or a license. Those are *data*; Marina holds *rules*. This boundary is what lets tzdata survive forty years without a legal department, and we are not going to be cleverer than tzdata.
 
@@ -254,9 +257,9 @@ mr.rule_at("price_limit_pct", "2024-06-14", "st_main", "XSHG+XSHE", as_of="2024-
 
 A rule published after `as_of` is `NOT_YET_PUBLISHED` / `NotYetPublished` — never answered with the older rule; a record
 with `published_at: null` is `UNKNOWN_PUBLICATION` / `PublicationUnknown`. CLI: `--as-of YYYY-MM-DD`. Exact semantics
-and what is out of scope: [docs/SCHEMA.md](docs/SCHEMA.md#as_of--as-officially-published-on-2026102607).
+and what is out of scope: [docs/SCHEMA.md](https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md#as_of--as-officially-published-on-2026102607).
 
-**An open end is not a forecast.** A record still in force has `effective_to: null`. Releases are monthly, and some
+**An open end is not a forecast.** A record still in force has `effective_to: null`. Releases are weekly at most, and some
 markets were researched once up to a cut-off date, so an exchange may have changed a rule that Marina has not caught up
 with. `mr.tracked_through(market, scope=None)` gives the last date for which the maintainer checked the official sources
 of that market for changes (`None` = not tracked; table under [Coverage](#coverage)). On or before it, an open-ended
@@ -300,7 +303,7 @@ Marina does not estimate P&L impact; that is what the interval is for.
 
 ## Conformance vectors — check *your* implementation, in any language
 
-[`conformance/vectors/`](conformance/) holds 590 input→expected pairs whose expected values come from
+[`conformance/vectors/`](https://github.com/David-Marina/marina-rules/tree/main/conformance/) holds 590 input→expected pairs whose expected values come from
 the exchange texts and hand arithmetic quoted in each vector's `oracle`, not from running Marina.
 Regime switches one day before and on the day, ST vs non-ST, IPO windows, both exchanges' one-tick
 floors, funds, convertibles, fees, missing and contradictory context, known gaps. Marina itself is
@@ -311,8 +314,8 @@ tested against them in CI; the first run caught a real defect. `python conforman
 `scripts/build_site.py` turns the data into static pages, one per market family, scope and rule: every record of that
 rule with its interval, value, verification level, sources, verbatim quotes and content hashes, plus the known gaps,
 the tracked-through date and the exact call that answers it. Definitions are copied from the rule tables in
-[docs/SCHEMA.md](docs/SCHEMA.md); no statement about a rule is written by hand (only fixed labels and headings
-are). Each page also has a Markdown twin, and `llms.txt` lists them all. Two builds of the same data are
+[docs/SCHEMA.md](https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md); no statement about a rule is written by hand (only fixed labels and headings
+are). Each page also has a Markdown twin, and the generated site carries its own `llms.txt` index of them. Two builds of the same data are
 byte-identical.
 
 ```bash
@@ -321,7 +324,7 @@ python scripts/build_site.py --out site
 
 ## Errata
 
-When data contradicts a rule, so far the data has been wrong every time. [`errata/`](errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding; issuer-specific ex-rights formulas in reorganisation conversions). Contributions welcome under the same bar: sample + detector + the fact that settles it.
+When data contradicts a rule, so far the data has been wrong every time. [`errata/`](https://github.com/David-Marina/marina-rules/tree/main/errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding; issuer-specific ex-rights formulas in reorganisation conversions). Contributions welcome under the same bar: sample + detector + the fact that settles it.
 
 ## Verification levels
 
@@ -337,7 +340,7 @@ Every record carries one of three levels, in the data, in the open:
 
 ## Contributing
 
-Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md).
+Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](https://github.com/David-Marina/marina-rules/blob/main/CONTRIBUTING.md) and [GOVERNANCE.md](https://github.com/David-Marina/marina-rules/blob/main/GOVERNANCE.md).
 
 ## Acknowledgements
 
@@ -345,8 +348,8 @@ The China A-share timeline was cross-checked against the rule histories compiled
 
 ## License
 
-Data (`data/`, `docs/`): [CC0 1.0](LICENSE-DATA) — no rights reserved.
-Code (`src/`, `scripts/`, `tests/`): [MIT](LICENSE).
+Data (`data/`, `docs/`): [CC0 1.0](https://github.com/David-Marina/marina-rules/blob/main/LICENSE-DATA) — no rights reserved.
+Code (`src/`, `scripts/`, `tests/`): [MIT](https://github.com/David-Marina/marina-rules/blob/main/LICENSE).
 
 ## About the name
 

@@ -1350,7 +1350,11 @@ def coverage(market: str, scope: str, rules: Iterable[str], start: str, end: str
 def rule_at(rule: str, date: str, scope: str = "stock", market: str | None = None, strict: bool = False,
             *, as_of: str | None = None, contract: str | None = None, require_tracked: bool = False):
     """Value of ``rule`` in force on ``date``. See ``record_at`` (including ``as_of``, ``contract`` and
-    ``require_tracked``)."""
+    ``require_tracked``). A rule recorded per instrument family (``tick_size``) is looked up under the family of
+    ``scope``, as ``tick_size()``, ``resolve()`` and ``rules_for()`` do; ``record_at`` itself reads exactly the scope
+    it is given."""
+    if rule in _FAMILY_RULES:
+        scope = lookup_scope(rule, scope, market)
     return record_at(rule, date, scope, market, strict, as_of=as_of, contract=contract,
                      require_tracked=require_tracked).value
 

@@ -15,7 +15,7 @@ from marina_rules.contract import (STATUSES, WARNING_BEYOND, WARNING_UNTRACKED, 
                                    resolve)
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PINNED_DIGEST = "a66ca0e3fe8e3659f16b708d2af698d12ab85d3c34525bb2cf5632a8a9d8959e"
+PINNED_DIGEST = "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536"
 TRACKING_FILES = [os.path.join(mr.DATA_DIR, p, mr.TRACKING_FILE) for p in mr.TRACKING_PREFIXES]
 
 
@@ -271,7 +271,7 @@ def test_coverage_reports_tracking_without_changing_status():
     assert t["status"] == "complete" and t["beyond_tracking"] == []                           # closed fee holiday
 
 
-# --- marina check ----------------------------------------------------------------------------------------------------
+# --- marina-check ----------------------------------------------------------------------------------------------------
 
 HDR = ["date", "code", "side", "price", "prev_close", "scope", "market"]
 
@@ -301,7 +301,7 @@ def test_check_example_stamp_unchanged():
     import csv
     with open(os.path.join(ROOT, "examples", "fills_ok.csv"), newline="", encoding="utf-8") as fh:
         out = chk.check_rows(list(csv.DictReader(fh)), strict=True)
-    assert out["stamp"].endswith("d2abe94da19e5306b55a1ed38cfafb7a")
+    assert out["stamp"].endswith("87ff86b08134065c107cbb5368058de5")
     # every example row has a market (XSHG / XSHE, tracked) and a date before 2026-11-13
     assert out["tracking"]["rows_untracked"] == out["tracking"]["rows_beyond_tracked_through"] == 0
     assert out["tracking"]["tracked_through"] == {"XSHE": "2026-11-13", "XSHG": "2026-11-13"}

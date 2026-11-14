@@ -1,4 +1,4 @@
-"""``marina check`` on model-price logs: relaxed options, numeric band findings, per-row view, summary, scope
+"""``marina-check`` on model-price logs: relaxed options, numeric band findings, per-row view, summary, scope
 derivation from context, board_for_code, and the price-basis hint."""
 import csv
 import hashlib

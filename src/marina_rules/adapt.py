@@ -1,4 +1,4 @@
-"""``marina-rules adapt`` — turn a backtest engine's trade export into the rows ``marina check`` reads.
+"""``marina-rules adapt`` — turn a backtest engine's trade export into the rows ``marina-check`` reads.
 
 A fill log from an engine has its own column names, its own way of writing a security code and a date, and usually no
 previous close. This module rewrites it, and joins what the engine did not export from a data vendor's tables:

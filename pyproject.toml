@@ -1,26 +1,46 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "marina-rules"
 version = "2026.11.16"
-description = "Point-in-time trading rules for financial markets, as data. Price limits, fees, sessions, settlement — every record cites its source."
+description = "Point-in-time exchange trading rules as data: China A-share price limits (涨跌停), stamp duty, fees, ticks, sessions; futures, Hong Kong, US. For backtests and AI agents; every record cites its source."
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT AND CC0-1.0"
+license-files = ["LICENSE", "LICENSE-DATA"]
 authors = [{name = "David Li"}]
 keywords = ["trading", "trading-rules", "backtest", "backtesting", "exchange-rules", "price-limit", "fees", "point-in-time",
-            "a-share", "china", "stock", "futures", "hong-kong", "quant", "agent"]
+            "a-share", "china", "stock", "futures", "hong-kong", "quant", "agent", "price-limits", "limit-up",
+            "limit-down", "stamp-duty", "transaction-fees", "tick-size", "trading-hours", "trading-sessions",
+            "backtest-validation", "dataset", "china-stock", "sse", "szse", "bse", "cffex", "shfe", "hkex", "us-equities",
+            "涨跌停", "涨跌幅限制", "印花税", "交易规则", "交易制度", "回测", "A股"]
 classifiers = [
-  "License :: OSI Approved :: MIT License",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Natural Language :: Chinese (Simplified)",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.12",
   "Topic :: Office/Business :: Financial :: Investment",
+  "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = ["pyyaml>=6"]
 
 [project.urls]
 Homepage = "https://github.com/David-Marina/marina-rules"
+Documentation = "https://github.com/David-Marina/marina-rules#readme"
+"Chinese README" = "https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md"
+"For AI agents" = "https://github.com/David-Marina/marina-rules/blob/main/SKILL.md"
+Schema = "https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md"
+Changelog = "https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md"
+Source = "https://github.com/David-Marina/marina-rules"
 Issues = "https://github.com/David-Marina/marina-rules/issues"
 
 [project.scripts]

@@ -1,7 +1,8 @@
 """One command line for the package: ``marina-rules <command> …`` or ``python -m marina_rules <command> …``.
 
   query <rule> <date> <scope> [market] [--context k=v,k=v] [--min verified] [--as-of D] [--require-tracked]
-                              one decision as JSON (marina_rules.contract.resolve); anything but DETERMINED is a stop
+                              one decision as JSON (marina_rules.contract.resolve); anything but DETERMINED is a stop.
+                              The exit code is 0 for every decision: read status, not the exit code
   rules <scope> [market] [--intervals]
                               rule names the dataset holds for a scope: first date, last date, number of intervals
                               (--intervals lists every interval)
@@ -66,6 +67,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if cmd == "scopes":
         pfx = rest[0] if rest else "cn"
+        if pfx not in ("cn", "hk", "us"):
+            print(f"error: unknown registry {pfx!r}; registries are cn (mainland China), hk, us")
+            return 2
         try:
             reg = mr.scopes(pfx)
         except Exception as e:   # unknown market family
@@ -92,6 +96,13 @@ def main(argv: list[str] | None = None) -> int:
             close = mr.similar_names(scope, known)
             if close:
                 out["similar_scopes"] = close
+        from .equity import equity_scopes
+        if have and scope in equity_scopes():
+            fam = mr.lookup_scope("tick_size", scope, market)
+            out["see_also"] = {"scopes": sorted({"stock", fam}),
+                               "note": "an A-share board scope carries the price limit only; stamp duty, transfer fee, "
+                                       "commission cap, sessions and holding period of the stock are recorded under these "
+                                       "scopes — marina-rules rules stock"}
         _dump(out)
         return 0
     if cmd == "fees":

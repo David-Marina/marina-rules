@@ -81,8 +81,13 @@ def test_bse_stock_answers_and_stock_bjse_is_keyerror(rule):
     if rule in BSE_FOUR:
         assert rec.value == BSE_FOUR[rule]
     assert mr.record_at(rule, D, "bse_stock").id == rec.id   # the only record under bse_stock
-    with pytest.raises(KeyError):
-        mr.rule_at(rule, D, "stock", "BJSE")
+    with pytest.raises(KeyError):                            # scope stock itself holds nothing for BJSE
+        mr.record_at(rule, D, "stock", "BJSE")
+    if rule == "tick_size":   # recorded per instrument family: rule_at follows the family, as tick_size() does
+        assert mr.rule_at(rule, D, "stock", "BJSE") == rec.value == mr.tick_size("stock", D, "BJSE")
+    else:
+        with pytest.raises(KeyError):
+            mr.rule_at(rule, D, "stock", "BJSE")
 
 
 @pytest.mark.parametrize("scope", ["bse", "st_bse", "ipo_day1_bse", "delisting_bse", "delisting_day1_bse", "bse_stock"])

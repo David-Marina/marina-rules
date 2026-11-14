@@ -1,6 +1,6 @@
 """Copy data/ and SKILL.md into the package so the wheel is self-contained. Run before `python -m build`.
 Never commit the copy; .gitignore excludes it. The installed package's dataset_digest() must equal the
-repo's, which is what tests/test_packaging.py asserts after a wheel install.
+repo's.
 
 It also writes data/compiled.json into the copy: the YAML loaders' output (marina_rules._precompiled), so the installed
 package does not parse YAML on first use. Building it runs every load-time check; invalid data stops the build here."""
