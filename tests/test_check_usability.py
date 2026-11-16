@@ -184,15 +184,16 @@ CTX = "date,code,side,price,prev_close,scope,market,board,st,listing_day_index,i
 def test_scope_derived_from_context_columns():
     rows = _rows(CTX + "2024-03-01,600000,buy,10.95,10.00,,XSHG,,false,100,\n"       # board from code → main_board
                        "2024-03-01,600001,buy,10.55,10.00,,XSHG,main_board,true,100,\n"  # st_main: 5% band → over
-                       "2024-03-01,600002,buy,10.45,10.00,main_board,XSHG,,true,100,\n"  # explicit scope wins
+                       "2024-03-01,600002,buy,10.45,10.00,main_board,XSHG,,true,100,\n"  # scope cell vs ST cell: refused
                        "2024-03-01,603999,buy,30.00,10.00,,XSHG,,false,3,registration\n")  # ipo_first5_main: unlimited
     out = check_rows(rows, per_row=True)
     assert [r["scope"] for r in out["row_status"]] == ["main_board", "st_main", "main_board", "ipo_first5_main"]
-    assert [r["status"] for r in out["row_status"]] == ["ok", "findings", "ok", "ok"]
+    assert [r["status"] for r in out["row_status"]] == ["ok", "findings", "findings", "ok"]
+    assert out["row_status"][2]["checks"] == ["SCOPE_CONTEXT_CONFLICT"]   # an explicit scope no longer overrides st=true
     assert out["row_status"][0]["scope_derived"] is True and "scope_derived" not in out["row_status"][2]
     # the stamp commits to the derived scope: same as the log with the scope written out
-    clean = rows[:1] + rows[2:]
-    spelled = [dict(r, scope=s) for r, s in zip(clean, ["main_board", "main_board", "ipo_first5_main"])]
+    clean = rows[:1] + rows[3:]
+    spelled = [dict(r, scope=s) for r, s in zip(clean, ["main_board", "ipo_first5_main"])]
     assert check_rows(clean)["stamp"] == check_rows(spelled)["stamp"] is not None
 
 

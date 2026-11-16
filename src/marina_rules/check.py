@@ -10,14 +10,20 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 see ``hints`` in the output.
   * side        buy | sell
   * market      XSHG | XSHE | BJSE …; needed where a rule differs by exchange (one-tick floor, B-share tick)
-  * decimals    optional rounding override for the limit price; also used as the tick for PRICE_OFF_TICK
+  * decimals    optional rounding override for the limit price; also used as the tick for PRICE_OFF_TICK. It is
+                accepted as the exchange's grid only when 10^-decimals IS the tick recorded for the row's scope, date
+                and market. Any other value is the caller's own grid: the row is checked on it, but the run is
+                relaxed and gets no stamp (``decimals_override`` counts such rows). Not an integer from 0 to 8:
+                ROW_INVALID.
   * scope       a China A-share scope with a price-limit record (``--list-scopes`` prints them all from the registry:
                 main_board, chinext, star, st_main, ipo_first5_main, …). When the cell is empty and the row carries
                 scope context (columns named like the registry keys: ``board``, ``st`` or ``st_status``,
                 ``listing_day_index``, ``issue_regime``, ``delisting_day_index`` …), the scope is chosen with
                 ``marina_rules.equity.pick_scope`` from the registry's own asserts; without a ``board`` cell the board
                 comes from ``board_for_code(code)`` (a code-prefix convenience, A-share stocks only). A row with
-                neither scope nor context keeps the old default ``stock``.
+                neither scope nor context keeps the old default ``stock``. A row that names a scope AND carries
+                context is checked for agreement: context cells that contradict the named scope (scope
+                ``main_board`` with ``st`` true) are SCOPE_CONTEXT_CONFLICT, as ``contract.resolve`` refuses them.
   * list_date   optional listing date (YYYY-MM-DD or YYYYMMDD), used only when ``listing_day_index`` is empty. Marina
                 has no trading calendar and never computes a trading-day index: a trade more than
                 LIST_DATE_MARGIN_DAYS (60) calendar days after ``list_date`` is past every listing window (the
@@ -34,12 +40,16 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 day's range disagree, not which of the two is wrong.
   * fee / turnover   optional; when both present, the fee is checked against the day's statutory
                      components (stamp duty of the fill's side, transfer fee on turnover) as a *lower bound*.
+                     A row without both has NO fee check: ``fee_check`` in the output counts the rows checked and
+                     not checked, and a stamp says nothing about the fees of the latter. A cell that is present
+                     but not a finite number (``nan``, ``inf``, text; a negative turnover) is ROW_INVALID.
                      A par-value transfer fee (SSE before 2015-08-01) is not computable from turnover and is
                      left out of the bound, never treated as a turnover rate. Supply ``market`` per row.
 
 Checks (each produces a finding on failure):
-  ROW_INVALID             missing date/code/side, or price / prev_close missing or not a finite number
-                          (nan, inf, empty) — reported even when the band is unlimited; or a date that is not
+  ROW_INVALID             missing date/code/side, or price / prev_close missing, not a finite number (nan, inf,
+                          empty) or not greater than 0 — reported even when the band is unlimited; a fee, turnover,
+                          decimals or scope-context cell that is present but cannot be read; or a date that is not
                           YYYY-MM-DD (20200102, 2020/1/2): dates are compared as ISO text, so another spelling
                           would be checked against the wrong rule interval — the row is refused, not guessed
   PRICE_OFF_TICK          price is not an integer multiple of the tick in force for the scope's instrument family
@@ -56,6 +66,8 @@ Checks (each produces a finding on failure):
                           XNAS, us_stock, us_etf): these checks are A-share only, so no other check is run on the row
   SCOPE_UNDETERMINED      the scope cell is empty and the row's context fits no scope, or several (never guessed);
                           no other check is run on the row
+  SCOPE_CONTEXT_CONFLICT  the scope cell names a scope that the row's own context cells contradict; no other check
+                          is run on the row
   PRICE_OUTSIDE_DAY_RANGE price outside [day_low, day_high] of the row (data consistency, not an exchange rule)
   DAY_RANGE_INVALID       day_high / day_low given but not both finite, positive and day_low <= day_high
 
@@ -86,7 +98,8 @@ Model-price logs (backtests fill at quote ± slippage, not on the exchange grid)
                                the rows whose scope depended on it. An ST stock is then checked against the wider
                                ordinary band, so a fill beyond the ST band can pass unnoticed.
 Any of these makes the run RELAXED: ``options`` in the output states what was used, ``rules_verified`` is false and
-no stamp is issued (``stamp_withheld`` says why), because a stamp certifies strict compliance.
+no stamp is issued (``stamp_withheld`` says why), because a stamp certifies strict compliance. So does a row whose
+``decimals`` cell is not the recorded tick (``decimals_override`` > 0): the caller changed the standard of the check.
 The tolerance also absorbs small price-basis errors: rows of an affected stock that exceed a limit by less than the
 tolerance pass. Read a relaxed run together with ``hints`` and ``summary.by_code``.
 
@@ -157,6 +170,8 @@ HINT_ROW_INDEXES = 20              # row indexes listed per hint without --rows
 TOP_CODES = 20                     # default length of summary.by_code
 TOLERANCE_BUCKETS = (0.1, 0.25, 0.5, 1.0)   # summary.within_tolerance_excess: |excess_pct| <= each, then above
 CONTEXT_ALIASES = {"st": "st_status"}
+MAX_DECIMALS = 8                   # a ``decimals`` cell must be an integer from 0 to this
+FALLBACK_TICK = 0.01               # what limit_price rounds to when no tick is recorded (pre-2006 A-share, G-0005)
 
 
 @dataclass
@@ -335,6 +350,41 @@ def _uses_day_range(rows: list) -> bool:
     return any(_s(r.get(k)) != "" for r in rows for k in DAY_RANGE_FIELDS)
 
 
+def scope_conflict(r: dict, scope: str, date: str) -> tuple:
+    """(check, detail) when the context cells of a row contradict the scope its ``scope`` cell names, else None.
+
+    A row may state its scope and also carry context (``board``, ``st`` / ``st_status``, ``listing_day_index``,
+    ``list_date`` …). The explicit scope decides which rules are checked, so cells that say the instrument is
+    something else (scope ``main_board`` with ``st_status`` true) must stop the row, exactly as
+    ``contract.resolve`` refuses such context. Only cells the row supplies are compared, against the scope's
+    ``asserts`` in the registry; a key the row leaves out is not demanded here. ``list_date`` counts only when the
+    trade is far enough after it to place the row past every listing window. A cell that cannot be read is
+    ROW_INVALID; a scope that is not in the registry is left to RULE_MISSING."""
+    from .contract import check_context   # late: contract imports this package
+    reg = scopes().get(scope)
+    if reg is None:
+        return None
+    raw = _row_context(r)
+    list_date = raw.pop("list_date", None)
+    ctx = {}
+    try:
+        for k, v in raw.items():
+            ctx[k] = parse_context_value(k, v)
+    except ValueError as e:
+        return "ROW_INVALID", f"context cell cannot be read: {e}"
+    if "listing_day_index" not in ctx and list_date is not None:
+        idx, _why = listing_index_from_list_date(date, list_date)
+        if idx is not None:
+            ctx["listing_day_index"] = idx
+    _missing, conflicts = check_context(reg.get("asserts") or {}, ctx, date)
+    if not conflicts:
+        return None
+    return "SCOPE_CONTEXT_CONFLICT", (
+        f"scope cell says {scope!r} but the row's own context contradicts it: " + "; ".join(
+            f"{c['key']}={c['supplied']!r} where {scope} asserts {c['scope_asserts']!r}" for c in conflicts) +
+        " — correct the scope, or leave the scope cell empty to have it chosen from the context")
+
+
 def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, band_tolerance_pct: float = 0.0,
                per_row: bool = False, assume_seasoned: bool = False, top_codes: int = TOP_CODES,
                assume_not_st: bool = False) -> dict:
@@ -358,6 +408,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     buckets: dict = {}
     out_of_range: dict = {}
     n_flagged = n_tol = n_assumed = n_not_st = 0
+    n_dec = n_fee = n_no_fee = 0
     trk_beyond = trk_untracked = 0
     trk_dates: dict = {}
     head = (f"marina-check-canon/3 strict={int(bool(strict))} day_range=1\n" if day_range
@@ -386,11 +437,20 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "SCOPE_UNDETERMINED", why)))
             else:
                 c["scope"] = sc
+        elif not row_f and _s(r.get("scope")) and _row_context(r):
+            bad = scope_conflict(r, c["scope"], c["date"])
+            if bad:
+                row_f.append(_finding(Finding(i, c["code"], c["date"], bad[0], bad[1])))
         canon.update((json.dumps([c[k] for k in fields], ensure_ascii=False, separators=(",", ":")) + "\n").encode())
         date, code, side, scope = c["date"], c["code"], c["side"], c["scope"]
         excesses: list = []
+        flags: dict = {}
         if not row_f:
-            _check_one(i, c, strict, tick, tol, row_f, within, foreign, out_of_range, excesses)
+            flags = _check_one(i, c, strict, tick, tol, row_f, within, foreign, out_of_range, excesses) or {}
+            n_dec += bool(flags.get("decimals_override"))
+            if "fee_checked" in flags:
+                n_fee += flags["fee_checked"]
+                n_no_fee += not flags["fee_checked"]
             if date and not any(f["check"] == "MARKET_UNSUPPORTED" for f in row_f):
                 mk = c["market"] or None
                 key = (mk, scope)
@@ -431,8 +491,13 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 st["assumed_seasoned"] = True
             if not_st:
                 st["assumed_not_st"] = True
+            if flags.get("decimals_override"):
+                st["decimals_override"] = True
+            if flags.get("fee_checked"):
+                st["fee_checked"] = True
             row_status.append(st)
     dg = dataset_digest()
+    relaxed = relaxed or n_dec > 0      # a row that sets its own price grid is not checked against the exchange's
     clean = not findings
     ok = clean and not relaxed
     stamp = hashlib.sha256((dg + "\n" + canon.hexdigest()).encode()).hexdigest() if ok else None
@@ -460,6 +525,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         "relaxed": relaxed, "clean": clean,
         "rows_with_findings": n_flagged, "within_tolerance": n_tol, "assumed_seasoned": n_assumed,
         "assumed_not_st": n_not_st,
+        "decimals_override": n_dec,
+        "fee_check": {"rows_checked": n_fee, "rows_not_checked": n_no_fee,
+                      "note": "the fee is checked only on rows that give both fee and turnover; for the other rows "
+                              "the result (and a stamp) says nothing about fees"},
         "summary": summary,
         "hints": _basis_hints(out_of_range, per_row),
         "tracking": {"rows_beyond_tracked_through": trk_beyond, "rows_untracked": trk_untracked,
@@ -470,7 +539,8 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     if relaxed:
         out["stamp_withheld"] = ("relaxed run (" + ", ".join(
             ([] if tick else ["no tick check"]) + ([f"band tolerance {tol:g}%"] if tol > 0 else []) +
-            (["assume seasoned"] if assume_seasoned else []) + (["assume not ST"] if assume_not_st else [])) +
+            (["assume seasoned"] if assume_seasoned else []) + (["assume not ST"] if assume_not_st else []) +
+            ([f"decimals cell overrides the recorded tick on {n_dec} row(s)"] if n_dec else [])) +
             "): a rules-verified stamp is issued only for a strict run")
     if per_row:
         out["row_status"] = row_status
@@ -486,36 +556,66 @@ def _excess(price: float, hi: float, lo: float) -> tuple:
 
 
 def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: list, within: list, foreign: set,
-               out_of_range: dict, excesses: list) -> None:
+               out_of_range: dict, excesses: list) -> dict:
     """Run the checks on one canonical row, appending finding dicts to ``row_f`` and tolerated excesses to
-    ``within``."""
+    ``within``. Returns ``decimals_override`` (the row's ``decimals`` cell is not the recorded tick, so the row was
+    checked on the caller's grid) and, when the row got as far as the fee check, ``fee_checked``."""
     date, code, side, scope = c["date"], c["code"], c["side"], c["scope"]
     add = lambda check, detail, extra=None: row_f.append(_finding(Finding(i, code, date, check, detail), extra))
     market = c["market"] or None
     if market_prefix_for(market) != "cn" or scope in foreign:
         # A-share tick, band and fee composition must never be applied to another market's fill.
         add("MARKET_UNSUPPORTED", f"marina-check covers China A-share fills only (market {market}, scope {scope})")
-        return
+        return {}
     price, pc = _f(c["price"]), _f(c["prev_close"])
+    fee, turnover = _f(c["fee"]), _f(c["turnover"])
+    dec = None                                                # None → tick from the dataset
+    bad = []
+    if not date:
+        bad.append("date is missing")
+    if side not in ("buy", "sell"):
+        bad.append(f"side {c['side']!r} is not buy or sell")
+    for name, v in (("price", price), ("prev_close", pc)):
+        if v is None:
+            bad.append(f"{name} {c[name]!r} is not a finite number")
+        elif v <= 0:
+            bad.append(f"{name} {c[name]!r} is not greater than 0")
+    if c["decimals"]:
+        try:
+            dec = int(c["decimals"])
+        except ValueError:
+            dec = -1
+        if not 0 <= dec <= MAX_DECIMALS:
+            bad.append(f"decimals {c['decimals']!r} is not an integer from 0 to {MAX_DECIMALS}")
+    # A cell that is present but unreadable is an invalid row, not an absent cell: skipping the fee check for
+    # fee "nan" would pass a log that fee "0" fails.
+    if c["fee"] and fee is None:
+        bad.append(f"fee {c['fee']!r} is not a finite number")
+    if c["turnover"] and (turnover is None or turnover < 0):
+        bad.append(f"turnover {c['turnover']!r} is not a finite number >= 0")
+    if bad:
+        add("ROW_INVALID", "need date, code, side (buy|sell), and finite numeric price and prev_close: " + "; ".join(bad))
+        return {}
+    # The recorded tick is looked up even when the row brings its own ``decimals``: an override is accepted as the
+    # exchange's grid only when it IS the recorded one. Any other value (finer, coarser, or where the tick differs
+    # by exchange and the row names none) is the caller's grid — the row is still checked on it, but the run is
+    # relaxed and gets no stamp.
+    recorded = conflict = None
     try:
-        dec = int(c["decimals"]) if c["decimals"] else None   # None → tick from the dataset
-    except ValueError:
-        dec = None; price = None
-    if price is None or pc is None or side not in ("buy", "sell") or not date:
-        add("ROW_INVALID", "need date, code, side (buy|sell), and finite numeric price and prev_close")
-        return
+        recorded = _agreed_tick(scope, date, market, strict)
+    except RuleConflict as e:
+        conflict = e
+    except KeyError:
+        recorded = None   # no tick recorded for this date (e.g. before 2006-07-01): cannot judge, not a finding
+    override = False
+    if dec is not None:
+        basis = recorded if recorded is not None else (None if conflict else FALLBACK_TICK)
+        override = basis is None or not math.isclose(10.0 ** -dec, basis, rel_tol=1e-9)
     if tick_on:
         # tick: the instrument family's tick_size in force (or 10^-decimals when the row overrides rounding)
-        tick = None
-        if dec is not None:
-            tick = 10.0 ** -dec
-        else:
-            try:
-                tick = _agreed_tick(scope, date, market, strict)
-            except RuleConflict as e:
-                add("MARKET_REQUIRED", f"tick differs by exchange: {e}")
-            except KeyError:
-                tick = None   # no tick recorded for this date (e.g. before 2006-07-01): cannot judge, not a finding
+        tick = 10.0 ** -dec if dec is not None else recorded
+        if dec is None and conflict is not None:
+            add("MARKET_REQUIRED", f"tick differs by exchange: {conflict}")
         if tick is not None and _off_tick(c["price"], tick):
             add("PRICE_OFF_TICK", f"price {c['price']} is not a multiple of tick {tick}")
     try:
@@ -559,14 +659,15 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
                 within.append(dict(check="PRICE_OUTSIDE_DAY_RANGE", **nums))
             else:
                 add("PRICE_OUTSIDE_DAY_RANGE", f"{price} not in the day's range [{lo}, {hi}]", nums)
-    fee, turnover = _f(c["fee"]), _f(c["turnover"])
-    if fee is not None and turnover is not None:
+    fee_checked = fee is not None and turnover is not None
+    if fee_checked:
         try:
             stat = statutory_fee_floor(turnover, side, date, market, strict=strict)
             if fee + 1e-6 < stat:
                 add("FEE_BELOW_STATUTORY", f"fee {fee:.2f} < statutory minimum {stat:.2f}")
         except KeyError as e:
             add("RULE_MISSING", str(e))
+    return {"decimals_override": override, "fee_checked": fee_checked}
 
 
 def scope_help() -> str:
