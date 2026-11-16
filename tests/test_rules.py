@@ -301,6 +301,38 @@ def test_tick_size_by_instrument_family():
     assert mr.limit_price(1.234, "etf", "2024-01-05", "XSHG") == (1.357, 1.111)   # 3-decimal rounding for funds
 
 
+def test_limit_price_substitutes_a_tick_for_a_share_stocks_before_2006_only():
+    # G-0005: the A-share tick before 2006-07-01 is not sourced; 0.01 is the only value it ever had
+    assert mr.limit_price(1.234, "main_board", "2005-01-05", "XSHG") == (1.36, 1.11)
+    assert mr.limit_price(1.234, "st_main", "2005-01-05") == (1.3, 1.17)
+    assert mr.limit_price(1.234, "main_board", "2005-01-05", "XSHG", strict=True) == (1.36, 1.11)
+    # a fund or a B share has a band from 1996 / 1998 but no tick before 2006-07-01: nothing to round at, no guess
+    for scope, market in (("etf", "XSHG"), ("etf", None), ("b_share", "XSHG"), ("b_share", "XSHE"),
+                          ("st_b_share", "XSHE")):
+        for strict in (False, True):
+            with pytest.raises(KeyError) as e:
+                mr.limit_price(1.234, scope, "2006-06-30", market, strict=strict)
+            msg = e.value.args[0]
+            assert "tick_size" in msg and "G-0005" in msg and "2006-07-01" in msg and "decimals" in msg
+            assert not isinstance(e.value, (mr.NotYetPublished, mr.PublicationUnknown))
+        with pytest.raises(KeyError):
+            mr.tick_size(scope, "2006-06-30", market)
+    # the caller's own grid is still accepted, and the first recorded day answers as before
+    assert mr.limit_price(1.234, "etf", "2006-06-30", "XSHG", decimals=3) == (1.357, 1.111)
+    assert mr.limit_price(1.234, "etf", "2006-07-03", "XSHG") == (1.357, 1.111)
+    assert mr.limit_price(1.234, "b_share", "2006-07-03", "XSHE") == (1.36, 1.11)
+
+
+def test_limit_price_does_not_substitute_where_a_stock_tick_record_exists_but_is_not_usable(monkeypatch):
+    # the substitution is for dates with no stock tick record at all; a record that may not be used is a refusal
+    def refused(scope, date, market=None, strict=False, as_of=None):
+        raise KeyError(f"no tick_size/stock rule in force on {date} (strict)")
+    monkeypatch.setattr(mr, "_agreed_tick", refused)
+    with pytest.raises(KeyError, match="tick_size"):
+        mr.limit_price(10.0, "main_board", "2020-01-02", "XSHG", strict=True)
+    assert mr.limit_price(10.0, "main_board", "2005-01-05", "XSHG") == (11.0, 9.0)
+
+
 def test_known_gaps_are_well_formed_and_do_not_overlap_records():
     gaps = mr.known_gaps("cn")
     ids = [g["gap_id"] for g in gaps]

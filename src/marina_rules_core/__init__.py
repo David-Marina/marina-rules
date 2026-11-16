@@ -1709,6 +1709,42 @@ def _agreed_tick(scope: str, date: str, market: str | None = None, strict: bool 
         return vals.pop()[0]
 
 
+@lru_cache(maxsize=None)
+def _tick_intervals(family: str) -> tuple:
+    """[effective_from, effective_to) of every ``tick_size`` record of ``family``, whatever its verification."""
+    return tuple((r.effective_from, r.effective_to) for r in records() if r.rule == "tick_size" and r.scope == family)
+
+
+UNSOURCED_STOCK_TICK = 0.01   # A-share stock tick on dates with no tick_size record (known gap G-0005)
+
+
+def _rounding_tick(scope: str, date: str, market: str | None = None, strict: bool = False,
+                   as_of: str | None = None) -> float:
+    """The tick ``limit_price`` rounds at when the caller gives no ``decimals``: the ``tick_size`` in force
+    (``_agreed_tick``), with one substitution.
+
+    Family ``stock`` on a date for which the dataset holds no ``tick_size`` record at all (before 2006-07-01) rounds
+    at 0.01: the A-share tick before the 2006 rules is not sourced, and 0.01 is the only value it ever had (known gap
+    G-0005). Nothing else is substituted — every other family (funds, B shares, convertible bonds, BSE stocks), and a
+    stock date whose record exists but may not be used (``strict`` and ``unverified``), raises ``KeyError``: those
+    instruments traded on 0.001 or on a grid that differs by exchange, so 0.01 would be a guess that moves the limit
+    price. ``NotYetPublished`` / ``PublicationUnknown`` and ``RuleConflict`` propagate unchanged."""
+    try:
+        return _agreed_tick(scope, date, market, strict, as_of)
+    except (NotYetPublished, PublicationUnknown):
+        raise
+    except KeyError as e:
+        fam = lookup_scope("tick_size", scope, market)
+        day = _check_date(date)
+        if fam == "stock" and not any(a <= day and (b is None or day < b) for a, b in _tick_intervals(fam)):
+            return UNSOURCED_STOCK_TICK
+        why = e.args[0] if e.args else str(e)
+        raise KeyError(f"limit_price cannot round the band for scope {scope!r} on {day}: no usable tick_size for "
+                       f"instrument family {fam!r}{' (strict: unverified records are not used)' if strict else ''} "
+                       f"— {why}. 0.01 is assumed only for A-share stocks before their first tick record (known gap "
+                       "G-0005); pass decimals= only if you know the grid the exchange used") from e
+
+
 def _min_tick_value(scope: str, date: str, market: str, as_of: str | None = None):
     """``limit_price_min_tick`` value for ``scope`` on ``date``: the scope's own record first, then (market BJSE)
     the BSE family scope ``bse_stock``, then scope ``stock``.
@@ -1755,6 +1791,11 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
     Pass ``market`` for any date-sensitive case: the one-tick floor is SZSE-only before 2023-04-10.
     ``as_of``: every composed record must have been published by then (see ``record_at``); otherwise
     ``NotYetPublished`` / ``PublicationUnknown`` propagate — the 0.01 pre-2006 tick fallback never masks them.
+
+    Where no ``tick_size`` is usable and ``decimals`` is not given: an A-share stock scope on a date with no tick
+    record at all rounds at 0.01 (known gap G-0005, the one value Marina substitutes); any other case raises
+    ``KeyError`` — a fund, a B share or a convertible bond did not trade on the 0.01 grid, so there is nothing to
+    round at. See ``_rounding_tick``.
     """
     as_of = _check_as_of(as_of)
     date = _check_date(date)
@@ -1764,12 +1805,7 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
     up = v["up"] if isinstance(v, dict) else v
     dn = v["down"] if isinstance(v, dict) else v
     if decimals is None:
-        try:
-            tick = _agreed_tick(scope, date, market, strict, as_of)
-        except (NotYetPublished, PublicationUnknown):
-            raise
-        except KeyError:
-            tick = 0.01  # pre-2006 A-share dates: tick not sourced, 0.01 is the only value ever used (G-0005)
+        tick = _rounding_tick(scope, date, market, strict, as_of)
         decimals = max(0, -int(round(math.log10(tick))))
     else:
         tick = 10.0 ** -decimals

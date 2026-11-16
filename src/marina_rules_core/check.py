@@ -12,10 +12,11 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
   * market      XSHG | XSHE | BJSE …; needed where a rule differs by exchange (one-tick floor, B-share tick)
   * decimals    optional rounding override for the limit price; also used as the tick for PRICE_OFF_TICK. It is
                 accepted as the exchange's grid only when 10^-decimals IS the tick recorded for the row's scope, date
-                and market (where none is recorded for the row: 0.01, the grid the limit prices are rounded at
-                in that case). Any other value is the caller's own grid: the row is checked on it, but the run is
-                relaxed and gets no stamp (``decimals_override`` counts such rows). Not an integer from 0 to 8:
-                ROW_INVALID.
+                and market (an A-share stock before its first tick record, 2006-07-01: 0.01, the grid the limit
+                prices are rounded at in that case, known gap G-0005). Any other value is the caller's own grid —
+                always so for a fund, B share or convertible bond on a date with no usable tick record: the row is
+                checked on it, but the run is relaxed and gets no stamp (``decimals_override`` counts such rows).
+                Not an integer from 0 to 8: ROW_INVALID.
   * scope       a China A-share scope with a price-limit record (``--list-scopes`` prints them all from the registry:
                 main_board, chinext, star, st_main, ipo_first5_main, …). When the cell is empty and the row carries
                 scope context (columns named like the registry keys: ``board``, ``st`` or ``st_status``,
@@ -64,6 +65,9 @@ Checks (each produces a finding on failure):
                           Decimal on the price as written. Skipped when no tick is recorded for that date (in a
                           strict run: no record that is not ``unverified``); ``tick_check`` in the output counts
                           the rows checked and not checked, and a stamp says nothing about the grid of the latter.
+                          Without a tick the limit prices of an A-share stock are rounded at 0.01 (dates before
+                          2006-07-01, known gap G-0005); for any other instrument family the row is RULE_MISSING
+                          unless it brings its own ``decimals`` (which makes the run relaxed).
   LIMIT_BUY_ABOVE_UP      buy price > limit-up price in force that day
   LIMIT_SELL_BELOW_DOWN   sell price < limit-down price
   PRICE_OUTSIDE_BAND      any fill outside [limit_down, limit_up]
@@ -171,7 +175,8 @@ from decimal import Decimal, InvalidOperation
 from functools import lru_cache
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
-               tracked_through, VERSION, __version__, _agreed_tick, _check_date, statutory_fee_floor)
+               tracked_through, VERSION, __version__, _agreed_tick, _check_date, _rounding_tick,
+               statutory_fee_floor)
 from .equity import (LIST_DATE_MARGIN_DAYS, _iso, all_context_keys, board_for_code, checkable_scopes, context_keys,
                      equity_scopes, listing_index_from_list_date, parse_context_value, pick_scope,
                      seasoned_listing_day_index)
@@ -191,7 +196,6 @@ TOP_CODES = 20                     # default length of summary.by_code
 TOLERANCE_BUCKETS = (0.1, 0.25, 0.5, 1.0)   # summary.within_tolerance_excess: |excess_pct| <= each, then above
 CONTEXT_ALIASES = {"st": "st_status"}
 MAX_DECIMALS = 8                   # a ``decimals`` cell must be an integer from 0 to this
-FALLBACK_TICK = 0.01               # what limit_price rounds to when no tick is recorded for the row (any family)
 B_SHARE_MARKETS = {"900": "XSHG", "200": "XSHE"}   # code prefix → exchange, for rows whose scope is a B-share scope
 ROW_INVALID_OPENING = "need date, code, side (buy|sell), and finite numeric price and prev_close: "
 
@@ -663,8 +667,10 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         "tick_check": {"rows_checked": n_tick, "rows_not_checked": n_no_tick,
                        "note": "the price grid is checked against the tick Marina records for the row's instrument "
                                "family, exchange and date (in a strict run: a record that is not unverified). The "
-                               "rows not checked are those with no such record (their limit prices are rounded at "
-                               "0.01), rows that bring their own decimals (decimals_override), and every row of a "
+                               "rows not checked are those with no such record (an A-share stock's limit prices "
+                               "are then rounded at 0.01, known gap G-0005; any other instrument is RULE_MISSING "
+                               "unless the row brings decimals), rows that bring their own decimals "
+                               "(decimals_override), and every row of a "
                                "run without the tick check; for them the result (and a stamp) says nothing about "
                                "the price grid. Rows refused before the checks are in neither count"},
         "columns_not_read": sorted(str(k) for k in columns
@@ -751,7 +757,12 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
         recorded = None   # no tick recorded for this date (e.g. before 2006-07-01): cannot judge, not a finding
     override = tick_checked = False
     if dec is not None:
-        basis = recorded if recorded is not None else (None if conflict else FALLBACK_TICK)
+        basis = recorded
+        if recorded is None and conflict is None:
+            try:   # what limit_price would round at without the cell: 0.01 for an A-share stock before its first
+                basis = _rounding_tick(scope, date, market, strict)   # tick record, nothing for any other family
+            except LookupError:
+                basis = None
         override = basis is None or not math.isclose(10.0 ** -dec, basis, rel_tol=1e-9)
     if tick_on:
         # tick: the instrument family's tick_size in force (or 10^-decimals when the row overrides rounding)
