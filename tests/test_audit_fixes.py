@@ -229,10 +229,10 @@ def test_non_finite_is_row_invalid_even_when_unlimited(bad, field):
 @pytest.mark.parametrize("row,off", [
     ({"price": "10.001"}, True), ({"price": "10.01"}, False), ({"price": "10.10"}, False),
     ({"price": "9.07", "prev_close": "9.00"}, False),          # 9.07 / 0.01 is 906.9999… in binary float
-    ({"scope": "etf", "price": "1.0005", "prev_close": "1"}, True),
-    ({"scope": "etf", "price": "1.001", "prev_close": "1"}, False),
-    ({"scope": "convertible", "price": "110.123", "prev_close": "100"}, False),
-    ({"scope": "convertible", "price": "110.1234", "prev_close": "100"}, True),
+    ({"scope": "etf", "code": "159915", "price": "1.0005", "prev_close": "1"}, True),
+    ({"scope": "etf", "code": "159915", "price": "1.001", "prev_close": "1"}, False),
+    ({"scope": "convertible", "code": "123001", "price": "110.123", "prev_close": "100"}, False),
+    ({"scope": "convertible", "code": "123001", "price": "110.1234", "prev_close": "100"}, True),
 ])
 def test_price_off_tick(row, off):
     out = check_rows([{**BASE, **row}])
@@ -240,7 +240,7 @@ def test_price_off_tick(row, off):
 
 
 @pytest.mark.parametrize("field,a,b", [("fee", "1", "2"), ("market", "XSHE", ""), ("turnover", "10000", "10001"),
-                                       ("decimals", "", "2"), ("code", "000001", "000002"), ("scope", "main_board", "etf")])
+                                       ("decimals", "", "2"), ("code", "000001", "000002"), ("scope", "main_board", "st_main")])
 def test_stamp_commits_to_every_input(field, a, b):
     r = {**BASE, "fee": "100", "turnover": "10000"}
     s1 = check_rows([{**r, field: a}])["stamp"]; s2 = check_rows([{**r, field: b}])["stamp"]

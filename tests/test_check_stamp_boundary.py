@@ -50,15 +50,15 @@ def test_decimals_equal_to_the_recorded_tick_changes_nothing_but_the_hash():
     plain, same = run(), run(decimals="2")
     assert same["rules_verified"] and same["stamp"] and not same["relaxed"] and same["decimals_override"] == 0
     assert same["stamp"] != plain["stamp"]                  # the stamp commits to the cell as written
-    out = run(scope="etf", price="10.001", decimals="3")   # ETF tick is 0.001: the override IS the exchange grid
+    out = run(scope="etf", code="510050", price="10.001", decimals="3")   # ETF tick is 0.001: the override IS the exchange grid
     assert out["rules_verified"] and out["stamp"] and out["decimals_override"] == 0
 
 
 def test_decimals_cannot_stand_in_for_a_missing_market():
     # B-share tick differs by exchange; without a market the recorded tick is unknown, so decimals is the caller's
-    out = run(scope="b_share", market="", decimals="3", fee="", turnover="")
+    out = run(scope="b_share", code="900901", market="", decimals="3", fee="", turnover="")
     assert out["relaxed"] and out["stamp"] is None and out["decimals_override"] == 1
-    out = run(scope="b_share", market="XSHG", decimals="3", fee="", turnover="")
+    out = run(scope="b_share", code="900901", market="XSHG", decimals="3", fee="", turnover="")
     assert out["rules_verified"] and out["decimals_override"] == 0
 
 
@@ -379,3 +379,201 @@ def test_adapter_passes_other_unreadable_cells_on_too():
     rows, report = adapt.adapt_rows([dict(base, code="600001", exchange="SZSE")], "generic")
     if "code_prefix_and_exchange_disagree" in report["cells_not_read"]:
         assert checks(check_rows(rows, strict=True)) == ["ROW_INVALID"]
+
+
+# --- round 4: what the second review found ----------------------------------------------------------------------------
+GEN = dict(date="2024-06-14", code="600000.SH", side="sell", price="10.80", prev_close="10.00", list_date="2000-01-01",
+           quantity="1000", fee="20")          # +8 %: inside the 10 % band, outside the ST 5 % band
+
+
+def through_adapter(fill, **tables):
+    rows, rep = adapt.adapt_rows([fill], "generic", **tables)
+    return check_rows(rows, strict=True), rows, rep
+
+
+def test_the_plain_row_is_stamped_through_the_adapter():
+    out, rows, rep = through_adapter(dict(GEN, st="0"))
+    assert out["rules_verified"] and out["stamp"] and rows[0]["row_error"] == "" and rep["rows_refused"] == {}
+
+
+@pytest.mark.parametrize("extra,reason", [
+    (dict(st="0", is_st="1"), "st_columns_disagree"),
+    (dict(st="0", st_status="true"), "st_columns_disagree"),
+    (dict(pre_close="9.00"), "prev_close_columns_disagree"),
+    (dict(exchange="XSHG", market="XSHE"), "exchange_columns_disagree"),
+    (dict(ipo_date="2024-06-10"), "list_date_columns_disagree"),
+    (dict(exchange="XSHE"), "code_and_exchange_disagree"),
+    (dict(quantity="nan"), "turnover_cannot_be_formed"),
+    (dict(quantity="abc"), "turnover_cannot_be_formed"),
+])
+def test_columns_that_disagree_behind_the_adapter_are_refused_not_settled(extra, reason):
+    out, rows, rep = through_adapter(dict(GEN, **extra))
+    assert checks(out) == ["ROW_INVALID"] and out["stamp"] is None, out["findings"]
+    assert reason in rep["rows_refused"] and rows[0]["row_error"]
+    assert rows[0]["row_error"] in out["findings"][0]["detail"]
+
+
+def test_columns_that_agree_in_another_spelling_are_not_a_conflict():
+    out, rows, _ = through_adapter(dict(GEN, st="0", is_st="false", pre_close="10.0", exchange="SSE", market="XSHG",
+                                        ipo_date="20000101"))
+    assert out["rules_verified"] and rows[0]["row_error"] == ""
+    out, rows, _ = through_adapter(dict(GEN, st="0", quantity="nan", turnover="10800"))   # the quantity was not needed
+    assert out["rules_verified"] and rows[0]["row_error"] == ""
+
+
+@pytest.mark.parametrize("tables,reason", [
+    (dict(bars=[dict(code="600000", date="2024-06-14", pre_close="9.00")]), "prev_close_differs_from_bars"),
+    (dict(bars=[dict(code="600000", date="2024-06-14", pre_close="10.00", st="1")]), "st_differs_from_bars"),
+    (dict(st=[dict(code="600000", date="2024-06-14", st="1")]), "st_differs_from_st_table"),
+    (dict(listing=[dict(code="600000", list_date="2024-06-10")]), "list_date_differs_from_listing_table"),
+])
+def test_a_joined_table_that_disagrees_with_the_fills_is_refused(tables, reason):
+    out, rows, rep = through_adapter(dict(GEN, st="0"), **tables)
+    assert checks(out) == ["ROW_INVALID"] and out["stamp"] is None and reason in rep["rows_refused"]
+
+
+def test_a_joined_table_that_agrees_changes_nothing():
+    out, rows, rep = through_adapter(dict(GEN, st="0"), bars=[dict(code="600000", date="2024-06-14", pre_close="10.0")],
+                                     st=[dict(code="000004", date="2024-06-14")],
+                                     listing=[dict(code="600000", list_date="20000101")])
+    assert out["rules_verified"] and rep["rows_refused"] == {}
+
+
+def test_a_row_error_cell_is_refused_and_is_not_an_unread_column():
+    out = run(row_error="columns 'st' and 'is_st' give st two values")
+    assert checks(out) == ["ROW_INVALID"] and "row_error" not in out["columns_not_read"]
+    assert run(row_error="")["stamp"] == run()["stamp"]
+
+
+@pytest.mark.parametrize("name", ["fee ", " fee", "turnover ", " prev_close", "date ", "st_status\t"])
+def test_a_column_name_with_white_space_around_it_is_still_read(name):
+    row = dict(BASE, fee="0", st_status="false")
+    row[name] = row.pop(name.strip())
+    out = check_rows([row], strict=True)
+    assert out["columns_not_read"] == []
+    assert out["stamp"] == check_rows([dict(BASE, fee="0", st_status="false")], strict=True)["stamp"]
+    assert "FEE_BELOW_STATUTORY" in out["counts"]            # fee 0 is found, whichever column was misspelt
+
+
+def test_two_columns_whose_names_differ_only_in_white_space():
+    out = check_rows([{**BASE, "fee ": "0"}], strict=True)
+    assert checks(out) == ["ROW_INVALID"] and "two columns are named 'fee'" in out["findings"][0]["detail"]
+    assert check_rows([{**BASE, "fee ": "5.1"}], strict=True)["rules_verified"]          # same cell twice
+    assert check_rows([{**BASE, "fee ": ""}], strict=True)["rules_verified"]             # one of them empty
+
+
+@pytest.mark.parametrize("cells", [
+    dict(scope="convertible", price="13.00"), dict(scope="etf"), dict(scope="b_share"), dict(scope="reits"),
+    dict(scope="convertible", code="SH600001"), dict(scope="etf", code="600001.SH"),
+])
+def test_a_stock_code_under_a_scope_of_another_instrument_is_a_conflict(cells):
+    out = run(**dict(dict(fee="", turnover=""), **cells))
+    assert checks(out) == ["SCOPE_CONTEXT_CONFLICT"] and "not a stock scope" in out["findings"][0]["detail"]
+    assert out["stamp"] is None
+
+
+@pytest.mark.parametrize("code,market", [("900901", "XSHG"), ("sh900901", "XSHG"), ("200002.SZ", "XSHE"), ("900901", "")])
+def test_a_b_share_code_under_an_a_share_scope_is_a_conflict(code, market):
+    out = run(code=code, market=market, fee="", turnover="")
+    assert checks(out) == ["SCOPE_CONTEXT_CONFLICT"] and "B-share code" in out["findings"][0]["detail"]
+    ok = run(code=code, market=market or "XSHG", scope="b_share", fee="", turnover="")
+    assert ok["rules_verified"], ok["findings"]
+
+
+@pytest.mark.parametrize("code", ["900901", "sh900901", "900901.SH", "SH.900901"])
+def test_a_b_share_code_with_the_other_exchange_is_refused_in_every_spelling(code):
+    out = run(code=code, market="XSHE", scope="b_share", fee="", turnover="")
+    assert checks(out) == ["ROW_INVALID"] and "B-share code" in out["findings"][0]["detail"]
+
+
+def test_funds_and_bonds_with_their_own_codes_are_checked_as_before():
+    assert run(scope="etf", code="510050", price="10.001", fee="", turnover="")["rules_verified"]
+    assert run(scope="convertible", code="113001", price="10.001", fee="", turnover="")["rules_verified"]
+    assert run(scope="etf", code="X1", fee="", turnover="")["rules_verified"]            # an unrecognised code
+
+
+@pytest.mark.parametrize("tail,ok", [(" 09:31:00", True), ("T09:31", True), (" 09:31:00.123456", True),
+                                     ("T09:31:00+08:00", True), ("T09:31:00Z", True), (" 9:31", True),
+                                     (" XYZ", False), ("Tjunk", False), (" 09:31 and more", False),
+                                     ("T", False), (" 2024-06-15", False), ("-09:31", False)])
+def test_only_a_time_may_follow_the_day(tail, ok):
+    out = run(date="2024-06-14" + tail)
+    if ok:
+        assert out["rules_verified"] and out["stamp"] == run()["stamp"]
+    else:
+        assert checks(out) == ["ROW_INVALID"] and "not a time" in out["findings"][0]["detail"]
+
+
+@pytest.mark.parametrize("other", ["600001.SH", "sh600001", "SH.600001", "600001.XSHG"])
+def test_two_spellings_of_one_code_are_one_code_for_rows_that_disagree(other):
+    rows = [dict(BASE), dict(BASE, code=other, prev_close="9.60")]
+    out = check_rows(rows, strict=True)
+    assert [f["check"] for f in out["findings"]] == ["ROWS_DISAGREE"] and out["stamp"] is None
+    assert check_rows([dict(BASE), dict(BASE, code=other)], strict=True)["rules_verified"]
+
+
+@pytest.mark.parametrize("cells", [dict(date="", scope="", st_status="false"), dict(date="", scope="", board="main_board"),
+                                   dict(date=""), dict(date="  ", scope="", list_date="2000-01-01")])
+def test_a_row_without_a_date_is_an_invalid_row_not_a_crash(cells):
+    out = run(**cells)
+    assert checks(out) == ["ROW_INVALID"] and "date is missing" in out["findings"][0]["detail"]
+
+
+def test_the_fee_of_a_fund_bond_or_b_share_is_not_held_to_the_stock_floor():
+    # stock stamp duty and transfer fee are not what a fund pays: fee 0.5 on 10000 is not a finding for an ETF
+    out = run(scope="etf", code="510050", fee="0.5")
+    assert out["rules_verified"] and out["fee_check"] == dict(out["fee_check"], rows_checked=0, rows_not_checked=1)
+    for scope, code in (("convertible", "113001"), ("b_share", "900901")):
+        out = run(scope=scope, code=code, fee="0")
+        assert "FEE_BELOW_STATUTORY" not in out["counts"] and out["fee_check"]["rows_checked"] == 0
+    out = run(fee="0.5")                                       # a stock is held to it as before
+    assert checks(out) == ["FEE_BELOW_STATUTORY"] and out["fee_check"]["rows_checked"] == 1
+    out = run(fee="nan", scope="etf", code="510050")           # unreadable is still refused, whatever the scope
+    assert checks(out) == ["ROW_INVALID"]
+
+
+def test_a_combined_market_on_a_recognised_code_is_checked_on_the_codes_exchange():
+    # SZSE has floored the band at one tick since 2011-02-28, SSE only since 2023-04-10
+    low = dict(date="2015-01-05", code="000001", side="buy", price="0.05", prev_close="0.04", scope="main_board",
+               fee="", turnover="")
+    assert check_rows([dict(low, market="XSHE")], strict=True)["rules_verified"]
+    assert check_rows([dict(low, market="XSHG+XSHE")], strict=True)["rules_verified"]
+    sse = dict(low, code="600000")
+    for market in ("XSHG", "XSHG+XSHE"):
+        assert "LIMIT_BUY_ABOVE_UP" in check_rows([dict(sse, market=market)], strict=True)["counts"]
+
+
+@pytest.mark.parametrize("scope,regime,days,conflict", [
+    ("ipo_first5_main", "registration", 40, True), ("ipo_first5_main", "registration", 30, True),
+    ("ipo_first5_main", "registration", 29, False), ("ipo_first5_main", "registration", 3, False),
+    ("ipo_day1_main", "approval", 1, True), ("ipo_day1_main", "approval", 0, False),
+    ("main_board", "registration", 40, False), ("main_board", "registration", 0, True),
+    ("main_board", "registration", 3, True),       # day 2 to 4 of a registration listing: still in its first five
+    ("main_board", "approval", 3, False),
+])
+def test_a_list_date_inside_the_margin_still_rules_out_a_listing_window_it_cannot_be_in(scope, regime, days, conflict):
+    import datetime as dt
+    day = dt.date(2024, 6, 14)
+    out = run(scope=scope, list_date=str(day - dt.timedelta(days=days)), price="10.50", side="buy",
+              issue_regime=regime, st_status="false", fee="", turnover="")
+    got = [f["check"] for f in out["findings"]]
+    assert ("SCOPE_CONTEXT_CONFLICT" in got) is conflict, out["findings"]
+    assert not (conflict and out["stamp"])
+
+
+def test_listing_index_bounds():
+    from marina_rules.equity import listing_index_bounds as b
+    assert b("2024-06-14", "2024-06-14") == (1, 1) and b("2024-06-14", "2024-06-13") == (2, 2)
+    assert b("2024-06-14", "2024-06-04") == (2, 11) and b("2024-06-14", "2024-05-15") == (6, 31)
+    assert b("2024-06-14", "2024-06-15") == (None, None) and b("2024-06-14", "junk") == (None, None)
+
+
+def test_command_line_reads_a_header_with_white_space_and_refuses_what_the_adapter_cannot_settle(tmp_path, capsys):
+    code, out, _ = cli(tmp_path, capsys, HEAD.replace("fee", "fee ") + ROW % "0")
+    assert out["stamp"] is None and "FEE_BELOW_STATUTORY" in out["counts"] and out["columns_not_read"] == []
+    text = "date,code,side,price,prev_close,st,is_st,quantity,fee\n2024-06-14,600000.SH,sell,10.80,10.00,0,1,1000,20\n"
+    code, out, _ = cli(tmp_path, capsys, text, "--format", "generic")
+    assert code != 0 and out["stamp"] is None and out["counts"] == {"ROW_INVALID": 1}
+    text = text.replace("0,1,1000", "0,0,nan")
+    code, out, _ = cli(tmp_path, capsys, text, "--format", "generic")
+    assert out["stamp"] is None and out["counts"] == {"ROW_INVALID": 1}

@@ -20,8 +20,8 @@ How to read an entry:
 ### Corrected (re-run needed)
 
 `marina-check` / `check_rows` issued a `rules-verified` stamp in cases where it should have withheld it. Three were
-reported by an outside tester; an independent review of the fix found more of the same kind. All of them are present
-in 2026.11.13 and 2026.11.16. The principle behind every item: a changed standard, inputs that contradict each
+reported by an outside tester; two independent reviews of the fix found more of the same kind. All of them are
+present in 2026.11.13 and 2026.11.16. The principle behind every item: a changed standard, inputs that contradict each
 other, and input that cannot be read never get the stamp a complete, valid check gets. **Re-run** any log those
 releases stamped; a stamp from them is not evidence of compliance where one of the cases below applies.
 
@@ -64,12 +64,27 @@ releases stamped; a stamp from them is not evidence of compliance where one of t
   included), `list_date` where it decides the listing-day index, and the board of a recognised A-share stock code
   when the row has no `board` cell (`scope=ipo_first5_main` on a ChiNext code). A contradiction is the new finding
   `SCOPE_CONTEXT_CONFLICT` and no other check runs on the row. A key the row leaves out is not demanded.
+  The same finding covers the kind of instrument: a recognised A-share stock code under a scope that is not a stock
+  scope (`600000` with `scope=convertible` was checked against the convertible band — unlimited before 2022 — and
+  stamped), and a 900… / 200… B-share code under a scope that is not a B-share scope. A `list_date` close to the
+  trade also counts where it settles the matter without a calendar: a day after it is not listing day 1, and
+  thirty calendar days after it is past the first five trading days, so `scope=ipo_first5_main` (no price limit) on
+  such a row is refused; a registration-regime main-board row two to four days after its `list_date` cannot be
+  `scope=main_board`.
 - **Two cells of one row that state different things.** Columns `st` and `st_status` with different values (the
   later column used to win); a `market` or `board` cell that names another exchange or board than a recognised
-  stock code (`600000` with `market=XSHE`), or another exchange than a 900… / 200… B-share code; a trade dated
-  before its own `list_date`. All are `ROW_INVALID`.
+  stock code (`600000` with `market=XSHE`), or another exchange than a 900… / 200… B-share code (in any
+  spelling: `900901`, `sh900901`, `900901.SH`); a trade dated before its own `list_date`. All are `ROW_INVALID`.
+- **The adapter settled such contradictions before the checker saw them.** Through `--format` (and
+  `marina-rules adapt`), a table with both an `st` and an `is_st` column, a `prev_close` and a `pre_close`, an
+  `exchange` and a `market`, or two listing-date columns was read from the first of the two and stamped; a value
+  in the fills silently won over a different one in the `--bars`, `--st` or `--listing` table; a code suffix that
+  named another exchange than the exchange column was counted but the row went on. The adapter now writes the
+  reason into a new output column, `row_error`, which the checker reports as `ROW_INVALID`; the adapter's report
+  counts these rows under `rows_refused`. Two cells that say the same thing in another spelling (`0` / `false`,
+  `SSE` / `XSHG`, `20000101` / `2000-01-01`) are not a conflict.
 - **Rows of one code on one day that disagree** on the previous close, the scope or the market: the later row gets
-  the new finding `ROWS_DISAGREE`.
+  the new finding `ROWS_DISAGREE`. `600000`, `600000.SH` and `sh600000` are one code for this purpose.
 
 *Input that cannot be read*
 
@@ -79,10 +94,19 @@ releases stamped; a stamp from them is not evidence of compliance where one of t
   `marina-rules adapt`) used to drop such a cell before the checker saw it; it now passes an unreadable fee,
   turnover, ST or listing-date cell through as written and counts it under `cells_not_read`. An absent cell still
   means no fee check, and the output now says so: `fee_check` counts `rows_checked` and `rows_not_checked`, and a
-  stamp says nothing about the fees of the latter.
+  stamp says nothing about the fees of the latter. Behind the adapter the same applies to the quantity: when the
+  turnover has to be formed from price × quantity and the quantity cell cannot be read, the row is refused
+  (`row_error`) instead of losing its fee check.
+- **A column whose name had a space around it was not read, and was not reported.** A header written `fee ` or
+  ` turnover` was ignored by the checks — `fee=0` under it passed, stamped — yet left out of `columns_not_read`.
+  Column names are now read without surrounding white space; two columns whose names differ only in that and whose
+  cells differ are `ROW_INVALID`.
 - A `price` or `prev_close` that is zero or negative (a zero price against a zero previous close used to pass), an
   empty `code`, a `list_date` that is not a date, and a `date` with anything but a time after the day
-  (`2024-03-01XYZ`) are `ROW_INVALID`.
+  (`2024-03-01XYZ`, `2024-03-01 XYZ`, `2024-03-01Tjunk`) are `ROW_INVALID`. A row without a date is `ROW_INVALID`
+  too (with scope context and no scope it used to raise `ValueError`). In Python, a `float('nan')` in `fee` or
+  `turnover` — what `DataFrame.to_dict("records")` gives for a missing value — is such an unreadable cell: write
+  `None` or leave the key out for "no fee given" (`df.astype(object).where(df.notna(), None)`).
 - `marina-check FILLS.csv` refuses a header that names a column twice (exit code 2): the second `fee` column
   silently replaced the first.
 
@@ -99,6 +123,13 @@ without `--strict`) can still be stamped, with a stamp that differs from the str
   `issue_regime` given, such a row gets its listing-day scope instead of `SCOPE_UNDETERMINED`.
 - `fee_check` counts a row as checked only when the statutory floor for its date was found; `tracking` counts only
   rows the checks ran on. A B-share row without a market is `MARKET_REQUIRED` instead of an uncaught `RuleConflict`.
+- The fee floor is applied to A-share stock scopes only. It is the stamp duty and transfer fee of stocks, and was
+  also held against funds, convertible bonds and B shares, which pay other charges: an ETF sale with a correct fee
+  was `FEE_BELOW_STATUTORY`. Such rows are now counted in `fee_check.rows_not_checked`.
+- A row whose `market` cell names both exchanges (`XSHG+XSHE`) and whose code is a recognised stock code is checked
+  under the code's own exchange. The one-tick floor differs by exchange before 2023-04-10, and the combined cell
+  was read as the Shanghai rule, so a valid Shenzhen fill at a very low price could be reported as beyond its
+  limit.
 - Rule pages (the generated site) can be found in Chinese. Every page has a Chinese name in its title, its
   description and a line under the heading — `创业板涨跌幅限制：10%→20%，2020-08-24 起 · price_limit_pct · chinext …`
   — and the family tables list each scope's Chinese name. The names are display names kept in

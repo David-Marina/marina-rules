@@ -22,9 +22,16 @@ Nothing is guessed:
   * ``generic`` recognises common column names (``--list-formats`` prints them). ``--map field=column`` names a column
     outright; ``--side-values buy=A|B,sell=C`` names the cell values; ``--side-from-sign COLUMN`` reads the side from
     the sign of a quantity; ``--date-format iso|yyyymmdd`` fixes the date spelling.
-  * No row is dropped. A cell that cannot be read is left empty (a date is passed through as written) and the
-    checker reports the row as ROW_INVALID; the report counts every such cell by reason, so row numbers still match
-    the source file.
+  * No row is dropped. A cell that cannot be read is passed through as written and the checker reports the row as
+    ROW_INVALID; the report counts every such cell by reason (``cells_not_read``), so row numbers still match the
+    source file.
+  * Nothing is settled by picking one of two values. When two columns of the fills carry the same field and differ
+    (``st`` and ``is_st``, ``prev_close`` and ``pre_close``, ``exchange`` and ``market``, two listing-date columns),
+    when the fills and a joined table differ, when a code's suffix and the exchange column name different
+    exchanges, or when the turnover would have to come from a quantity that cannot be read, the reason is written
+    into the output column ``row_error``; the checker reports such a row as ROW_INVALID, and the report counts them
+    under ``rows_refused``. The same value in another spelling (``0`` / ``false``, ``SSE`` / ``XSHG``) is not a
+    difference.
   * ``prev_close`` comes only from a column that the vendor documents as the previous close used for the day's
     price limit. It is never computed from other columns. Bars must be UNADJUSTED; a baostock table that says it is
     adjusted (``adjustflag`` other than 3) is refused.
@@ -51,7 +58,11 @@ import sys
 from .equity import board_for_code
 
 OUT_FIELDS = ("date", "code", "side", "price", "prev_close", "market", "board", "st", "list_date", "fee", "turnover",
-              "day_high", "day_low")
+              "day_high", "day_low", "row_error")
+# row_error: why the adapter could not turn the input into ONE statement about this fill — two columns, or the
+# fills and a joined table, that give different values; a quantity it needed and could not read. It never picks one
+# of the two: the checker reports a non-empty row_error as ROW_INVALID, so the log gets no stamp.
+SAME_MEANING = ("prev_close", "st", "exchange", "list_date")   # fields whose alias columns can only mean one thing
 
 # --- security codes ---------------------------------------------------------------------------------------------
 # Exchange spellings seen in engine and vendor tables → the dataset's market code (ISO 10383).
@@ -290,6 +301,45 @@ def _bool(v) -> str:
     return "true" if t in _TRUE else "false" if t in _FALSE else ""
 
 
+def _same(field: str, a: str, b: str) -> bool:
+    """Do two non-empty cells of one field say the same thing? Numbers as numbers, flags as flags, dates as dates,
+    exchanges as exchanges; anything that cannot be read that way, as text."""
+    if field in ("prev_close", "day_high", "day_low"):
+        x, y = _num(a), _num(b)
+        return abs(x - y) <= 1e-9 if x is not None and y is not None else a == b
+    if field == "st":
+        x, y = _bool(a), _bool(b)
+        return x == y if x and y else a == b
+    if field == "list_date":
+        x, y = to_iso(a), to_iso(b)
+        return x == y if x and y else a == b
+    if field == "exchange":
+        x, y = (EXCHANGES.get(t.upper().rsplit(".", 1)[-1]) for t in (a, b))
+        return x == y if x and y else a == b
+    return a == b
+
+
+def _twins(header: list, spec: dict, cols: dict) -> dict:
+    """field → the header's other columns that carry the same field (``st`` and ``is_st``, ``prev_close`` and
+    ``pre_close``), for the fields in SAME_MEANING. The adapter reads the first; a row where another one disagrees
+    is refused, not settled."""
+    by_key = {}
+    for h in header:
+        by_key.setdefault(_key(h), h)
+    out = {}
+    for field in SAME_MEANING:
+        if field in cols:
+            others = [by_key[n] for n in spec.get(field, ()) if n in by_key and by_key[n] != cols[field]]
+            if others:
+                out[field] = others
+    return out
+
+
+def _refuse(row: dict, counter: dict, reason: str, text: str, i: int) -> None:
+    row["row_error"] = (row["row_error"] + "; " if row["row_error"] else "") + text
+    _bump(counter, reason, i)
+
+
 def _resolve_columns(header: list, spec: dict, mapping: dict | None, what: str) -> dict:
     """field → the header's own column name, from ``--map`` first, then the format's names in order."""
     by_key = {}
@@ -367,9 +417,18 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
             values[_key(n)] = side
     dfmt = date_format or spec.get("date_format") or "auto"
     problems: dict = {}
+    disagree: dict = {}
+    twins = _twins(header, spec["columns"], cols)
     out, wanted = [], set()
     for i, r in enumerate(fills, start=1):
         row = dict.fromkeys(OUT_FIELDS, "")
+        for field, others in twins.items():
+            mine = _cell(r.get(cols[field]))
+            for o in others:
+                theirs = _cell(r.get(o))
+                if mine and theirs and not _same(field, mine, theirs):
+                    _refuse(row, disagree, f"{field}_columns_disagree",
+                            f"columns {cols[field]!r} and {o!r} give {field} two values ({mine!r}, {theirs!r})", i)
         raw_date = _cell(r.get(cols["date"]))
         day = to_iso(r.get(cols["date"]), dfmt)
         row["date"] = day or raw_date          # an unreadable date is passed through: the checker refuses it
@@ -379,6 +438,11 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
         if sc is None:
             row["code"] = _cell(r.get(cols["code"]))
             _bump(problems, "code_not_read", i)
+            alone = split_code(r.get(cols["code"]))
+            ex_cell = _cell(r.get(cols["exchange"])) if "exchange" in cols else ""
+            if alone is not None and EXCHANGES.get(ex_cell.upper().rsplit(".", 1)[-1]):
+                _refuse(row, disagree, "code_and_exchange_disagree",
+                        f"code {row['code']!r} and exchange {ex_cell!r} name different exchanges", i)
         else:
             row["code"], row["market"] = sc
             bm = board_for_code(sc[0])
@@ -388,7 +452,8 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
                 _bump(problems, "code_prefix_and_exchange_disagree", i)
             else:
                 _bump(problems, "not_a_recognised_stock_code", i)
-        qty = _num(r.get(cols["quantity"])) if "quantity" in cols else None
+        qty_cell = _cell(r.get(cols["quantity"])) if "quantity" in cols else ""
+        qty = _num(qty_cell) if qty_cell else None
         if sign_col is not None:
             s = _num(r.get(sign_col))
             row["side"] = "buy" if s is not None and s > 0 else "sell" if s is not None and s < 0 else ""
@@ -409,6 +474,11 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
             _bump(problems, "turnover_not_a_number", i)
         elif qty is not None and _num(row["price"]) is not None:
             row["turnover"] = _fmt(abs(qty) * _num(row["price"]))
+        elif qty_cell and qty is None:
+            # the turnover would have come from this cell: without it the fee check is dropped, so the row is refused
+            _bump(problems, "quantity_not_a_number", i)
+            _refuse(row, disagree, "turnover_cannot_be_formed",
+                    f"quantity {qty_cell!r} is not a number, so no turnover can be formed for the fee check", i)
         fee_cols = (["fee"] if "fee" in cols else
                     [k for k in ("commission", "tax", "transfer_fee") if k in cols] if "commission" in cols and "tax" in cols
                     else [])
@@ -438,16 +508,16 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
         out.append(row)
     report = {"format": fmt, "basis": spec["basis"], "notes": list(spec.get("notes", ())), "rows": len(out),
               "columns_used": dict(cols, **({"side_from_sign": sign_col} if sign_col else {})),
-              "date_format": dfmt, "cells_not_read": problems}
+              "date_format": dfmt, "cells_not_read": problems, "rows_refused": disagree}
     if "commission" in cols and "fee" not in cols and "tax" not in cols:
         report["notes"].append(f"column {cols['commission']!r} is a commission, not a total fee: no fee was taken")
     codes = {c for c, _ in wanted}
     if bars is not None:
-        report["bars"] = _join_bars(out, bars, bars_format, wanted)
+        report["bars"] = _join_bars(out, bars, bars_format, wanted, disagree)
     if st is not None:
-        report["st"] = _join_st(out, st, st_format, wanted)
+        report["st"] = _join_st(out, st, st_format, wanted, disagree)
     if listing is not None:
-        report["listing"] = _join_listing(out, listing, listing_format, codes)
+        report["listing"] = _join_listing(out, listing, listing_format, codes, disagree)
     report["rows_without_prev_close"] = sum(1 for r in out if not r["prev_close"])
     report["rows_without_st"] = sum(1 for r in out if not r["st"] and not r.get("scope"))
     report["rows_without_list_date"] = sum(1 for r in out if not r["list_date"] and not r.get("scope"))
@@ -470,7 +540,7 @@ def _table(rows, spec: dict, need: tuple, what: str, fmt: str):
     return gen(), cols
 
 
-def _join_bars(out: list, bars, fmt: str, wanted: set) -> dict:
+def _join_bars(out: list, bars, fmt: str, wanted: set, disagree: dict) -> dict:
     spec = BAR_FORMATS[fmt]
     it, cols = _table(bars, spec, ("code", "date"), "bars", fmt)
     dfmt = spec.get("date_format", "auto")
@@ -491,7 +561,7 @@ def _join_bars(out: list, bars, fmt: str, wanted: set) -> dict:
         if "st" in cols:
             found[(sc[0], day)]["st"] = _bool(b.get(cols["st"]))
     matched = 0
-    for r in out:
+    for i, r in enumerate(out, start=1):
         hit = found.get((r["code"], r["date"]))
         if hit is None:
             continue
@@ -499,12 +569,14 @@ def _join_bars(out: list, bars, fmt: str, wanted: set) -> dict:
         for k, v in hit.items():
             if v != "" and not r[k]:
                 r[k] = v
+            elif v != "" and not _same(k, r[k], v):      # the fills and the bars say different things: refuse
+                _refuse(r, disagree, f"{k}_differs_from_bars", f"{k} is {r[k]!r} in the fills and {v!r} in the bars", i)
     return {"format": fmt, "basis": spec["basis"], "columns_used": cols, "rows_read": n,
             "fills_with_a_bar": matched, "fills_without_a_bar": len(out) - matched,
             "fields_joined": sorted({k for h in found.values() for k, v in h.items() if v != ""})}
 
 
-def _join_st(out: list, st, fmt: str, wanted: set) -> dict:
+def _join_st(out: list, st, fmt: str, wanted: set, disagree: dict) -> dict:
     spec = ST_FORMATS[fmt]
     it, cols = _table(st, spec, ("code", "date"), "ST table", fmt)
     days_covered, flagged = set(), {}
@@ -519,8 +591,13 @@ def _join_st(out: list, st, fmt: str, wanted: set) -> dict:
         if (sc[0], day) in wanted:
             flagged[(sc[0], day)] = _bool(s.get(cols["st"])) if "st" in cols else "true"
     yes = no = unknown = 0
-    for r in out:
+    for i, r in enumerate(out, start=1):
         if r["st"]:
+            v = flagged.get((r["code"], r["date"])) or ("false" if r["date"] in days_covered and
+                                                        (r["code"], r["date"]) not in flagged else "")
+            if v and r["st"] in ("true", "false") and v != r["st"]:
+                _refuse(r, disagree, "st_differs_from_st_table",
+                        f"st is {r['st']!r} in the fills (or bars) and {v!r} in the ST table", i)
             continue
         v = flagged.get((r["code"], r["date"]))
         if v:
@@ -533,7 +610,7 @@ def _join_st(out: list, st, fmt: str, wanted: set) -> dict:
             "rule": "not ST only on a day the table has rows for; a day it does not cover stays unknown"}
 
 
-def _join_listing(out: list, listing, fmt: str, codes: set) -> dict:
+def _join_listing(out: list, listing, fmt: str, codes: set, disagree: dict) -> dict:
     spec = LISTING_FORMATS[fmt]
     it, cols = _table(listing, spec, ("code", "list_date"), "listing table", fmt)
     dates: dict = {}
@@ -545,9 +622,12 @@ def _join_listing(out: list, listing, fmt: str, codes: set) -> dict:
         if sc is not None and day is not None and sc[0] in codes:
             dates[sc[0]] = day
     hit = 0
-    for r in out:
+    for i, r in enumerate(out, start=1):
         if not r["list_date"] and r["code"] in dates:
             r["list_date"] = dates[r["code"]]
+        elif r["code"] in dates and not _same("list_date", r["list_date"], dates[r["code"]]):
+            _refuse(r, disagree, "list_date_differs_from_listing_table",
+                    f"list_date is {r['list_date']!r} in the fills and {dates[r['code']]!r} in the listing table", i)
         hit += bool(r["list_date"])
     return {"format": fmt, "basis": spec["basis"], "columns_used": cols, "rows_read": n,
             "fills_with_a_list_date": hit, "fills_without_a_list_date": len(out) - hit}

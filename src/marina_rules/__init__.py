@@ -1626,7 +1626,7 @@ def _rounding_tick(scope: str, date: str, market: str | None = None, strict: boo
     """The tick ``limit_price`` rounds at when the caller gives no ``decimals``: the ``tick_size`` in force
     (``_agreed_tick``), with one substitution.
 
-    Family ``stock`` on a date for which the dataset holds no ``tick_size`` record at all (before 2006-07-01) rounds
+    Family ``stock`` on a date before the first ``tick_size`` record of that family (before 2006-07-01) rounds
     at 0.01: the A-share tick before the 2006 rules is not sourced, and 0.01 is the only value it ever had (known gap
     G-0005). Nothing else is substituted — every other family (funds, B shares, convertible bonds, BSE stocks), and a
     stock date whose record exists but may not be used (``strict`` and ``unverified``), raises ``KeyError``: those
@@ -1639,7 +1639,7 @@ def _rounding_tick(scope: str, date: str, market: str | None = None, strict: boo
     except KeyError as e:
         fam = lookup_scope("tick_size", scope, market)
         day = _check_date(date)
-        if fam == "stock" and not any(a <= day and (b is None or day < b) for a, b in _tick_intervals(fam)):
+        if fam == "stock" and day < min(a for a, _b in _tick_intervals(fam)):   # before the first record only
             return UNSOURCED_STOCK_TICK
         why = e.args[0] if e.args else str(e)
         raise KeyError(f"limit_price cannot round the band for scope {scope!r} on {day}: no usable tick_size for "
