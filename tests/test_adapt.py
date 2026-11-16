@@ -71,7 +71,7 @@ def test_rqalpha_with_tushare_tables_checks_clean_and_is_stamped():
                            listing_format="tushare", st=TS_ST, st_format="tushare")
     assert rows[0] == {"date": "2020-01-02", "code": "300001", "side": "buy", "price": "11.0", "prev_close": "10.0",
                        "market": "XSHE", "board": "chinext", "st": "false", "list_date": "2009-10-30", "fee": "5",
-                       "turnover": "11000", "day_high": "11.0", "day_low": "10.0"}
+                       "turnover": "11000", "day_high": "11.0", "day_low": "10.0", "row_error": ""}
     assert rows[1]["side"] == "sell" and rows[1]["fee"] == "16.5" and rows[2]["board"] == "main_board"
     assert rep["cells_not_read"] == {} and rep["rows_without_prev_close"] == 0 and rep["rows_without_st"] == 0
     assert rep["bars"]["fills_with_a_bar"] == 3 and rep["st"]["fills_not_st"] == 3 and rep["listing"]["fills_with_a_list_date"] == 3

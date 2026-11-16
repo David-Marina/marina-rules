@@ -183,7 +183,7 @@ def is_scalar(v) -> bool:
 def percent(rule: str, v, unit) -> str | None:
     if isinstance(v, bool) or not isinstance(v, (int, float)) or unit is not None or not (0 < v < 1):
         return None
-    if not (rule.endswith("_pct") or any(w in rule for w in PCT_WORDS)):
+    if not (rule.endswith("_pct") or "_pct_" in rule or any(w in rule for w in PCT_WORDS)):
         return None
     d = (Decimal(repr(v)) * 100).normalize()
     return format(d, "f") + "%"

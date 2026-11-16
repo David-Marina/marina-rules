@@ -86,7 +86,7 @@ resolve("price_limit_pct", "2024-06-14", "st_main", "XSHE", {"board": "main_boar
 python -m marina_rules.check fills.csv
 ```
 
-逐笔核对回测或实盘的成交：买入价不高于涨停价、卖出价不低于跌停价、价格落在当日有效的最小报价单位上、费用不低于法定下限。目前只检查 A 股成交。`prev_close` 必须和成交价同一口径（都不复权；除权除息日用交易所公布的除权参考价）。验证印章不会建立在你自己改过的标准或读不出的输入上：`decimals` 与当日交易所最小报价单位不一致时，本次运行按放宽模式处理、不给印章；`scope` 与同一行的 ST / 板块 / 上市日信息或股票代码矛盾时报 `SCOPE_CONTEXT_CONFLICT`；同一行里两处说法不一致（`st` 与 `st_status`、`market` 与代码所属交易所），或 `fee`、`turnover`、`list_date` 填了但读不出（如 `nan`），报 `ROW_INVALID`；同一代码同一天的两行前收盘价不同，报 `ROWS_DISAGREE`。费用只在同时给出 `fee` 和 `turnover` 的行上检查，最小报价单位只在当日有记录的行上检查（没有记录时，A 股股票的涨跌停价按 0.01 取整，即 2006-07-01 之前，已知缺口 G-0005；基金和 B 股的行报 `RULE_MISSING`，不按 0.01 猜），输出里的 `fee_check`、`tick_check` 写明各检查了多少行、没检查多少行；检查器没有读的列列在 `columns_not_read` 里。全部选项和各类发现的含义见英文版的 [Check a fill log](README.md#check-a-fill-log)。
+逐笔核对回测或实盘的成交：买入价不高于涨停价、卖出价不低于跌停价、价格落在当日有效的最小报价单位上、费用不低于法定下限。目前只检查 A 股成交。`prev_close` 必须和成交价同一口径（都不复权；除权除息日用交易所公布的除权参考价）。验证印章不会建立在你自己改过的标准或读不出的输入上：`decimals` 与当日交易所最小报价单位不一致时，本次运行按放宽模式处理、不给印章；`scope` 与同一行的 ST / 板块 / 上市日信息或股票代码矛盾时报 `SCOPE_CONTEXT_CONFLICT`；同一行里两处说法不一致（`st` 与 `st_status`、`market` 与代码所属交易所），或 `fee`、`turnover`、`list_date` 填了但读不出（如 `nan`），报 `ROW_INVALID`；同一代码同一天的两行前收盘价不同，报 `ROWS_DISAGREE`。经适配器（`--format`）读入时，两列或两张表对同一项给出不同的值，也按 `ROW_INVALID` 拒绝，不替你挑一个。费用只在 A 股股票、且同时给出 `fee` 和 `turnover` 的行上检查（基金、可转债、B 股的费用不检查），最小报价单位只在当日有记录的行上检查（没有记录时，A 股股票的涨跌停价按 0.01 取整，即 2006-07-01 之前，已知缺口 G-0005；基金和 B 股的行报 `RULE_MISSING`，不按 0.01 猜），输出里的 `fee_check`、`tick_check` 写明各检查了多少行、没检查多少行；检查器没有读的列列在 `columns_not_read` 里。全部选项和各类发现的含义见英文版的 [Check a fill log](README.md#check-a-fill-log)。
 
 回测引擎自己导出的成交记录不用手工改格式，直接读：
 
