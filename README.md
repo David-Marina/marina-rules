@@ -263,8 +263,8 @@ Blank cells are blank on purpose. A missing rule raises `KeyError`; it does not 
   futures coverage starts 2024-01-01.
 - **DCE is not covered**: no Dalian Commodity Exchange product has a record or a coverage target.
 
-**Coverage statement (2026.11.13).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
-(687,464 / 706,888 target-days to 2026-11-13; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
+**Coverage statement (2026.11.16).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
+(687,839 / 707,281 target-days to 2026-11-16; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
 remains is listed as `unresolved` in [`coverage/cn_targets.yaml`](https://github.com/David-Marina/marina-rules/blob/main/coverage/cn_targets.yaml) and counts as **not covered**:
 convertible-bond commission cap — SZSE 2006-07-01 → 2006-12-30 and 2014-08-25 → open, SSE 2021-12-31 → open — and minimum —
 SZSE 2006-07-01 → open, SSE 2021-12-31 → open (no official text states a level, or says there is none, for those periods); BJSE
