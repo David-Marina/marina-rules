@@ -239,12 +239,18 @@ def test_price_off_tick(row, off):
     assert ("PRICE_OFF_TICK" in out["counts"]) is off, out["findings"]
 
 
-@pytest.mark.parametrize("field,a,b", [("fee", "1", "2"), ("market", "XSHE", "XSHG"), ("turnover", "10000", "10001"),
+@pytest.mark.parametrize("field,a,b", [("fee", "1", "2"), ("market", "XSHE", ""), ("turnover", "10000", "10001"),
                                        ("decimals", "", "2"), ("code", "000001", "000002"), ("scope", "main_board", "etf")])
 def test_stamp_commits_to_every_input(field, a, b):
     r = {**BASE, "fee": "100", "turnover": "10000"}
     s1 = check_rows([{**r, field: a}])["stamp"]; s2 = check_rows([{**r, field: b}])["stamp"]
     assert s1 and s2 and s1 != s2
+
+
+def test_a_market_that_is_not_the_codes_is_refused_not_stamped():
+    # until 2026.11.16 this pair produced two different stamps; 000001 is an SZSE code, so XSHG contradicts it
+    out = check_rows([{**BASE, "market": "XSHG"}])
+    assert [f["check"] for f in out["findings"]] == ["ROW_INVALID"] and out["stamp"] is None
 
 
 def test_stamp_is_recomputable_from_the_documented_canonical_form():
