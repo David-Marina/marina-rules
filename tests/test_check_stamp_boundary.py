@@ -70,6 +70,32 @@ def test_decimals_where_no_tick_is_recorded():
     assert out["decimals_override"] == 1 and out["relaxed"] and out["stamp"] is None
 
 
+FUND_2005 = dict(date="2005-06-01", code="510050", scope="etf", market="XSHG", side="buy", price="1.234",
+                 prev_close="1.200", fee="", turnover="")
+
+
+@pytest.mark.parametrize("cells", [{}, dict(scope="b_share", code="900901"),
+                                   dict(scope="st_b_share", code="200002", market="XSHE", st_status="true")])
+@pytest.mark.parametrize("strict", [False, True])
+def test_no_tick_for_a_fund_or_b_share_is_a_missing_rule_not_a_0_01_grid(cells, strict):
+    # the band is recorded from 1996 / 1998, the tick only from 2006-07-01: nothing to round the limits at
+    out = check_rows([dict(FUND_2005, **cells)], strict=strict)
+    assert checks(out) == ["RULE_MISSING"] and "tick_size" in out["findings"][0]["detail"]
+    assert not out["rules_verified"] and out["stamp"] is None and out["tick_check"]["rows_checked"] == 0
+
+
+def test_decimals_for_a_fund_without_a_tick_record_is_the_callers_grid():
+    out = run(**dict(FUND_2005, decimals="3"))
+    assert checks(out) == [] and out["decimals_override"] == 1 and out["relaxed"] and out["stamp"] is None
+    out = run(**dict(FUND_2005, decimals="2"))      # 0.01 is not the dataset's grid for a fund either
+    assert checks(out) == ["PRICE_OFF_TICK"] and out["decimals_override"] == 1 and out["stamp"] is None
+
+
+def test_a_fund_from_its_first_tick_record_is_checked_as_before():
+    out = run(**dict(FUND_2005, date="2006-07-03"))
+    assert checks(out) == [] and out["rules_verified"] and out["tick_check"]["rows_checked"] == 1
+
+
 @pytest.mark.parametrize("dec", ["400", "-1", "2.5", "abc", str(MAX_DECIMALS + 1), "1e2"])
 def test_unusable_decimals_is_an_invalid_row_not_a_crash(dec):
     out = run(decimals=dec)

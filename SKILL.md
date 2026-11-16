@@ -151,6 +151,8 @@ stamp = mr.rule_at("stamp_duty_sell", date)                 # fraction of sell t
 ```
 
 - `KeyError`: no rule in force → the window is not covered; do not fall back to another date or scope.
+  `limit_price` raises it too when the band is recorded but the tick to round it at is not (funds and B shares
+  before 2006-07-01); only an A-share stock before 2006-07-01 is rounded at 0.01 (known gap G-0005).
 - `RuleConflict`: two records in force → dataset error; report the record ids, do not pick one.
 - `limit_price(...) is None`: band is *unlimited* — this is an answer, distinct from "unknown".
 - `ValueError` from `limit_price`: prev_close is so low the band rounds below one tick, and whether the

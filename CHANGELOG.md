@@ -29,17 +29,31 @@ releases stamped; a stamp from them is not evidence of compliance where one of t
 
 - **A `decimals` cell replaced the exchange's tick and the run was still stamped.** `price=10.001` on a main-board
   stock is `PRICE_OFF_TICK`; with `decimals=3` in the row it passed, stamped. A `decimals` cell now counts as the
-  exchange's grid only when 10^-decimals equals the tick recorded for the row's scope, date and market — or, where
-  no tick is recorded for the row, equals 0.01, the grid the limit prices are rounded at in that case. Any other
-  value (finer, coarser, or given where the tick differs by exchange and the row names no market) is still used
+  exchange's grid only when 10^-decimals equals the tick recorded for the row's scope, date and market — or, for an
+  A-share stock on a date before its first tick record, equals 0.01, the grid the limit prices are rounded at in
+  that case. Any other value (finer, coarser, given where the tick differs by exchange and the row names no market,
+  or given for a fund, B share or convertible bond that has no usable tick record on that date) is still used
   for the row's checks, but makes the run relaxed: `rules_verified` false, no stamp, `stamp_withheld` says why, and
   the new `decimals_override` counts such rows (`row_status` marks them). A `decimals` that is not an integer from 0
   to 8 is `ROW_INVALID` (a large value used to raise `OverflowError`).
 - **Rows whose price grid was not checked looked the same as rows where it was.** Where no tick is recorded for a
   row (dates before 2006-07-01; in a strict run also the SZSE convertible-bond tick of 2011-02-28 to 2012-12-10,
-  whose record is `unverified`), the tick check is skipped and the limit prices are rounded at 0.01. The output now
-  says so: `tick_check` counts `rows_checked` and `rows_not_checked` (`row_status` marks the latter
-  `tick_not_checked`), and a stamp says nothing about the price grid of those rows.
+  whose record is `unverified`), the tick check is skipped. The output now says so: `tick_check` counts
+  `rows_checked` and `rows_not_checked` (`row_status` marks the latter `tick_not_checked`), and a stamp says nothing
+  about the price grid of those rows.
+- **`limit_price` rounded funds and B shares at 0.01 where it had no tick for them.** With no `tick_size` in force
+  and no `decimals` given, the limit prices were rounded at 0.01 for every instrument. That substitution is
+  documented for A-share stocks only (known gap G-0005: their tick before 2006-07-01 is not sourced, and 0.01 is
+  the only value it ever had); for scopes `etf`, `b_share` and `st_b_share` on dates before 2006-07-01 — whose
+  bands are recorded from 1996 / 1998 and whose ticks were 0.001 or differed by exchange — it produced limit
+  prices on the wrong grid, and `marina-check` judged and stamped such rows against them.
+  `limit_price(1.234, "etf", "2006-06-30", "XSHG")` returned `(1.36, 1.11)`; it now raises `KeyError`, which names
+  the instrument family and the dates that do have a record (the command line and the MCP tool report "not
+  answered"; `marina-check` reports `RULE_MISSING` for the row, so the log is not verified). Pass `decimals` only
+  if you know the grid the exchange used — in `marina-check` that makes the run relaxed. The 0.01 substitution now
+  applies to an A-share stock scope on a date for which the dataset has no stock tick record at all, and to
+  nothing else; results for dates from 2006-07-01 are unchanged. **Re-run** anything that took fund or B-share
+  limit prices before 2006-07-01 from Marina.
 
 *Inputs that contradict each other*
 

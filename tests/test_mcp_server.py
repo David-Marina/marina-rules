@@ -86,6 +86,15 @@ def test_limit_price_matches_the_library_and_says_unlimited():
     assert ipo["unlimited"] is True and ipo["limit_up"] is None and "unlimited" in ipo["note"]
 
 
+def test_limit_price_without_a_tick_to_round_at_is_not_answered():
+    with pytest.raises(ms.ToolFailure) as e:
+        ms.run_tool("limit_price", {"prev_close": 1.234, "scope": "etf", "date": "2006-06-30", "market": "XSHG"})
+    assert str(e.value).startswith("not answered: ") and "tick_size" in str(e.value) and CITE in str(e.value)
+    got = ms.run_tool("limit_price", {"prev_close": 1.234, "scope": "main_board", "date": "2005-01-05",
+                                      "market": "XSHG"})
+    assert (got["limit_up"], got["limit_down"]) == (1.36, 1.11)     # A-share stock: 0.01, known gap G-0005
+
+
 def test_statutory_fees_match_the_library():
     got = ms.run_tool("statutory_fees", {"turnover": 86420.0, "side": "sell", "date": "2023-08-28", "market": "XSHG"})
     assert got["status"] == "DETERMINED" and got["citation"] == CITE
