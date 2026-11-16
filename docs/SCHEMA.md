@@ -137,12 +137,12 @@ must be of that product.
 | `price_limit_pct` | fraction, `{up, down}`, or `unlimited` | previous close |
 | `price_limit_pct_of_issue_price` | `{up, down}` or `unlimited` | **issue price** (convertible-bond listing day). Distinct name on purpose: `limit_price(prev_close, …)` must not be used with it. |
 | `min_holding_days` | integer | trading days a bought security must be held before it can be sold (A shares 1 = T+1 since 1995; B shares 1 since ≤2006-07-01; ordinary funds `etf`/`etf_20pct` 1 since 2006-07-01; same-day-rotation fund types 0 — see 2026.10.26.5). |
-| `tick_size` | number + `unit` (CNY/USD/HKD) | minimum price increment per instrument family (`stock` / `bse_stock` / `etf` / `b_share` / `convertible`; `marina_rules.tick_family(scope, market)`) |
+| `tick_size` | number + `unit` (CNY/USD/HKD) | minimum price increment per instrument family (`stock` / `bse_stock` / `etf` / `b_share` / `convertible`; `marina_rules.tick_family(scope, market)`). The fallback to family `stock` applies to mainland securities scopes only (scopes whose records are on XSHG / XSHE / BJSE): a futures, Hong Kong or US scope is its own family and has no `tick_size`, so the question is refused |
 | `limit_price_min_tick` | `true` \| `false` | exchange floors the band at ±1 tick when it would round to zero. **Per exchange**: XSHE `true` from 2011-02-28 (rules 3.3.16), XSHG `true` from 2023-04-10 (rules 3.3.17); `false` (rounding only — sourced from the complete rule text) XSHE 2006-07-01..2011-02-28, XSHG 2006-07-01..2023-04-10, BJSE from 2021-11-15 (2026.10.26.7). `false` and absent behave identically in `limit_price()`. |
 | `limit_price_min_tick` (scope-specific) | `{prev_close_lt \| prev_close_lte: x, band: b}` + `unit` | board-specific absolute band: when the previous close is below / at-or-below `x`, the limits are prev_close ± `b` regardless of rounding. Only the SSE delisting board uses it (scopes `delisting`, `delisting_day1`; 2013-01-01 `<0.05`, 2020-12-31 `≤0.05`, both ±¥0.01; repealed 2023-04-10). `limit_price()` looks up the requested scope first and falls back to scope `stock`. (2026.10.26.4) |
+| `stamp_duty_sell` / `transfer_fee_each_side` / `commission_cap` / `commission_min_per_order_cny` | fraction / CNY | turnover / per order |
 
 `limit_price()` composes the three: band → round to tick → apply the floor if (and only if) a `limit_price_min_tick` record is in force for that market and date (requested scope first, then `stock`). When the floor would matter and no market was given it raises `ValueError` rather than guess.
-| `stamp_duty_sell` / `transfer_fee_each_side` / `commission_cap` / `commission_min_order_cny` | fraction / CNY | turnover / per order |
 
 ## 2026.10.26.5 — sessions, same-day fund types, pre-2022 convertibles
 
@@ -1058,7 +1058,7 @@ Timelines (`hk_stock` and `hk_etf` share every fee record's value and sources un
 - **T+1 settlement**: HKEX's 2026-10-16 roadmap targets the second half of 2028, subject to market readiness and
   regulatory approval; not implemented, so `settlement_cycle_days` stays 2 (open-ended) and no future record is added.
 
-**Fill checks.** `marina check` composes A-share rules (tick family, band, stamp duty and transfer fee under scope `stock`)
+**Fill checks.** `marina-check` composes A-share rules (tick family, band, stamp duty and transfer fee under scope `stock`)
 and does not support Hong Kong: a row with market `XHKG` or scope `hk_stock` / `hk_etf` / `hk_etf_part_b` is reported as
 `MARKET_UNSUPPORTED` and no other check runs on it.
 
@@ -1333,7 +1333,7 @@ own analysis), ETP-specific cross price thresholds and the closing-price fallbac
   [2026 filing](https://www.govinfo.gov/content/pkg/FR-2026-10-08/html/2026-20605.htm)): after the window, not
   encoded.
 
-**Fill checks.** `marina check` does not support US equities either: a row with market `XNYS` / `XNAS` or scope
+**Fill checks.** `marina-check` does not support US equities either: a row with market `XNYS` / `XNAS` or scope
 `us_stock` / `us_etf` is reported as `MARKET_UNSUPPORTED` and no other check runs on it.
 
 ## Coverage targets (`coverage/cn_targets.yaml`)
@@ -1356,7 +1356,7 @@ and exits 1 on any gap not listed in `unresolved`.
 | rule | value | basis |
 |---|---|---|
 | `stamp_duty_buy` | fraction | stamp duty on **buy** turnover. Bilateral regime: 1‰ from 2005-01-24 (财税〔2005〕11号), 3‰ from 2007-05-30, 1‰ from 2008-04-24; **0** from 2008-09-19 (对受让方不再征税; Stamp Duty Law art.3 from 2022-07-01: 不对受让方征收). `0` is a sourced fact, not a default. |
-| `transfer_fee_par_value` | fraction | SSE A-share transfer fee per side as a fraction of **traded par value** (成交面额), CSDC portion — XSHG 2006-07-01..2015-08-01 (0.5‰, 0.375‰ from 2012-06-01, 0.3‰ from 2012-09-01). A broker-retained part existed (CSDC 2012-08-02) but no official text states its size; it is not modelled. **Never multiply it by turnover**: a fill log does not carry par value, so `marina check` leaves it out of the statutory fee floor (`statutory_fee_floor`). From 2015-08-01 SSE charges on turnover (`transfer_fee_each_side`). |
+| `transfer_fee_par_value` | fraction | SSE A-share transfer fee per side as a fraction of **traded par value** (成交面额), CSDC portion — XSHG 2006-07-01..2015-08-01 (0.5‰, 0.375‰ from 2012-06-01, 0.3‰ from 2012-09-01). A broker-retained part existed (CSDC 2012-08-02) but no official text states its size; it is not modelled. **Never multiply it by turnover**: a fill log does not carry par value, so `marina-check` leaves it out of the statutory fee floor (`statutory_fee_floor`). From 2015-08-01 SSE charges on turnover (`transfer_fee_each_side`). |
 
 `transfer_fee_each_side` remains a fraction of **turnover**. Before 2015-08-01 it exists only for XSHE (0.0255‰,
 collected by CSDC out of the SZSE handling fee — not a separate investor line item); for XSHG on those dates query
@@ -1369,7 +1369,7 @@ covers all three (records with `market: XSHG+XSHE+BJSE`); where its rate differe
 family scope `bse_stock` (Beijing Stock Exchange shares, no context required — like `stock`):
 `cn.fee.transfer_fee_each_side.bjse.2021-11-15`, 0.025‰, 2021-11-15..2022-04-29. So on those dates a `stock` lookup
 without a market answers the SSE/SZSE 0.02‰ record, `stock` + `BJSE` is `KeyError` (no record), and the BSE value is
-`rule_at("transfer_fee_each_side", d, "bse_stock", "BJSE")`. `marina check` looks up BJSE fills under `bse_stock`
+`rule_at("transfer_fee_each_side", d, "bse_stock", "BJSE")`. `marina-check` looks up BJSE fills under `bse_stock`
 first, then `stock`. From 2022-04-29 the national `stock` record (XSHG+XSHE+BJSE) answers BJSE.
 
 `bse_stock` also holds the other BSE-only stock records (from 2021-11-15): `tick_size` 0.01, `min_holding_days` 1,
@@ -1445,3 +1445,51 @@ what to do with `NOT_YET_PUBLISHED`. Also out of scope: consultations / drafts (
 final notice) are not publication; `published_at` is the final notice's date. `recorded_at` plays no role in `as_of`.
 
 **Data.** 6 of 184 records have `published_at: null` (2026.10.26.7, after the publication-date research) — the original notice was not located; under `as_of` these always yield `UNKNOWN_PUBLICATION`: the 1998 ST 5% (`st_main`, `st_b_share`), the rounding rule (`limit_price_rounding`) and the SZSE / SSE-par-value / BJSE transfer fees. Where a publication date comes from an official register or chronicle rather than the notice text itself (the 1996 band: 1996-12-13; A-share T+1: 1994-12-08), the record's notes say `published_at basis: official-register`.
+
+## Tracking registry (`data/<prefix>/tracking.yaml`)
+
+Not rules, and **not part of the dataset digest**: `_iter_files()` (and `marina_rules.diff`) skip files named
+`tracking.yaml`, so moving a tracking date forward with no rule change leaves `dataset_digest()` and every citation
+unchanged. Loaded by `tracking_registry()`; one file per market directory (`cn`, `hk`, `us`).
+
+```yaml
+schema: 1
+tracking:
+- market: XSGE                     # MIC as on records; 'XNYS+XNAS' covers each member
+  scopes: [cffex_if, cffex_t*]     # optional: scope names or 'family_*' name-prefix patterns; absent = every scope
+  tracked_through: '2026-11-02'    # last date for which the official sources were checked for rule changes
+  basis: daily settlement parameters and notices, every trading day   # how (short, English)
+  updated: '2026-11-14'            # when the entry was last written
+```
+
+**Meaning.** For a date on or before `tracked_through`, an open-ended record (`effective_to: null`) states what the
+sources said on that date. For a later date it is a **carry-forward** of the last checked rule, not a finding. A closed
+record is unaffected: its `effective_to` is itself sourced. A market or scope with no entry is **untracked** — no date is
+defaulted, and every open-ended answer on it is a carry-forward.
+
+**Validated at load** (a bad file refuses to load): exactly the keys above; both dates valid ISO dates;
+`tracked_through` ≤ `updated`; every market has records under `data/<prefix>/`; every scope (or pattern) names a scope in
+that directory's `scopes.yaml`; no two entries cover the same (market, scope).
+
+**Lookup.** `tracked_through(market, scope=None)` → ISO date or `None`. A '+' market takes the earliest of its members
+and is `None` if any member is untracked; `scope=None` takes the earliest entry of the market, or `None` if some scope with
+records has no entry; `market=None` → `None`. In `resolve()` without a market the answering record's market is used, so
+an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry) but tracked for a query with market `XSHG` or `XSHE`.
+
+**Entries (2026-11-14).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
+rule keywords reviewed by title, not every notice read); `XSGE`, `XINE`, `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-03;
+`XNYS+XNAS` 2026-11-03. Untracked: `BJSE`, `CCFX`.
+
+**Where it shows** (all additive; default return values and exceptions are unchanged):
+
+| API | without opt-in | `require_tracked=True` |
+|---|---|---|
+| `contract.resolve()` | `tracking: {tracked_through, beyond}` on every decision (`beyond` = `trade_date` > `tracked_through`; both `null` when untracked; the market is the query's, else the answering record's). `warnings`: `CARRY_FORWARD_BEYOND_TRACKED` / `CARRY_FORWARD_UNTRACKED` on a DETERMINED answer from an open-ended record beyond tracking / on an untracked market | that answer becomes status `BEYOND_TRACKING`: `result` null, `record_id` / evidence kept |
+| `record_at()` / `rule_at()` | unchanged | `BeyondTracking` (subclass of `KeyError`; `record`, `date`, `tracked_through`) in the same case |
+| `coverage()` | `tracking: {tracked_through, beyond: {from, to} \| null}` and `beyond_tracking` [{rule, from, to, record_ids}]: ranges answered by an open-ended record after `tracked_through` (anywhere when untracked); `status` unchanged | non-empty `beyond_tracking` → `partial` |
+| `marina-check` | `tracking`: `rows_beyond_tracked_through`, `rows_untracked` (a row without a market counts as untracked), `tracked_through` per market; not findings, no effect on the stamp or exit code | — |
+| capabilities | `tracking`: `entries`, `untracked_markets` | — |
+
+`scripts/check_release_metadata.py` fails on a `tracked_through` or `updated` after today (Asia/Tokyo), and with
+`--release` (the release workflow) after the date of the version's CHANGELOG heading; it prints each entry's age. An old
+date is not an error.

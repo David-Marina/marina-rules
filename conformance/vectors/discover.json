@@ -1,0 +1,164 @@
+[
+ {
+  "id": "DSC-0001",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-02",
+   "scope": "cffex_if"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "the dataset holds no tick_size record under any futures scope (marina_rules.rules_for); the only market-less tick_size record in force is cn.tick.a_share.2011-02-28, the A-share tick of the SSE / SZSE trading rules, which says nothing about a futures contract → a futures scope asked without a market is refused, never answered with the stock tick",
+  "tags": [
+   "tick-family",
+   "futures",
+   "no-market"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0002",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-02",
+   "scope": "shfe_au"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "the dataset holds no tick_size record under any futures scope (marina_rules.rules_for); the only market-less tick_size record in force is cn.tick.a_share.2011-02-28, the A-share tick of the SSE / SZSE trading rules, which says nothing about a futures contract → refused (same as DSC-0001, SHFE gold)",
+  "tags": [
+   "tick-family",
+   "futures",
+   "no-market"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0003",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-02",
+   "scope": "cffex_if",
+   "market": "CCFX"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "the dataset holds no tick_size record under any futures scope (marina_rules.rules_for); the only market-less tick_size record in force is cn.tick.a_share.2011-02-28, the A-share tick of the SSE / SZSE trading rules, which says nothing about a futures contract → refused with the market named as well",
+  "tags": [
+   "tick-family",
+   "futures"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0004",
+  "query": {
+   "rule": "tick_size",
+   "trade_date": "2024-01-02",
+   "scope": "main_board"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "value": 0.01
+  },
+  "oracle": "record cn.tick.a_share.2011-02-28 (market XSHG+XSHE, scope stock, in force from 2011-02-28, open-ended): A-share quotation unit 0.01 CNY; main_board is a mainland securities scope, so its tick is looked up under the stock family — unchanged by the futures fix",
+  "tags": [
+   "tick-family",
+   "regression"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0005",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-03",
+   "scope": "cffex_if",
+   "market": "CCFX"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "alternatives": {
+    "scope_rules": [
+     "margin_ratio",
+     "min_holding_days",
+     "price_limit_pct_of_prev_settlement",
+     "session_schedule"
+    ],
+    "similar_rules": [
+     "price_limit_pct_of_prev_settlement"
+    ]
+   }
+  },
+  "oracle": "data/cn: scope cffex_if carries exactly four rule names; the daily limit of an index future is recorded as price_limit_pct_of_prev_settlement (a fraction of the previous settlement price), not price_limit_pct (a fraction of the previous close) → the question as asked is refused and the refusal names what exists",
+  "tags": [
+   "alternatives",
+   "wrong-rule-name"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0006",
+  "query": {
+   "rule": "price_limit_pct_of_prev_settlement",
+   "trade_date": "2024-06-03",
+   "scope": "cffex_if",
+   "market": "CCFX"
+  },
+  "expect": {
+   "status": "DETERMINED",
+   "alternatives": {}
+  },
+  "oracle": "the same scope asked by the recorded rule name is answered; alternatives is empty on every status other than OUT_OF_COVERAGE",
+  "tags": [
+   "alternatives"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0007",
+  "query": {
+   "rule": "price_limit_pct",
+   "trade_date": "2024-06-03",
+   "scope": "chinex",
+   "market": "XSHE"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE",
+   "alternatives": {
+    "similar_scopes": [
+     "chinext",
+     "delisting_chinext",
+     "delisting_chinext_post0824"
+    ]
+   }
+  },
+  "oracle": "data/cn/scopes.yaml has no scope 'chinex'; the registered names containing it are chinext, delisting_chinext, delisting_chinext_post0824 (first three in alphabetical order) → refused, with the names",
+  "tags": [
+   "alternatives",
+   "unknown-scope"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ },
+ {
+  "id": "DSC-0008",
+  "query": {
+   "rule": "stamp_duty_sell",
+   "trade_date": "1985-01-01",
+   "scope": "stock",
+   "market": "XSHG"
+  },
+  "expect": {
+   "status": "OUT_OF_COVERAGE"
+  },
+  "oracle": "the first stamp_duty_sell record starts 2005-01-24 (rules_for('stock','XSHG')['stamp_duty_sell'][0][0]); 1985-01-01 precedes it → refused, never the earliest known rate",
+  "tags": [
+   "alternatives",
+   "before-first-record"
+  ],
+  "ruleset_version_min": "2026.11.16"
+ }
+]

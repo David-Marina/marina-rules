@@ -32,7 +32,8 @@ def main(out: str) -> int:
                                             "published_at", "recorded_at", "verification", "notes", "file", "unit", "contracts")},
              "sources": list(r.sources)} for r in mr.records()]
     dump = {"ruleset_version": ver, "dataset_sha256": dg, "citation": mr.citation(short=False),
-            "records": recs, "scopes": all_scopes, "known_gaps": all_gaps}
+            "records": recs, "scopes": all_scopes, "known_gaps": all_gaps,
+            "tracking": mr.tracking_registry()}   # not part of dataset_sha256 (docs/SCHEMA.md, Tracking registry)
     files = {}
     p = os.path.join(out, f"marina-rules-{ver}.json")
     with open(p, "w", encoding="utf-8") as fh:
@@ -59,6 +60,8 @@ def main(out: str) -> int:
     c.executemany("insert into scopes values(?,?,?,?)", [(k, v["description"], json.dumps(list(v["requires"])), json.dumps(list(v["excludes"]))) for k, v in all_scopes.items()])
     c.execute("create table known_gaps(gap_id text primary key, market text, scope text, rule text, from_date text, to_date text, severity text, status text, reason text, contracts_json text)")
     c.executemany("insert into known_gaps values(?,?,?,?,?,?,?,?,?,?)", [(g["gap_id"], g["market"], g["scope"], g["rule"], g["interval"]["from"], g["interval"]["to"], g["severity"], g["status"], g["reason"], None if g.get("contracts") is None else json.dumps(g["contracts"])) for g in all_gaps])
+    c.execute("create table tracking(market text, scopes_json text, tracked_through text, basis text, updated text)")
+    c.executemany("insert into tracking values(?,?,?,?,?)", [(t["market"], None if t["scopes"] is None else json.dumps(t["scopes"]), t["tracked_through"], t["basis"], t["updated"]) for t in dump["tracking"]])
     con.commit(); con.close(); files[p] = 1
     for name, obj in (("capabilities.json", capabilities()), ("capabilities-hk.json", capabilities("hk")),
                       ("capabilities-us.json", capabilities("us")),

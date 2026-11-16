@@ -1,0 +1,37 @@
+# Tracking registry · China (A-share and Chinese futures). Not rules: excluded from the dataset digest.
+#
+# Each entry: up to which date the maintainer has checked the official sources of a market (MIC as on records; a
+# '+' list covers each member) for rule changes. Optional `scopes`: scope names or 'family_*' patterns, for a market
+# whose parts are followed to different dates; without it the entry covers every scope of the market. No two entries
+# may cover the same (market, scope).
+#   tracked_through  last date checked. On or before it, an open-ended record (effective_to: null) states what the
+#                    sources said; after it, the record is a carry-forward, not a finding.
+#   basis            how it was checked.
+#   updated          the date this entry was last written (tracked_through <= updated).
+# A market or scope with no entry is NOT tracked: nothing is defaulted. Not tracked here: BJSE (its pages are not on the
+# watch list; a record whose market includes BJSE is untracked for a BJSE query or a query without a market) and CCFX
+# (CFFEX index and treasury bond futures). See docs/SCHEMA.md "Tracking registry".
+schema: 1
+tracking:
+- market: XSHG+XSHE
+  tracked_through: '2026-11-13'
+  basis: Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF
+    announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by
+    title. A title-keyword check, not a reading of every notice.
+  updated: '2026-11-14'
+- market: XSGE
+  tracked_through: '2026-11-02'
+  basis: SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.
+  updated: '2026-11-14'
+- market: XINE
+  tracked_through: '2026-11-02'
+  basis: INE notices and daily settlement-parameter / trade-argument files, every trading day from 2024-01-02 to 2026-11-02.
+  updated: '2026-11-14'
+- market: XZCE
+  tracked_through: '2026-11-02'
+  basis: CZCE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.
+  updated: '2026-11-14'
+- market: GFEX
+  tracked_through: '2026-11-02'
+  basis: GFEX notices and daily settlement parameters, every trading day from 2024-01-02 to 2026-11-02.
+  updated: '2026-11-14'

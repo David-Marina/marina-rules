@@ -27,15 +27,20 @@ def run():
                         got = {"error": type(ex).__name__, "message": str(ex)[:120]}
                 else:
                     kw = {"as_of": q["as_of"]} if "as_of" in q else {}
+                    if q.get("require_tracked"): kw["require_tracked"] = True
                     d = resolve(q["rule"], q["trade_date"], q["scope"], q.get("market"), q.get("context"),
                                 q.get("min_verification", "single-source"), **kw)
                     got = {"status": d["status"]}
                     if d["status"] == "DETERMINED": got["value"] = d["result"]["value"]
-                    if "missing_context" in e: got["missing_context"] = d["missing_context"]
-                    if "known_gap_ids" in e: got["known_gap_ids"] = d["known_gap_ids"]
+                    # Only the keys a vector expects are compared, so additive decision keys never break old vectors.
+                    for k in ("missing_context", "known_gap_ids", "tracking", "warnings", "alternatives"):
+                        if k in e: got[k] = d.get(k)
             except Exception as ex:
                 got = {"error": type(ex).__name__, "message": str(ex)[:120]}
-            ok = all(got.get(k) == v for k, v in e.items()) and not got.get("error")
+            if "error" in e:   # the call must be refused as bad input (the exception class of this implementation)
+                ok = got.get("error") == e["error"]
+            else:
+                ok = all(got.get(k) == v for k, v in e.items()) and not got.get("error")
             if "missing_context" in e and ok:
                 ok = set(got.get("missing_context", [])) == set(e["missing_context"])
             if not ok:

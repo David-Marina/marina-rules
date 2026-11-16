@@ -1,0 +1,9 @@
+# Tracking registry · Hong Kong. Not rules: excluded from the dataset digest. Format and meaning: data/cn/tracking.yaml
+# header and docs/SCHEMA.md "Tracking registry".
+schema: 1
+tracking:
+- market: XHKG
+  tracked_through: '2026-11-03'
+  basis: HKEX rules, circulars, fee pages and trading-mechanism papers, SFC and IRD notices; researched for a window
+    ending before 2026-11-04.
+  updated: '2026-11-14'

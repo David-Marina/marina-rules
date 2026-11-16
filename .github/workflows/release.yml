@@ -21,8 +21,8 @@ jobs:
           V=$(python -c "import marina_rules;print(marina_rules.VERSION)")
           [ "$V" = "${GITHUB_REF_NAME}" ] || { echo "VERSION=$V but tag=${GITHUB_REF_NAME}"; exit 1; }
           pip -q install packaging && python -c "from packaging.version import Version as X; import sys; v=X('$V'); sys.exit(1 if (v.is_prerelease or v.is_devrelease) else 0)" || { echo "$V is a pre-release under PEP 440 (letter suffix?) — use YYYY.MM.DD.N"; exit 1; }
-      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash)
-        run: python scripts/check_release_metadata.py
+      - name: release metadata (CHANGELOG section, README/SKILL/pyproject version, README citation hash, tracking dates)
+        run: python scripts/check_release_metadata.py --release
       - run: pytest -q
       - run: python conformance/run.py
       - name: build wheel with vendored data

@@ -34,7 +34,8 @@
     "CONFLICT",
     "UNVERIFIED",
     "NOT_YET_PUBLISHED",
-    "UNKNOWN_PUBLICATION"
+    "UNKNOWN_PUBLICATION",
+    "BEYOND_TRACKING"
    ]
   },
   "rule": {
@@ -88,6 +89,77 @@
     "contracts": {
      "type": "object",
      "description": "present only when the record covers part of the product's contracts (docs/SCHEMA.md, Contract selectors)"
+    }
+   }
+  },
+  "tracking": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "tracked_through",
+    "beyond"
+   ],
+   "description": "how far the official sources for the market were checked for rule changes (docs/SCHEMA.md, Tracking registry); both null when the market is untracked",
+   "properties": {
+    "tracked_through": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "beyond": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    }
+   }
+  },
+  "warnings": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "CARRY_FORWARD_BEYOND_TRACKED",
+     "CARRY_FORWARD_UNTRACKED"
+    ]
+   },
+   "description": "carry-forward warnings on a DETERMINED answer from an open-ended record"
+  },
+  "alternatives": {
+   "type": "object",
+   "additionalProperties": false,
+   "description": "what can be asked instead, on OUT_OF_COVERAGE only (empty otherwise): the rule names the scope has, names close to the one asked, the intervals the asked rule does have, scope names close to an unknown scope, or the market codes the scope is recorded on when it is not recorded on the one asked. A similar name is a different rule: read its definition before using it",
+   "properties": {
+    "scope_rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "similar_rules": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rule_intervals": {
+     "type": "array",
+     "items": {
+      "type": "array"
+     }
+    },
+    "similar_scopes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "markets": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    }
   },

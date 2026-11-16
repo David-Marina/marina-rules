@@ -1,0 +1,193 @@
+{
+  "dataset": {
+    "citation": "rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536",
+    "digest": "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536",
+    "version": "2026.11.16"
+  },
+  "eval_version": 1,
+  "tasks": {
+    "T01": {
+      "carry_forward": false,
+      "derivation": "limit_price(13.45, 'chinext', day, 'XSHE')[0] for each day; resolve() DETERMINED with board=chinext, st_status=false, a seasoned listing_day_index",
+      "judgement": "the band changes on 2020-08-24, not before; exchange half-up rounding (14.795 -> 14.80)",
+      "kind": "value",
+      "status": "determined",
+      "tol": 0.001,
+      "value": {
+        "2020-08-21": 14.8,
+        "2020-08-24": 16.14
+      }
+    },
+    "T02": {
+      "carry_forward": false,
+      "derivation": "limit_price(4.10, 'st_main', '2024-06-14', 'XSHG')",
+      "judgement": "half-up rounding: 4.305 -> 4.31 and 3.895 -> 3.90 (Python round() gives 4.3 / 3.89)",
+      "kind": "value",
+      "status": "determined",
+      "tol": 0.001,
+      "value": {
+        "limit_down": 3.9,
+        "limit_up": 4.31
+      }
+    },
+    "T03": {
+      "carry_forward": false,
+      "derivation": "limit_price(30.00, 'ipo_first5_chinext', '2024-03-05', 'XSHE') is None; resolve() DETERMINED value 'unlimited'",
+      "judgement": "the answer is 'no price limit', not a number",
+      "kind": "value",
+      "status": "determined",
+      "value": "no_limit"
+    },
+    "T04": {
+      "carry_forward": false,
+      "derivation": "rule_at('stamp_duty_sell', day) / resolve(..., 'stock', 'XSHG+XSHE')",
+      "judgement": "the halving applies from 2023-08-28, not before",
+      "kind": "value",
+      "status": "determined",
+      "tol": 1e-09,
+      "value": {
+        "2023-08-25": 0.001,
+        "2023-08-28": 0.0005
+      }
+    },
+    "T05": {
+      "carry_forward": false,
+      "derivation": "marina_rules.check.statutory_fee_floor(86420.00, 'sell', '2023-08-28', 'XSHG') (stamp duty of the sell side + transfer fee, both on turnover)",
+      "judgement": "the new stamp duty rate applies on 2023-08-28",
+      "kind": "value",
+      "status": "determined",
+      "tol": 0.01,
+      "value": 44.0742
+    },
+    "T06": {
+      "derivation": "resolve('price_limit_pct', '2024-06-14', 'main_board', 'XSHG', {'board': 'main_board'}) -> MISSING_CONTEXT ['st_status', 'listing_day_index'] (the board follows from the code)",
+      "judgement": "no number: ST status decides 5% vs 10% and a listing window would mean no limit; the answer must name both missing facts",
+      "kind": "refusal",
+      "missing_context_allowed": [
+        "board",
+        "issue_regime"
+      ],
+      "missing_context_required": [
+        "listing_day_index",
+        "st_status"
+      ],
+      "status": "needs_context"
+    },
+    "T07": {
+      "derivation": "resolve('price_limit_pct_of_prev_settlement', '2025-03-03', 'dce_m', 'XDCE') -> OUT_OF_COVERAGE, no known gap; no DCE scope or record in the dataset",
+      "gap_ids": [],
+      "judgement": "no number; not a known gap either (an invented gap id is wrong)",
+      "kind": "refusal",
+      "status": "not_covered"
+    },
+    "T08": {
+      "derivation": "resolve('margin_ratio', '2026-04-15', 'shfe_cu', 'XSGE') -> OUT_OF_COVERAGE, known_gap_ids ['G-0031'] (same with a contract)",
+      "gap_ids": [
+        "G-0031"
+      ],
+      "judgement": "no number; report the known gap and its id",
+      "kind": "refusal",
+      "status": "known_gap"
+    },
+    "T09": {
+      "complete": false,
+      "derivation": "coverage('XSHG', 'st_main', ['price_limit_pct', 'tick_size'], '2004-01-01', '2012-01-01') -> partial, required_context ['board', 'st_status']",
+      "gap_ids": [
+        "G-0005"
+      ],
+      "gaps": [
+        {
+          "from": "2004-01-01",
+          "rule": "tick_size",
+          "to": "2006-07-01"
+        }
+      ],
+      "judgement": "not complete: name the missing stretch and its known gap id; ST status must be supplied per security and day (the board is implied by the task)",
+      "kind": "coverage",
+      "required_context_allowed": [
+        "board"
+      ],
+      "required_context_required": [
+        "st_status"
+      ]
+    },
+    "T10": {
+      "derivation": "python -m marina_rules.check fills_exchange.csv --rows",
+      "judgement": "row 3 is fine only because the 20% band starts 2020-08-24; row 4 only under half-up rounding; row 7 only because of the SZSE one-tick floor; row 6 only because the new stamp duty applies from 2023-08-28; row 8 is in an unlimited listing window",
+      "kind": "fill_log",
+      "tolerated": null,
+      "violations": [
+        {
+          "check": "band",
+          "row": 2
+        },
+        {
+          "check": "fee",
+          "row": 5
+        }
+      ]
+    },
+    "T11": {
+      "derivation": "python -m marina_rules.check fills_model.csv --no-tick --band-tolerance-pct 0.3 --rows",
+      "judgement": "off-tick prices are not violations here; rows beyond a limit by <= 0.3% are tolerated, not violations; row 7 is tolerated only under the pre-2020-08-24 10% ChiNext band",
+      "kind": "fill_log",
+      "tolerated": [
+        1,
+        3,
+        7
+      ],
+      "violations": [
+        {
+          "check": "band",
+          "row": 2
+        },
+        {
+          "check": "band",
+          "row": 5
+        }
+      ]
+    },
+    "T12": {
+      "also_accept": [
+        "beyond_tracking"
+      ],
+      "carry_forward": true,
+      "derivation": "resolve('trans_fee_rate', '2026-11-10', 'shfe_cu', 'XSGE') -> DETERMINED with warning ['CARRY_FORWARD_BEYOND_TRACKED'], tracked_through 2026-11-02",
+      "judgement": "the value must come flagged as a carry-forward (or be declined as beyond tracking)",
+      "kind": "value",
+      "status": "determined",
+      "tol": 1e-09,
+      "value": 5e-05
+    },
+    "T13": {
+      "also_accept": [
+        "beyond_tracking"
+      ],
+      "carry_forward": true,
+      "derivation": "resolve('price_limit_pct_of_prev_settlement', '2025-06-03', 'cffex_if', 'CCFX') -> DETERMINED with warning ['CARRY_FORWARD_UNTRACKED'] (CCFX is not tracked)",
+      "judgement": "the value must come flagged as a carry-forward (or be declined as beyond tracking)",
+      "kind": "value",
+      "status": "determined",
+      "tol": 1e-09,
+      "value": 0.1
+    },
+    "T14": {
+      "carry_forward": false,
+      "derivation": "resolve('trans_fee_per_lot', '2025-07-10', 'shfe_au', 'XSGE', {'contract': c})",
+      "judgement": "the two contracts are in different fee tiers; one value for both is wrong",
+      "kind": "value",
+      "status": "determined",
+      "tol": 1e-06,
+      "value": {
+        "au2509": 20,
+        "au2510": 10
+      }
+    }
+  },
+  "tolerances": {
+    "cny": 0.01,
+    "cny_per_lot": 1e-06,
+    "price": 0.001,
+    "rate": 1e-09
+  }
+}

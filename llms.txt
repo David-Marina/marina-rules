@@ -1,0 +1,46 @@
+# marina-rules
+
+> Auditable backtests: point-in-time exchange trading rules as data, with a Python library, command line and MCP
+> server. For each trading day it answers which rule was in force, and it checks a fill log against those rules: China A-share price limits (涨跌停 / 涨跌幅限制), stamp duty (印花税), transfer
+> fees, commission caps, tick sizes, trading sessions and T+N; CFFEX, SHFE, INE, CZCE and GFEX futures margins,
+> price limits and fees; Hong Kong and US equity rules. Every record carries its effective date, the official
+> source, a verbatim quote and a content hash. Built for backtest engines and AI agents: a missing rule is an
+> error, never a guess. Not related to boat marinas; the project is named after a person.
+
+Use it to: get the price-limit band, limit-up / limit-down price, tick or statutory fee that applied on a past date;
+check a backtest's or broker's fill log against the rules of each day (`marina-check`); pre-flight a backtest window
+for gaps (`coverage`); cite the exact rule set a result was computed under (`citation`).
+
+It does not contain: prices, constituents, ST or suspension lists, adjustment factors, trading calendars, DCE
+futures, crypto. ST status, board and listing date of a security are supplied by the caller.
+
+## Install and ask
+
+- `pip install marina-rules` — the dataset ships inside the package; no network is used at run time.
+- `marina-rules` lists the subcommands; `marina-rules skill` prints the usage notes for agents; `marina-rules capabilities`
+  prints everything that can be asked, as JSON.
+- Python: `import marina_rules as mr`; `mr.rule_at("price_limit_pct", "2020-08-24", "chinext", "XSHE")`;
+  `mr.limit_price(10.0, "chinext", "2021-03-01", "XSHE")`; `mr.rules_for(scope, market)`; `mr.scopes()`.
+- One decision shape for any language: `marina-rules query <rule> <YYYY-MM-DD> <scope> [market] --context k=v`;
+  act only on status `DETERMINED`.
+- MCP server for AI assistants: `pip install "marina-rules[mcp]"`, then `marina-rules-mcp` (stdio; tools resolve,
+  limit_price, statutory_fees, coverage, list_scopes, list_rules, check_fills, citation).
+- Dates are `YYYY-MM-DD`; markets are ISO 10383 codes (XSHG, XSHE, BJSE, XHKG, XNYS, XNAS, CCFX, XSGE, XINE, XZCE, GFEX).
+
+## Documents
+
+- [README](https://github.com/David-Marina/marina-rules/blob/main/README.md): what it is, coverage per market, examples
+- [README.zh-CN](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md): 中文入门
+- [SKILL.md](https://github.com/David-Marina/marina-rules/blob/main/SKILL.md): step-by-step usage for an AI agent, including when to stop
+- [capabilities.json](https://github.com/David-Marina/marina-rules/blob/main/capabilities.json): rules, scopes, required context and known gaps, generated from the data
+- [docs/SCHEMA.md](https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md): record schema and the definition of every rule name
+- [docs/decision.schema.json](https://github.com/David-Marina/marina-rules/blob/main/docs/decision.schema.json): JSON Schema of a decision
+- [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md): what changed in each release and what to re-run
+
+- [Rule pages](https://david-marina.github.io/marina-rules/): one page per market, scope and rule, with every record, its sources and quotes; its own llms.txt lists them as Markdown
+
+## Optional
+
+- [conformance vectors](https://github.com/David-Marina/marina-rules/tree/main/conformance): input → expected pairs for checking another implementation
+- [data/](https://github.com/David-Marina/marina-rules/tree/main/data): the records as plain YAML, readable from any language
+- [errata](https://github.com/David-Marina/marina-rules/tree/main/errata): cases where market data contradicted a rule, with detectors

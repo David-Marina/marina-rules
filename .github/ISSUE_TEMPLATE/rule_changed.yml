@@ -1,0 +1,42 @@
+name: An exchange changed a rule
+description: A new notice changes a rule Marina records (or sets one it does not), from a date on.
+title: "Rule change: <market> / <rule> from <date>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rule changes are recorded with the day they take effect and the day the notice was published, so that
+        backtests asking with `as_of` do not see a change before it was announced. Please give both if you can.
+  - type: input
+    id: source
+    attributes:
+      label: Official notice (URL)
+      description: The exchange's or regulator's notice itself.
+    validations:
+      required: true
+  - type: input
+    id: published
+    attributes:
+      label: Published on
+      description: The date on the notice, YYYY-MM-DD.
+  - type: input
+    id: effective
+    attributes:
+      label: Takes effect on
+      description: YYYY-MM-DD, as the notice states it.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What changes
+      description: Market, instruments, rule, old value → new value.
+    validations:
+      required: true
+  - type: textarea
+    id: quote
+    attributes:
+      label: The sentence that sets the new rule
+      description: Copied from the notice, unchanged, in its original language.
+    validations:
+      required: true
