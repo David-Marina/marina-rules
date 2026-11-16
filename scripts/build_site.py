@@ -3,9 +3,16 @@
     python scripts/build_site.py --out site [--base-url https://example.org/]
 
 Every statement about a rule on these pages is a record field, a source quote, a known gap, a tracking entry or a row
-of docs/SCHEMA.md, copied verbatim; the introduction on the index is taken from README.md. Nothing is summarised and
-nothing depends on the date of the build: two builds of the same data are byte-identical. Without --base-url no
-absolute URL of the site is written anywhere (sitemap.xml needs one, so it is written only with --base-url).
+of docs/SCHEMA.md, copied verbatim; the introduction on the index is taken from README.md (and README.zh-CN.md).
+Nothing is summarised and nothing depends on the date of the build: two builds of the same data are byte-identical.
+Without --base-url no absolute URL of the site is written anywhere (sitemap.xml needs one, so it is written only
+with --base-url).
+
+Chinese: each page carries a Chinese name in its title, description and a line under the heading, so that it can be
+found by a Chinese query. The names come from scripts/site_zh.json (display names of families, markets, scopes and
+rules — never a value); the values in that line are record fields in their effective_from order, written only where
+the page has one unbroken series of plain values per market. Each page also carries Open Graph tags and a schema.org
+Dataset description (JSON-LD, a data block: the pages run no script).
 
 Output: index.html, <prefix>/index.html, <prefix>/<scope>/index.html, <prefix>/<scope>/<rule>.html and .md,
 llms.txt, site.json and, with --base-url, sitemap.xml and robots.txt. Known gaps whose (scope, rule) has records are on that fact
@@ -115,10 +122,12 @@ def tracking_meaning(text: str) -> str:
 
 
 def readme_intro(text: str) -> list:
-    """The two paragraphs after the README title: the tag line and the paragraph that follows it."""
+    """The first two paragraphs after the README title that are not block quotes (README.md opens with a Chinese
+    summary in one): the tag line and the paragraph that follows it."""
     paras = [p.strip() for p in text.split("\n\n")]
     i = next(k for k, p in enumerate(paras) if p.startswith("# "))
-    return [" ".join(paras[i + 1].split()), " ".join(paras[i + 2].split())]
+    body = [p for p in paras[i + 1:] if not p.startswith(">")]
+    return [" ".join(body[0].split()), " ".join(body[1].split())]
 
 
 def verification_levels(text: str) -> list:
@@ -236,16 +245,138 @@ def table_md(head: list, rows: list) -> str:
 
 PYPI_URL = "https://pypi.org/project/marina-rules/"
 REPO_URL = "https://github.com/David-Marina/marina-rules"
+DATA_LICENSE_URL = "https://creativecommons.org/publicdomain/zero/1.0/"
+SITE_NAME_ZH = "交易制度历史数据"
 
 
-def page(title: str, h1: str, body: str, *, path: str, description: str, nav: list, base_url: str | None) -> str:
-    """nav: [(label, site-relative target path or None)]."""
+# --- Chinese names and the line of values under the heading -------------------------------------------------------
+def zh_names() -> dict:
+    with open(os.path.join(ROOT, "scripts", "site_zh.json"), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def zh_join(a: str, b: str) -> str:
+    """Two names as one phrase: no space where two CJK characters meet (创业板 + 涨跌幅限制), a space otherwise."""
+    return a + ("" if CJK_RE.match(a[-1:]) and CJK_RE.match(b[:1]) else " ") + b
+
+
+def zh_markets(zh: dict, markets) -> str:
+    """'XSHG+XSHE' / ['XSHE', 'XSHG+XSHE'] → 上交所、深交所 (each exchange once, in order of appearance)."""
+    names = []
+    for mk in ([markets] if isinstance(markets, str) else markets):
+        for m in mk.split("+"):
+            if zh["market"][m] not in names:
+                names.append(zh["market"][m])
+    return "、".join(names)
+
+
+def zh_value(zh: dict, rule: str, v, unit) -> str | None:
+    """A record value as it is written in the Chinese line: a percentage where the page shows one (a zero of such
+    a rule is 0%), a plain number with its unit, or 'unlimited' of a price-limit rule. None for anything else
+    (tables, flags, other words): such a page gets no line of values."""
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, str):
+        return "不设涨跌幅限制" if v == "unlimited" and rule.startswith("price_limit_pct") else None
+    if not isinstance(v, (int, float)):
+        return None
+    pct = percent(rule, v, unit)
+    if pct:
+        return pct
+    if v == 0 and percent(rule, 0.5, unit):
+        return "0%"
+    num = format(Decimal(repr(v)).normalize(), "f") if isinstance(v, float) else str(v)
+    return num + (f" {zh['unit'].get(unit, unit)}" if unit else "")
+
+
+def zh_runs(zh: dict, rs: list) -> list | None:
+    """[(effective_from, value text, market)] for records that follow one another, neighbours with the same value AND
+    market merged — or None when the series is not a plain one: a record with a contract selector, a value zh_value
+    does not write, an interval that does not start where the previous one ended, or a last record that has ended."""
+    rs = sorted(rs, key=lambda r: r.effective_from)
+    runs, prev = [], None
+    for r in rs:
+        text = None if r.contracts else zh_value(zh, r.rule, r.value, r.unit)
+        if text is None or (prev is not None and prev.effective_to != r.effective_from):
+            return None
+        if not runs or runs[-1][1:] != (text, r.market):
+            runs.append((r.effective_from, text, r.market))
+        prev = r
+    return runs if prev is not None and prev.effective_to is None else None
+
+
+def zh_fact(zh: dict, pfx: str, scope: str, rule: str, rs: list) -> dict:
+    """Chinese name, title part, description sentence and visible line of one fact page."""
+    name = zh_join(zh["scope"][scope], zh["rule"][rule])
+    by_market: dict = defaultdict(list)
+    for r in rs:
+        by_market[r.market].append(r)
+    # one series when the page's records follow one another whatever their market strings (a rule later extended to
+    # another exchange): each step then names its exchanges. Otherwise one series per market string, and only if
+    # every market has one.
+    whole = zh_runs(zh, rs)
+    series = {None: whole} if whole else {mk: zh_runs(zh, v) for mk, v in sorted(by_market.items())}
+    first = min(r.effective_from for r in rs)
+    where = zh_markets(zh, sorted(by_market))
+    title = name
+    values = short = ""
+    if all(series.values()):
+        def one(runs):
+            named = len({mk for _f, _t, mk in runs}) > 1
+            return "；".join(f"{frm} 起 {text}" + (f"（{zh_markets(zh, mk)}）" if named else "") for frm, text, mk in runs)
+        if len(series) == 1:
+            runs = next(iter(series.values()))
+            k = len(runs) - 1                    # the step at which the value became the present one
+            while k > 0 and runs[k - 1][1] == runs[-1][1]:
+                k -= 1
+            head = f"{runs[k - 1][1]}→{runs[-1][1]}" if k > 0 else runs[-1][1]
+            title = f"{name}：{head}，{runs[k][0]} 起"
+            values = one(runs)
+            short = values if len(runs) <= 6 else f"{one(runs[:1])}；……；{one(runs[-3:])}"
+        else:
+            values = short = "；".join(f"{zh_markets(zh, mk)}：{one(runs)}" for mk, runs in series.items())
+    tail = (f"共 {len(rs)} 条按生效日期记录的规则，最早自 {first} 起；每条附官方文件出处和原文引文，"
+            "可按交易日查询当日有效的规则。")
+    return {"name": name, "title": title,
+            "line": f"{name}（{where}）" + (f"历次取值：{values}。" if values else "：") + tail,
+            "description": f"{name}（{where}）" + (f"历次调整：{short}。" if short else "历次调整记录：") + tail}
+
+
+def json_ld(obj: dict) -> str:
+    """A JSON-LD data block. '<' is written as \\u003c so that no text of a record can close the element."""
+    return json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")).replace("<", "\\u003c")
+
+
+def dataset_ld(name: str, description: str, *, base_url: str | None, path: str, extra: dict) -> dict:
+    d = {"@context": "https://schema.org", "@type": "Dataset", "name": name, "description": description,
+         "license": DATA_LICENSE_URL, "isAccessibleForFree": True, "version": mr.VERSION,
+         "inLanguage": ["en", "zh"],
+         "creator": {"@type": "Organization", "name": "marina-rules", "url": REPO_URL}}
+    if base_url:
+        d["url"] = base_url + ("" if path == "index.html" else path)
+    d.update(extra)
+    return d
+
+
+def page(title: str, h1: str, body: str, *, path: str, description: str, nav: list, base_url: str | None,
+         zh_line: str | None = None, ld: dict | None = None) -> str:
+    """nav: [(label, site-relative target path or None)]. zh_line: plain Chinese text shown under the heading.
+    ld: a schema.org object written as a JSON-LD data block."""
     crumbs = " / ".join(f'<a href="{esc(rel(path, t))}">{esc(lab)}</a>' if t else esc(lab) for lab, t in nav)
     canon = f'<link rel="canonical" href="{esc(base_url + path)}">\n' if base_url else ""
+    og = [("og:type", "website"), ("og:site_name", "marina-rules"), ("og:title", title),
+          ("og:description", description), ("og:locale", "en_US"), ("og:locale:alternate", "zh_CN")]
+    if base_url:
+        og.append(("og:url", base_url + path))
+    card = "".join(f'<meta property="{k}" content="{esc(v)}">\n' for k, v in og)
+    card += '<meta name="twitter:card" content="summary">\n'
+    data = f'<script type="application/ld+json">{json_ld(ld)}</script>\n' if ld else ""
+    zh_p = f'<p lang="zh">{esc(zh_line)}</p>\n' if zh_line else ""
     return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f"<title>{esc(title)}</title>\n<meta name=\"description\" content=\"{esc(description)}\">\n{canon}"
-            f"<style>\n{CSS}\n</style>\n</head>\n<body>\n<main>\n<nav>{crumbs}</nav>\n<h1>{esc(h1)}</h1>\n"
+            f"{card}{data}"
+            f"<style>\n{CSS}\n</style>\n</head>\n<body>\n<main>\n<nav>{crumbs}</nav>\n<h1>{esc(h1)}</h1>\n{zh_p}"
             f"{body}\n<p>marina-rules — point-in-time trading rules as data. "
             f'<a href="{PYPI_URL}">Install from PyPI</a> · <a href="{REPO_URL}">source, data and how to cite</a> · '
             f"CC0 data, MIT code.</p>\n</main>\n</body>\n</html>\n")
@@ -291,6 +422,8 @@ def build(base_url: str | None = None) -> dict:
     defs = schema_definitions(schema_txt)
     meaning = tracking_meaning(schema_txt)
     intro = readme_intro(readme_txt)
+    intro_zh = readme_intro(_read("README.zh-CN.md"))[0].strip("*")
+    zh = zh_names()
     levels = verification_levels(readme_txt)
     citation = mr.citation()
     recs = mr.records()
@@ -333,12 +466,14 @@ def build(base_url: str | None = None) -> dict:
         path, mdpath = fact_path(pfx, scope, rule), fact_path(pfx, scope, rule, "md")
         markets = sorted({r.market for r in rs if r.market})
         h1 = f"{rule} · {scope} · {FAMILY[pfx]} ({', '.join(markets)})"
-        title = f"{h1} — marina-rules"
+        zf = zh_fact(zh, pfx, scope, rule, rs)
+        title = f"{zf['title']} · {h1} — marina-rules"
         first, last = min(r.effective_from for r in rs), latest(rs)
-        desc = (f"{rule} for scope {scope} on {', '.join(markets)}: {len(rs)} point-in-time record(s) from {first}, "
-                f"each with its official source and quote. {citation}")
+        desc_en = (f"{rule} for scope {scope} on {', '.join(markets)}: {len(rs)} point-in-time record(s) from {first}, "
+                   f"each with its official source and quote. {citation}")
+        desc = f"{zf['description']} {desc_en}"
         sc = registries[pfx].get(scope, {})
-        b, m = [], [f"# {h1}", ""]
+        b, m = [], [f"# {h1}", "", zf["line"], ""]
         for section, pairs in defs.get(rule, []):
             cells_html = "; ".join(f"{esc(col)}: {md_inline(cell)}" for col, cell in pairs)
             b.append(f'<p><strong>Definition</strong> <span class="muted">(docs/SCHEMA.md, “{esc(section)}”)</span>: '
@@ -468,10 +603,20 @@ def build(base_url: str | None = None) -> dict:
         m += ["## Cite", "", "```", citation, "```", "",
               f"Generated from the data of marina-rules {mr.VERSION}. Treat the exchange's own notice as authoritative.", ""]
         nav = [("marina-rules", "index.html"), (pfx, f"{pfx}/index.html"), (scope, scope_path(pfx, scope)), (rule, None)]
-        files[path] = page(title, h1, "\n".join(b), path=path, description=desc, nav=nav, base_url=base_url)
+        ends = [r.effective_to for r in rs]
+        extra = {"alternateName": zf["name"], "citation": citation, "spatialCoverage": FAMILY[pfx],
+                 "temporalCoverage": f"{first}/" + (".." if None in ends else max(ends)),
+                 "keywords": [rule, scope, *markets, zh["rule"][rule], zh["scope"][scope], "point-in-time trading rules"],
+                 "isBasedOn": sorted({s["url"] for r in rs for s in r.sources if s.get("url")}),
+                 "isPartOf": {"@type": "Dataset", "name": "marina-rules", "url": base_url or REPO_URL}}
+        if base_url:
+            extra["distribution"] = [{"@type": "DataDownload", "encodingFormat": "text/markdown",
+                                      "contentUrl": base_url + mdpath}]
+        files[path] = page(title, h1, "\n".join(b), path=path, description=desc, nav=nav, base_url=base_url,
+                           zh_line=zf["line"], ld=dataset_ld(h1, desc, base_url=base_url, path=path, extra=extra))
         files[mdpath] = "\n".join(m).rstrip("\n") + "\n"
         manifest_pages.append({"path": path, "md": mdpath, "kind": "fact", "prefix": pfx, "scope": scope, "rule": rule,
-                               "title": title, "record_ids": [r.id for r in rs],
+                               "title": title, "name_zh": zf["name"], "record_ids": [r.id for r in rs],
                                "gap_ids": [g["gap_id"] for g in gs]})
 
     # ---- scope pages ----
@@ -518,9 +663,14 @@ def build(base_url: str | None = None) -> dict:
             if lone:
                 b += ["<h2>Known gaps for rules with no records here</h2>", table_html(gap_head, gap_rows_html(lone))]
             nav = [("marina-rules", "index.html"), (pfx, f"{pfx}/index.html"), (scope, None)]
-            files[path] = page(f"{h1} — marina-rules", h1, "\n".join(b), path=path, base_url=base_url, nav=nav,
-                               description=f"Scope {scope} ({FAMILY[pfx]}): {len(rules)} rule(s) with point-in-time "
-                                           f"records and sources. {citation}")
+            sz = zh["scope"][scope]
+            zline = (f"{sz}（{zh['family'][pfx]}）的交易规则：" + "、".join(zh["rule"][r] for r in rules) + "。" if rules
+                     else f"{sz}（{zh['family'][pfx]}）：该范围下暂无规则记录。")
+            files[path] = page(f"{sz}交易规则 · {h1} — marina-rules" if CJK_RE.match(sz[-1:]) else
+                               f"{sz} 交易规则 · {h1} — marina-rules", h1, "\n".join(b), path=path, base_url=base_url,
+                               nav=nav, zh_line=zline,
+                               description=f"{zline} Scope {scope} ({FAMILY[pfx]}): {len(rules)} rule(s) with "
+                                           f"point-in-time records and sources. {citation}")
             manifest_pages.append({"path": path, "kind": "scope", "prefix": pfx, "scope": scope, "rules": rules,
                                    "gap_ids": [g["gap_id"] for g in lone]})
 
@@ -533,13 +683,14 @@ def build(base_url: str | None = None) -> dict:
             sc = registries[pfx].get(scope, {})
             n = len([1 for (q, s, _r) in groups if q == pfx and s == scope])
             rows.append([f'<a href="{esc(rel(path, scope_path(pfx, scope)))}"><code>{esc(scope)}</code></a>',
+                         f'<span lang="zh">{esc(zh["scope"][scope])}</span>',
                          md_inline(sc.get("description") or ""),
                          ", ".join(f"<code>{esc(x)}</code>" for x in sc.get("requires") or ()), esc(str(n))])
         n_rec = sum(len(v) for (q, _s, _r), v in groups.items() if q == pfx)
         b = [f"<p>{esc(str(n_rec))} records in <code>data/{esc(pfx)}/</code>, "
              f"{esc(str(len([1 for k in groups if k[0] == pfx])))} rule pages, "
              f"{esc(str(len(gaps[pfx])))} known gaps.</p>",
-             "<h2>Scopes</h2>", table_html(["scope", "description", "required context", "rules"], rows),
+             "<h2>Scopes</h2>", table_html(["scope", "中文名", "description", "required context", "rules"], rows),
              "<h2>Tracking registry</h2>"]
         if tracking[pfx]:
             b.append(table_html(["market", "scopes", "tracked_through", "basis"],
@@ -552,8 +703,10 @@ def build(base_url: str | None = None) -> dict:
         if orphan:
             b += ["<h2>Known gaps for scopes not in the registry</h2>", table_html(gap_head, gap_rows_html(orphan))]
         nav = [("marina-rules", "index.html"), (pfx, None)]
-        files[path] = page(f"{h1} — marina-rules", h1, "\n".join(b), path=path, base_url=base_url, nav=nav,
-                           description=f"Point-in-time trading rules for {FAMILY[pfx]}, as data. {citation}")
+        fz = f"{zh['family'][pfx]}市场交易制度历史数据：按生效日期记录的交易规则，每条附官方出处。"
+        files[path] = page(f"{zh['family'][pfx]}交易规则历史数据 · {h1} — marina-rules", h1, "\n".join(b), path=path,
+                           base_url=base_url, nav=nav, zh_line=fz,
+                           description=f"{fz} Point-in-time trading rules for {FAMILY[pfx]}, as data. {citation}")
         manifest_pages.append({"path": path, "kind": "family", "prefix": pfx, "gap_ids": [g["gap_id"] for g in orphan]})
 
     # ---- root ----
@@ -564,7 +717,8 @@ def build(base_url: str | None = None) -> dict:
          f"<pre><code>{esc(citation)}</code></pre>",
          "<h2>Market families</h2>",
          table_html(["family", "records", "rule pages", "scopes"],
-                    [[f'<a href="{p}/index.html">{esc(FAMILY[p])} (<code>{p}</code>)</a>', esc(str(fam_counts[p])),
+                    [[f'<a href="{p}/index.html">{esc(FAMILY[p])} (<code>{p}</code>)</a> '
+                      f'<span lang="zh">{esc(zh["family"][p])}</span>', esc(str(fam_counts[p])),
                       esc(str(len([1 for k in groups if k[0] == p]))), esc(str(len(scopes_by_pfx[p])))] for p in PREFIXES]),
          "<h2>Verification levels</h2>",
          table_html(["level", "records", "meaning (README)"],
@@ -573,10 +727,19 @@ def build(base_url: str | None = None) -> dict:
          "<pre><code>pip install marina-rules\nmarina-rules query &lt;rule&gt; &lt;date&gt; &lt;scope&gt; [market]"
          "</code></pre>",
          '<p>Every rule page as text: <a href="llms.txt">llms.txt</a>. Manifest: <a href="site.json">site.json</a>.</p>']
-    files["index.html"] = page("marina-rules — point-in-time trading rules", "marina-rules",
-                               "\n".join(x for x in b if x), path="index.html", base_url=base_url,
-                               nav=[("marina-rules", None)],
-                               description=re.sub(r"[*`]", "", intro[0] + " " + intro[1]))
+    root_desc = intro_zh + " " + re.sub(r"[*`]", "", intro[0] + " " + intro[1])
+    root_extra = {"alternateName": f"Marina：{SITE_NAME_ZH}", "citation": citation, "sameAs": [REPO_URL, PYPI_URL],
+                  "keywords": ["point-in-time trading rules", "backtesting", "China A-shares", "price limit",
+                               "stamp duty", "tick size", "交易制度", "涨跌停", "涨跌幅限制", "印花税", "最小报价单位",
+                               "回测"]}
+    if base_url:
+        root_extra["distribution"] = [{"@type": "DataDownload", "encodingFormat": "application/json",
+                                       "contentUrl": base_url + "site.json"}]
+    files["index.html"] = page(f"marina-rules — point-in-time trading rules · {SITE_NAME_ZH}（涨跌停、印花税、最小报价单位）",
+                               "marina-rules", "\n".join(x for x in b if x), path="index.html", base_url=base_url,
+                               nav=[("marina-rules", None)], zh_line=intro_zh, description=root_desc,
+                               ld=dataset_ld("marina-rules", root_desc, base_url=base_url, path="index.html",
+                                             extra=root_extra))
     manifest_pages.append({"path": "index.html", "kind": "root"})
 
     # ---- llms.txt ----
@@ -589,7 +752,7 @@ def build(base_url: str | None = None) -> dict:
           "## Market families", ""]
     lt += [f"- [{FAMILY[p]} ({p})]({url(p + '/index.html')})" for p in PREFIXES]
     lt += ["", "## Rule pages (Markdown)", ""]
-    lt += [f"- [{x['rule']} · {x['scope']} · {x['prefix']}]({url(x['md'])})" for x in facts]
+    lt += [f"- [{x['rule']} · {x['scope']} · {x['prefix']}]({url(x['md'])}): {x['name_zh']}" for x in facts]
     files["llms.txt"] = "\n".join(lt) + "\n"
 
     if base_url:

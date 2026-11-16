@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: >-
+  If you use marina-rules, cite the exact rules your result ran under: the line printed by
+  `marina-rules version` or `marina_rules.citation()` (`rules: marina-rules@<version> sha256:<digest>`).
+  The version is deliberately not repeated in this file; a result is reproducible only with that line.
+title: "marina-rules: point-in-time exchange trading rules as data"
+abstract: >-
+  The exchange trading rules in force on each day, as data with sources: price limits, stamp duty and fees,
+  tick sizes, trading sessions and settlement for China A-shares, China futures, Hong Kong and US equities.
+  Every record states when the rule took effect and cites the official text it comes from, with a verbatim
+  quote and a content hash.
+type: dataset
+authors:
+  - family-names: Li
+    given-names: David
+repository-code: "https://github.com/David-Marina/marina-rules"
+url: "https://david-marina.github.io/marina-rules/"
+repository-artifact: "https://pypi.org/project/marina-rules/"
+license:
+  - CC0-1.0
+  - MIT
+keywords:
+  - point-in-time trading rules
+  - backtesting
+  - China A-shares
+  - price limits
+  - stamp duty
+  - tick size
+  - futures
+  - Hong Kong equities
+  - US equities

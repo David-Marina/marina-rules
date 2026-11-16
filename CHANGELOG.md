@@ -107,6 +107,16 @@ without `--strict`) can still be stamped, with a stamp that differs from the str
   `issue_regime` given, such a row gets its listing-day scope instead of `SCOPE_UNDETERMINED`.
 - `fee_check` counts a row as checked only when the statutory floor for its date was found; `tracking` counts only
   rows the checks ran on. A B-share row without a market is `MARKET_REQUIRED` instead of an uncaught `RuleConflict`.
+- Rule pages (the generated site) can be found in Chinese. Every page has a Chinese name in its title, its
+  description and a line under the heading — `创业板涨跌幅限制：10%→20%，2020-08-24 起 · price_limit_pct · chinext …`
+  — and the family tables list each scope's Chinese name. The names are display names kept in
+  `scripts/site_zh.json`; the values in that line are the page's own record values in `effective_from` order,
+  written only where the page has one unbroken series of plain values (230 of 479 pages), with the exchanges named
+  at each step when a rule was later extended to another exchange. Each page also carries Open Graph tags, and the
+  index and every rule page a schema.org `Dataset` description (JSON-LD: name, description, licence, version,
+  temporal coverage, the official source URLs under `isBasedOn`). The pages still run no script. `llms.txt` lists
+  the Chinese name after each link, and each `.md` page repeats the Chinese line.
+- `README.md` opens with the Chinese summary (it is the PyPI project description); `CITATION.cff` added.
 
 ## [2026.11.16] - 2026-11-16
 

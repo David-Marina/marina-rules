@@ -21,7 +21,9 @@ _spec.loader.exec_module(site)
 
 ALLOWED_TAGS = {"html", "head", "meta", "title", "style", "body", "main", "nav", "h1", "h2", "h3", "p", "a", "strong",
                 "em", "code", "pre", "span", "div", "table", "tr", "th", "td", "ul", "ol", "li", "dl", "dt", "dd",
-                "blockquote", "br", "link"}
+                "blockquote", "br", "link", "script"}
+LD_RE = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
+ZH_LINE_RE = re.compile(r'<h1>[^<]*</h1>\n<p lang="zh">([^<]*)</p>')
 
 
 def _tree(d):
@@ -235,7 +237,8 @@ def test_html_pages_are_well_formed_and_links_resolve(built, text):
         assert p.tags["h1"] == 1 and p.tags["title"] == 1 and p.tags["main"] == 1, k
         assert ("meta", {"charset": "utf-8"}) in p.attrs, k
         assert any(tag == "meta" and a.get("name") == "viewport" for tag, a in p.attrs), k
-        assert "<script" not in t and "@import" not in t and "src=" not in t, k
+        assert t.count("<script") == len(LD_RE.findall(t)) <= 1, k      # a JSON-LD data block, never a script
+        assert "@import" not in t and "src=" not in t, k
         anchors = set(re.findall(r' id="([^"]+)"', t))
         for href in p.links:
             if href.startswith(("http://", "https://")):
@@ -310,3 +313,123 @@ def test_index_counts_match_the_data(text):
     assert html.escape(mr.citation()) in t
     for level, n in Counter(r.verification for r in mr.records()).items():
         assert f"<td><code>{level}</code></td><td>{n}</td>" in t
+
+
+# --- Chinese names, share cards, dataset markup ----------------------------------------------------------------------
+def test_every_family_market_scope_and_rule_has_a_chinese_name_and_no_name_is_left_over():
+    zh = site.zh_names()
+    recs = mr.records()
+    scopes = {r.scope for r in recs} | {s for p in ("cn", "hk", "us") for s in mr.scopes(p)}
+    assert set(zh["scope"]) == scopes
+    assert set(zh["rule"]) == {r.rule for r in recs}
+    assert set(zh["market"]) == {m for r in recs for m in r.market.split("+")}
+    assert set(zh["family"]) == {"cn", "hk", "us"}
+    for names in (zh["scope"], zh["rule"], zh["market"], zh["family"], zh["unit"]):
+        assert all(isinstance(v, str) and v.strip() == v and v for v in names.values())
+    assert len(set(zh["scope"].values())) == len(zh["scope"])           # two scopes never share a name
+
+
+def test_every_page_has_a_chinese_line_and_a_share_card(text, manifest):
+    for k, t in text.items():
+        if not k.endswith(".html"):
+            continue
+        line = ZH_LINE_RE.search(t)
+        assert line and site.CJK_RE.search(line.group(1)), k
+        title = re.search(r"<title>([^<]*)</title>", t).group(1)
+        assert site.CJK_RE.search(title), k
+        for prop in ("og:type", "og:site_name", "og:title", "og:description", "og:locale"):
+            assert f'<meta property="{prop}" content="' in t, (k, prop)
+        assert f'<meta property="og:title" content="{title}">' in t, k
+        assert '<meta name="twitter:card" content="summary">' in t and "og:url" not in t, k
+    for p in _facts(manifest):
+        zh = site.zh_names()
+        name = site.zh_join(zh["scope"][p["scope"]], zh["rule"][p["rule"]])
+        assert p["name_zh"] == name and p["title"].startswith(name)
+        assert html.unescape(ZH_LINE_RE.search(text[p["path"]]).group(1)) in text[p["md"]]
+
+
+def test_the_chinese_title_states_the_record_values(text):
+    t = text["cn/chinext/price_limit_pct.html"]
+    assert "<title>创业板涨跌幅限制：10%→20%，2020-08-24 起 · price_limit_pct · chinext · China mainland (XSHE) — " in t
+    assert "历次取值：2009-10-30 起 10%；2020-08-24 起 20%。共 2 条" in t
+    assert mr.rule_at("price_limit_pct", "2020-08-21", "chinext", "XSHE") == 0.1
+    assert mr.rule_at("price_limit_pct", "2020-08-24", "chinext", "XSHE") == 0.2
+    # a rule later extended to another exchange: each step names its exchanges, the title dates the change of value
+    t = text["cn/stock/stamp_duty_sell.html"]
+    assert "<title>A 股股票印花税（卖出）：0.1%→0.05%，2023-08-28 起 · " in t
+    assert "2008-04-24 起 0.1%（上交所、深交所）；2021-11-15 起 0.1%（上交所、深交所、北交所）；" in t
+    t = text["cn/stock/transfer_fee_each_side.html"]
+    assert "2006-07-01 起 0.00255%（深交所）；2015-08-01 起 0.002%（上交所、深交所）" in t
+    # exchanges with different values are never merged; tables and words get a name but no values
+    assert "深交所：2006-07-01 起 0.01 港元；上交所：2006-07-01 起 0.001 美元" in text["cn/b_share/tick_size.html"]
+    assert "<title>B 股最小报价单位 · tick_size" in text["cn/b_share/tick_size.html"]
+    assert "历次取值" not in text["cn/stock/limit_price_rounding.html"]
+    assert "历次取值" not in text["hk/hk_stock/tick_size_table.html"]
+
+
+def test_every_value_in_a_chinese_line_is_a_record_of_that_page(text, manifest):
+    recs = {r.id: r for r in mr.records()}
+    zh = site.zh_names()
+    seen = 0
+    for p in _facts(manifest):
+        line = html.unescape(ZH_LINE_RE.search(text[p["path"]]).group(1))
+        if "历次取值：" not in line:
+            continue
+        rs = [recs[i] for i in p["record_ids"]]
+        assert not any(r.contracts for r in rs), p["path"]
+        assert max(rs, key=lambda r: r.effective_from).effective_to is None, p["path"]
+        body = line.split("历次取值：", 1)[1].split("。共 ", 1)[0]
+        steps = re.findall(r"(\d{4}-\d{2}-\d{2}) 起 ([^；（]+)", body)
+        assert steps, p["path"]
+        for frm, val in steps:
+            assert any(r.effective_from == frm and site.zh_value(zh, r.rule, r.value, r.unit) == val for r in rs), \
+                (p["path"], frm, val)
+            seen += 1
+    assert seen > 300
+
+
+def test_a_series_with_a_hole_an_end_or_a_contract_selector_gets_no_values():
+    zh = site.zh_names()
+
+    class R:
+        def __init__(self, frm, to, value, market="XSHE", contracts=None, unit=None):
+            self.effective_from, self.effective_to, self.value, self.market = frm, to, value, market
+            self.contracts, self.unit, self.rule = contracts, unit, "price_limit_pct"
+    ok = [R("2010-01-01", "2020-01-01", 0.1), R("2020-01-01", None, 0.2)]
+    assert site.zh_runs(zh, ok) == [("2010-01-01", "10%", "XSHE"), ("2020-01-01", "20%", "XSHE")]
+    assert site.zh_runs(zh, [R("2010-01-01", "2019-01-01", 0.1), R("2020-01-01", None, 0.2)]) is None      # hole
+    assert site.zh_runs(zh, [R("2010-01-01", "2020-01-01", 0.1), R("2015-01-01", None, 0.2)]) is None      # overlap
+    assert site.zh_runs(zh, [R("2010-01-01", "2020-01-01", 0.1)]) is None                                  # ended
+    assert site.zh_runs(zh, [R("2010-01-01", None, 0.1, contracts={"any": []})]) is None
+    assert site.zh_runs(zh, [R("2010-01-01", None, {"up": 0.1, "down": 0.1})]) is None
+    assert site.zh_runs(zh, [R("2010-01-01", None, True)]) is None
+    assert site.zh_value(zh, "stamp_duty_buy", 0.0, None) == "0%" and site.zh_value(zh, "tick_size", 0.001, "USD") == "0.001 美元"
+    assert site.zh_value(zh, "min_holding_days", 1, None) == "1" and site.zh_value(zh, "price_limit_pct", "unlimited", None) == "不设涨跌幅限制"
+    assert site.zh_value(zh, "limit_price_rounding", "half_up_2dp", None) is None
+
+
+def test_dataset_markup_is_valid_json_and_cannot_be_closed_by_a_record(built, text, manifest):
+    based = {k: v.decode("utf-8") for k, v in built["based"].items()}
+    for p in _facts(manifest) + [{"path": "index.html"}]:
+        k = p["path"]
+        (raw,) = LD_RE.findall(text[k])
+        assert "<" not in raw, k
+        d = json.loads(raw)
+        assert d["@context"] == "https://schema.org" and d["@type"] == "Dataset" and d["name"], k
+        assert 50 <= len(d["description"]) <= 5000, (k, len(d["description"]))
+        assert d["license"] == "https://creativecommons.org/publicdomain/zero/1.0/" and d["version"] == mr.VERSION
+        assert d["creator"]["name"] == "marina-rules" and d["isAccessibleForFree"] is True
+        assert "url" not in d and "distribution" not in d, k           # no absolute site URL without --base-url
+        b = json.loads(LD_RE.findall(based[k])[0])
+        assert b["url"].startswith("https://example.org/rules/") and b["distribution"][0]["contentUrl"] in \
+            {"https://example.org/rules/" + x for x in built["based"]}, k
+    chinext = json.loads(LD_RE.findall(text["cn/chinext/price_limit_pct.html"])[0])
+    assert chinext["alternateName"] == "创业板涨跌幅限制" and chinext["temporalCoverage"] == "2009-10-30/.."
+    assert chinext["spatialCoverage"] == "China mainland" and "涨跌幅限制" in chinext["keywords"]
+    urls = {s["url"] for r in mr.records() if r.scope == "chinext" and r.rule == "price_limit_pct" for s in r.sources}
+    assert set(chinext["isBasedOn"]) == urls
+    assert site.json_ld({"q": "</script><b>"}) == '{"q":"\\u003c/script>\\u003cb>"}'
+    scope_page = text["cn/chinext/index.html"]
+    assert not LD_RE.findall(scope_page) and "<title>创业板交易规则 · chinext" in scope_page
+    assert 'og:url" content="https://example.org/rules/cn/chinext/price_limit_pct.html"' in \
+        based["cn/chinext/price_limit_pct.html"]

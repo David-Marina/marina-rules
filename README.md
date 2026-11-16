@@ -1,5 +1,7 @@
 # Marina — point-in-time trading rules (marina-rules)
 
+> **中文简介** · A 股、期货、港股、美股**交易制度的历史数据**：涨跌停幅度（涨跌幅限制）、印花税和过户费的历次调整、最小报价单位、交易时段、T+N 交收——每条规则**从哪天起生效、依据哪份官方文件**，都有记录，附原文引文和内容哈希。回测按成交日取当天的规则，不把今天的规则写死；查不到就报错，不猜。给回测引擎和 AI Agent 用：`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`marina-check` 逐笔核对成交，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。`pip install marina-rules` · 中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md) · 每条规则一页的网页版：[david-marina.github.io/marina-rules](https://david-marina.github.io/marina-rules/)
+
 **Auditable backtests: the exchange trading rules in force on each day, as data with sources.**
 
 Price limits, fees, trading sessions, ticks, settlement — every record says *when* a rule took effect and *where* it was published. A backtest asks for the rule of each trade date instead of hard-coding today's; `marina-check` then verifies every fill against the rules of its day and, on a strict pass, emits a stamp that anyone holding the same fill log and the same rules version can recompute; `citation()` names the exact, byte-pinned rules a result ran under.
@@ -7,8 +9,6 @@ Price limits, fees, trading sessions, ticks, settlement — every record says *w
 What a stamp certifies is deliberately narrow: the fills respected these rules. It says nothing about look-ahead in prices, survivorship or overfitting. `as_of` closes one more gap: it answers only from rules that had been published by a given date, so a backtest cannot use a rule change before it was announced (a rule whose publication date was not located is refused, not assumed).
 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
-
-> **中文** · 市场交易规则的「tzdata」：涨跌幅、费用、交易时段、tick 等制度**从哪天起、依据什么**，每条记录都带官方原文出处、引文和内容哈希。它给回测引擎和 AI Agent 用——查不到就报错，不猜；`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md)。
 
 ```
 rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0
@@ -162,7 +162,7 @@ calendar; a security's board, ST status and listing day are the caller's to supp
 
 ### Cite it
 
-Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes.
+Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes. For a reference list, [`CITATION.cff`](https://github.com/David-Marina/marina-rules/blob/main/CITATION.cff) names the project; the version and digest still come from `mr.citation()`.
 
 ```
 rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0

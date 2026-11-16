@@ -176,3 +176,21 @@ def test_the_pages_workflow_builds_with_the_published_address():
     assert "branches: [main]" in wf and "actions/deploy-pages@" in wf
     for name in ("README.md", "llms.txt", "pyproject.toml"):
         assert "https://david-marina.github.io/marina-rules/" in _read(name), name
+
+
+def test_english_readme_opens_with_a_chinese_summary_that_carries_the_search_words():
+    # README.md is the PyPI project description: a Chinese reader must meet Chinese on the first screen
+    lines = _read("README.md").splitlines()
+    assert lines[0].startswith("# ") and lines[1] == "" and lines[2].startswith("> **中文简介**")
+    for word in ("交易制度", "涨跌停", "涨跌幅限制", "印花税", "历次调整", "最小报价单位", "回测", "pip install marina-rules"):
+        assert word in lines[2], word
+
+
+def test_citation_file_names_the_project_and_leaves_the_version_to_the_citation_line():
+    import yaml
+    cff = yaml.safe_load(_read("CITATION.cff"))
+    assert cff["cff-version"] == "1.2.0" and cff["type"] == "dataset" and cff["title"].startswith("marina-rules")
+    assert cff["authors"] and cff["message"].strip() and "citation()" in cff["message"]
+    assert cff["repository-code"] == "https://github.com/David-Marina/marina-rules"
+    assert "version" not in cff and "date-released" not in cff          # nothing here goes stale at a release
+    assert "/blob/main/CITATION.cff)" in _read("README.md")
