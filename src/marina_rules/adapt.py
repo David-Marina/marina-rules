@@ -399,23 +399,37 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
         row["price"] = _cell(r.get(cols["price"]))
         if _num(row["price"]) is None:
             _bump(problems, "price_not_a_number", i)
-        if "turnover" in cols and _num(r.get(cols["turnover"])) is not None:
-            row["turnover"] = _fmt(abs(_num(r.get(cols["turnover"]))))
+        # A cell that is present but cannot be read is passed through as written, like an unreadable date: the
+        # checker refuses the row (ROW_INVALID). Dropping it would turn "fee: nan" into "no fee given", which passes.
+        t_cell = _cell(r.get(cols["turnover"])) if "turnover" in cols else ""
+        if t_cell and _num(t_cell) is not None:
+            row["turnover"] = _fmt(abs(_num(t_cell)))
+        elif t_cell:
+            row["turnover"] = t_cell
+            _bump(problems, "turnover_not_a_number", i)
         elif qty is not None and _num(row["price"]) is not None:
             row["turnover"] = _fmt(abs(qty) * _num(row["price"]))
-        if "fee" in cols:
-            f = _num(r.get(cols["fee"]))
-            row["fee"] = "" if f is None else _fmt(abs(f))
-        elif "commission" in cols and "tax" in cols:
-            parts = [_num(r.get(cols[k])) for k in ("commission", "tax", "transfer_fee") if k in cols]
-            row["fee"] = "" if any(p is None for p in parts) else _fmt(sum(abs(p) for p in parts))
+        fee_cols = (["fee"] if "fee" in cols else
+                    [k for k in ("commission", "tax", "transfer_fee") if k in cols] if "commission" in cols and "tax" in cols
+                    else [])
+        cells = [_cell(r.get(cols[k])) for k in fee_cols]
+        unread = [x for x in cells if x and _num(x) is None]
+        if unread:
+            row["fee"] = unread[0]
+            _bump(problems, "fee_not_a_number", i)
+        elif cells and all(cells):                      # an empty part: no total can be formed, no fee is taken
+            row["fee"] = _fmt(sum(abs(_num(x)) for x in cells))
         for k in ("prev_close", "day_high", "day_low"):
             if k in cols:
                 row[k] = _cell(r.get(cols[k]))
         if "st" in cols:
-            row["st"] = _bool(r.get(cols["st"]))
+            row["st"] = _bool(r.get(cols["st"])) or _cell(r.get(cols["st"]))
+            if row["st"] not in ("", "true", "false"):
+                _bump(problems, "st_not_read", i)
         if "list_date" in cols:
-            row["list_date"] = to_iso(r.get(cols["list_date"])) or ""
+            row["list_date"] = to_iso(r.get(cols["list_date"])) or _cell(r.get(cols["list_date"]))
+            if row["list_date"] and to_iso(row["list_date"]) is None:
+                _bump(problems, "list_date_not_read", i)
         for k in ("scope", "board"):       # a table that already names a scope or a board keeps it
             if k in cols and _cell(r.get(cols[k])):
                 row[k] = _cell(r.get(cols[k]))
@@ -551,6 +565,19 @@ def read_table(path: str) -> list:
     head = text.split("\n", 1)[0]
     delim = "\t" if head.count("\t") > head.count(",") else ","
     return list(csv.DictReader(io.StringIO(text, newline=""), delimiter=delim))
+
+
+def dict_rows(reader, path: str) -> list:
+    """The rows of a ``csv.DictReader``, after refusing a header that names a column twice: a dict keeps only the
+    last of two cells, so ``fee,turnover,fee`` would silently drop the first fee. Used for the checker's own row
+    format (``marina-check FILLS.csv``); an engine's export may repeat a name (RQAlpha writes ``datetime`` twice,
+    as index and as column) and is read with ``read_table``, where the last column of a repeated name is the one read."""
+    names = [n.strip() for n in (reader.fieldnames or []) if n is not None]
+    twice = sorted({n for n in names if n and names.count(n) > 1})
+    if twice:
+        raise ValueError(f"{path}: the header names a column more than once ({', '.join(twice)}); "
+                         "keep one column per name")
+    return list(reader)
 
 
 def formats_help() -> str:

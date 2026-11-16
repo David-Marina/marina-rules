@@ -257,9 +257,12 @@ turnover; canonical form in `marina_rules/check.py`). The stamp says nothing abo
 China A-share fills only: a Hong Kong or US row is reported as `MARKET_UNSUPPORTED` and not checked.
 A stamp never rests on your own standard or on unreadable input: a `decimals` cell that is not the recorded tick
 makes the run relaxed (no stamp; `decimals_override`); a `scope` cell contradicted by the row's own `st` / `board` /
-listing cells is `SCOPE_CONTEXT_CONFLICT`; a `fee` or `turnover` that is present but not a number (`nan`) is
-`ROW_INVALID`. Fees are checked only where both `fee` and `turnover` are given — read `fee_check` and do not report
-"fees verified" for rows it counts as not checked.
+listing cells or by its stock code is `SCOPE_CONTEXT_CONFLICT`; two cells of a row that state different things
+(`st` and `st_status`, a `market` that is not the code's), and a `fee`, `turnover` or `list_date` that is present
+but unreadable (`nan`), are `ROW_INVALID`; rows of one code on one day with different previous closes are
+`ROWS_DISAGREE`. Fees are checked only where both `fee` and `turnover` are given, the price grid only where a tick
+is recorded — read `fee_check` and `tick_check` and do not report "fees verified" or "ticks verified" for rows
+they count as not checked. `columns_not_read` lists the input columns that were ignored.
 
 - `prev_close` must be on the same basis as `price`: unadjusted; on an ex-rights day the exchange's ex-rights
   reference price. Never an adjusted close. `hints` in the output names codes whose rows look off by a constant factor.

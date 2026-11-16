@@ -12,7 +12,8 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
   * market      XSHG | XSHE | BJSE …; needed where a rule differs by exchange (one-tick floor, B-share tick)
   * decimals    optional rounding override for the limit price; also used as the tick for PRICE_OFF_TICK. It is
                 accepted as the exchange's grid only when 10^-decimals IS the tick recorded for the row's scope, date
-                and market. Any other value is the caller's own grid: the row is checked on it, but the run is
+                and market (where none is recorded for the row: 0.01, the grid the limit prices are rounded at
+                in that case). Any other value is the caller's own grid: the row is checked on it, but the run is
                 relaxed and gets no stamp (``decimals_override`` counts such rows). Not an integer from 0 to 8:
                 ROW_INVALID.
   * scope       a China A-share scope with a price-limit record (``--list-scopes`` prints them all from the registry:
@@ -21,9 +22,12 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 ``listing_day_index``, ``issue_regime``, ``delisting_day_index`` …), the scope is chosen with
                 ``marina_rules.equity.pick_scope`` from the registry's own asserts; without a ``board`` cell the board
                 comes from ``board_for_code(code)`` (a code-prefix convenience, A-share stocks only). A row with
-                neither scope nor context keeps the old default ``stock``. A row that names a scope AND carries
-                context is checked for agreement: context cells that contradict the named scope (scope
-                ``main_board`` with ``st`` true) are SCOPE_CONTEXT_CONFLICT, as ``contract.resolve`` refuses them.
+                neither scope nor context keeps the old default ``stock``. A row that names a scope is checked
+                for agreement with what the row itself says about the instrument: its context cells (any key a
+                scope in the registry requires or asserts), ``list_date`` where it decides the listing-day index,
+                and the board of a recognised stock code. A contradiction (scope ``main_board`` with ``st`` true;
+                an IPO scope of the main board on a ChiNext code) is SCOPE_CONTEXT_CONFLICT, as
+                ``contract.resolve`` refuses such context. See ``scope_conflict`` and ``row_problems``.
   * list_date   optional listing date (YYYY-MM-DD or YYYYMMDD), used only when ``listing_day_index`` is empty. Marina
                 has no trading calendar and never computes a trading-day index: a trade more than
                 LIST_DATE_MARGIN_DAYS (60) calendar days after ``list_date`` is past every listing window (the
@@ -49,12 +53,17 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
 Checks (each produces a finding on failure):
   ROW_INVALID             missing date/code/side, or price / prev_close missing, not a finite number (nan, inf,
                           empty) or not greater than 0 — reported even when the band is unlimited; a fee, turnover,
-                          decimals or scope-context cell that is present but cannot be read; or a date that is not
-                          YYYY-MM-DD (20200102, 2020/1/2): dates are compared as ISO text, so another spelling
-                          would be checked against the wrong rule interval — the row is refused, not guessed
+                          decimals, list_date or scope-context cell that is present but cannot be read; two cells
+                          of the row that state different things (``st`` and ``st_status``; a market or board
+                          that is not the stock code's; a trade before its list_date); or a date that is not
+                          YYYY-MM-DD (20200102, 2020/1/2; a time after the day is accepted): dates are compared
+                          as ISO text, so another spelling would be checked against the wrong rule interval — the
+                          row is refused, not guessed
   PRICE_OFF_TICK          price is not an integer multiple of the tick in force for the scope's instrument family
                           (tick_size: stock 0.01, fund 0.001, convertible 0.001 from 2022-08-01 …), compared in
-                          Decimal on the price as written. Skipped when no tick is recorded for that date.
+                          Decimal on the price as written. Skipped when no tick is recorded for that date (in a
+                          strict run: no record that is not ``unverified``); ``tick_check`` in the output counts
+                          the rows checked and not checked, and a stamp says nothing about the grid of the latter.
   LIMIT_BUY_ABOVE_UP      buy price > limit-up price in force that day
   LIMIT_SELL_BELOW_DOWN   sell price < limit-down price
   PRICE_OUTSIDE_BAND      any fill outside [limit_down, limit_up]
@@ -66,8 +75,11 @@ Checks (each produces a finding on failure):
                           XNAS, us_stock, us_etf): these checks are A-share only, so no other check is run on the row
   SCOPE_UNDETERMINED      the scope cell is empty and the row's context fits no scope, or several (never guessed);
                           no other check is run on the row
-  SCOPE_CONTEXT_CONFLICT  the scope cell names a scope that the row's own context cells contradict; no other check
-                          is run on the row
+  SCOPE_CONTEXT_CONFLICT  the scope cell names a scope that the row itself contradicts: its context cells, its
+                          list_date, or the board of its stock code (see ``scope``, above); no other check runs
+                          on the row
+  ROWS_DISAGREE           a row of the same code on the same day as an earlier row, with another previous close,
+                          scope or market: one of the two is wrong, so the later one is refused
   PRICE_OUTSIDE_DAY_RANGE price outside [day_low, day_high] of the row (data consistency, not an exchange rule)
   DAY_RANGE_INVALID       day_high / day_low given but not both finite, positive and day_low <= day_high
 
@@ -111,7 +123,8 @@ Tracking (not findings, never affect the stamp or the exit code): ``tracking`` c
 the ``tracked_through`` date of their market and scope (``rows_beyond_tracked_through``) and the rows whose market is not
 tracked at all (``rows_untracked``; a row without a market counts here), and lists ``tracked_through`` per market seen.
 Such rows were checked against open-ended rules carried forward past the date the official sources were last checked
-for changes (docs/SCHEMA.md "Tracking registry"). Rows reported MARKET_UNSUPPORTED or SCOPE_UNDETERMINED are not counted.
+for changes (docs/SCHEMA.md "Tracking registry"). Only rows the checks ran on are counted: not a row refused
+before them (ROW_INVALID, MARKET_UNSUPPORTED, SCOPE_UNDETERMINED, SCOPE_CONTEXT_CONFLICT, ROWS_DISAGREE).
 
 Hints (not findings, never affect the stamp): ``hints`` lists codes whose rows outside the band (source ``band``,
 ratio = price / prev_close) or outside the day's range (source ``day_range``, ratio = price / violated day bound)
@@ -126,7 +139,10 @@ first HINT_ROW_INDEXES (20) row indexes (all with ``--rows``) and the total in `
 
 Output: JSON with findings, counts, the dataset digest, and a ``rules-verified`` stamp when a strict run (no
 relaxation) has zero findings. The stamp is sha256(dataset_digest ‖ "\n" ‖ sha256(canonical fill log)) and can be recomputed by
-anyone holding the same log and the same rules version. It commits to every input that can change a check.
+anyone holding the same log and the same rules version. It commits to every input a check is computed from;
+context cells next to an explicit scope, ``list_date`` and the other rows of the log can only stop a row (a finding,
+so no stamp), never change what a stamped row was checked against. ``columns_not_read`` lists the input columns
+the checker ignored.
 
 Canonical fill log (``CANON_VERSION`` = 2): the UTF-8 bytes of
     marina-check-canon/2 strict=<0|1>\n
@@ -150,11 +166,13 @@ import math
 import sys
 from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
+from functools import lru_cache
 
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_size,
                tracked_through, VERSION, _agreed_tick, _check_date, statutory_fee_floor)
-from .equity import (LIST_DATE_MARGIN_DAYS, board_for_code, checkable_scopes, context_keys, equity_scopes,
-                     listing_index_from_list_date, parse_context_value, pick_scope, seasoned_listing_day_index)
+from .equity import (LIST_DATE_MARGIN_DAYS, _iso, all_context_keys, board_for_code, checkable_scopes, context_keys,
+                     equity_scopes, listing_index_from_list_date, parse_context_value, pick_scope,
+                     seasoned_listing_day_index)
 
 CANON_VERSION = 2
 CANON_FIELDS = ("date", "code", "side", "price", "prev_close", "scope", "market", "decimals", "fee", "turnover")
@@ -171,7 +189,16 @@ TOP_CODES = 20                     # default length of summary.by_code
 TOLERANCE_BUCKETS = (0.1, 0.25, 0.5, 1.0)   # summary.within_tolerance_excess: |excess_pct| <= each, then above
 CONTEXT_ALIASES = {"st": "st_status"}
 MAX_DECIMALS = 8                   # a ``decimals`` cell must be an integer from 0 to this
-FALLBACK_TICK = 0.01               # what limit_price rounds to when no tick is recorded (pre-2006 A-share, G-0005)
+FALLBACK_TICK = 0.01               # what limit_price rounds to when no tick is recorded for the row (any family)
+B_SHARE_MARKETS = {"900": "XSHG", "200": "XSHE"}   # code prefix → exchange, for rows whose scope is a B-share scope
+ROW_INVALID_OPENING = "need date, code, side (buy|sell), and finite numeric price and prev_close: "
+
+
+@lru_cache(maxsize=None)
+def READ_COLUMNS() -> frozenset:
+    """The column names marina-check reads; any other column of the input is listed in ``columns_not_read``."""
+    return frozenset(CANON_FIELDS + DAY_RANGE_FIELDS + tuple(all_context_keys()) + tuple(CONTEXT_ALIASES)
+                     + ("list_date",))
 
 
 @dataclass
@@ -221,9 +248,10 @@ def _off_tick(price_text: str, tick: float) -> bool:
     return t > 0 and p % t != 0
 
 
-def _row_context(r: dict) -> dict:
-    """Non-empty scope-context cells of a row (registry keys, ``st`` → ``st_status``, plus ``list_date``), as written."""
-    keys = set(context_keys()) | {"list_date"}
+def _row_context(r: dict, keys=None) -> dict:
+    """Non-empty scope-context cells of a row (registry keys, ``st`` → ``st_status``, plus ``list_date``), as written.
+    ``keys`` defaults to the keys the stock scopes use (``context_keys()``), which is what a scope is chosen from."""
+    keys = set(context_keys() if keys is None else keys) | {"list_date"}
     out = {}
     for k, v in r.items():
         if k is None:
@@ -232,6 +260,59 @@ def _row_context(r: dict) -> dict:
         if name in keys and _s(v) != "":
             out[name] = _s(v)
     return out
+
+
+def _same_cell(key: str, a: str, b: str) -> bool:
+    try:
+        return parse_context_value(key, a) == parse_context_value(key, b)
+    except ValueError:
+        return a == b
+
+
+def row_problems(r: dict, c: dict) -> list:
+    """What makes a row unusable before any rule is looked up: cells that cannot be read, and cells of the same row
+    that state two different things. Each is a reason for ROW_INVALID; none is ever skipped or settled by picking one
+    of the two.
+
+    * ``code`` is empty;
+    * ``date`` carries something after the day that is not a time (``2024-03-01XYZ``; ``2024-03-01 09:31:00`` and
+      ``2024-03-01T09:31`` are read as the day);
+    * two columns give the same context key different values (``st`` and ``st_status``);
+    * ``list_date`` is not a date, or the trade is dated before it;
+    * the code is a recognised A-share stock code (``board_for_code``) and the ``market`` cell names another
+      exchange, or the ``board`` cell names another board."""
+    bad = []
+    raw_date = _s(r.get("date"))
+    if len(raw_date) > 10 and raw_date[10] not in " T":
+        bad.append(f"date {raw_date!r} has characters after the day that are not a time")
+    if not c["code"]:
+        bad.append("code is missing")
+    seen: dict = {}
+    for k, v in r.items():
+        if k is None or _s(v) == "":
+            continue
+        col = str(k).strip()
+        name = CONTEXT_ALIASES.get(col, col)
+        if name in seen and not _same_cell(name, seen[name][1], _s(v)):
+            bad.append(f"columns {seen[name][0]!r} and {col!r} give {name} two values "
+                       f"({seen[name][1]!r}, {_s(v)!r})")
+        seen.setdefault(name, (col, _s(v)))
+    ld = seen.get("list_date")
+    if ld is not None:
+        iso = _iso(ld[1])
+        if iso is None:
+            bad.append(f"list_date {ld[1]!r} is not a date (YYYY-MM-DD or YYYYMMDD)")
+        elif c["date"] and c["date"] < iso:
+            bad.append(f"trade date {c['date']} is before list_date {iso}")
+    bm = board_for_code(c["code"])
+    if bm is not None:
+        # only among A-share exchanges: another market's row is MARKET_UNSUPPORTED, whatever its code looks like
+        if c["market"] and market_prefix_for(c["market"]) == "cn" and bm[1] not in c["market"].split("+"):
+            bad.append(f"market {c['market']!r} contradicts code {c['code']!r}, a {bm[1]} code")
+        board = seen.get("board")
+        if board is not None and board[1] != bm[0]:
+            bad.append(f"board {board[1]!r} contradicts code {c['code']!r}, a {bm[0]} code")
+    return bad
 
 
 def derive_scope(r: dict, date: str, assume_seasoned: bool = False) -> tuple:
@@ -262,7 +343,7 @@ def derive_scope(r: dict, date: str, assume_seasoned: bool = False) -> tuple:
             res = pick_scope(date, **ctx)      # a scope that needs no listing index may still fit
             return res["scope"], f"{res['reason']}; {why}" if res["scope"] is None else res["reason"], False
         ctx["listing_day_index"] = idx
-        note = f" (listing_day_index ≥ {idx} from list_date: {why})"
+        note = f" (listing_day_index {'=' if idx == 1 else '≥'} {idx} from list_date: {why})"
     res = pick_scope(date, **ctx)
     if res["scope"] is None and assume_seasoned and "listing_day_index" not in ctx and list_date is None:
         res2 = pick_scope(date, **dict(ctx, listing_day_index=seasoned_listing_day_index()))
@@ -350,23 +431,35 @@ def _uses_day_range(rows: list) -> bool:
     return any(_s(r.get(k)) != "" for r in rows for k in DAY_RANGE_FIELDS)
 
 
-def scope_conflict(r: dict, scope: str, date: str) -> tuple:
-    """(check, detail) when the context cells of a row contradict the scope its ``scope`` cell names, else None.
+def scope_conflict(r: dict, scope: str, date: str, code: str = "", market: str = "") -> tuple:
+    """(check, detail) when what a row says about the instrument contradicts the scope its ``scope`` cell names,
+    else None.
 
-    A row may state its scope and also carry context (``board``, ``st`` / ``st_status``, ``listing_day_index``,
-    ``list_date`` …). The explicit scope decides which rules are checked, so cells that say the instrument is
-    something else (scope ``main_board`` with ``st_status`` true) must stop the row, exactly as
-    ``contract.resolve`` refuses such context. Only cells the row supplies are compared, against the scope's
-    ``asserts`` in the registry; a key the row leaves out is not demanded here. ``list_date`` counts only when the
-    trade is far enough after it to place the row past every listing window. A cell that cannot be read is
-    ROW_INVALID; a scope that is not in the registry is left to RULE_MISSING."""
+    A row may state its scope and also say what the instrument is: context cells (``board``, ``st`` / ``st_status``,
+    ``listing_day_index``, ``fund_constituents`` … — every key some scope in the registry requires or asserts),
+    ``list_date``, and the code itself. The explicit scope decides which rules are checked, so a row that says the
+    instrument is something else (scope ``main_board`` with ``st_status`` true; scope ``ipo_first5_main`` on a
+    ChiNext code) must stop, as ``contract.resolve`` refuses such context. Compared against the scope's ``asserts``
+    in the registry:
+
+    * the context cells the row supplies — a key the row leaves out is not demanded here;
+    * ``list_date``, when ``listing_day_index`` is empty and the date decides the index: the trade is on it (listing
+      day 1) or far enough after it to be past every listing window;
+    * the board of a recognised A-share stock code (``board_for_code``), when the row has no ``board`` cell.
+
+    A B-share scope on a 900… / 200… code whose ``market`` cell names the other exchange is ROW_INVALID, as is a
+    context cell that cannot be read. A scope that is not in the registry is left to RULE_MISSING."""
     from .contract import check_context   # late: contract imports this package
     reg = scopes().get(scope)
     if reg is None:
         return None
-    raw = _row_context(r)
+    if "b_share" in scope and market:
+        home = B_SHARE_MARKETS.get(code[:3]) if code[:6].isdigit() else None
+        if home is not None and home not in market.split("+"):
+            return "ROW_INVALID", f"market {market!r} contradicts code {code!r}, a {home} B-share code"
+    raw = _row_context(r, all_context_keys())
     list_date = raw.pop("list_date", None)
-    ctx = {}
+    ctx, origin = {}, {}
     try:
         for k, v in raw.items():
             ctx[k] = parse_context_value(k, v)
@@ -375,13 +468,18 @@ def scope_conflict(r: dict, scope: str, date: str) -> tuple:
     if "listing_day_index" not in ctx and list_date is not None:
         idx, _why = listing_index_from_list_date(date, list_date)
         if idx is not None:
-            ctx["listing_day_index"] = idx
+            ctx["listing_day_index"], origin["listing_day_index"] = idx, f" (from list_date {list_date})"
+    if "board" not in ctx:
+        bm = board_for_code(code)
+        if bm is not None:
+            ctx["board"], origin["board"] = bm[0], f" (from code {code})"
     _missing, conflicts = check_context(reg.get("asserts") or {}, ctx, date)
     if not conflicts:
         return None
     return "SCOPE_CONTEXT_CONFLICT", (
-        f"scope cell says {scope!r} but the row's own context contradicts it: " + "; ".join(
-            f"{c['key']}={c['supplied']!r} where {scope} asserts {c['scope_asserts']!r}" for c in conflicts) +
+        f"scope cell says {scope!r} but the row itself contradicts it: " + "; ".join(
+            f"{c['key']}={c['supplied']!r}{origin.get(c['key'], '')} where {scope} asserts {c['scope_asserts']!r}"
+            for c in conflicts) +
         " — correct the scope, or leave the scope cell empty to have it chosen from the context")
 
 
@@ -408,7 +506,9 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
     buckets: dict = {}
     out_of_range: dict = {}
     n_flagged = n_tol = n_assumed = n_not_st = 0
-    n_dec = n_fee = n_no_fee = 0
+    n_dec = n_fee = n_no_fee = n_tick = n_no_tick = 0
+    same_day: dict = {}                # (code, date) → (row, prev_close, scope, market) of its first checked row
+    columns: dict = {}
     trk_beyond = trk_untracked = 0
     trk_dates: dict = {}
     head = (f"marina-check-canon/3 strict={int(bool(strict))} day_range=1\n" if day_range
@@ -418,6 +518,9 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         c = canonical_row(r)
         for k in DAY_RANGE_FIELDS:
             c[k] = _s(r.get(k))
+        for k in r:
+            if k not in columns:
+                columns[k] = None
         row_f: list[dict] = []
         within: list = []
         derived = assumed = not_st = False
@@ -426,6 +529,11 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 _check_date(c["date"])
             except ValueError as e:
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "ROW_INVALID", str(e))))
+        if not row_f:
+            bad = row_problems(r, c)
+            if bad:
+                row_f.append(_finding(Finding(i, c["code"], c["date"], "ROW_INVALID",
+                                              ROW_INVALID_OPENING + "; ".join(bad))))
         if not row_f and not _s(r.get("scope")) and _row_context(r):
             sc, why, assumed = derive_scope(r, c["date"], assume_seasoned)
             if sc is None and assume_not_st and "st_status" not in _row_context(r):
@@ -437,10 +545,25 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "SCOPE_UNDETERMINED", why)))
             else:
                 c["scope"] = sc
-        elif not row_f and _s(r.get("scope")) and _row_context(r):
-            bad = scope_conflict(r, c["scope"], c["date"])
+        elif not row_f and _s(r.get("scope")):
+            bad = scope_conflict(r, c["scope"], c["date"], c["code"], c["market"])
             if bad:
-                row_f.append(_finding(Finding(i, c["code"], c["date"], bad[0], bad[1])))
+                row_f.append(_finding(Finding(i, c["code"], c["date"], bad[0],
+                                              (ROW_INVALID_OPENING if bad[0] == "ROW_INVALID" else "") + bad[1])))
+        if not row_f and _f(c["prev_close"]) is not None:
+            # Fills of one instrument on one day share one previous close, one scope and one exchange.
+            mine = (i, _f(c["prev_close"]), c["scope"], c["market"])
+            first = same_day.setdefault((c["code"], c["date"]), mine)
+            diff = [n for n, a, b in (("prev_close", first[1], mine[1]), ("scope", first[2], mine[2]),
+                                      ("market", first[3], mine[3]))
+                    if (abs(a - b) > 1e-9 if n == "prev_close" else a != b)]
+            if diff:
+                row_f.append(_finding(Finding(i, c["code"], c["date"], "ROWS_DISAGREE",
+                                              f"row {first[0]} is the same code on the same day with another " +
+                                              ", ".join(f"{n} ({first[1 + ('prev_close', 'scope', 'market').index(n)]!r}"
+                                                        f" there, {mine[1 + ('prev_close', 'scope', 'market').index(n)]!r} here)"
+                                                        for n in diff) +
+                                              ": one of the two rows is wrong, so neither can be taken as checked")))
         canon.update((json.dumps([c[k] for k in fields], ensure_ascii=False, separators=(",", ":")) + "\n").encode())
         date, code, side, scope = c["date"], c["code"], c["side"], c["scope"]
         excesses: list = []
@@ -451,7 +574,9 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
             if "fee_checked" in flags:
                 n_fee += flags["fee_checked"]
                 n_no_fee += not flags["fee_checked"]
-            if date and not any(f["check"] == "MARKET_UNSUPPORTED" for f in row_f):
+                n_tick += flags["tick_checked"]
+                n_no_tick += not flags["tick_checked"]
+            if date and flags:   # rows the checks ran on; a row refused before them rests on no rule
                 mk = c["market"] or None
                 key = (mk, scope)
                 if key not in trk_dates:
@@ -495,6 +620,8 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 st["decimals_override"] = True
             if flags.get("fee_checked"):
                 st["fee_checked"] = True
+            if flags and not flags["tick_checked"]:
+                st["tick_not_checked"] = True
             row_status.append(st)
     dg = dataset_digest()
     relaxed = relaxed or n_dec > 0      # a row that sets its own price grid is not checked against the exchange's
@@ -527,8 +654,19 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
         "assumed_not_st": n_not_st,
         "decimals_override": n_dec,
         "fee_check": {"rows_checked": n_fee, "rows_not_checked": n_no_fee,
-                      "note": "the fee is checked only on rows that give both fee and turnover; for the other rows "
-                              "the result (and a stamp) says nothing about fees"},
+                      "note": "the fee is checked only on rows that give both fee and turnover, against the "
+                              "statutory components recorded for the day; for the other rows the result (and a "
+                              "stamp) says nothing about fees. Rows refused before the checks (ROW_INVALID, a scope "
+                              "finding, ROWS_DISAGREE, MARKET_UNSUPPORTED) are in neither count"},
+        "tick_check": {"rows_checked": n_tick, "rows_not_checked": n_no_tick,
+                       "note": "the price grid is checked against the tick Marina records for the row's instrument "
+                               "family, exchange and date (in a strict run: a record that is not unverified). The "
+                               "rows not checked are those with no such record (their limit prices are rounded at "
+                               "0.01), rows that bring their own decimals (decimals_override), and every row of a "
+                               "run without the tick check; for them the result (and a stamp) says nothing about "
+                               "the price grid. Rows refused before the checks are in neither count"},
+        "columns_not_read": sorted(str(k) for k in columns
+                                   if k is not None and str(k).strip() not in READ_COLUMNS()),
         "summary": summary,
         "hints": _basis_hints(out_of_range, per_row),
         "tracking": {"rows_beyond_tracked_through": trk_beyond, "rows_untracked": trk_untracked,
@@ -573,6 +711,8 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
     bad = []
     if not date:
         bad.append("date is missing")
+    if not code:
+        bad.append("code is missing")
     if side not in ("buy", "sell"):
         bad.append(f"side {c['side']!r} is not buy or sell")
     for name, v in (("price", price), ("prev_close", pc)):
@@ -594,7 +734,7 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
     if c["turnover"] and (turnover is None or turnover < 0):
         bad.append(f"turnover {c['turnover']!r} is not a finite number >= 0")
     if bad:
-        add("ROW_INVALID", "need date, code, side (buy|sell), and finite numeric price and prev_close: " + "; ".join(bad))
+        add("ROW_INVALID", ROW_INVALID_OPENING + "; ".join(bad))
         return {}
     # The recorded tick is looked up even when the row brings its own ``decimals``: an override is accepted as the
     # exchange's grid only when it IS the recorded one. Any other value (finer, coarser, or where the tick differs
@@ -607,7 +747,7 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
         conflict = e
     except KeyError:
         recorded = None   # no tick recorded for this date (e.g. before 2006-07-01): cannot judge, not a finding
-    override = False
+    override = tick_checked = False
     if dec is not None:
         basis = recorded if recorded is not None else (None if conflict else FALLBACK_TICK)
         override = basis is None or not math.isclose(10.0 ** -dec, basis, rel_tol=1e-9)
@@ -618,8 +758,13 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
             add("MARKET_REQUIRED", f"tick differs by exchange: {conflict}")
         if tick is not None and _off_tick(c["price"], tick):
             add("PRICE_OFF_TICK", f"price {c['price']} is not a multiple of tick {tick}")
+        tick_checked = recorded is not None and not override     # the grid checked is the recorded one
     try:
         band = limit_price(pc, scope, date, market=market, decimals=dec, strict=strict)
+    except RuleConflict as e:   # the band or its rounding differs by exchange and the row names none
+        if not any(f["check"] == "MARKET_REQUIRED" for f in row_f):
+            add("MARKET_REQUIRED", str(e))
+        band = None
     except KeyError as e:
         add("RULE_MISSING", str(e))
         band = None
@@ -659,15 +804,16 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
                 within.append(dict(check="PRICE_OUTSIDE_DAY_RANGE", **nums))
             else:
                 add("PRICE_OUTSIDE_DAY_RANGE", f"{price} not in the day's range [{lo}, {hi}]", nums)
-    fee_checked = fee is not None and turnover is not None
-    if fee_checked:
+    fee_checked = False
+    if fee is not None and turnover is not None:
         try:
             stat = statutory_fee_floor(turnover, side, date, market, strict=strict)
+            fee_checked = True
             if fee + 1e-6 < stat:
                 add("FEE_BELOW_STATUTORY", f"fee {fee:.2f} < statutory minimum {stat:.2f}")
         except KeyError as e:
             add("RULE_MISSING", str(e))
-    return {"decimals_override": override, "fee_checked": fee_checked}
+    return {"decimals_override": override, "fee_checked": fee_checked, "tick_checked": tick_checked}
 
 
 def scope_help() -> str:
@@ -739,7 +885,7 @@ def main(argv: list[str] | None = None) -> int:
             rows, report = adapt.adapt_files(paths[0], adapter)
         else:
             with open(paths[0], newline="", encoding="utf-8-sig") as fh:
-                rows = list(csv.DictReader(fh))
+                rows = adapt.dict_rows(csv.DictReader(fh), paths[0])
     except OSError as e:
         print(f"marina-check: cannot read {e.filename or paths[0]}: {e.strerror}", file=sys.stderr); return 2
     except ValueError as e:

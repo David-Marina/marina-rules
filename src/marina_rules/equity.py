@@ -69,6 +69,18 @@ def context_keys() -> tuple:
     return tuple(keys)
 
 
+@lru_cache(maxsize=None)
+def all_context_keys() -> tuple:
+    """Every context key a scope in the registry requires or asserts — ``context_keys()`` plus the keys of the fund
+    and other non-stock scopes (``fund_constituents``, ``fund_type`` …). ``marina-check`` compares a row that names
+    its scope against all of them."""
+    keys: dict = dict.fromkeys(context_keys())
+    for spec in scopes("cn").values():
+        for k in list(spec["requires"]) + list((spec.get("asserts") or {}).keys()):
+            keys[k] = None
+    return tuple(keys)
+
+
 def _entries(spec):
     return spec if isinstance(spec, list) else [spec if isinstance(spec, dict) else {"eq": spec}]
 
@@ -77,7 +89,7 @@ def _entries(spec):
 def context_kind(key: str) -> str:
     """'bool', 'int' or 'str': the value type the registry's asserts use for ``key`` (for parsing CSV text)."""
     reg = scopes("cn")
-    for s in equity_scopes():
+    for s in list(equity_scopes()) + [x for x in reg if x not in equity_scopes()]:
         spec = (reg[s].get("asserts") or {}).get(key)
         if spec is None:
             continue
@@ -214,7 +226,8 @@ def listing_index_from_list_date(trade_date: str, list_date) -> tuple:
     """(listing_day_index or None, reason) from a listing date, without a trading calendar.
 
     More than ``LIST_DATE_MARGIN_DAYS`` calendar days after ``list_date`` → ``seasoned_listing_day_index()`` (past
-    every listing window). Within the margin → None: the trading-day index is unknown, give ``listing_day_index``.
+    every listing window). On ``list_date`` itself → 1: the listing day is trading day 1 by definition. Otherwise
+    within the margin → None: the trading-day index is unknown, give ``listing_day_index``.
     ``list_date`` accepts YYYY-MM-DD or YYYYMMDD; an unparsable one or a trade before listing → None."""
     ld, td = _iso(list_date), _iso(trade_date)
     if ld is None or td is None:
@@ -224,6 +237,8 @@ def listing_index_from_list_date(trade_date: str, list_date) -> tuple:
         return None, f"trade date {td} is before list_date {ld}"
     if days > LIST_DATE_MARGIN_DAYS:
         return seasoned_listing_day_index(), f"{days} calendar days after list_date {ld} (> {LIST_DATE_MARGIN_DAYS})"
+    if days == 0:
+        return 1, f"the trade is on list_date {ld}: listing day 1"
     return None, (f"only {days} calendar days after list_date {ld} (≤ {LIST_DATE_MARGIN_DAYS}): the trading-day index "
                   "is unknown without a calendar — give listing_day_index")
 

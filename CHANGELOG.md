@@ -19,33 +19,72 @@ How to read an entry:
 
 ### Corrected (re-run needed)
 
-Three ways in which `marina-check` / `check_rows` issued a `rules-verified` stamp it should have withheld. All
-three are present in 2026.11.13 and 2026.11.16. **Re-run** any log that was stamped by those releases and has a
-`decimals` column, context columns next to an explicit `scope`, or a `fee` / `turnover` column that may hold
-non-numbers; a stamp from them on such a log is not evidence of compliance.
+`marina-check` / `check_rows` issued a `rules-verified` stamp in cases where it should have withheld it. Three were
+reported by an outside tester; an independent review of the fix found more of the same kind. All of them are present
+in 2026.11.13 and 2026.11.16. The principle behind every item: a changed standard, inputs that contradict each
+other, and input that cannot be read never get the stamp a complete, valid check gets. **Re-run** any log those
+releases stamped; a stamp from them is not evidence of compliance where one of the cases below applies.
+
+*The standard of the check*
 
 - **A `decimals` cell replaced the exchange's tick and the run was still stamped.** `price=10.001` on a main-board
-  stock is `PRICE_OFF_TICK`; with `decimals=3` in the row it passed, stamped. `decimals` is now accepted as the
-  exchange's grid only when 10^-decimals equals the tick recorded for the row's scope, date and market. Any other
-  value — finer, coarser, or given where the tick differs by exchange and the row names no market — is still used
+  stock is `PRICE_OFF_TICK`; with `decimals=3` in the row it passed, stamped. A `decimals` cell now counts as the
+  exchange's grid only when 10^-decimals equals the tick recorded for the row's scope, date and market — or, where
+  no tick is recorded for the row, equals 0.01, the grid the limit prices are rounded at in that case. Any other
+  value (finer, coarser, or given where the tick differs by exchange and the row names no market) is still used
   for the row's checks, but makes the run relaxed: `rules_verified` false, no stamp, `stamp_withheld` says why, and
   the new `decimals_override` counts such rows (`row_status` marks them). A `decimals` that is not an integer from 0
   to 8 is `ROW_INVALID` (a large value used to raise `OverflowError`).
-- **An explicit `scope` overrode the row's own context.** A row with `scope=main_board` and `st_status=true` was
-  checked against the ordinary 10 % band and stamped, although `resolve()` refuses the same context as
-  contradicting the scope. A row that names a scope and also carries context cells (`board`, `st` / `st_status`,
-  `listing_day_index`, `list_date`, …) is now compared with the scope's `asserts` in the registry; a contradiction
-  is the new finding `SCOPE_CONTEXT_CONFLICT` and no other check runs on the row. Only cells the row supplies are
-  compared; a key it leaves out is not demanded.
+- **Rows whose price grid was not checked looked the same as rows where it was.** Where no tick is recorded for a
+  row (dates before 2006-07-01; in a strict run also the SZSE convertible-bond tick of 2011-02-28 to 2012-12-10,
+  whose record is `unverified`), the tick check is skipped and the limit prices are rounded at 0.01. The output now
+  says so: `tick_check` counts `rows_checked` and `rows_not_checked` (`row_status` marks the latter
+  `tick_not_checked`), and a stamp says nothing about the price grid of those rows.
+
+*Inputs that contradict each other*
+
+- **An explicit `scope` overrode what the row itself said about the instrument.** A row with `scope=main_board` and
+  `st_status=true` was checked against the ordinary 10 % band and stamped, although `resolve()` refuses the same
+  context. A row that names a scope is now compared with that scope's `asserts` in the registry, using the context
+  cells the row supplies (every key a scope requires or asserts, the fund keys such as `fund_constituents`
+  included), `list_date` where it decides the listing-day index, and the board of a recognised A-share stock code
+  when the row has no `board` cell (`scope=ipo_first5_main` on a ChiNext code). A contradiction is the new finding
+  `SCOPE_CONTEXT_CONFLICT` and no other check runs on the row. A key the row leaves out is not demanded.
+- **Two cells of one row that state different things.** Columns `st` and `st_status` with different values (the
+  later column used to win); a `market` or `board` cell that names another exchange or board than a recognised
+  stock code (`600000` with `market=XSHE`), or another exchange than a 900… / 200… B-share code; a trade dated
+  before its own `list_date`. All are `ROW_INVALID`.
+- **Rows of one code on one day that disagree** on the previous close, the scope or the market: the later row gets
+  the new finding `ROWS_DISAGREE`.
+
+*Input that cannot be read*
+
 - **An unreadable `fee` or `turnover` skipped the fee check.** `fee=0` is `FEE_BELOW_STATUTORY`, but `fee=nan`,
   `inf` or any text was read as "no fee given" and passed, stamped; so did `turnover=nan`. A cell that is present
-  but not a finite number (and a negative turnover) is now `ROW_INVALID`. An absent cell still means no fee check,
-  and the output now says so: `fee_check` counts `rows_checked` and `rows_not_checked`, and a stamp says nothing
-  about the fees of the latter.
-- A `price` or `prev_close` that is zero or negative is `ROW_INVALID` (a zero price against a zero previous close
-  used to pass).
+  but not a finite number (and a negative turnover) is now `ROW_INVALID`. The adapter (`--format`,
+  `marina-rules adapt`) used to drop such a cell before the checker saw it; it now passes an unreadable fee,
+  turnover, ST or listing-date cell through as written and counts it under `cells_not_read`. An absent cell still
+  means no fee check, and the output now says so: `fee_check` counts `rows_checked` and `rows_not_checked`, and a
+  stamp says nothing about the fees of the latter.
+- A `price` or `prev_close` that is zero or negative (a zero price against a zero previous close used to pass), an
+  empty `code`, a `list_date` that is not a date, and a `date` with anything but a time after the day
+  (`2024-03-01XYZ`) are `ROW_INVALID`.
+- `marina-check FILLS.csv` refuses a header that names a column twice (exit code 2): the second `fee` column
+  silently replaced the first.
 
 Stamps of logs that none of the above touches are unchanged: the canonical form and its version are the same.
+
+**Not changed, so that it is not mistaken for checked:** `turnover` is not reconciled with price × quantity (the
+checker reads no quantity); a column the checker does not read (`ST`, `is_st`, `Fee` — names are case-sensitive) is
+ignored, and is now listed in `columns_not_read`; a non-strict run (`strict=False`, the command line's default
+without `--strict`) can still be stamped, with a stamp that differs from the strict one.
+
+### Changed
+
+- A trade dated on its `list_date` is listing day 1 (`listing_index_from_list_date` returns 1): with
+  `issue_regime` given, such a row gets its listing-day scope instead of `SCOPE_UNDETERMINED`.
+- `fee_check` counts a row as checked only when the statutory floor for its date was found; `tracking` counts only
+  rows the checks ran on. A B-share row without a market is `MARKET_REQUIRED` instead of an uncaught `RuleConflict`.
 
 ## [2026.11.16] - 2026-11-16
 

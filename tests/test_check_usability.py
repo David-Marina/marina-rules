@@ -364,7 +364,8 @@ def test_list_date_past_margin_selects_the_ordinary_scope():
                                 "2024-03-01,603998,buy,10.50,10.00,,XSHG,true,2024-02-20\n"      # ST: no index needed
                                 "2024-03-01,603997,buy,10.50,10.00,,XSHG,false,2024-05-01\n"),   # before listing
                      per_row=True)
-    assert [r["scope"] for r in out["row_status"]] == ["main_board", "star", "undetermined", "st_main", "undetermined"]
+    assert [r["scope"] for r in out["row_status"]] == ["main_board", "star", "undetermined", "st_main", "stock"]
+    assert out["row_status"][4]["checks"] == ["ROW_INVALID"]      # a trade dated before its own listing is not a fill
     assert "listing_day_index" in out["findings"][0]["detail"] and out["relaxed"] is False
     assert listing_index_from_list_date("2024-03-01", "2023-12-31")[0] == seasoned_listing_day_index()
     assert listing_index_from_list_date("2024-03-01", "2024-01-01")[0] is None      # 60 days: not more than margin
