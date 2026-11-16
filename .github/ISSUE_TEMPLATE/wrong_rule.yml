@@ -1,0 +1,54 @@
+name: A rule is wrong
+description: Marina gives a value, a date or a source that the official text contradicts.
+title: "Wrong rule: <market> / <scope> / <rule> on <date>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. A correction is accepted on the strength of an official text (exchange, regulator, ministry,
+        depository), so the source below is the one thing this report cannot do without.
+  - type: input
+    id: query
+    attributes:
+      label: What you asked
+      description: The call or command, with the date written YYYY-MM-DD.
+      placeholder: marina-rules query price_limit_pct 2020-08-21 chinext XSHE --context board=chinext,st_status=false,listing_day_index=100
+    validations:
+      required: true
+  - type: textarea
+    id: marina
+    attributes:
+      label: What Marina answered
+      description: The value and the record id it came from (`record_id` in the output).
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What the rule was
+      description: The value and the dates it applied from and to, as the official text states them.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source (URL)
+      description: The notice, rule book or fee schedule itself — not an article about it.
+      placeholder: https://www.szse.cn/...
+    validations:
+      required: true
+  - type: textarea
+    id: quote
+    attributes:
+      label: The sentence that settles it
+      description: Copied from the source, unchanged, in its original language.
+    validations:
+      required: true
+  - type: input
+    id: citation
+    attributes:
+      label: Rules version
+      description: The output of `marina-rules version` (or `mr.citation()`).
+      placeholder: "rules: marina-rules@YYYY.MM.DD sha256:…"
+    validations:
+      required: true

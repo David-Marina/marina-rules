@@ -15,7 +15,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "David Li"}]
 keywords = ["trading", "trading-rules", "backtest", "backtesting", "exchange-rules", "price-limit", "fees", "point-in-time",
-            "a-share", "china", "stock", "futures", "hong-kong", "quant", "agent", "price-limits", "limit-up",
+            "a-share", "china", "stock", "futures", "hong-kong", "quant", "agent", "mcp", "mcp-server", "price-limits", "limit-up",
             "limit-down", "stamp-duty", "transaction-fees", "tick-size", "trading-hours", "trading-sessions",
             "backtest-validation", "dataset", "china-stock", "sse", "szse", "bse", "cffex", "shfe", "hkex", "us-equities",
             "涨跌停", "涨跌幅限制", "印花税", "交易规则", "交易制度", "回测", "A股"]
@@ -36,12 +36,19 @@ classifiers = [
 ]
 dependencies = ["pyyaml>=6"]
 
+[project.optional-dependencies]
+# The MCP server (marina_rules_core.mcp_server; the command marina-rules-mcp belongs to marina-rules) for AI assistants.
+# The MCP Python SDK needs Python 3.10+; on 3.9 the extra installs nothing and the entry point says so. Nothing else in
+# the package imports it. Users ask for it as marina-rules[mcp], which asks for this.
+mcp = ['mcp>=2.3,<3; python_version >= "3.10"']
+
 [project.urls]
 Homepage = "https://github.com/David-Marina/marina-rules"
 Documentation = "https://github.com/David-Marina/marina-rules#readme"
 "Chinese README" = "https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md"
 "For AI agents" = "https://github.com/David-Marina/marina-rules/blob/main/SKILL.md"
 Schema = "https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md"
+"Rule pages" = "https://david-marina.github.io/marina-rules/"
 Changelog = "https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md"
 Source = "https://github.com/David-Marina/marina-rules"
 Issues = "https://github.com/David-Marina/marina-rules/issues"

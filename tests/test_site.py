@@ -290,7 +290,10 @@ def test_base_url_adds_sitemap_and_absolute_links(built):
     assert locs and all(u.startswith("https://example.org/rules/") for u in locs)
     assert len(locs) == sum(1 for k in based if k.endswith(".html"))
     assert "https://example.org/rules/cn/chinext/price_limit_pct.md" in based["llms.txt"].decode("utf-8")
-    assert set(based) - {"sitemap.xml"} == set(built["files"])
+    assert set(based) - {"sitemap.xml", "robots.txt"} == set(built["files"])
+    assert based["robots.txt"].decode("utf-8") == "User-agent: *\nAllow: /\nSitemap: https://example.org/rules/sitemap.xml\n"
+    page = built["files"]["cn/chinext/price_limit_pct.html"].decode("utf-8")
+    assert "https://pypi.org/project/marina-rules/" in page and "https://github.com/David-Marina/marina-rules" in page
 
 
 def test_llms_txt_lists_every_fact_page(text, manifest):

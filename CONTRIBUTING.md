@@ -25,6 +25,9 @@ Please do **not** contribute: constituent lists, ST/suspension lists, prices, ad
 
 ## How
 
+Not ready to edit YAML? Open an issue instead — there are forms for a wrong rule, a missing rule and a rule an
+exchange has changed. Each asks for the official source, which is what a record is built from.
+
 1. One record (or one closely related group) per pull request. Small PRs get merged; large ones get discussed.
 2. Edit the YAML under `data/<market>/`. Follow [`docs/SCHEMA.md`](docs/SCHEMA.md). Ids are stable: `<market>.<family>.<scope>.<effective_from>`.
 3. Add the source(s):

@@ -2,6 +2,8 @@
 
 **把各市场的交易制度做成按时间点可查的数据：涨跌停幅度、印花税和过户费、交易时段、最小报价单位、T+N 交收——每条规则从哪天起生效、依据哪份官方文件，都有记录。给回测引擎和 AI Agent 用。**
 
+它的用处是让回测**可以被别人复核**：按成交日取当天的规则，而不是把今天的写死；`marina-check` 逐笔核对成交是否遵守当天的规则，严格通过时给出一个验证印章，任何人拿着同一份成交记录、同一版数据都能重算出来；`citation()` 写明结果用的是哪一版规则。印章只说明成交遵守了这些规则，不说明回测没有未来函数、幸存者偏差或过拟合。
+
 A 股回测里最常见的一类错误不是策略写错，而是交易规则用错：把创业板涨跌幅写死成 20%（2020-08-24 之前是 10%），忘了 ST 股是 5%，用今天的印花税率算十年前的成交，或者用 `round()` 算涨跌停价（交易所是四舍五入，`round()` 不是）。Marina 把这些规则连同生效日期和出处放进一张公开的表里，查询时按交易日返回当天实际有效的规则；查不到就报错，不猜。
 
 完整说明、各市场的记录数和覆盖范围以英文版为准：[README.md](README.md)。本页是中文入门。
@@ -73,6 +75,10 @@ resolve("price_limit_pct", "2024-06-14", "st_main", "XSHE", {"board": "main_boar
 `resolve()` 不抛数据类异常，只返回一个带 `status` 的字典：`DETERMINED`（有答案）、`MISSING_CONTEXT`（缺你该提供的上下文）、`OUT_OF_COVERAGE`（没有覆盖，附 `alternatives` 说明有什么）等。只有 `DETERMINED` 才有值；其他状态一律停下来，不要自己补一个数。给 Agent 的使用说明在 [SKILL.md](SKILL.md)，安装后可用 `marina-rules skill` 或 `mr.skill_text()` 读到；能问什么由 `marina-rules capabilities` 列出。
 
 数据本身是 [`data/`](data/) 下的 YAML 文件，不装 Python 包也能用任何语言读。
+
+## 在 AI 助手里查：MCP 服务
+
+`pip install "marina-rules[mcp]"`（MCP 服务需要 Python 3.10+）后运行 `marina-rules-mcp`，AI 助手就能通过 Model Context Protocol 直接查询，不用写代码。在客户端配置里加 `{"mcpServers": {"marina-rules": {"command": "marina-rules-mcp"}}}`。工具有 `resolve`（某日某规则的判定）、`limit_price`（涨跌停价）、`statutory_fees`（印花税和过户费）、`coverage`、`list_scopes`、`list_rules`、`check_fills`（内联传入的成交，最多 500 笔）和 `citation`；每个结果都带引用行，查不到或参数不对时返回错误说明，不会补数。它只读、不联网，只含规则，不含行情、ST 名单和交易日历。详见英文版的 [Ask from an AI assistant](README.md#ask-from-an-ai-assistant-the-mcp-server)。
 
 ## 检查一份成交记录
 

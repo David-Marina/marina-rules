@@ -1,8 +1,10 @@
 # Marina — point-in-time trading rules (marina-rules)
 
-**Point-in-time trading rules for financial markets, as data.**
+**Auditable backtests: the exchange trading rules in force on each day, as data with sources.**
 
-Price limits, fees, trading sessions, settlement — every record says *when* it took effect and *where* it was published. Any backtest or trading agent can cite the exact rules it ran under, and anyone can re-run it against byte-identical rules.
+Price limits, fees, trading sessions, ticks, settlement — every record says *when* a rule took effect and *where* it was published. A backtest asks for the rule of each trade date instead of hard-coding today's; `marina-check` then verifies every fill against the rules of its day and, on a strict pass, emits a stamp that anyone holding the same fill log and the same rules version can recompute; `citation()` names the exact, byte-pinned rules a result ran under.
+
+What a stamp certifies is deliberately narrow: the fills respected these rules. It says nothing about look-ahead in prices, survivorship or overfitting. `as_of` closes one more gap: it answers only from rules that had been published by a given date, so a backtest cannot use a rule change before it was announced (a rule whose publication date was not located is refused, not assumed).
 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
 
@@ -23,6 +25,16 @@ What changed in each release, and which backtests a release asks you to re-run: 
 Every backtest engine, every trading agent, and every research notebook re-implements the same handful of rules — "ChiNext limit is 20%" — and a large share of them get the *date* wrong (it was 10% before 2020-08-24), the *scope* wrong (ST stocks differ), or the *rounding* wrong (exchanges round half-up; `round()` doesn't). These errors used to live in one firm's code. Now that AI agents write backtests by the thousand, the same error gets copied by the thousand.
 
 A shared, cited, versioned table fixes this the way tzdata fixed time zones: not by being authoritative, but by being **the same for everyone** and **traceable to the source**.
+
+[`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints six such fills side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
+
+| fill | hard-coded with today's rule | rule of that day |
+|---|---|---|
+| ChiNext, 2020-08-21, previous close 10.00: limit-up / limit-down | 12.00 / 8.00 | 11.00 / 9.00 |
+| ST main-board stock, 2024-06-14, previous close 10.00 | 11.00 / 9.00 | 10.50 / 9.50 |
+| Main-board IPO in its first five days, 2024-01-30 | 11.00 / 9.00 | no limit |
+| Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
+| Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
 
 ## Use
 
@@ -104,6 +116,49 @@ knows it does not cover (pre-2006 sessions and convertibles, the 2013 T+0 switch
 a reason and a status, so "unsupported" can be cited rather than worked around. Agents: read [SKILL.md](https://github.com/David-Marina/marina-rules/blob/main/SKILL.md).
 
 The data is plain YAML under [`data/`](https://github.com/David-Marina/marina-rules/tree/main/data/). You do not need the Python package; read the files from any language.
+
+### Ask from an AI assistant: the MCP server
+
+The same questions can be put to the dataset by an AI assistant through the
+[Model Context Protocol](https://modelcontextprotocol.io), without writing code. The server runs locally over stdio.
+
+```bash
+pip install "marina-rules[mcp]"   # adds the MCP Python SDK; the server needs Python 3.10+, the rest of the package 3.9+
+marina-rules-mcp                  # the same server: marina-rules mcp, python -m marina_rules.mcp_server
+```
+
+Add it to the MCP client's configuration (most clients read this `mcpServers` shape; where the file lives differs per
+client). If the client does not start in the environment where the package is installed, give the full path to
+`marina-rules-mcp`.
+
+```json
+{
+  "mcpServers": {
+    "marina-rules": {"command": "marina-rules-mcp"}
+  }
+}
+```
+
+| tool | answers |
+|---|---|
+| `resolve` | one rule on one trading day for one scope: the decision of `resolve()`, acted on only when `status` is `DETERMINED` |
+| `limit_price` | limit-up / limit-down price from the previous close; `unlimited: true` when no daily limit applied |
+| `statutory_fees` | stamp duty and transfer fee of one A-share stock fill, per component and summed (commission not included) |
+| `coverage` | whether every (rule, day) of a backtest window can be answered for a scope, with the gaps |
+| `list_scopes` | the scopes of `cn`, `hk` or `us` and the context each requires |
+| `list_rules` | the rule names a scope holds, with their first and last dates |
+| `check_fills` | the `marina-check` checks on up to 500 fills passed inline as JSON (not a file path) |
+| `citation` | the citation line and version of the dataset |
+
+Every answer carries `citation`. Arguments the library refuses (a date not written `YYYY-MM-DD`, an unknown side) and
+questions with no record in force come back as tool errors whose text says what to change or what is missing; no value
+is filled in. The usage notes (SKILL.md) are offered as the resource `marina-rules://skill`.
+
+What it does not do: it is read-only and deterministic, uses no network, and reads no file but the dataset shipped
+in the package. Like the package, it holds rules only — no prices, ST or suspension lists, constituents or trading
+calendar; a security's board, ST status and listing day are the caller's to supply.
+
+<!-- mcp-name: io.github.David-Marina/marina-rules -->
 
 ### Cite it
 
@@ -235,8 +290,8 @@ Blank cells are blank on purpose. A missing rule raises `KeyError`; it does not 
   futures coverage starts 2024-01-01.
 - **DCE is not covered**: no Dalian Commodity Exchange product has a record or a coverage target.
 
-**Coverage statement (2026.11.13).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
-(687,464 / 706,888 target-days to 2026-11-13; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
+**Coverage statement (2026.11.16).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
+(687,839 / 707,281 target-days to 2026-11-16; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
 remains is listed as `unresolved` in [`coverage/cn_targets.yaml`](https://github.com/David-Marina/marina-rules/blob/main/coverage/cn_targets.yaml) and counts as **not covered**:
 convertible-bond commission cap — SZSE 2006-07-01 → 2006-12-30 and 2014-08-25 → open, SSE 2021-12-31 → open — and minimum —
 SZSE 2006-07-01 → open, SSE 2021-12-31 → open (no official text states a level, or says there is none, for those periods); BJSE
@@ -357,6 +412,9 @@ byte-identical.
 python scripts/build_site.py --out site
 ```
 
+The pages of the current release are published at **<https://david-marina.github.io/marina-rules/>** (rebuilt from the
+data at each release), with a `sitemap.xml` and an `llms.txt` that lists every rule page as Markdown.
+
 ## Errata
 
 When data contradicts a rule, so far the data has been wrong every time. [`errata/`](https://github.com/David-Marina/marina-rules/tree/main/errata/) records each case with a sample and a one-command detector you can run on your own bars (stale pct-change columns; sub-¥1 adjusted-price rounding; issuer-specific ex-rights formulas in reorganisation conversions). Contributions welcome under the same bar: sample + detector + the fact that settles it.
@@ -375,7 +433,7 @@ Every record carries one of three levels, in the data, in the open:
 
 ## Contributing
 
-Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](https://github.com/David-Marina/marina-rules/blob/main/CONTRIBUTING.md) and [GOVERNANCE.md](https://github.com/David-Marina/marina-rules/blob/main/GOVERNANCE.md).
+Yes, please — this only works as a commons. One record per pull request, with the primary source linked. CI checks the schema, the sources, interval overlap, and runs the audit on the sample bars. See [CONTRIBUTING.md](https://github.com/David-Marina/marina-rules/blob/main/CONTRIBUTING.md) and [GOVERNANCE.md](https://github.com/David-Marina/marina-rules/blob/main/GOVERNANCE.md). Found a wrong rule, a missing one, or a rule an exchange has just changed? [Open an issue](https://github.com/David-Marina/marina-rules/issues/new/choose) — the forms ask for the official source and nothing else you would have to look up.
 
 ## Acknowledgements
 
@@ -388,7 +446,7 @@ Code (`src/`, `scripts/`, `tests/`; the `marina-rules-core` package and the modu
 
 ## About the name
 
-Marina is named after my wife, Marina. This repository was published on **13 November 2026**, our wedding anniversary.
+This project is named after my wife, Marina. This repository was published on **13 November 2026**, our wedding anniversary.
 
 A rules table is an unglamorous thing: a few hundred lines of dates, percentages, and citations. But every one of those lines is a mistake that someone, somewhere, no longer has to make. If this table spares even a few people a wrong number, a bad trade, or a wasted week, then it has done what I hoped it would do on the day it was named — bring a little more good into the world, in her name.
 
@@ -400,7 +458,7 @@ It is free for everyone, forever. No rights reserved.
 
 **关于名字**
 
-Marina 以我爱人 Marina 的名字命名。这个仓库发布于 **2026 年 11 月 13 日**，我们的结婚纪念日。
+项目以我爱人 Marina 的名字命名。这个仓库发布于 **2026 年 11 月 13 日**，我们的结婚纪念日。
 
 一张规则表是件很不起眼的东西：几百行日期、百分比和出处。但其中每一行，都是某个人在某个地方不必再犯的一个错误。如果这张表能让哪怕几个人少写错一个数字、少做错一笔交易、少白费一周时间，它就做到了命名那天我希望它做到的事——以她的名字，给这个世界多带来一点好。
 

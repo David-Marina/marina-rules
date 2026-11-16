@@ -17,6 +17,8 @@
   schema                      JSON Schema of the decision returned by query
   skill                       the usage notes shipped with the package (SKILL.md)
   version                     the citation line: data version, dataset digest, code version
+  mcp                         run the MCP server on stdio, for AI assistants (needs: pip install "marina-rules[mcp]";
+                              same as marina-rules-mcp)
 
 Exit codes: 0 answered, 1 findings (check only), 2 usage error. Output is JSON except for adapt (CSV rows; its report is
 JSON on stderr), skill, version and this help.
@@ -29,6 +31,51 @@ import sys
 
 def _dump(obj) -> None:
     print(json.dumps(obj, ensure_ascii=False, indent=1))
+
+
+# The payloads below are shared with the MCP server (marina_rules.mcp_server): one answer shape for both front ends.
+def scopes_payload(market_prefix: str) -> dict:
+    """``marina-rules scopes``: scope → description and required context, for one market family (cn / hk / us)."""
+    import marina_rules_core as mr
+    return {k: {"description": v["description"], "requires": list(v["requires"])}
+            for k, v in sorted(mr.scopes(market_prefix).items())}
+
+
+def rules_payload(scope: str, market: str | None = None, intervals: bool = False) -> dict:
+    """``marina-rules rules``: rule names the dataset holds for a scope (compact unless ``intervals``)."""
+    import marina_rules_core as mr
+    have = mr.rules_for(scope, market)
+    shown = have if intervals else {k: {"from": v[0][0], "to": v[-1][1], "intervals": len(v)} for k, v in have.items()}
+    out = {"scope": scope, "market": market, "rules": shown, "citation": mr.citation()}
+    if not have:
+        known = set()
+        for pfx in ("cn", "hk", "us"):
+            known |= set(mr.scopes(pfx))
+        out["note"] = ("the dataset holds no rule for this scope" + (" on this market" if market else "")
+                       + ("" if scope in known else "; the scope name is not in any registry"))
+        close = mr.similar_names(scope, known)
+        if close:
+            out["similar_scopes"] = close
+    from .equity import equity_scopes
+    if have and scope in equity_scopes():
+        fam = mr.lookup_scope("tick_size", scope, market)
+        out["see_also"] = {"scopes": sorted({"stock", fam}),
+                           "note": "an A-share board scope carries the price limit only; stamp duty, transfer fee, "
+                                   "commission cap, sessions and holding period of the stock are recorded under these "
+                                   "scopes — marina-rules rules stock"}
+    return out
+
+
+def fees_payload(turnover: float, side: str, date: str, market: str | None = None) -> dict:
+    """``marina-rules fees``: statutory fees of one A-share stock fill. Raises KeyError (no rule in force) and
+    ValueError (a date that is not YYYY-MM-DD) as ``statutory_fee_components`` does."""
+    import marina_rules_core as mr
+    comps = mr.statutory_fee_components(turnover, side, date, market)
+    return {"status": "DETERMINED", "turnover": turnover, "side": side, "date": date, "market": market,
+            "components": comps, "statutory_fee_floor": mr.statutory_fee_floor(turnover, side, date, market),
+            "note": "statutory components only (stamp duty, transfer fee); commission is not included; a component "
+                    "with amount null is charged on par value and is left out of the sum",
+            "citation": mr.citation()}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -65,17 +112,20 @@ def main(argv: list[str] | None = None) -> int:
     if cmd == "version":
         print(mr.citation())
         return 0
+    if cmd == "mcp":
+        from .mcp_server import main as mcp_main
+        return mcp_main(rest)
     if cmd == "scopes":
         pfx = rest[0] if rest else "cn"
         if pfx not in ("cn", "hk", "us"):
             print(f"error: unknown registry {pfx!r}; registries are cn (mainland China), hk, us")
             return 2
         try:
-            reg = mr.scopes(pfx)
+            payload = scopes_payload(pfx)
         except Exception as e:   # unknown market family
             print(f"error: {e}")
             return 2
-        _dump({k: {"description": v["description"], "requires": list(v["requires"])} for k, v in sorted(reg.items())})
+        _dump(payload)
         return 0
     if cmd == "rules":
         if not rest:
@@ -84,26 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         full = "--intervals" in rest
         rest = [x for x in rest if x != "--intervals"]
         scope, market = rest[0], (rest[1] if len(rest) > 1 else None)
-        have = mr.rules_for(scope, market)
-        shown = have if full else {k: {"from": v[0][0], "to": v[-1][1], "intervals": len(v)} for k, v in have.items()}
-        out = {"scope": scope, "market": market, "rules": shown, "citation": mr.citation()}
-        if not have:
-            known = set()
-            for pfx in ("cn", "hk", "us"):
-                known |= set(mr.scopes(pfx))
-            out["note"] = ("the dataset holds no rule for this scope" + (" on this market" if market else "")
-                           + ("" if scope in known else "; the scope name is not in any registry"))
-            close = mr.similar_names(scope, known)
-            if close:
-                out["similar_scopes"] = close
-        from .equity import equity_scopes
-        if have and scope in equity_scopes():
-            fam = mr.lookup_scope("tick_size", scope, market)
-            out["see_also"] = {"scopes": sorted({"stock", fam}),
-                               "note": "an A-share board scope carries the price limit only; stamp duty, transfer fee, "
-                                       "commission cap, sessions and holding period of the stock are recorded under these "
-                                       "scopes — marina-rules rules stock"}
-        _dump(out)
+        _dump(rules_payload(scope, market, full))
         return 0
     if cmd == "fees":
         if len(rest) < 3 or rest[1] not in ("buy", "sell"):
@@ -116,18 +147,14 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         market = rest[3] if len(rest) > 3 else None
         try:
-            comps = mr.statutory_fee_components(turnover, rest[1], rest[2], market)
+            payload = fees_payload(turnover, rest[1], rest[2], market)
         except KeyError as e:
             _dump({"status": "OUT_OF_COVERAGE", "reason": e.args[0] if e.args else str(e), "citation": mr.citation()})
             return 0
         except ValueError as e:   # a date that is not YYYY-MM-DD, an unknown side
             print(f"error: {e}")
             return 2
-        _dump({"status": "DETERMINED", "turnover": turnover, "side": rest[1], "date": rest[2], "market": market,
-               "components": comps, "statutory_fee_floor": mr.statutory_fee_floor(turnover, rest[1], rest[2], market),
-               "note": "statutory components only (stamp duty, transfer fee); commission is not included; a component "
-                       "with amount null is charged on par value and is left out of the sum",
-               "citation": mr.citation()})
+        _dump(payload)
         return 0
     print(f"unknown command {cmd!r}\n\n{__doc__.strip()}")
     return 2

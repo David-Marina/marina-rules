@@ -14,6 +14,11 @@ with it as a dependency; no network at run time). Covered:
 China A-shares, CFFEX / SHFE / INE / CZCE / GFEX futures, Hong Kong and US equities. Not covered: DCE, crypto, and
 anything that is data rather than a rule — prices, ST or suspension lists, constituents, trading calendars.
 
+From an MCP client instead of Python: `pip install "marina-rules[mcp]"` and run `marina-rules-mcp` (stdio). Its tools
+(`resolve`, `limit_price`, `statutory_fees`, `coverage`, `list_scopes`, `list_rules`, `check_fills`, `citation`) give
+the answers of the functions below as JSON with `citation`; a lookup that would raise comes back as a tool error.
+The path and the stopping rules here apply unchanged.
+
 ## The path
 
 ```

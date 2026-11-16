@@ -1,7 +1,7 @@
 # marina-rules
 
-> Point-in-time exchange trading rules as data, with a Python library and command line. For each trading day it
-> answers which rule was in force: China A-share price limits (涨跌停 / 涨跌幅限制), stamp duty (印花税), transfer
+> Auditable backtests: point-in-time exchange trading rules as data, with a Python library, command line and MCP
+> server. For each trading day it answers which rule was in force, and it checks a fill log against those rules: China A-share price limits (涨跌停 / 涨跌幅限制), stamp duty (印花税), transfer
 > fees, commission caps, tick sizes, trading sessions and T+N; CFFEX, SHFE, INE, CZCE and GFEX futures margins,
 > price limits and fees; Hong Kong and US equity rules. Every record carries its effective date, the official
 > source, a verbatim quote and a content hash. Built for backtest engines and AI agents: a missing rule is an
@@ -24,6 +24,8 @@ futures, crypto. ST status, board and listing date of a security are supplied by
   `mr.limit_price(10.0, "chinext", "2021-03-01", "XSHE")`; `mr.rules_for(scope, market)`; `mr.scopes()`.
 - One decision shape for any language: `marina-rules query <rule> <YYYY-MM-DD> <scope> [market] --context k=v`;
   act only on status `DETERMINED`.
+- MCP server for AI assistants: `pip install "marina-rules[mcp]"`, then `marina-rules-mcp` (stdio; tools resolve,
+  limit_price, statutory_fees, coverage, list_scopes, list_rules, check_fills, citation).
 - Dates are `YYYY-MM-DD`; markets are ISO 10383 codes (XSHG, XSHE, BJSE, XHKG, XNYS, XNAS, CCFX, XSGE, XINE, XZCE, GFEX).
 
 ## Documents
@@ -35,6 +37,8 @@ futures, crypto. ST status, board and listing date of a security are supplied by
 - [docs/SCHEMA.md](https://github.com/David-Marina/marina-rules/blob/main/docs/SCHEMA.md): record schema and the definition of every rule name
 - [docs/decision.schema.json](https://github.com/David-Marina/marina-rules/blob/main/docs/decision.schema.json): JSON Schema of a decision
 - [CHANGELOG](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md): what changed in each release and what to re-run
+
+- [Rule pages](https://david-marina.github.io/marina-rules/): one page per market, scope and rule, with every record, its sources and quotes; its own llms.txt lists them as Markdown
 
 ## Optional
 

@@ -74,11 +74,15 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
 - **Statutory fees of a fill**: `statutory_fee_floor(turnover, side, date, market)` and
   `statutory_fee_components(...)` (per rule, with record ids).
 - **One command line**, `marina-rules` (= `python -m marina_rules`): `query`, `rules`, `scopes`, `fees`, `check`,
-  `adapt`, `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
+  `adapt`, `mcp`, `capabilities`, `schema`, `skill`, `version`. `SKILL.md` ships in the wheel (`marina_rules.skill_text()`).
 - **`marina-check`**: `--no-tick`, `--band-tolerance-pct`, `--assume-seasoned` (relaxed runs: no stamp), `--rows`,
   `--top-codes`; the scope may be left empty and chosen from `board`, `st`, `listing_day_index` / `list_date`
   (`board_for_code` fills the board from the code); optional `day_high` / `day_low` add `PRICE_OUTSIDE_DAY_RANGE`;
   `hints` for price-basis mismatches; `summary` by scope, year, side and code.
+- **MCP server** for AI assistants: `pip install "marina-rules[mcp]"` (Python 3.10+), then `marina-rules-mcp` (or
+  `marina-rules mcp`). Read-only tools `resolve`, `limit_price`, `statutory_fees`, `coverage`, `list_scopes`,
+  `list_rules`, `check_fills`, `citation`; every answer carries the citation, and a refusal is returned as an error
+  that says what to ask instead. Nothing changes for code that does not use it.
 - **Engine exports** — `marina-rules adapt`, and `marina-check FILE --format NAME`: reads the trades of RQAlpha,
   vn.py, backtrader, 掘金 gm or any table with common column names (`generic`; `--map`, `--side-values`,
   `--side-from-sign`, `--date-format`), and joins what an engine does not export — previous close, day high / low,
@@ -100,13 +104,20 @@ No record was corrected. `python -m marina_rules.diff 2026.11.13 2026.11.16` lis
   expect a refusal (`expect.error`).
 - **`evals/`**: 14 tasks for testing an assistant that has only the installed package, with expected answers
   generated from the library and a grader.
-- **`scripts/build_site.py`**: generates one static page per (market family, scope, rule) from the data. The pages
-  are not published anywhere.
+- **Rule pages**: `scripts/build_site.py` generates one static page per (market family, scope, rule) from the
+  data — every record with its interval, value, sources and quotes — and they are published at
+  <https://david-marina.github.io/marina-rules/>, rebuilt at each release.
+- **`examples/hardcoded_vs_marina.py`**: six fills at rule changes, each computed with today's rule and with the
+  rule of the trade date.
 
 ### Changed
 - Bookkeeping: `cn.fee.commission_min_per_order_cny.2002-05-01` gained `unit: CNY` (the value is unchanged; `diff`
   does not compare `unit` and so does not list it); `hk.order_spread_limit.hk_stock.2025-08-04` listed one source
   twice.
+- README, PyPI summary and llms.txt lead with what the package is for — making a backtest checkable by someone else
+  (rules by trade date, fill checks with a recomputable stamp, a pinned citation, `as_of`) — and say what a stamp does
+  not certify.
+- Issue forms for a wrong rule, a missing rule and a rule an exchange has changed; each asks for the official source.
 - README states up front that maturity differs by market (A-share, CFFEX, SHFE and INE mostly `verified`; CZCE,
   GFEX, Hong Kong and US mostly `single-source`); more PyPI keywords.
 - The weekly source watch checks listing pages only.
