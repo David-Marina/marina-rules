@@ -1,7 +1,8 @@
 cff-version: 1.2.0
 message: >-
   If you use marina-rules, cite the exact rules your result ran under: the line printed by
-  `marina-rules version` or `marina_rules.citation()` (`rules: marina-rules@<version> sha256:<digest>`).
+  `marina-rules version` or `marina_rules.citation()`
+  (`rules: marina-rules@<data version> sha256:<digest> code: marina-rules-core@<code version>`).
   The version is deliberately not repeated in this file; a result is reproducible only with that line.
 title: "marina-rules: point-in-time exchange trading rules as data"
 abstract: >-

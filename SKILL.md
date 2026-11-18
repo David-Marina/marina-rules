@@ -275,7 +275,9 @@ but unreadable (`nan`), are `ROW_INVALID`; rows of one code on one day with diff
 is recorded — read `fee_check` and `tick_check` and do not report "fees verified" or "ticks verified" for rows
 they count as not checked. `columns_not_read` lists the input columns that were ignored. The fee floor is that of A-share stocks only;
 fund, convertible-bond and B-share rows are never fee-checked. A row the adapter could not read as one statement
-(two columns or two tables that disagree) carries a `row_error` and is `ROW_INVALID`.
+(two columns or two tables that disagree, a turnover that is not price × quantity) carries a `row_error` and is
+`ROW_INVALID`; `--map field=COLUMN` says which of two columns a field is. A `scope` cell with no context beside it
+is taken as given: supply `st`, `list_date` or `listing_day_index` when you have them, so that the scope is checked.
 
 - `prev_close` must be on the same basis as `price`: unadjusted; on an ex-rights day the exchange's ex-rights
   reference price. Never an adjusted close. `hints` in the output names codes whose rows look off by a constant factor.

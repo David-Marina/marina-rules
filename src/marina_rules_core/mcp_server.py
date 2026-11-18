@@ -148,7 +148,9 @@ def _rows(v) -> List[Dict[str, str]]:
             raise ValueError(f"row {i} is not an object")
         if len(r) > MAX_ROW_KEYS:
             raise ValueError(f"row {i} has more than {MAX_ROW_KEYS} columns")
-        out.append({_text(f"row {i} column name", k): _cell(_scalar(f"row {i} {k}", x)) for k, x in r.items()})
+        for k in r:
+            _text(f"row {i} column name", k)          # a non-empty string of reasonable length; kept as written
+        out.append({k: _cell(_scalar(f"row {i} {k}", x)) for k, x in r.items()})
     return out
 
 

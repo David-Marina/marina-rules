@@ -2272,3 +2272,16 @@ def test_hk_order_limit_rules_refused_outside_xhkg_at_load(tmp_path, monkeypatch
            "verification": "single-source", "sources": [_SRC], **record}
     with pytest.raises(ValueError):
         _load_with(tmp_path, monkeypatch, rec, "us", "XNYS")
+
+
+def test_limit_price_with_a_market_naming_several_exchanges():
+    # one record spanning them, or the exchanges' own records agreeing: answered
+    assert mr.limit_price(1.234, "etf", "2024-06-14", "XSHG+XSHE") == (1.357, 1.111)
+    assert mr.limit_price(1.234, "main_board", "2024-06-14", "XSHG+XSHE") == (1.36, 1.11)
+    # the exchanges' records differ: the caller must name one (it used to round at 0.01, right for Shenzhen only)
+    with pytest.raises(mr.RuleConflict, match="differs by exchange"):
+        mr.limit_price(1.234, "b_share", "2024-06-14", "XSHG+XSHE")
+    assert mr.limit_price(1.234, "b_share", "2024-06-14", "XSHG") == (1.357, 1.111)
+    assert mr.limit_price(1.234, "b_share", "2024-06-14", "XSHE") == (1.36, 1.11)
+    with pytest.raises(KeyError):                               # no record at all on that date: still a missing rule
+        mr.limit_price(1.234, "b_share", "2005-06-01", "XSHG+XSHE")

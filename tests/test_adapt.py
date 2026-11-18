@@ -207,7 +207,7 @@ def test_a_fill_without_a_bar_gets_no_previous_close_and_is_counted():
 
 
 def test_two_bars_for_one_security_and_day_are_refused():
-    with pytest.raises(ValueError, match="two rows for 300001 on 2020-01-02"):
+    with pytest.raises(ValueError, match="two rows for 300001 XSHE on 2020-01-02"):
         adapt_rows(RQ, "rqalpha", bars=TS_DAILY + TS_DAILY[:1], bars_format="tushare")
 
 

@@ -243,18 +243,14 @@ def listing_index_from_list_date(trade_date: str, list_date) -> tuple:
                   "is unknown without a calendar — give listing_day_index")
 
 
-LIST_DATE_FIRST_WINDOW_DAYS = 30
-
-
 def listing_index_bounds(trade_date: str, list_date) -> tuple:
     """(lowest, highest) trading-day index the trade can have, from a listing date without a trading calendar;
     (None, None) when either date cannot be read or the trade is before listing.
 
-    On ``list_date`` → (1, 1). ``d`` calendar days after it → at most ``d + 1`` (every day a trading day) and at
-    least 2; from ``LIST_DATE_FIRST_WINDOW_DAYS`` calendar days on at least 6: thirty calendar days hold at most ten
-    weekend days, and no closure of the mainland exchanges has taken more than nine further weekdays out of such a
-    stretch, so more than five trading days have passed. The bounds only ever rule a scope OUT (a listing-day or
-    first-five-days scope on a trade that cannot be in that window); they never choose one."""
+    On ``list_date`` → (1, 1). ``d`` calendar days after it → at least 2 (it is not the listing day) and at most
+    ``d + 1`` (every day a trading day). Nothing tighter is claimed inside ``LIST_DATE_MARGIN_DAYS``: a security
+    suspended soon after listing can still be inside its first trading days weeks later. The bounds only ever rule a
+    scope OUT (a listing-day scope on a trade after the listing day); they never choose one."""
     ld, td = _iso(list_date), _iso(trade_date)
     if ld is None or td is None:
         return None, None
@@ -263,8 +259,7 @@ def listing_index_bounds(trade_date: str, list_date) -> tuple:
         return None, None
     if days == 0:
         return 1, 1
-    lo = 6 if days >= LIST_DATE_FIRST_WINDOW_DAYS else 2
-    return lo, max(days + 1, lo)
+    return 2, days + 1
 
 
 # --- board from code: a convenience, NOT a sourced record ---------------------------------------------------------
@@ -304,8 +299,31 @@ def board_for_code(code) -> tuple | None:
     return None
 
 
+_ANY_CODE = re.compile(r"^(?:([A-Z]+)[.:]?)?(\d{6})(?:\.([A-Z]+))?$")
+_EXCHANGE_TOKENS = dict(_SUFFIX, SSE="XSHG", SHSE="XSHG", SZSE="XSHE")
+SECURITIES_EXCHANGES = frozenset({"XSHG", "XSHE", "BJSE"})
+
+
 def code_digits(code) -> str | None:
-    """The six digits of a security code written ``600000``, ``600000.SH`` or ``SH600000`` (any security, not only
-    stocks), or None for another spelling. Two spellings of one code have the same digits."""
-    m = _CODE.match(str(code or "").strip().upper())
+    """The six digits of a security code written ``600000``, ``600000.SH``, ``SH600000``, ``SHSE.600000`` or
+    ``XSHG:600000`` (any security, not only stocks), or None for another spelling. Two spellings of one code have
+    the same digits."""
+    m = _ANY_CODE.match(str(code or "").strip().upper())
     return m.group(2) if m else None
+
+
+def code_exchanges(code) -> frozenset:
+    """The exchanges a code's own prefix and suffix name (``600000.SH`` → {XSHG}; ``600000`` → {}); a token that is
+    not an exchange spelling is ignored. Two different exchanges in one code is a contradiction for the caller."""
+    m = _ANY_CODE.match(str(code or "").strip().upper())
+    if not m:
+        return frozenset()
+    return frozenset(_EXCHANGE_TOKENS[t] for t in (m.group(1), m.group(3)) if t in _EXCHANGE_TOKENS)
+
+
+def not_a_stock_code(code) -> bool:
+    """True for six digits that no mainland exchange gives to a stock: 5xxxxx (Shanghai funds) and 1xxxxx (bonds in
+    Shanghai; funds and bonds in Shenzhen). A convention of the exchanges' code allocation, like ``board_for_code``:
+    not a sourced record, used only to refuse a stock scope on such a code."""
+    digits = code_digits(code)
+    return bool(digits) and digits[0] in "15"

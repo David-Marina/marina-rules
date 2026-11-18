@@ -1697,18 +1697,35 @@ def _agreed_tick(scope: str, date: str, market: str | None = None, strict: bool 
                  as_of: str | None = None) -> float:
     """tick_size(), except that with ``market=None`` several exchanges' records in force that all carry the SAME value
     (e.g. separate SSE and SZSE convertible records, both 0.001) answer with that value — rounding needs the value, not the exchange. Different
-    values still raise ``RuleConflict``; nothing in force raises ``KeyError``."""
+    values still raise ``RuleConflict``; nothing in force raises ``KeyError``.
+
+    The same holds for a market naming several exchanges (``XSHG+XSHE``) when the tick is recorded per exchange and no
+    record spans them: if each named exchange has a record in force and all carry the same value, that value; if
+    they differ (B shares: 0.001 USD in Shanghai, 0.01 HKD in Shenzhen), ``RuleConflict`` — the caller must name one
+    exchange; if a named exchange has none, ``KeyError``."""
     try:
         return tick_size(scope, date, market, strict, as_of=as_of)
-    except RuleConflict:
-        if market is not None:
+    except (NotYetPublished, PublicationUnknown):
+        raise
+    except (RuleConflict, KeyError) as e:
+        several = market is not None and "+" in market
+        if (isinstance(e, RuleConflict) and market is not None) or (isinstance(e, KeyError) and not several):
             raise
         fam = lookup_scope("tick_size", scope, market)
         active = [r for r in records() if r.rule == "tick_size" and r.scope == fam
                   and r.active_on(_check_date(date)) and not (strict and r.verification == "unverified")]
+        if several:
+            want = set(market.split("+"))
+            active = [r for r in active if want & set(r.market.split("+"))]
+            if not active or not want <= {m for r in active for m in r.market.split("+")}:
+                raise
         vals = {(r.value, r.unit) for r in active}
         if len(vals) != 1:
-            raise
+            if isinstance(e, RuleConflict):
+                raise
+            raise RuleConflict(f"tick_size for {fam!r} on {_check_date(date)} differs by exchange ("
+                               + ", ".join(f"{r.market}: {r.value} {r.unit or ''}".strip() for r in active)
+                               + f"); name one exchange instead of {market!r}") from None
         for r in active:   # every agreeing record must have been public at as_of
             _require_published(r, as_of)
         return vals.pop()[0]

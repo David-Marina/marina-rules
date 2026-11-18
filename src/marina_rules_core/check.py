@@ -23,18 +23,28 @@ Input: CSV with columns  date, code, side, price, prev_close, scope  [, market, 
                 ``listing_day_index``, ``issue_regime``, ``delisting_day_index`` …), the scope is chosen with
                 ``marina_rules.equity.pick_scope`` from the registry's own asserts; without a ``board`` cell the board
                 comes from ``board_for_code(code)`` (a code-prefix convenience, A-share stocks only). A row with
-                neither scope nor context keeps the old default ``stock``. A row that names a scope is checked
+                neither scope nor context keeps the default ``stock``, which has no price-limit record: such a
+                row is always RULE_MISSING — give a scope or context. A row that names a scope is checked
                 for agreement with what the row itself says about the instrument: its context cells (any key a
                 scope in the registry requires or asserts), ``list_date`` where it decides the listing-day index,
-                and the board of a recognised stock code. A contradiction (scope ``main_board`` with ``st`` true;
+                and the kind of security its code is (the board of a recognised stock code; a B-share code; a
+                fund or bond code under a stock scope). A contradiction (scope ``main_board`` with ``st`` true;
                 an IPO scope of the main board on a ChiNext code) is SCOPE_CONTEXT_CONFLICT, as
-                ``contract.resolve`` refuses such context. See ``scope_conflict`` and ``row_problems``.
+                ``contract.resolve`` refuses such context. What the row does NOT say is not demanded: a scope
+                cell with no context beside it is taken as given. See ``scope_conflict`` and ``row_problems``.
+  * column names are read in any case and without surrounding white space (``Fee``, ``"fee "``); two columns that
+                are the same name by that rule and hold different values are ROW_INVALID.
+  * row_error   written by the adapter (``marina_rules.adapt``, ``--format``) when the input did not make one
+                statement about a fill; a row whose ``row_error`` is not empty is ROW_INVALID. Leave it out of
+                a log you write yourself.
   * list_date   optional listing date (YYYY-MM-DD or YYYYMMDD), used only when ``listing_day_index`` is empty. Marina
                 has no trading calendar and never computes a trading-day index: a trade more than
                 LIST_DATE_MARGIN_DAYS (60) calendar days after ``list_date`` is past every listing window (the
                 registry's windows end within 5 trading days; 60 days exceeds that even across a three-week market
-                closure); a trade within the margin stays SCOPE_UNDETERMINED unless ``listing_day_index`` is given.
-                A stock suspended for weeks inside its own first five trading days needs ``listing_day_index``.
+                closure); a trade on ``list_date`` itself is listing day 1; any other trade within the margin has
+                no index, so a scope that depends on it stays SCOPE_UNDETERMINED unless ``listing_day_index`` is
+                given. A stock suspended for weeks inside its own first five trading days needs
+                ``listing_day_index``.
   * an engine's own export (RQAlpha, vn.py, backtrader, 掘金 …) is read with ``--format NAME`` and, for the previous
                 close, ST status and listing dates, ``--bars`` / ``--st`` / ``--listing`` tables from a data vendor:
                 see ``marina-rules adapt --help``. The rows checked (and stamped) are the adapted ones; the output
@@ -74,8 +84,10 @@ Checks (each produces a finding on failure):
   PRICE_OUTSIDE_BAND      any fill outside [limit_down, limit_up]
   FEE_BELOW_STATUTORY     fee < statutory minimum (stamp + turnover-based transfer fee; commission excluded)
   RULE_MISSING            no rule in force for (scope, date) — the log cites a scope we do not cover
-  MARKET_REQUIRED         prev_close so low the band rounds below one tick; the one-tick floor is
-                          exchange-specific (SZSE 2011-02-28, SSE 2023-04-10) and the row has no market
+  MARKET_REQUIRED         the rule differs by exchange and the row does not name one: prev_close so low the band
+                          rounds below one tick (the one-tick floor is exchange-specific: SZSE 2011-02-28, SSE
+                          2023-04-10), or a tick that differs by exchange (B shares) with no market, or with
+                          ``XSHG+XSHE``, on a code that does not say which
   MARKET_UNSUPPORTED      the row's market or scope is not a China A-share one (XHKG, hk_stock, hk_etf; XNYS,
                           XNAS, us_stock, us_etf): these checks are A-share only, so no other check is run on the row
   SCOPE_UNDETERMINED      the scope cell is empty and the row's context fits no scope, or several (never guessed);
@@ -115,7 +127,7 @@ Model-price logs (backtests fill at quote ± slippage, not on the exchange grid)
                                the rows whose scope depended on it. An ST stock is then checked against the wider
                                ordinary band, so a fill beyond the ST band can pass unnoticed.
 Any of these makes the run RELAXED: ``options`` in the output states what was used, ``rules_verified`` is false and
-no stamp is issued (``stamp_withheld`` says why), because a stamp certifies strict compliance. So does a row whose
+no stamp is issued (``stamp_withheld`` says why), because a stamp certifies a check with nothing relaxed. So does a row whose
 ``decimals`` cell is not the recorded tick (``decimals_override`` > 0): the caller changed the standard of the check.
 The tolerance also absorbs small price-basis errors: rows of an affected stock that exceed a limit by less than the
 tolerance pass. Read a relaxed run together with ``hints`` and ``summary.by_code``.
@@ -142,8 +154,11 @@ tenths of a percent past a limit, so its median stays well under 1.5% however ma
 never fires. A hint can also mean a wrong scope (e.g. a 10%-band stock labelled with a 5% scope). Each hint lists the
 first HINT_ROW_INDEXES (20) row indexes (all with ``--rows``) and the total in ``rows``.
 
-Output: JSON with findings, counts, the dataset digest, and a ``rules-verified`` stamp when a strict run (no
-relaxation) has zero findings: ``rules-verified@<data version>:<first 32 hex of the hash>``, where the data version
+``--strict`` is not a relaxation and not its opposite: it makes the checks use only records that are not
+``unverified`` (``strict=True`` in Python). A run with and a run without it can both be stamped, with different stamps.
+
+Output: JSON with findings, counts, the dataset digest, and a ``rules-verified`` stamp when a run with nothing
+relaxed has zero findings: ``rules-verified@<data version>:<first 32 hex of the hash>``, where the data version
 is ``VERSION`` (the marina-rules release, the dataset; ``marina_rules_version`` in the report) and the hash is
 sha256(dataset_digest ‖ "\n" ‖ sha256(canonical fill log)). It can be recomputed by anyone holding the same log and the
 same dataset. It commits to every input a check is computed from; context cells next to an explicit scope,
@@ -179,9 +194,9 @@ from functools import lru_cache
 from . import (RuleConflict, citation, dataset_digest, limit_price, market_prefix_for, record_at, scopes, tick_family,
                tick_size, tracked_through, VERSION, __version__, _agreed_tick, _check_date, _rounding_tick,
                statutory_fee_floor)
-from .equity import (LIST_DATE_MARGIN_DAYS, _iso, all_context_keys, board_for_code, checkable_scopes, code_digits,
-                     context_keys, equity_scopes, listing_index_bounds, listing_index_from_list_date,
-                     parse_context_value, pick_scope,
+from .equity import (LIST_DATE_MARGIN_DAYS, SECURITIES_EXCHANGES, _iso, all_context_keys, board_for_code,
+                     checkable_scopes, code_digits, code_exchanges, context_keys, equity_scopes, listing_index_bounds,
+                     listing_index_from_list_date, not_a_stock_code, parse_context_value, pick_scope,
                      seasoned_listing_day_index)
 
 CANON_VERSION = 2
@@ -202,7 +217,8 @@ MAX_DECIMALS = 8                   # a ``decimals`` cell must be an integer from
 B_SHARE_MARKETS = {"900": "XSHG", "200": "XSHE"}   # B-share code prefix → exchange
 STOCK_FAMILIES = ("stock", "bse_stock")            # tick families of the A-share stock scopes
 # what may follow the day in a date cell: a time of day, as engines and pandas write it
-TIME_TAIL = re.compile(r"[ T]\d{1,2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}(:?\d{2})?)?")
+# (exchange time: a UTC offset other than +08:00 could put the trade on another day there, so it is refused)
+TIME_TAIL = re.compile(r"[ T]\d{1,2}:\d{2}(:\d{2}(\.\d+)?)?(\+08(:?00)?)?")
 ROW_INVALID_OPENING = "need date, code, side (buy|sell), and finite numeric price and prev_close: "
 
 
@@ -214,14 +230,16 @@ def READ_COLUMNS() -> frozenset:
 
 
 def clean_keys(r: dict) -> tuple:
-    """(the row with its column names stripped of surrounding white space, names that two columns share).
+    """(the row with its column names in lower case and stripped of surrounding white space, names that two columns
+    share).
 
-    Every reader below looks a column up by its exact name, so a header written ``"fee "`` would be a column nobody
-    reads: the fee check would be skipped without a trace. Two columns whose names differ only in white space and
-    whose cells differ are reported, not settled (the first is kept)."""
+    Every reader below looks a column up by its exact lower-case name, so a header written ``"fee "`` or ``"Fee"``
+    would be a column nobody reads: the fee check would be skipped without a trace. Two columns whose names differ
+    only in case or white space and whose cells both hold something different are reported, not settled; where one
+    of the two is empty the other is the value."""
     out, clash = {}, []
     for k, v in r.items():
-        name = k.strip() if isinstance(k, str) else k
+        name = k.strip().lower() if isinstance(k, str) else k
         if name in out:
             if _s(out[name]) != _s(v) and _s(v) != "":
                 if _s(out[name]) == "":
@@ -267,6 +285,7 @@ def canonical_row(r: dict) -> dict:
     c = {k: _s(r.get(k)) for k in CANON_FIELDS}
     c["date"] = c["date"][:10]
     c["side"] = c["side"].lower()
+    c["market"] = c["market"].upper()
     c["scope"] = c["scope"] or "stock"
     return c
 
@@ -323,8 +342,10 @@ def row_problems(r: dict, c: dict) -> list:
         bad.append(f"date {raw_date!r} has characters after the day that are not a time")
     if not c["code"]:
         bad.append("code is missing")
-    if _s(r.get("row_error")):
-        bad.append(f"the input does not make one statement about this fill: {_s(r.get('row_error'))}")
+    err = r.get("row_error")
+    err = "" if isinstance(err, float) and err != err else _s(err)     # a DataFrame's empty text cell is NaN
+    if err:
+        bad.append(f"the input does not make one statement about this fill: {err}")
     seen: dict = {}
     for k, v in r.items():
         if k is None or _s(v) == "":
@@ -342,10 +363,21 @@ def row_problems(r: dict, c: dict) -> list:
             bad.append(f"list_date {ld[1]!r} is not a date (YYYY-MM-DD or YYYYMMDD)")
         elif c["date"] and c["date"] < iso:
             bad.append(f"trade date {c['date']} is before list_date {iso}")
-    bm = board_for_code(c["code"])
+    digits = code_digits(c["code"])
+    bm = board_for_code(digits) if digits else None
+    home = bm[1] if bm is not None else B_SHARE_MARKETS.get(digits[:3]) if digits else None
+    named = code_exchanges(c["code"])
+    # only among the mainland securities exchanges: another market's row is MARKET_UNSUPPORTED or RULE_MISSING
+    cells = set(c["market"].split("+")) if c["market"] else set()
+    known = bool(cells) and cells <= SECURITIES_EXCHANGES
+    if len(named) > 1:
+        bad.append(f"code {c['code']!r} names two exchanges")
+    elif named and home is not None and home not in named:
+        bad.append(f"code {c['code']!r} names {next(iter(named))}, but {digits} is a {home} code")
+    elif named and known and not named & cells:
+        bad.append(f"market {c['market']!r} contradicts code {c['code']!r}, which names {next(iter(named))}")
     if bm is not None:
-        # only among A-share exchanges: another market's row is MARKET_UNSUPPORTED, whatever its code looks like
-        if c["market"] and market_prefix_for(c["market"]) == "cn" and bm[1] not in c["market"].split("+"):
+        if known and bm[1] not in cells:
             bad.append(f"market {c['market']!r} contradicts code {c['code']!r}, a {bm[1]} code")
         board = seen.get("board")
         if board is not None and board[1] != bm[0]:
@@ -486,11 +518,12 @@ def scope_conflict(r: dict, scope: str, date: str, code: str = "", market: str =
     * the board of a recognised A-share stock code (``board_for_code``), when the row has no ``board`` cell.
 
     * the kind of instrument the code is: a recognised A-share stock code under a scope that is not a stock scope
-      (``convertible``, ``etf``, ``b_share`` …), or a 900… / 200… B-share code under a scope that is not a B-share
-      scope;
-    * ``list_date`` inside the margin: the trade is at least one day after it, so not on listing day 1, and from
-      ``LIST_DATE_FIRST_WINDOW_DAYS`` calendar days on it is past the first five trading days — a scope that
-      asserts a ``listing_day_index`` no day in that range can have is contradicted.
+      (``convertible``, ``etf``, ``b_share`` …); a 900… / 200… B-share code under a scope that is not a B-share
+      scope; a fund or bond code (5xxxxx, 1xxxxx) under a stock scope;
+    * ``list_date`` inside the margin: the trade is at least one day after it, so not on listing day 1 — a scope
+      that asserts listing day 1 is contradicted. Whether such a trade is still inside the first five trading days
+      cannot be told without a calendar (a suspension stretches them), so a first-five-days scope is taken as given
+      there: give ``listing_day_index`` to have it checked.
 
     A B-share code whose ``market`` cell names the other exchange is ROW_INVALID, as is a context cell that cannot
     be read. A scope that is not in the registry is left to RULE_MISSING."""
@@ -507,9 +540,12 @@ def scope_conflict(r: dict, scope: str, date: str, code: str = "", market: str =
         if family != "b_share":
             return "SCOPE_CONTEXT_CONFLICT", (f"scope {scope!r} is not a B-share scope, but code {code!r} is a "
                                               f"{home} B-share code")
-    if board_for_code(code) is not None and family not in STOCK_FAMILIES:
+    if digits and board_for_code(digits) is not None and family not in STOCK_FAMILIES:
         return "SCOPE_CONTEXT_CONFLICT", (f"scope {scope!r} is not a stock scope, but code {code!r} is an A-share "
                                           "stock code")
+    if not_a_stock_code(code) and family in STOCK_FAMILIES:
+        return "SCOPE_CONTEXT_CONFLICT", (f"scope {scope!r} is a stock scope, but code {code!r} is not a stock code "
+                                          "(5xxxxx and 1xxxxx are funds and bonds)")
     raw = _row_context(r, all_context_keys())
     list_date = raw.pop("list_date", None)
     ctx, origin = {}, {}
@@ -536,7 +572,7 @@ def scope_conflict(r: dict, scope: str, date: str, code: str = "", market: str =
                         f"listing day {lo} to {hi}, none of which the scope allows; the scope is never chosen "
                         "against what the row says about the instrument")
     if "board" not in ctx:
-        bm = board_for_code(code)
+        bm = board_for_code(digits) if digits else None
         if bm is not None:
             ctx["board"], origin["board"] = bm[0], f" (from code {code})"
     _missing, conflicts = check_context(asserts, ctx, date)
@@ -618,17 +654,22 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
                 row_f.append(_finding(Finding(i, c["code"], c["date"], bad[0],
                                               (ROW_INVALID_OPENING if bad[0] == "ROW_INVALID" else "") + bad[1])))
         if not row_f and _f(c["prev_close"]) is not None:
-            # Fills of one instrument on one day share one previous close, one scope and one exchange.
+            # Fills of one instrument on one day share one previous close and one scope. The instrument is the
+            # code's digits on one exchange: a row that names no market is compared with the others of its digits,
+            # rows that name different markets are different instruments.
             mine = (i, _f(c["prev_close"]), c["scope"], c["market"])
-            first = same_day.setdefault((code_digits(c["code"]) or c["code"], c["date"]), mine)
-            diff = [n for n, a, b in (("prev_close", first[1], mine[1]), ("scope", first[2], mine[2]),
-                                      ("market", first[3], mine[3]))
+            key = (code_digits(c["code"]) or c["code"], c["date"])
+            first = next((x for x in same_day.setdefault(key, []) if not (x[3] and mine[3] and x[3] != mine[3])), None)
+            if first is None:
+                same_day[key].append(mine)
+                first = mine
+            diff = [n for n, a, b in (("prev_close", first[1], mine[1]), ("scope", first[2], mine[2]))
                     if (abs(a - b) > 1e-9 if n == "prev_close" else a != b)]
             if diff:
                 row_f.append(_finding(Finding(i, c["code"], c["date"], "ROWS_DISAGREE",
                                               f"row {first[0]} is the same code on the same day with another " +
-                                              ", ".join(f"{n} ({first[1 + ('prev_close', 'scope', 'market').index(n)]!r}"
-                                                        f" there, {mine[1 + ('prev_close', 'scope', 'market').index(n)]!r} here)"
+                                              ", ".join(f"{n} ({first[1 + ('prev_close', 'scope').index(n)]!r}"
+                                                        f" there, {mine[1 + ('prev_close', 'scope').index(n)]!r} here)"
                                                         for n in diff) +
                                               ": one of the two rows is wrong, so neither can be taken as checked")))
         canon.update((json.dumps([c[k] for k in fields], ensure_ascii=False, separators=(",", ":")) + "\n").encode())
@@ -750,7 +791,7 @@ def check_rows(rows: list[dict], strict: bool = False, *, tick: bool = True, ban
             ([] if tick else ["no tick check"]) + ([f"band tolerance {tol:g}%"] if tol > 0 else []) +
             (["assume seasoned"] if assume_seasoned else []) + (["assume not ST"] if assume_not_st else []) +
             ([f"decimals cell overrides the recorded tick on {n_dec} row(s)"] if n_dec else [])) +
-            "): a rules-verified stamp is issued only for a strict run")
+            "): a rules-verified stamp is issued only for a run with nothing relaxed")
     if per_row:
         out["row_status"] = row_status
     return out
@@ -777,8 +818,9 @@ def _check_one(i: int, c: dict, strict: bool, tick_on: bool, tol: float, row_f: 
         add("MARKET_UNSUPPORTED", f"marina-check covers China A-share fills only (market {market}, scope {scope})")
         return {}
     bm = board_for_code(code)
-    if bm is not None and market is not None and "+" in market and bm[1] in market.split("+"):
-        market = bm[1]            # "XSHG+XSHE" on a recognised code: the rules of the code's own exchange apply
+    home = bm[1] if bm is not None else B_SHARE_MARKETS.get((code_digits(code) or "")[:3])
+    if home is not None and market is not None and "+" in market and home in market.split("+"):
+        market = home             # "XSHG+XSHE" on a recognised code: the rules of the code's own exchange apply
     price, pc = _f(c["price"]), _f(c["prev_close"])
     fee, turnover = _f(c["fee"]), _f(c["turnover"])
     dec = None                                                # None → tick from the dataset

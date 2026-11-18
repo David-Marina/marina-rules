@@ -12,8 +12,9 @@ previous close. This module rewrites it, and joins what the engine did not expor
   --st      one row per (security, day) on which it was ST   --st-format
   --list-formats   every format with the columns it reads and what that reading rests on
 
-Output columns: date, code, side, price, prev_close, market, board, st, list_date, fee, turnover, day_high, day_low
-(the checker's own; ``scope`` is left to the checker, which chooses it from board, st and the listing date).
+Output columns: date, code, side, price, prev_close, market, board, st, list_date, fee, turnover, day_high, day_low,
+row_error (the checker's own; ``scope`` is left to the checker, which chooses it from board, st and the listing
+date, unless the table has a ``scope`` column, which is kept).
 
 Nothing is guessed:
   * A format is a declared reading of named columns. Each one states what it rests on (package version and source
@@ -25,13 +26,23 @@ Nothing is guessed:
   * No row is dropped. A cell that cannot be read is passed through as written and the checker reports the row as
     ROW_INVALID; the report counts every such cell by reason (``cells_not_read``), so row numbers still match the
     source file.
-  * Nothing is settled by picking one of two values. When two columns of the fills carry the same field and differ
-    (``st`` and ``is_st``, ``prev_close`` and ``pre_close``, ``exchange`` and ``market``, two listing-date columns),
-    when the fills and a joined table differ, when a code's suffix and the exchange column name different
-    exchanges, or when the turnover would have to come from a quantity that cannot be read, the reason is written
-    into the output column ``row_error``; the checker reports such a row as ROW_INVALID, and the report counts them
-    under ``rows_refused``. The same value in another spelling (``0`` / ``false``, ``SSE`` / ``XSHG``) is not a
-    difference.
+  * Nothing is settled by picking one of two values. When two columns of the fills can be read as the same field
+    and differ — any two of a format's names for it (``st`` and ``is_st``, ``date`` and ``trade_date``, ``price`` and
+    ``trade_price``, ``symbol`` and ``vt_symbol``), or one name in two spellings (``prev_close`` and ``PREV_CLOSE``)
+    — when the fills and a joined table differ, when a code's suffix and the exchange column name different
+    exchanges, when the turnover is not price × quantity, or when it would have to come from a quantity that cannot
+    be read, the reason is written into the output column ``row_error``; the checker reports such a row as
+    ROW_INVALID, and the report counts them under ``rows_refused``. ``--map field=COLUMN`` says which column a
+    field is and ends the comparison for it. The same value in another spelling (``0`` / ``false``, ``SSE`` /
+    ``XSHG``) is not a difference, and a column that cannot be read as the field at all (a ``market`` column
+    holding a board name) is not compared. ``columns_not_used`` in the report lists the columns of the fills the
+    adapter did not read.
+  * A joined table must itself say one thing: an ST table with a row that cannot be read or with two answers for
+    one security and day, a listing table with two dates for one security and two bars for one security and day
+    stop the run (ValueError; exit code 2).
+  * A date is a day, optionally followed by a time of day in exchange time (``2024-03-01 09:31:00``,
+    ``20240301 093100``; ``+08:00`` is the one UTC offset accepted). Anything else after the day leaves the cell
+    unread.
   * ``prev_close`` comes only from a column that the vendor documents as the previous close used for the day's
     price limit. It is never computed from other columns. Bars must be UNADJUSTED; a baostock table that says it is
     adjusted (``adjustflag`` other than 3) is refused.
@@ -44,7 +55,9 @@ The report (JSON, to stderr or ``--report FILE``; ``adapter`` in the checker's o
 cells that could not be read, and how many fills found a bar, an ST answer and a listing date.
 
 From Python: ``rows, report = adapt_rows(df.to_dict("records"), "rqalpha", bars=bars.to_dict("records"),
-bars_format="tushare")`` then ``marina_rules.check.check_rows(rows)``.
+bars_format="tushare")`` then ``marina_rules.check.check_rows(rows)``. A DataFrame writes a missing cell as NaN,
+which is read as the unreadable text ``nan`` (the row is then ROW_INVALID): turn missing cells into None first,
+``df.astype(object).where(df.notna(), None).to_dict("records")``.
 """
 from __future__ import annotations
 
@@ -60,9 +73,13 @@ from .equity import board_for_code
 OUT_FIELDS = ("date", "code", "side", "price", "prev_close", "market", "board", "st", "list_date", "fee", "turnover",
               "day_high", "day_low", "row_error")
 # row_error: why the adapter could not turn the input into ONE statement about this fill — two columns, or the
-# fills and a joined table, that give different values; a quantity it needed and could not read. It never picks one
-# of the two: the checker reports a non-empty row_error as ROW_INVALID, so the log gets no stamp.
-SAME_MEANING = ("prev_close", "st", "exchange", "list_date")   # fields whose alias columns can only mean one thing
+# fills and a joined table, that give different values; a turnover that is not price × quantity; a quantity it
+# needed and could not read. It never picks one of the two: the checker reports a non-empty row_error as
+# ROW_INVALID, so the log gets no stamp.
+NUMERIC = ("price", "quantity", "turnover", "fee", "commission", "tax", "transfer_fee", "prev_close", "day_high",
+           "day_low")
+TURNOVER_TOLERANCE = 0.01      # turnover against price × quantity: an average price rounded to the tick
+LOT_SIZES = (1, 10, 100)       # … with the quantity in units, in lots of 10 (bonds) or in lots of 100 (shares)
 
 # --- security codes ---------------------------------------------------------------------------------------------
 # Exchange spellings seen in engine and vendor tables → the dataset's market code (ISO 10383).
@@ -109,9 +126,12 @@ def split_code(text, exchange=None) -> tuple | None:
 
 
 # --- dates ----------------------------------------------------------------------------------------------------------
-_ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:[T ].*)?$", re.S)
-_YMD8 = re.compile(r"^(\d{4})(\d{2})(\d{2})(?:\D.*)?$", re.S)
-_YEAR_FIRST = re.compile(r"^(\d{4})[/.-](\d{1,2})[/.-](\d{1,2})(?:[T ].*)?$", re.S)
+# After the day only a time of day may follow (exchange time; +08:00 is the one offset accepted), as in the checker:
+# "2024-03-01 XYZ" or "2024-03-01 or 2024-03-04" is not a date.
+_TAIL = r"(?:[T ](?:\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?|\d{6})(?:\+08(?::?00)?)?)?"       # 09:31:00 or 093100
+_ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})" + _TAIL + "$")
+_YMD8 = re.compile(r"^(\d{4})(\d{2})(\d{2})" + _TAIL + "$")
+_YEAR_FIRST = re.compile(r"^(\d{4})[/.-](\d{1,2})[/.-](\d{1,2})" + _TAIL + "$")
 DATE_FORMATS = ("auto", "iso", "yyyymmdd")
 
 
@@ -301,37 +321,27 @@ def _bool(v) -> str:
     return "true" if t in _TRUE else "false" if t in _FALSE else ""
 
 
-def _same(field: str, a: str, b: str) -> bool:
-    """Do two non-empty cells of one field say the same thing? Numbers as numbers, flags as flags, dates as dates,
-    exchanges as exchanges; anything that cannot be read that way, as text."""
-    if field in ("prev_close", "day_high", "day_low"):
-        x, y = _num(a), _num(b)
-        return abs(x - y) <= 1e-9 if x is not None and y is not None else a == b
-    if field == "st":
-        x, y = _bool(a), _bool(b)
-        return x == y if x and y else a == b
-    if field == "list_date":
-        x, y = to_iso(a), to_iso(b)
-        return x == y if x and y else a == b
-    if field == "exchange":
-        x, y = (EXCHANGES.get(t.upper().rsplit(".", 1)[-1]) for t in (a, b))
-        return x == y if x and y else a == b
+def _same(a, b) -> bool:
+    """Two readings of one field (numbers within rounding noise, anything else equal)."""
+    if isinstance(a, float) and isinstance(b, float):
+        return abs(a - b) <= 1e-9 * max(1.0, abs(a), abs(b))
     return a == b
 
 
-def _twins(header: list, spec: dict, cols: dict) -> dict:
-    """field → the header's other columns that carry the same field (``st`` and ``is_st``, ``prev_close`` and
-    ``pre_close``), for the fields in SAME_MEANING. The adapter reads the first; a row where another one disagrees
-    is refused, not settled."""
-    by_key = {}
-    for h in header:
-        by_key.setdefault(_key(h), h)
+def _twins(header: list, spec: dict, cols: dict, mapping: dict | None) -> dict:
+    """field → the header's other columns that carry the same field: another of the format's names for it (``st``
+    and ``is_st``, ``date`` and ``trade_date``, ``price`` and ``trade_price``) or the chosen name in another case or
+    with other white space (``prev_close`` and ``PREV_CLOSE``). The adapter reads the first; a row where another
+    one says something else is refused, not settled. A field the caller named with ``--map`` has no twins: the
+    caller has said which column it is."""
     out = {}
-    for field in SAME_MEANING:
-        if field in cols:
-            others = [by_key[n] for n in spec.get(field, ()) if n in by_key and by_key[n] != cols[field]]
-            if others:
-                out[field] = others
+    for field, col in cols.items():
+        if field in (mapping or {}):
+            continue
+        names = set(spec.get(field, ())) | {_key(col)}
+        others = [h for h in header if h != col and _key(h) in names]
+        if others:
+            out[field] = others
     return out
 
 
@@ -418,17 +428,42 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
     dfmt = date_format or spec.get("date_format") or "auto"
     problems: dict = {}
     disagree: dict = {}
-    twins = _twins(header, spec["columns"], cols)
+    twins = _twins(header, spec["columns"], cols, mapping)
+
+    def read(field: str, cell: str):
+        """A cell as the value of ``field``, or None when it cannot be read as one (then it is not compared: a
+        ``market`` column holding 主板 is not an exchange, a ``symbol`` holding a name is not a code)."""
+        if field in NUMERIC:
+            return _num(cell)
+        if field == "st":
+            return _bool(cell) or None
+        if field == "date":
+            return to_iso(cell, dfmt)
+        if field == "list_date":
+            return to_iso(cell)
+        if field == "exchange":
+            return EXCHANGES.get(cell.upper().rsplit(".", 1)[-1])
+        if field == "code":
+            sc = split_code(cell)
+            return sc[0] if sc else None
+        if field == "side":
+            return values.get(_key(cell))
+        return cell
+
     out, wanted = [], set()
     for i, r in enumerate(fills, start=1):
         row = dict.fromkeys(OUT_FIELDS, "")
+        row["row_error"] = _cell(r.get("row_error")) if "row_error" in r else ""     # set by read_table
         for field, others in twins.items():
             mine = _cell(r.get(cols[field]))
+            x = read(field, mine) if mine else None
             for o in others:
                 theirs = _cell(r.get(o))
-                if mine and theirs and not _same(field, mine, theirs):
+                y = read(field, theirs) if theirs else None
+                if x is not None and y is not None and not _same(x, y):
                     _refuse(row, disagree, f"{field}_columns_disagree",
-                            f"columns {cols[field]!r} and {o!r} give {field} two values ({mine!r}, {theirs!r})", i)
+                            f"columns {cols[field]!r} and {o!r} give {field} two values ({mine!r}, {theirs!r}); "
+                            f"say which one it is with --map {field}=COLUMN", i)
         raw_date = _cell(r.get(cols["date"]))
         day = to_iso(r.get(cols["date"]), dfmt)
         row["date"] = day or raw_date          # an unreadable date is passed through: the checker refuses it
@@ -466,23 +501,31 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
             _bump(problems, "price_not_a_number", i)
         # A cell that is present but cannot be read is passed through as written, like an unreadable date: the
         # checker refuses the row (ROW_INVALID). Dropping it would turn "fee: nan" into "no fee given", which passes.
+        fee_cols = (["fee"] if "fee" in cols else
+                    [k for k in ("commission", "tax", "transfer_fee") if k in cols] if "commission" in cols and "tax" in cols
+                    else [])
+        cells = [_cell(r.get(cols[k])) for k in fee_cols]
         t_cell = _cell(r.get(cols["turnover"])) if "turnover" in cols else ""
+        if qty_cell and qty is None:
+            _bump(problems, "quantity_not_a_number", i)
         if t_cell and _num(t_cell) is not None:
             row["turnover"] = _fmt(abs(_num(t_cell)))
+            # a turnover that is not price × quantity (in units, lots of 10 or lots of 100) contradicts the row: an
+            # understated one would lower the statutory fee the row is held to
+            pq = abs(qty) * _num(row["price"]) if qty is not None and _num(row["price"]) is not None else None
+            if pq and not any(abs(abs(_num(t_cell)) - pq * k) <= TURNOVER_TOLERANCE * pq * k for k in LOT_SIZES):
+                _refuse(row, disagree, "turnover_is_not_price_times_quantity",
+                        f"turnover {t_cell!r} is not price × quantity ({row['price']} × {qty_cell}, in units or in "
+                        "lots of 10 or 100)", i)
         elif t_cell:
             row["turnover"] = t_cell
             _bump(problems, "turnover_not_a_number", i)
         elif qty is not None and _num(row["price"]) is not None:
             row["turnover"] = _fmt(abs(qty) * _num(row["price"]))
-        elif qty_cell and qty is None:
+        elif qty_cell and qty is None and any(cells):
             # the turnover would have come from this cell: without it the fee check is dropped, so the row is refused
-            _bump(problems, "quantity_not_a_number", i)
             _refuse(row, disagree, "turnover_cannot_be_formed",
                     f"quantity {qty_cell!r} is not a number, so no turnover can be formed for the fee check", i)
-        fee_cols = (["fee"] if "fee" in cols else
-                    [k for k in ("commission", "tax", "transfer_fee") if k in cols] if "commission" in cols and "tax" in cols
-                    else [])
-        cells = [_cell(r.get(cols[k])) for k in fee_cols]
         unread = [x for x in cells if x and _num(x) is None]
         if unread:
             row["fee"] = unread[0]
@@ -508,7 +551,9 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
         out.append(row)
     report = {"format": fmt, "basis": spec["basis"], "notes": list(spec.get("notes", ())), "rows": len(out),
               "columns_used": dict(cols, **({"side_from_sign": sign_col} if sign_col else {})),
-              "date_format": dfmt, "cells_not_read": problems, "rows_refused": disagree}
+              "date_format": dfmt, "cells_not_read": problems, "rows_refused": disagree,
+              "columns_not_used": [str(h) for h in header if h not in set(cols.values()) and h != sign_col
+                                   and h != "row_error"]}
     if "commission" in cols and "fee" not in cols and "tax" not in cols:
         report["notes"].append(f"column {cols['commission']!r} is a commission, not a total fee: no fee was taken")
     codes = {c for c, _ in wanted}
@@ -522,6 +567,20 @@ def adapt_rows(fills, fmt: str = "generic", *, bars=None, bars_format: str = "ge
     report["rows_without_st"] = sum(1 for r in out if not r["st"] and not r.get("scope"))
     report["rows_without_list_date"] = sum(1 for r in out if not r["list_date"] and not r.get("scope"))
     return out, report
+
+
+def _table_same(field: str, a: str, b: str) -> bool:
+    """Does a fill's own cell say what the joined table says? Numbers as numbers, dates as dates, flags as flags;
+    a cell that cannot be read that way is compared as text."""
+    if field in NUMERIC:
+        x, y = _num(a), _num(b)
+    elif field == "list_date":
+        x, y = to_iso(a), to_iso(b)
+    elif field == "st":
+        x, y = _bool(a) or None, _bool(b) or None
+    else:
+        x = y = None
+    return _same(x, y) if x is not None and y is not None else a == b
 
 
 def _table(rows, spec: dict, need: tuple, what: str, fmt: str):
@@ -555,25 +614,31 @@ def _join_bars(out: list, bars, fmt: str, wanted: set, disagree: dict) -> dict:
         if "adjustflag" in cols and _cell(b.get(cols["adjustflag"])) not in ("", "3"):
             raise ValueError(f"bars (format {fmt}): row {n} has adjustflag {_cell(b.get(cols['adjustflag']))!r} — the "
                              "table is price-adjusted; fetch it unadjusted (adjustflag='3')")
-        if (sc[0], day) in found:
-            raise ValueError(f"bars (format {fmt}): two rows for {sc[0]} on {day} (row {n}); one bar per security and day")
-        found[(sc[0], day)] = {k: _cell(b.get(cols[k])) for k in ("prev_close", "day_high", "day_low") if k in cols}
-        if "st" in cols:
-            found[(sc[0], day)]["st"] = _bool(b.get(cols["st"]))
+        # one bar per security and day; the same six digits on two exchanges (000001.SH the index, 000001.SZ the
+        # stock) are two securities
+        mine = found.setdefault((sc[0], day), {})
+        if sc[1] in mine:
+            raise ValueError(f"bars (format {fmt}): two rows for {sc[0]} {sc[1]} on {day} (row {n}); one bar per "
+                             "security and day")
+        mine[sc[1]] = {k: _cell(b.get(cols[k])) for k in ("prev_close", "day_high", "day_low") if k in cols}
+        if "st" in cols:      # an ST cell that cannot be read is passed through: the checker refuses the row
+            mine[sc[1]]["st"] = _bool(b.get(cols["st"])) or _cell(b.get(cols["st"]))
     matched = 0
     for i, r in enumerate(out, start=1):
-        hit = found.get((r["code"], r["date"]))
+        cands = found.get((r["code"], r["date"])) or {}
+        hit = (cands.get(r["market"]) if r["market"] in cands else cands.get("") if "" in cands
+               else next(iter(cands.values())) if not r["market"] and len(cands) == 1 else None)
         if hit is None:
             continue
         matched += 1
         for k, v in hit.items():
             if v != "" and not r[k]:
                 r[k] = v
-            elif v != "" and not _same(k, r[k], v):      # the fills and the bars say different things: refuse
+            elif v != "" and not _table_same(k, r[k], v):      # the fills and the bars say different things: refuse
                 _refuse(r, disagree, f"{k}_differs_from_bars", f"{k} is {r[k]!r} in the fills and {v!r} in the bars", i)
     return {"format": fmt, "basis": spec["basis"], "columns_used": cols, "rows_read": n,
             "fills_with_a_bar": matched, "fills_without_a_bar": len(out) - matched,
-            "fields_joined": sorted({k for h in found.values() for k, v in h.items() if v != ""})}
+            "fields_joined": sorted({k for c in found.values() for h in c.values() for k, v in h.items() if v != ""})}
 
 
 def _join_st(out: list, st, fmt: str, wanted: set, disagree: dict) -> dict:
@@ -586,10 +651,18 @@ def _join_st(out: list, st, fmt: str, wanted: set, disagree: dict) -> dict:
         sc = split_code(s.get(cols["code"]))
         day = to_iso(s.get(cols["date"]))
         if sc is None or day is None:
-            continue
+            if not _cell(s.get(cols["code"])) and not _cell(s.get(cols["date"])):
+                continue                                   # an empty line
+            # "not ST" is concluded from a security's ABSENCE on a day the table covers: a row that cannot be read
+            # could be the very row that lists it
+            raise ValueError(f"ST table (format {fmt}): row {n} cannot be read (code "
+                             f"{_cell(s.get(cols['code']))!r}, date {_cell(s.get(cols['date']))!r})")
         days_covered.add(day)
-        if (sc[0], day) in wanted:
-            flagged[(sc[0], day)] = _bool(s.get(cols["st"])) if "st" in cols else "true"
+        flag = (_bool(s.get(cols["st"])) or _cell(s.get(cols["st"]))) if "st" in cols else "true"
+        if flag not in ("true", "false"):
+            raise ValueError(f"ST table (format {fmt}): row {n} has an ST value that cannot be read ({flag!r})")
+        if flagged.setdefault((sc[0], day), flag) != flag:
+            raise ValueError(f"ST table (format {fmt}): {sc[0]} on {day} is listed as ST and as not ST (row {n})")
     yes = no = unknown = 0
     for i, r in enumerate(out, start=1):
         if r["st"]:
@@ -620,12 +693,14 @@ def _join_listing(out: list, listing, fmt: str, codes: set, disagree: dict) -> d
         sc = split_code(s.get(cols["code"]))
         day = to_iso(s.get(cols["list_date"]))
         if sc is not None and day is not None and sc[0] in codes:
-            dates[sc[0]] = day
+            if dates.setdefault(sc[0], day) != day:
+                raise ValueError(f"listing table (format {fmt}): two listing dates for {sc[0]} ({dates[sc[0]]} and "
+                                 f"{day}, row {n}); one row per security")
     hit = 0
     for i, r in enumerate(out, start=1):
         if not r["list_date"] and r["code"] in dates:
             r["list_date"] = dates[r["code"]]
-        elif r["code"] in dates and not _same("list_date", r["list_date"], dates[r["code"]]):
+        elif r["code"] in dates and not _table_same("list_date", r["list_date"], dates[r["code"]]):
             _refuse(r, disagree, "list_date_differs_from_listing_table",
                     f"list_date is {r['list_date']!r} in the fills and {dates[r['code']]!r} in the listing table", i)
         hit += bool(r["list_date"])
@@ -644,7 +719,27 @@ def read_table(path: str) -> list:
         text = raw.decode("gb18030")
     head = text.split("\n", 1)[0]
     delim = "\t" if head.count("\t") > head.count(",") else ","
-    return list(csv.DictReader(io.StringIO(text, newline=""), delimiter=delim))
+    rows = list(csv.reader(io.StringIO(text, newline=""), delimiter=delim))
+    if not rows:
+        return []
+    names = rows[0]
+    out = []
+    for cells in rows[1:]:
+        if not cells:
+            continue
+        d, clash = {}, []
+        for k, name in enumerate(names):
+            v = cells[k] if k < len(cells) else None
+            if name in d and v is not None and d[name] is not None and v.strip() and d[name].strip() and \
+                    v.strip() != d[name].strip():
+                clash.append(name)
+            d[name] = v if (name not in d or (v is not None and v.strip())) else d[name]
+        if len(cells) > len(names):
+            d[None] = cells[len(names):]
+        if clash:     # the same column name twice with two values in this row: not one statement
+            d["row_error"] = "; ".join(f"the file has two columns named {n!r} and their cells differ" for n in clash)
+        out.append(d)
+    return out
 
 
 def dict_rows(reader, path: str) -> list:

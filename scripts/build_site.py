@@ -247,6 +247,7 @@ PYPI_URL = "https://pypi.org/project/marina-rules/"
 REPO_URL = "https://github.com/David-Marina/marina-rules"
 DATA_LICENSE_URL = "https://creativecommons.org/publicdomain/zero/1.0/"
 SITE_NAME_ZH = "交易制度历史数据"
+ZH_VALUES = "有记录以来的取值"     # the first date in the line is where Marina's records begin, not a date of change
 
 
 # --- Chinese names and the line of values under the heading -------------------------------------------------------
@@ -329,17 +330,18 @@ def zh_fact(zh: dict, pfx: str, scope: str, rule: str, rs: list) -> dict:
             k = len(runs) - 1                    # the step at which the value became the present one
             while k > 0 and runs[k - 1][1] == runs[-1][1]:
                 k -= 1
-            head = f"{runs[k - 1][1]}→{runs[-1][1]}" if k > 0 else runs[-1][1]
-            title = f"{name}：{head}，{runs[k][0]} 起"
+            # a title dates a change of value; where the records hold one value only, their first date is where the
+            # records begin, not when the value began, so it is left out
+            title = f"{name}：{runs[k - 1][1]}→{runs[-1][1]}，{runs[k][0]} 起" if k > 0 else f"{name}：{runs[-1][1]}"
             values = one(runs)
             short = values if len(runs) <= 6 else f"{one(runs[:1])}；……；{one(runs[-3:])}"
         else:
             values = short = "；".join(f"{zh_markets(zh, mk)}：{one(runs)}" for mk, runs in series.items())
-    tail = (f"共 {len(rs)} 条按生效日期记录的规则，最早自 {first} 起；每条附官方文件出处和原文引文，"
-            "可按交易日查询当日有效的规则。")
+    tail = (f"共 {len(rs)} 条记录，记录从 {first} 开始；每条附官方文件出处和原文引文。"
+            "按交易日查询时，没有记录的日期会报错，不给默认值。")
     return {"name": name, "title": title,
-            "line": f"{name}（{where}）" + (f"历次取值：{values}。" if values else "：") + tail,
-            "description": f"{name}（{where}）" + (f"历次调整：{short}。" if short else "历次调整记录：") + tail}
+            "line": f"{name}（{where}）" + (f"{ZH_VALUES}：{values}。" if values else "：") + tail,
+            "description": f"{name}（{where}）" + (f"{ZH_VALUES}：{short}。" if short else "：") + tail}
 
 
 def json_ld(obj: dict) -> str:

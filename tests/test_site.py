@@ -351,7 +351,7 @@ def test_every_page_has_a_chinese_line_and_a_share_card(text, manifest):
 def test_the_chinese_title_states_the_record_values(text):
     t = text["cn/chinext/price_limit_pct.html"]
     assert "<title>创业板涨跌幅限制：10%→20%，2020-08-24 起 · price_limit_pct · chinext · China mainland (XSHE) — " in t
-    assert "历次取值：2009-10-30 起 10%；2020-08-24 起 20%。共 2 条" in t
+    assert site.ZH_VALUES + "：2009-10-30 起 10%；2020-08-24 起 20%。共 2 条记录，记录从 2009-10-30 开始" in t
     assert mr.rule_at("price_limit_pct", "2020-08-21", "chinext", "XSHE") == 0.1
     assert mr.rule_at("price_limit_pct", "2020-08-24", "chinext", "XSHE") == 0.2
     # a rule later extended to another exchange: each step names its exchanges, the title dates the change of value
@@ -363,8 +363,12 @@ def test_the_chinese_title_states_the_record_values(text):
     # exchanges with different values are never merged; tables and words get a name but no values
     assert "深交所：2006-07-01 起 0.01 港元；上交所：2006-07-01 起 0.001 美元" in text["cn/b_share/tick_size.html"]
     assert "<title>B 股最小报价单位 · tick_size" in text["cn/b_share/tick_size.html"]
-    assert "历次取值" not in text["cn/stock/limit_price_rounding.html"]
-    assert "历次取值" not in text["hk/hk_stock/tick_size_table.html"]
+    # one value since the records begin: the title gives the value and no date (the records' first date is not the
+    # date the value began: 0.01 was the A-share tick before 2006-07-01 too, known gap G-0005)
+    assert "<title>A 股股票最小报价单位：0.01 元 · tick_size · stock" in text["cn/stock/tick_size.html"]
+    assert "记录从 2006-07-01 开始" in text["cn/stock/tick_size.html"]
+    assert site.ZH_VALUES not in text["cn/stock/limit_price_rounding.html"]
+    assert site.ZH_VALUES not in text["hk/hk_stock/tick_size_table.html"]
 
 
 def test_every_value_in_a_chinese_line_is_a_record_of_that_page(text, manifest):
@@ -373,12 +377,12 @@ def test_every_value_in_a_chinese_line_is_a_record_of_that_page(text, manifest):
     seen = 0
     for p in _facts(manifest):
         line = html.unescape(ZH_LINE_RE.search(text[p["path"]]).group(1))
-        if "历次取值：" not in line:
+        if site.ZH_VALUES + "：" not in line:
             continue
         rs = [recs[i] for i in p["record_ids"]]
         assert not any(r.contracts for r in rs), p["path"]
         assert max(rs, key=lambda r: r.effective_from).effective_to is None, p["path"]
-        body = line.split("历次取值：", 1)[1].split("。共 ", 1)[0]
+        body = line.split(site.ZH_VALUES + "：", 1)[1].split("。共 ", 1)[0]
         steps = re.findall(r"(\d{4}-\d{2}-\d{2}) 起 ([^；（]+)", body)
         assert steps, p["path"]
         for frm, val in steps:
