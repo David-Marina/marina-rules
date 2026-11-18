@@ -48,6 +48,8 @@ from . import (DATA_VERSION, rules_for, similar_names, markets_recorded, Contrac
                dataset_digest, gaps_for, lookup_scope, market_prefix_for, record_at, records, scopes, tracked_through,
                tracking_registry, tracking_state)
 
+VERSION = DATA_VERSION   # kept: marina_rules.contract.VERSION existed (an import) up to 2026.11.16
+
 CONTRACT_VERSION = "1"
 STATUSES = ["DETERMINED", "MISSING_CONTEXT", "OUT_OF_COVERAGE", "CONFLICT", "UNVERIFIED", "NOT_YET_PUBLISHED",
             "UNKNOWN_PUBLICATION", "BEYOND_TRACKING"]

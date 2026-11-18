@@ -327,3 +327,25 @@ def test_release_workflow_publishes_each_package_from_its_own_tag():
     with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as fh:
         ci = fh.read()
     assert ci.index("pip install -e .") < ci.index("pip install ./packages/marina-rules")   # the code first
+
+
+def test_an_installed_copy_is_not_taken_for_a_source_checkout(tmp_path):
+    # pip install --target X/lib beside the user's own X/data: the data comes from the installed marina_rules
+    lib = tmp_path / "lib"
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "VERSION").write_text("9999.01.01\n")
+    shutil.copytree(os.path.dirname(core.__file__), lib / "marina_rules_core",
+                    ignore=shutil.ignore_patterns("__pycache__"))
+    pkg = lib / "marina_rules"
+    shutil.copytree(os.path.dirname(mr.__file__), pkg, ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(core.DATA_DIR, pkg / "data")
+    code = ("import marina_rules_core as c, sys; print(c.DATA_DIR)")
+    p = subprocess.run([sys.executable, "-B", "-I", "-c", f"import sys; sys.path.insert(0, {str(lib)!r}); " + code],
+                       capture_output=True, text=True, cwd=str(tmp_path))
+    assert p.returncode == 0, p.stderr
+    assert p.stdout.strip() == str(pkg / "data")
+
+
+def test_names_of_the_old_contract_module_are_kept():
+    from marina_rules import contract
+    assert contract.VERSION == mr.VERSION == core.DATA_VERSION

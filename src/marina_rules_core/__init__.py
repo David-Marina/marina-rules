@@ -77,11 +77,16 @@ def _version_key(v: str) -> tuple:
 
 
 def _locate_data() -> str:
-    """Where the dataset is: a source checkout's data/ (beside src/), else the data/ directory of the installed package
-    ``marina_rules`` (the marina-rules distribution). The package is located, not imported: importing it imports this
-    module."""
-    checkout = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data"))
-    if os.path.isfile(os.path.join(checkout, "VERSION")):
+    """Where the dataset is: a source checkout's data/ (this module at <root>/src/marina_rules_core, with
+    <root>/pyproject.toml and <root>/data/VERSION), else the data/ directory of the installed package ``marina_rules``
+    (the marina-rules distribution). The package is located, not imported: importing it imports this module. An
+    installed copy is never taken for a checkout because some data/ directory happens to sit two levels up (``pip
+    install --target X/lib`` beside the user's own X/data)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.normpath(os.path.join(here, "..", ".."))
+    checkout = os.path.join(root, "data")
+    if (os.path.basename(os.path.dirname(here)) == "src" and os.path.isfile(os.path.join(root, "pyproject.toml"))
+            and os.path.isfile(os.path.join(checkout, "VERSION"))):
         return checkout
     import importlib.util
     try:

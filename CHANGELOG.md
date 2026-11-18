@@ -50,6 +50,11 @@ No record was corrected. The corrections of this week are in the code: see
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.
+- `marina_rules` is now a forwarding module: reading, setting and deleting an attribute (`setattr`,
+  `monkeypatch.setattr`, `mock.patch`) act on `marina_rules_core`, and `marina_rules.check is marina_rules_core.check`.
+  Two things differ from 2026.11.16: writing into its `__dict__` directly (`vars(mr)[...] = …`) has no effect, and
+  classes name their new module (`Record.__module__` is `marina_rules_core`), so objects pickled by this release load
+  under an older one only where `marina-rules-core` is installed too. Objects pickled by an older release load here.
 - A stamp names the data version (`rules-verified@2026.11.23:…`). For a log that none of the corrections below touches,
   the hash after the colon is the one 2026.11.16 issued, since the rules are the same.
 
