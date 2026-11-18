@@ -23,7 +23,66 @@ How to read an entry:
 - **Compatibility.** A code entry says which data it reads (the oldest data version and the data
   formats); a data entry that needs a newer code release says so.
 
-## [Unreleased]
+## [2026.11.23] - 2026-11-23
+
+**In three lines.** *Rules:* none changed — the dataset is byte for byte that of 2026.11.16. *Packaging:* the code
+moved into its own package, `marina-rules-core` 1.0.0, which this release requires; `pip install -U marina-rules`
+installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* all in
+the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
+before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
+
+Dataset: `sha256:80188ec249ce22ae` · 2873 records (1421 `verified`, 1451 `single-source`, 1 `unverified`), the
+same records as 2026.11.16.
+
+### Corrected (re-run needed)
+No record was corrected. The corrections of this week are in the code: see
+[marina-rules-core 1.0.0](#marina-rules-core-100---2026-11-23).
+
+### Changed
+
+- **Two packages.** `marina-rules` (this package, date versions) now holds the dataset and the module
+  `marina_rules`, which forwards to the code in `marina-rules-core` (semantic versions; a dependency,
+  `marina-rules-core>=1.0.0,<2`). Data releases stay weekly; the code is released when it changes. Nothing to change
+  in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
+  marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
+  now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:80188ec249ce22ae code:
+  marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
+  "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
+  code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.
+- A stamp names the data version (`rules-verified@2026.11.23:…`). For a log that none of the corrections below touches,
+  the hash after the colon is the one 2026.11.16 issued, since the rules are the same.
+
+### Known issues
+
+What a user of this release should know, in one place. None of it changes an answer silently: each is a refusal, a
+documented substitution, or something the checker says it did not check.
+
+- **Fixed here, present in 2026.11.13 and 2026.11.16** (neither release is withdrawn; see marina-rules-core 1.0.0):
+  stamps issued for logs the checker had not fully checked or whose cells contradicted each other; `limit_price` for
+  funds and B shares before 2006-07-01.
+- **Fixed in 2026.11.16, present in 2026.11.13:** a date not written `YYYY-MM-DD` selected the wrong rule (in
+  practice the newest), and `tick_size` answered 0.01 for instruments without a tick record.
+- A-share stocks before 2006-07-01: the tick is not sourced and `limit_price` rounds at 0.01 (known gap G-0005) —
+  the only value Marina substitutes.
+- `marina-check` does not reconcile `turnover` with price × quantity, reads no column it does not list, and stamps a
+  non-strict run (with a stamp that differs from the strict one). A row whose scope cell names a listing-window scope
+  (`ipo_first5_main`, no price limit) and that carries no listing information at all is checked under that scope:
+  give `list_date` or `listing_day_index` and the checker refuses a scope the trade cannot be in.
+- Fees: only the statutory floor of A-share stocks (stamp duty and transfer fee) is checked; funds, convertible bonds
+  and B shares are not fee-checked.
+- Coverage: the Dalian Commodity Exchange (DCE) is not covered; CZCE, GFEX, Hong Kong and US records are mostly
+  `single-source`. `coverage()` and `known_gaps()` list every gap Marina knows of.
+
+## [marina-rules-core 1.0.0] - 2026-11-23
+
+**In three lines.** *Code:* the first release of the code as its own package — the functions, checker, adapters,
+command line and MCP server of marina-rules 2026.11.16, as the module `marina_rules_core` (and, through marina-rules,
+`marina_rules`). *Corrections:* `marina-check` withheld its stamp too rarely, and `limit_price` substituted a tick
+where it has none; **re-run** any log stamped by 2026.11.13 or 2026.11.16 that one of the items below touches.
+*Compatibility:* reads the dataset marina-rules 2026.11.16 or later (data schemas 1, 1.1 and 1.2); additive, except
+that the checker now refuses rows it used to stamp, `limit_price` raises for funds and B shares before 2006-07-01, and
+the fee of a fund, convertible bond or B-share row is no longer checked.
 
 ### Corrected (re-run needed)
 
