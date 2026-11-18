@@ -90,7 +90,7 @@ def test_relaxed_run_never_carries_a_stamp():
     for kw in ({"band_tolerance_pct": 0.4}, {"tick": False}):
         out = check_rows(_rows(SLIP if "band_tolerance_pct" in kw else HDR + "2021-03-01,300001,buy,11.503,10.00,chinext,XSHE\n"), **kw)
         assert out["clean"] is True and out["relaxed"] is True
-        assert out["rules_verified"] is False and out["stamp"] is None and "strict run" in out["stamp_withheld"]
+        assert out["rules_verified"] is False and out["stamp"] is None and "nothing relaxed" in out["stamp_withheld"]
     # the same clean log, strict, keeps the stamp exactly as before
     clean = HDR + "2021-03-01,300001,buy,11.50,10.00,chinext,XSHE\n"
     assert check_rows(_rows(clean))["stamp"] == _stamp_by_hand(_rows(clean))
