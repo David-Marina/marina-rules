@@ -15,7 +15,12 @@ from marina_rules.contract import (STATUSES, WARNING_BEYOND, WARNING_UNTRACKED, 
                                    resolve)
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PINNED_DIGEST = "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536"
+# The data is released every week, so nothing here pins this week's digest or dates: the digest is compared with
+# itself across changes to the tracking files, and the tests of the mechanics run on a frozen registry (``frozen``).
+PINNED_DIGEST = mr.dataset_digest()
+DIGEST_2026_11_16 = "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536"
+FROZEN = (("XSHG+XSHE", "2026-11-13"), ("XSGE", "2026-11-02"), ("XINE", "2026-11-02"), ("XZCE", "2026-11-02"),
+          ("GFEX", "2026-11-02"), ("XHKG", "2026-11-03"), ("XNYS+XNAS", "2026-11-03"))
 TRACKING_FILES = [os.path.join(mr.DATA_DIR, p, mr.TRACKING_FILE) for p in mr.TRACKING_PREFIXES]
 
 
@@ -34,16 +39,25 @@ def registry(monkeypatch):
     return use
 
 
+@pytest.fixture
+def frozen(registry):
+    """The registry as it stood on 2026-11-14, whatever the tracking files say this week."""
+    registry(*[_entry(m, t) for m, t in FROZEN])
+
+
 # --- digest -------------------------------------------------------------------------------------------------------
 
 def test_digest_is_pinned_and_ignores_tracking_files(tmp_path):
     assert all(os.path.exists(p) for p in TRACKING_FILES)
-    assert mr.dataset_digest() == PINNED_DIGEST
+    assert len(PINNED_DIGEST) == 64 and mr.dataset_digest() == PINNED_DIGEST
     d = tmp_path / "data"
     shutil.copytree(mr.DATA_DIR, d)
     assert mr._digest_dir(str(d)) == PINNED_DIGEST                  # with tracking files
     p = d / "cn" / mr.TRACKING_FILE
-    p.write_text(p.read_text(encoding="utf-8").replace("2026-11-02", "2026-11-09"), encoding="utf-8")
+    before = p.read_text(encoding="utf-8")
+    after = before.replace("tracked_through: '20", "tracked_through: '21")
+    assert after != before
+    p.write_text(after, encoding="utf-8")
     assert mr._digest_dir(str(d)) == PINNED_DIGEST                  # tracking date moved forward
     for pfx in mr.TRACKING_PREFIXES:
         os.remove(d / pfx / mr.TRACKING_FILE)
@@ -63,7 +77,8 @@ def test_diff_digest_ignores_tracking_files():
 def test_registry_contents():
     reg = {e["market"]: e for e in mr.tracking_registry()}
     assert set(reg) == {"XSHG+XSHE", "XSGE", "XINE", "XZCE", "GFEX", "XHKG", "XNYS+XNAS"}
-    assert mr.tracked_through("XSHG") == mr.tracked_through("XSHE") == mr.tracked_through("XSHG+XSHE") == "2026-11-13"
+    assert mr.tracked_through("XSHG") == mr.tracked_through("XSHE") == mr.tracked_through("XSHG+XSHE") \
+        == reg["XSHG+XSHE"]["tracked_through"] >= "2026-11-13"
     assert all(e["tracked_through"] <= e["updated"] for e in reg.values())
     assert {e["market"] for e in mr.tracking_registry("hk")} == {"XHKG"}
     for m in ("BJSE", "CCFX", "XSHG+XSHE+BJSE"):  # not on the watch list: untracked, never defaulted
@@ -115,7 +130,7 @@ def test_overlapping_entries_are_refused():
 
 # --- tracked_through ----------------------------------------------------------------------------------------------
 
-def test_tracked_through_lookup():
+def test_tracked_through_lookup(frozen):
     assert mr.tracked_through("XSGE") == mr.tracked_through("XSGE", "shfe_cu") == "2026-11-02"
     assert mr.tracked_through("XNYS") == mr.tracked_through("XNAS", "us_etf") == "2026-11-03"
     assert mr.tracked_through("XNYS+XNAS") == "2026-11-03"
@@ -151,7 +166,7 @@ def _schema_ok(d):
     return d
 
 
-def test_resolve_within_beyond_closed_untracked():
+def test_resolve_within_beyond_closed_untracked(frozen):
     d = _schema_ok(resolve("session_schedule", "2026-11-02", "shfe_cu", "XSGE"))
     assert d["status"] == "DETERMINED" and d["tracking"] == {"tracked_through": "2026-11-02", "beyond": False}
     assert d["warnings"] == []
@@ -163,7 +178,7 @@ def test_resolve_within_beyond_closed_untracked():
     assert d["tracking"] == {"tracked_through": None, "beyond": None} and d["warnings"] == [WARNING_UNTRACKED]
 
 
-def test_a_share_tracking_and_the_mixed_market_record():
+def test_a_share_tracking_and_the_mixed_market_record(frozen):
     """cn.fee.stamp_duty_sell.2023-08-28 is XSHG+XSHE+BJSE and open-ended; XSHG / XSHE are tracked, BJSE is not."""
     d = _schema_ok(resolve("stamp_duty_sell", "2026-11-10", "stock", "XSHE"))
     assert d["tracking"] == {"tracked_through": "2026-11-13", "beyond": False} and d["warnings"] == []
@@ -179,14 +194,14 @@ def test_a_share_tracking_and_the_mixed_market_record():
     assert d["warnings"] == [WARNING_BEYOND] and d["result"]["value"] == 0.001
 
 
-def test_non_determined_statuses_carry_tracking_but_no_warning():
+def test_non_determined_statuses_carry_tracking_but_no_warning(frozen):
     d = _schema_ok(resolve("price_limit_pct", "2026-11-20", "main_board", "XSHE"))
     assert d["status"] == "MISSING_CONTEXT" and d["warnings"] == [] and d["tracking"]["beyond"] is True
     d = _schema_ok(resolve("margin_ratio", "2026-11-20", "shfe_xx", "XSGE"))
     assert d["status"] == "OUT_OF_COVERAGE" and d["tracking"]["beyond"] is True and d["warnings"] == []
 
 
-def test_require_tracked_refuses_only_carry_forwards():
+def test_require_tracked_refuses_only_carry_forwards(frozen):
     d = _schema_ok(resolve("session_schedule", "2026-11-03", "shfe_cu", "XSGE", require_tracked=True))
     assert d["status"] == "BEYOND_TRACKING" and d["result"] is None
     assert d["record_id"] == "cn.futures.session_schedule.shfe_cu.2024-01-01" and d["evidence_refs"]
@@ -227,7 +242,7 @@ def test_schema_and_capabilities():
     assert capabilities("us")["tracking"]["untracked_markets"] == []
 
 
-def test_cli_require_tracked(capsys):
+def test_cli_require_tracked(capsys, frozen):
     assert main(["session_schedule", "2026-11-03", "shfe_cu", "XSGE", "--require-tracked"]) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "BEYOND_TRACKING"
     assert main(["session_schedule", "2026-11-03", "shfe_cu", "XSGE"]) == 0
@@ -236,7 +251,7 @@ def test_cli_require_tracked(capsys):
 
 # --- record_at / rule_at --------------------------------------------------------------------------------------------
 
-def test_record_at_opt_in_raises_beyond_tracking():
+def test_record_at_opt_in_raises_beyond_tracking(frozen):
     assert mr.rule_at("session_schedule", "2026-11-20", "shfe_cu", "XSGE") == \
         mr.rule_at("session_schedule", "2026-11-20", "shfe_cu", "XSGE", require_tracked=False)
     with pytest.raises(mr.BeyondTracking) as ei:
@@ -253,7 +268,7 @@ def test_record_at_opt_in_raises_beyond_tracking():
 
 # --- coverage -------------------------------------------------------------------------------------------------------
 
-def test_coverage_reports_tracking_without_changing_status():
+def test_coverage_reports_tracking_without_changing_status(frozen):
     a = mr.coverage("XSGE", "shfe_cu", ["session_schedule"], "2026-10-01", "2026-12-01")
     assert a["status"] == "complete"
     assert a["tracking"] == {"tracked_through": "2026-11-02", "beyond": {"from": "2026-11-03", "to": "2026-12-01"}}
@@ -281,6 +296,7 @@ def _rows(*lines):
 
 
 def test_check_counts_rows_beyond_tracking_without_touching_the_stamp(registry):
+    registry(*[_entry(m, t) for m, t in FROZEN])
     rows = _rows("2026-11-13,000001,buy,10.00,10.00,main_board,XSHE", "2026-11-20,000001,buy,10.00,10.00,main_board,XSHE",
                  "2026-11-20,600000,buy,10.00,10.00,main_board,", "2026-11-05,600000,buy,10.00,10.00,main_board,XSHG")
     for r in rows:
@@ -297,8 +313,11 @@ def test_check_counts_rows_beyond_tracking_without_touching_the_stamp(registry):
     assert tracked["stamp"] == plain["stamp"] and tracked["findings"] == plain["findings"] == []
 
 
-def test_check_example_stamp_unchanged():
+def test_check_example_stamp_unchanged(frozen, monkeypatch):
     import csv
+    # the stamp is sha256(dataset digest, canonical log): with the digest of 2026.11.16 it must be the one that release
+    # issued, whatever the data holds this week
+    monkeypatch.setattr(chk, "dataset_digest", lambda: DIGEST_2026_11_16)
     with open(os.path.join(ROOT, "examples", "fills_ok.csv"), newline="", encoding="utf-8") as fh:
         out = chk.check_rows(list(csv.DictReader(fh)), strict=True)
     assert out["stamp"].endswith("87ff86b08134065c107cbb5368058de5")
@@ -329,5 +348,5 @@ def test_release_guard_tracking_dates():
     errs, lines = g.check_tracking(old, today="2026-11-14", release="2026-11-14")
     assert errs == [] and lines[0].startswith("tracking XSGE shfe_cu: tracked through 2020-01-01")   # stale is not an error
     assert g.release_date(ROOT, "2026.11.13") == "2026-11-13" and g.release_date(ROOT, "1999.01.01") is None
-    errs, _ = g.check_tracking(mr.tracking_registry(), today="2026-11-14")
+    errs, _ = g.check_tracking(mr.tracking_registry(), today=max(e["updated"] for e in mr.tracking_registry()))
     assert errs == []

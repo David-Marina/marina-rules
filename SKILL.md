@@ -233,7 +233,7 @@ number. Templates:
 - "Scope `reits` is `unsupported` in marina-rules@<data version> — known gap **G-0009** (pending). REIT bands are not encoded; nothing was substituted."
 - "Scope `unicorn` is `unsupported` and matches no known gap — Marina has no opinion on it at all. Stop."
 - "`price_limit_pct` is not a rule of `cffex_if`; the scope's daily limit is `price_limit_pct_of_prev_settlement` (0.10 of the previous settlement price on 2024-06-03). Answered under that name." — or, if that is not the quantity asked for: "not covered; nothing substituted."
-- "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-02. Not answered."
+- "`session_schedule` / `shfe_cu` on 2026-11-20 is `BEYOND_TRACKING`: SHFE sources were checked only through 2026-11-18. Not answered."
 
 `cov["known_gap_ids"]` is the difference between *we know we don't cover this* (cite the `G-xxxx`, its
 `severity` says how wrong a substitute would be) and *nobody has looked* (no id). Both stop the run;

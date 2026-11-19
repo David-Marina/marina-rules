@@ -18,3 +18,11 @@ def test_every_vector_has_an_oracle_and_unique_id():
             assert v["id"] not in seen, f"duplicate id {v['id']}"; seen.add(v["id"])
             assert len(v["oracle"].strip()) >= 10, f"{v['id']}: oracle must cite a text or show the arithmetic"
             assert v["expect"], v["id"]
+
+
+def test_tracking_vectors_follow_the_registry():
+    """The tracked-through dates move every week; conformance/tracking_vectors.py rewrites the vectors from them."""
+    import tracking_vectors as tv
+    with open(tv.PATH, encoding="utf-8") as fh:
+        vectors = json.load(fh)
+    assert tv.build(vectors) == vectors, "run: python conformance/tracking_vectors.py"

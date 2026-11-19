@@ -187,12 +187,12 @@ def build() -> dict:
                     "judgement": "off-tick prices are not violations here; rows beyond a limit by <= 0.3% are tolerated, "
                                  "not violations; row 7 is tolerated only under the pre-2020-08-24 10% ChiNext band"}
 
-    # T12 beyond the tracked-through date of SHFE.
-    d = _determined("trans_fee_rate", "2026-11-10", "shfe_cu", "XSGE")
+    # T12 beyond the tracked-through date of SHFE (a date far enough ahead that weekly tracking does not reach it).
+    d = _determined("trans_fee_rate", "2027-06-01", "shfe_cu", "XSGE")
     assert _carry_forward(d) and d["tracking"]["beyond"] is True
     tasks["T12"] = {"kind": "value", "status": "determined", "value": d["result"]["value"], "tol": TOL_RATE,
                     "carry_forward": True, "also_accept": ["beyond_tracking"],
-                    "derivation": "resolve('trans_fee_rate', '2026-11-10', 'shfe_cu', 'XSGE') -> DETERMINED with "
+                    "derivation": "resolve('trans_fee_rate', '2027-06-01', 'shfe_cu', 'XSGE') -> DETERMINED with "
                                   f"warning {d['warnings']}, tracked_through {d['tracking']['tracked_through']}",
                     "judgement": "the value must come flagged as a carry-forward (or be declined as beyond tracking)"}
 

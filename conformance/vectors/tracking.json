@@ -3,19 +3,19 @@
   "id": "TRK-0001",
   "query": {
    "rule": "session_schedule",
-   "trade_date": "2026-11-02",
+   "trade_date": "2026-11-18",
    "scope": "shfe_cu",
    "market": "XSGE"
   },
   "expect": {
    "status": "DETERMINED",
    "tracking": {
-    "tracked_through": "2026-11-02",
+    "tracked_through": "2026-11-18",
     "beyond": false
    },
    "warnings": []
   },
-  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). 2026-11-02 is the last checked day: the open-ended session record states what the sources said → no warning",
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-18 (SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18.) 2026-11-18 is on or before it. || The last checked day is within tracking: the open-ended session record answers with no warning.",
   "tags": [
    "tracking",
    "within",
@@ -27,21 +27,21 @@
   "id": "TRK-0002",
   "query": {
    "rule": "session_schedule",
-   "trade_date": "2026-11-20",
+   "trade_date": "2026-11-25",
    "scope": "shfe_cu",
    "market": "XSGE"
   },
   "expect": {
    "status": "DETERMINED",
    "tracking": {
-    "tracked_through": "2026-11-02",
+    "tracked_through": "2026-11-18",
     "beyond": true
    },
    "warnings": [
     "CARRY_FORWARD_BEYOND_TRACKED"
    ]
   },
-  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). 2026-11-20 > 2026-11-02 and the record has effective_to null → the answer is a carry-forward, warned",
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-18 (SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18.) 2026-11-25 is after it. || An open-ended record answering for a day after the tracked-through date is a carry-forward: DETERMINED with CARRY_FORWARD_BEYOND_TRACKED.",
   "tags": [
    "tracking",
    "beyond",
@@ -53,7 +53,7 @@
   "id": "TRK-0003",
   "query": {
    "rule": "session_schedule",
-   "trade_date": "2026-11-20",
+   "trade_date": "2026-11-25",
    "scope": "shfe_cu",
    "market": "XSGE",
    "require_tracked": true
@@ -61,7 +61,7 @@
   "expect": {
    "status": "BEYOND_TRACKING"
   },
-  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-02 (SHFE daily settlement-parameter files and notices checked every trading day 2024-01-02 → 2026-11-02; docs/SCHEMA.md SHFE fees: an open end means no later change was found up to 2026-11-02). same query with require_tracked=True: a carry-forward is refused, never answered",
+  "oracle": "data/cn/tracking.yaml: XSGE tracked_through 2026-11-18 (SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18.) 2026-11-25 is after it. || Same query as TRK-0002 with require_tracked=True: the carry-forward is refused (BEYOND_TRACKING).",
   "tags": [
    "tracking",
    "beyond",
@@ -73,7 +73,7 @@
   "id": "TRK-0004",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2026-11-04",
+   "trade_date": "2026-11-19",
    "scope": "hk_stock",
    "market": "XHKG"
   },
@@ -81,14 +81,14 @@
    "status": "DETERMINED",
    "value": 0.001,
    "tracking": {
-    "tracked_through": "2026-11-03",
+    "tracked_through": "2026-11-18",
     "beyond": true
    },
    "warnings": [
     "CARRY_FORWARD_BEYOND_TRACKED"
    ]
   },
-  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-03 (research window ending before 2026-11-04; docs/SCHEMA.md Hong Kong: no reinstatement was found before 2026-11-04). Stamp duty 0.1% per side from 2023-11-17 (open-ended) → 2026-11-04 is one day beyond, value carried forward and warned",
+  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-18 (HKEX register of amendments to the Rules of the Exchange, HKEX trading-fee, settlement-fee, trading-hours and minimum-spread pages, the IRD stamp-duty pages and the government's daily press-release index, read on 2026-11-19 for 2026-11-04 to 2026-11-18. Not read - the SFC's own news list and HKEX circulars outside the CT series (neither could be listed without a script); the SFC levy was checked on HKEX's fee page only.) 2026-11-19 is after it. || Stamp duty 0.1% per side from 2023-11-17 (open-ended): the first day after the tracked-through date is a carry-forward, value unchanged, flagged.",
   "tags": [
    "tracking",
    "beyond",
@@ -100,7 +100,7 @@
   "id": "TRK-0005",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2026-11-03",
+   "trade_date": "2026-11-18",
    "scope": "hk_stock",
    "market": "XHKG"
   },
@@ -108,12 +108,12 @@
    "status": "DETERMINED",
    "value": 0.001,
    "tracking": {
-    "tracked_through": "2026-11-03",
+    "tracked_through": "2026-11-18",
     "beyond": false
    },
    "warnings": []
   },
-  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-03 → 2026-11-03 is within; stamp duty 0.1% per side from 2023-11-17",
+  "oracle": "data/hk/tracking.yaml: XHKG tracked_through 2026-11-18 (HKEX register of amendments to the Rules of the Exchange, HKEX trading-fee, settlement-fee, trading-hours and minimum-spread pages, the IRD stamp-duty pages and the government's daily press-release index, read on 2026-11-19 for 2026-11-04 to 2026-11-18. Not read - the SFC's own news list and HKEX circulars outside the CT series (neither could be listed without a script); the SFC levy was checked on HKEX's fee page only.) 2026-11-18 is on or before it. || Stamp duty 0.1% per side from 2023-11-17: the last checked day is within tracking, no warning.",
   "tags": [
    "tracking",
    "within"
@@ -136,7 +136,7 @@
    },
    "warnings": []
   },
-  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03. The FINRA TAF fee holiday record is closed: [2026-10-01, 2027-01-01) (SR-FINRA-2026-021: transactions from 2026-10-01 through 2026-12-31). A closed record's end is a sourced fact → beyond tracking but no warning",
+  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03 (SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT fee alerts; researched for a window ending before 2026-11-04.) 2026-12-01 is after it. || The FINRA TAF fee holiday record is closed: [2026-10-01, 2027-01-01) (SR-FINRA-2026-021: transactions from 2026-10-01 through 2026-12-31). A closed record's end is a sourced fact: no warning, whether or not the day is beyond tracking.",
   "tags": [
    "tracking",
    "beyond",
@@ -157,7 +157,7 @@
    "status": "DETERMINED",
    "warnings": []
   },
-  "oracle": "Same as TRK-0006 with require_tracked=True: only open-ended records are refused; the closed fee-holiday record still answers",
+  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03 (SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT fee alerts; researched for a window ending before 2026-11-04.) 2026-12-01 is after it. || Same as TRK-0006 with require_tracked=True: only open-ended records are refused; the closed fee-holiday record still answers.",
   "tags": [
    "tracking",
    "beyond",
@@ -258,7 +258,7 @@
    },
    "warnings": []
   },
-  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. Query market XSHE on 2026-11-10 ≤ 2026-11-13: within tracking, answered even with require_tracked=True",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-10 is on or before it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28 (XSHG+XSHE+BJSE, open-ended, 0.05% on sales): a query with market XSHE on a checked day is tracked and answers with require_tracked=True.",
   "tags": [
    "tracking",
    "within",
@@ -286,7 +286,7 @@
     "CARRY_FORWARD_BEYOND_TRACKED"
    ]
   },
-  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (listing pages of SSE, SZSE, CSDC and MOF diffed on 2026-11-14 against the 2026-10-24 snapshot; BJSE is not on the watch list and is untracked). Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG+XSHE+BJSE, 0.05% on sales from 2023-08-28 (财政部 税务总局公告2023年第39号), open-ended. Query market XSHG on 2026-11-20 > 2026-11-13: carry-forward, warned",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-20 is after it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG, a day after the tracked-through date: a carry-forward, flagged.",
   "tags": [
    "tracking",
    "beyond",
@@ -306,7 +306,7 @@
   "expect": {
    "status": "BEYOND_TRACKING"
   },
-  "oracle": "Same as TRK-0012 with require_tracked=True: refused",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-20 is after it. || Same as TRK-0012 with require_tracked=True: refused.",
   "tags": [
    "tracking",
    "beyond",

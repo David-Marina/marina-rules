@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536",
+ "ruleset_hash": "42202950aae64e3b99776b6eaef94067e351c620c51a52a45c23495d7700e263",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -472,9 +472,9 @@
    {
     "market": "XHKG",
     "scopes": null,
-    "tracked_through": "2026-11-03",
-    "basis": "HKEX rules, circulars, fee pages and trading-mechanism papers, SFC and IRD notices; researched for a window ending before 2026-11-04.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-18",
+    "basis": "HKEX register of amendments to the Rules of the Exchange, HKEX trading-fee, settlement-fee, trading-hours and minimum-spread pages, the IRD stamp-duty pages and the government's daily press-release index, read on 2026-11-19 for 2026-11-04 to 2026-11-18. Not read - the SFC's own news list and HKEX circulars outside the CT series (neither could be listed without a script); the SFC levy was checked on HKEX's fee page only.",
+    "updated": "2026-11-19"
    }
   ],
   "untracked_markets": [],

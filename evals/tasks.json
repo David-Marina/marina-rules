@@ -80,7 +80,7 @@
     {
       "id": "T12",
       "title": "SHFE copper trading fee in November 2026",
-      "question": "Shanghai Futures Exchange copper futures: what is the exchange trading fee rate (fraction of turnover) for opening a speculative position on 2026-11-10?",
+      "question": "Shanghai Futures Exchange copper futures: what is the exchange trading fee rate (fraction of turnover) for opening a speculative position on 2027-06-01?",
       "return": "value: the fraction, or the status that applies; carry_forward as in ANSWER_FORMAT.md."
     },
     {

@@ -42,7 +42,7 @@ def test_bool_rule_accepts_bool(tmp_path, monkeypatch, ok):
 def test_both_records_resolve():
     d = resolve(RULE, "2025-07-13", "star_growth_new", "XSHG", NEW)
     assert d["status"] == "DETERMINED" and d["result"]["value"] is True
-    assert d["record_id"] == "cn.suitability.star_growth_new.2025-07-13" and d["verification"] == "single-source"
+    assert d["record_id"] == "cn.suitability.star_growth_new.2025-07-13" and d["verification"] == "verified"
     d = resolve(RULE, "2026-11-02", "star_growth_legacy", "XSHG", LEGACY)
     assert d["status"] == "DETERMINED" and d["result"]["value"] is False
     assert d["record_id"] == "cn.suitability.star_growth_legacy.2025-07-13"

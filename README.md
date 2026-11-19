@@ -11,12 +11,12 @@ What a stamp certifies is deliberately narrow: the fills respected these rules. 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
 
 ```
-rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.16 sha256:42202950aae64e3b code: marina-rules-core@1.0.0
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
 
-> **Status: 2026.11.16.** 2873 records — 1421 `verified`, 1451 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (27 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
+> **Status: 2026.11.16.** 2874 records — 1423 `verified`, 1450 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (27 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
 
 What changed in each release, and which backtests a release asks you to re-run: [CHANGELOG.md](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md).
 
@@ -165,7 +165,7 @@ calendar; a security's board, ST status and listing day are the caller's to supp
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes. For a reference list, [`CITATION.cff`](https://github.com/David-Marina/marina-rules/blob/main/CITATION.cff) names the project; the version and digest still come from `mr.citation()`.
 
 ```
-rules: marina-rules@2026.11.16 sha256:80188ec249ce22ae code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.16 sha256:42202950aae64e3b code: marina-rules-core@1.0.0
 ```
 
 `marina-rules@…` is the data version (`mr.VERSION`, the version of the `marina-rules` package) and `sha256:…` the
@@ -310,8 +310,10 @@ each market's `known_gaps.yaml` are the statement.
 | Market group | `tracked_through` | Checked against |
 |---|---|---|
 | China A-share (XSHG, XSHE) | 2026-11-13 | listing pages of SSE, SZSE, CSDC and MOF rules and notices, diffed weekly; new titles matching rule keywords reviewed by title |
-| SHFE (XSGE), INE (XINE), CZCE (XZCE), GFEX | 2026-11-02 | notices and daily settlement parameters, every trading day from 2024-01-02 |
-| Hong Kong (XHKG) | 2026-11-03 | HKEX rules, circulars and fee pages; SFC and IRD notices |
+| SHFE (XSGE) | 2026-11-18 | notices and daily settlement parameters, every trading day from 2024-01-02 |
+| INE (XINE) | 2026-11-18 | daily settlement and trading parameters, every trading day from 2024-01-02; notices from 2026-11-03 only as republished on shfe.com.cn |
+| CZCE (XZCE), GFEX | 2026-11-02 | notices and daily settlement parameters, every trading day from 2024-01-02 |
+| Hong Kong (XHKG) | 2026-11-18 | HKEX register of rule amendments, fee, trading-hours and minimum-spread pages; IRD stamp-duty pages; government press releases. The SFC's own news list and HKEX circulars outside the CT series were not read for 2026-11-04 onward |
 | US equities (XNYS, XNAS) | 2026-11-03 | SEC, FINRA, NYSE and Nasdaq rules, orders, notices and filings |
 | BJSE, CFFEX (CCFX) | not tracked | not on the watch list; every open-ended answer is a carry-forward |
 
@@ -355,7 +357,7 @@ beyond that date (or on an untracked market) carries the warning `CARRY_FORWARD_
 A closed record is never flagged: its end date is sourced. To refuse carry-forwards instead, opt in:
 
 ```python
-mr.tracked_through("XSGE")                                                          # '2026-11-02'
+mr.tracked_through("XSGE")                                                          # '2026-11-18'
 resolve("session_schedule", "2026-11-20", "shfe_cu", "XSGE")["warnings"]             # ['CARRY_FORWARD_BEYOND_TRACKED']
 resolve("session_schedule", "2026-11-20", "shfe_cu", "XSGE", require_tracked=True)["status"]  # 'BEYOND_TRACKING'
 mr.rule_at("session_schedule", "2026-11-20", "shfe_cu", "XSGE", require_tracked=True)  # raises BeyondTracking (a KeyError)

@@ -28750,6 +28750,40 @@ records:
     one-sided-market increases under the risk-control rules (风险控制管理办法), which the holiday and adjustment notices say are applied
     on top of the stated levels. The notice makes the restoration conditional (first trading day after the holiday without
     a one-sided market); the date is fixed from the settlement-parameter file.'
+- id: cn.futures.margin_ratio.shfe_bu.2026-11-17
+  scope: shfe_bu
+  rule: margin_ratio
+  value: 0.12
+  effective_from: '2026-11-17'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-19'
+  verification: single-source
+  sources:
+  - url: https://www.shfe.com.cn/data/tradedata/future/dailydata/js20261117.dat
+    publisher: 上海期货交易所
+    title: 期货结算参数（20261117）
+    date: '2026-11-17'
+    kind: official
+    quote: '"INSTRUMENTID":"bu2702" … "SPECLONGMARGINRATIO":0.12 … "SPECSHORTMARGINRATIO":0.12 … "ISUNITODAY":0'
+    content_sha256: 568f01f21c2a6c42b98270ad515c01ed74261bafc153999483ced0113bd9757e
+    hash_kind: bytes
+  - url: https://www.shfe.com.cn/publicnotice/notice/202610/t20261030_833904.html
+    publisher: 上海期货交易所
+    title: 关于调整燃料油、石油沥青期货相关合约涨跌停板幅度和交易保...
+    date: '2026-10-30'
+    kind: official
+    quote: 石油沥青期货BU2611、BU2612、BU2701合约的涨跌停板幅度为14 % ，套保持仓交易保证金比例为15 % ，一般持仓交易保证金比例为16 %
+    content_sha256: 02d8d68b229b9245d4760cad14a42035a4d80f1470e35bd7172ebc356a6cbd9e
+    hash_kind: text
+  notes: 'General-month speculative margin: minimum across listed contracts after excluding the two nearest expiries
+    (BU2612, BU2701) and contracts hitting a price limit that day (ISUNITODAY nonzero). The retained BU2702–BU2809
+    contracts all have 0.12 long and short margins and ISUNITODAY=0 on 2026-11-17 and 2026-11-18. Not a new adjustment:
+    the general months were split from 2026-10-12 (gap G-0107) because BU2612 and BU2701 carried a raised level (0.14,
+    then 0.16 from the 2026-11-03 settlement under the 2026-10-30 notice); the split ended when BU2611 left the file
+    after 2026-11-16 and the two raised contracts became the two nearest expiries. The notice raises only those named
+    contracts and does not state the 0.12 general-month value, so the record is single-source: value and date from
+    the daily file. The notice page was hashed on 2026-11-19. Brokers may add a markup.'
 - id: cn.futures.price_limit_pct_of_prev_settlement.shfe_bu.2023-12-29
   scope: shfe_bu
   rule: price_limit_pct_of_prev_settlement

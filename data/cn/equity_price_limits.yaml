@@ -368,6 +368,22 @@ records:
     content_sha256: fc30f7595e7e82f4e81e7d3bc04fa97dd24c9993a252d0aa19bcce3059f7edd2
     hash_kind: bytes
     fetched_sha256: fc30f7595e7e82f4e81e7d3bc04fa97dd24c9993a252d0aa19bcce3059f7edd2
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 北京证券交易所交易规则（试行）第3.3.11条
+    date: '2021-11-02'
+    kind: official
+    quote: '本所对股票交易实行价格涨跌幅限制，涨跌幅限制比例为30%。'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
+    date: '2021-11-02'
+    kind: official
+    quote: '经中国证监会批准，现予以发布，自2021年11月15日起施行。'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
   notes: Beijing Stock Exchange launch.
 - id: cn.limit.ipo_day1.main.sse.1996-12-16
   scope: ipo_day1_main
@@ -646,6 +662,22 @@ records:
     content_sha256: fc30f7595e7e82f4e81e7d3bc04fa97dd24c9993a252d0aa19bcce3059f7edd2
     hash_kind: bytes
     fetched_sha256: fc30f7595e7e82f4e81e7d3bc04fa97dd24c9993a252d0aa19bcce3059f7edd2
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 北京证券交易所交易规则（试行）第3.3.12条
+    date: '2021-11-02'
+    kind: official
+    quote: '（一）向不特定合格投资者公开发行的股票上市交易首日；'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
+    date: '2021-11-02'
+    kind: official
+    quote: '经中国证监会批准，现予以发布，自2021年11月15日起施行。'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
   notes: 'BSE: listing day unlimited.'
 - id: cn.limit.rounding.1996-12-16
   scope: stock
@@ -910,7 +942,7 @@ records:
     quote: （二）该股票的报价日涨跌幅限制为5%；（三）实行特别处理期间，该公司的中期报告必须审计
     content_sha256: 496fd6b0b976c3f69a48d74d489ae06b5f2eefbd4bdf13af63cc56ee556580bf
     hash_kind: text
-  notes: 'ST B shares followed the main-board ST band (5%). The 1998 ST regime applied to listed companies regardless of share class (the first batch included B-share-only ST 中浩B), and no exchange text was found that sets a different band for B shares — but none names them either, so: single-source. Closed 2026-07-06 when main-board risk-warning stocks moved to 10%. published_at: not located (2026-10-29 search: SSE repeal registers batches 1–7, SZSE repeal register batch 1, SSE/SZSE chronicles 1996–1998, CSRC 现行规章目录 and repeal notices, SZSE 2005 research page). Found but not used: SZSE register item 103 关于印发《深交所股票上市规则》的通知 (1998.1.6 深证发（98）2) — the 5% band is in that rule per an SZSE research article, but no SSE date was found for an XSHG+XSHE record; CSRC 证监交字[1998]6号 (1998-03-16) only on non-official reprints; SSE 上证交（98）字第012号 (1998-04-23, register batch 6) is after effective_from.'
+  notes: 'ST B shares followed the main-board ST band (5%). Start date as for st_main (the SZSE retrospective cited here says 1998-04-27, the SSE chronology 1998-04-22; 04-22 is used). The 1998 ST regime applied to listed companies regardless of share class (the first batch included B-share-only ST 中浩B), and no exchange text was found that sets a different band for B shares — but none names them either, so: single-source. Closed 2026-07-06 when main-board risk-warning stocks moved to 10%. published_at: not located (2026-10-29 search: SSE repeal registers batches 1–7, SZSE repeal register batch 1, SSE/SZSE chronicles 1996–1998, CSRC 现行规章目录 and repeal notices, SZSE 2005 research page). Found but not used: SZSE register item 103 关于印发《深交所股票上市规则》的通知 (1998.1.6 深证发（98）2) — the 5% band is in that rule per an SZSE research article, but no SSE date was found for an XSHG+XSHE record; CSRC 证监交字[1998]6号 (1998-03-16) only on non-official reprints; SSE 上证交（98）字第012号 (1998-04-23, register batch 6) is after effective_from.'
 - id: cn.limit.st_b_share.2026-07-06
   market: XSHG+XSHE
   scope: st_b_share
@@ -1943,6 +1975,22 @@ records:
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
     quote: 经中国证监会批准，现予以发布，自2021年11月15日起施行。
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 北京证券交易所交易规则（试行）第3.3.12条
+    date: '2021-11-02'
+    kind: official
+    quote: '（二）退市整理期首日；'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
+    date: '2021-11-02'
+    kind: official
+    quote: '经中国证监会批准，现予以发布，自2021年11月15日起施行。'
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
   notes: 'BSE trial rules 3.3.12(2): no band on the first day of the delisting period, from the exchange''s opening.'
 - id: cn.limit.delisting_day1_star.2019-07-22
   market: XSHG
@@ -4811,10 +4859,16 @@ records:
     quote: 在《交易规则》修订前，上交所市场有关债券ETF、黄金ETF实施“T+0”交易机制的规定可见于具体的业务规则。
     content_sha256: f8fe6b76eeef303c45e2e610127c02fe8a52b57a59f7e4dcfd4bc8a27ead8481
     hash_kind: text
+  - url: http://web.archive.org/web/20130518083644id_/http://www.sse.com.cn:80/lawandrules/sserules/trading/fund/c/c_20130315_3688912.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 关于债券类交易型开放式指数基金交易相关事项的通知（上证基字〔2013〕86号）（sse.com.cn 页面，web.archive.org 存档 2013-05-18）
+    date: '2013-03-15'
+    kind: official
+    quote: '当日买入的债券ETF份额，当日可卖出。'
+    content_sha256: ea583f07379b9f258e618bbf53355d8123430578ea48c259b6ac13d251b30579
+    hash_kind: text
   notes: 'SSE bond ETFs were same-day from the start: SSE bond-ETF guide (2013-02-08) and SSE''s own 2013-12 Q&A naming the
-    notice 《关于债券类交易型开放式指数基金交易相关事项的通知》 "issued and effective on 2013-03-15" (the number 上证基字〔2013〕86号 appears only in the press
-    reprint; the notice text is not on sse.com.cn). First SSE bond ETF (511010) listed 2013-03-25 (SSE yearbook). single-source
-    on the date (official restatement, not the notice). Continued for both exchanges by cn.settle.etf_bond.2013-08-05. Replaces
+    notice 《关于债券类交易型开放式指数基金交易相关事项的通知》 "issued and effective on 2013-03-15" (上证基字〔2013〕86号; the notice is no longer on sse.com.cn and is cited from the web.archive.org copy of the SSE page). First SSE bond ETF (511010) listed 2013-03-25 (SSE yearbook). single-source: the notice itself survives only as an archived copy, the live sources are restatements. Continued for both exchanges by cn.settle.etf_bond.2013-08-05. Replaces
     part of former gap G-0019.'
 - id: cn.settle.etf_bond.2013-08-05
   market: XSHG+XSHE
@@ -5143,9 +5197,16 @@ records:
     quote: 已经中国证监会批准，现予发布，自发布之日起施行。
     content_sha256: b74963005b5b9f449231528884638902b524c2608367c39a02e9d8ce3df4890d
     hash_kind: text
+  - url: http://web.archive.org/web/20131025225138id_/http://www.sse.com.cn:80/lawandrules/sserules/trading/universal/c/c_20131021_3746516.shtml
+    publisher: 上交所（sse.com.cn 页面，web.archive.org 存档）
+    title: 关于修订《上海证券交易所交易规则》及相关事项的通知（上证发〔2013〕9号）（sse.com.cn 页面，web.archive.org 存档 2013-10-25）
+    date: '2013-10-18'
+    kind: official
+    quote: '一、本次修订后的《交易规则》将于2013年12月9日起实施。'
+    content_sha256: b36b1a3bd374bda6d18eee6f6557f80578ae43e34cd2d2b1d3c96cf8f36b2bf2
+    hash_kind: text
   notes: 'SSE trading-rules revision (上证发〔2013〕9号, in force 2013-12-09 per SSE''s own Q&A) lists 交易型货币市场基金 as same-day; SZSE since
-    2013-11-30. single-source: the SSE revision text was found only as a press reprint; the value and date come from SSE''s official
-    Q&A. Continued by cn.settle.etf_money.2015-01-19. Replaces former gap G-0020.'
+    2013-11-30. single-source: the SSE revision notice is no longer on sse.com.cn and is cited, for the date, from the web.archive.org copy of the SSE page; the value comes from SSE''s official Q&A. Continued by cn.settle.etf_money.2015-01-19. Replaces former gap G-0020.'
 - id: cn.settle.reits.2021-01-29
   market: XSHG+XSHE
   scope: reits

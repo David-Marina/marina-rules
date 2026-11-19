@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536",
+ "ruleset_hash": "42202950aae64e3b99776b6eaef94067e351c620c51a52a45c23495d7700e263",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -331,7 +331,7 @@
    "has_open_interval": true,
    "records_by_verification": {
     "verified": 650,
-    "single-source": 306
+    "single-source": 307
    }
   },
   "min_holding_days": {
@@ -578,7 +578,7 @@
    "earliest_effective_from": "2025-07-13",
    "has_open_interval": true,
    "records_by_verification": {
-    "single-source": 2
+    "verified": 2
    }
   },
   "session_schedule": {
@@ -3286,7 +3286,7 @@
    "rule": "margin_ratio",
    "interval": {
     "from": "2026-10-12",
-    "to": null
+    "to": "2026-11-17"
    },
    "severity": "medium",
    "status": "open"
@@ -9716,16 +9716,16 @@
    {
     "market": "XSGE",
     "scopes": null,
-    "tracked_through": "2026-11-02",
-    "basis": "SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-18",
+    "basis": "SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18.",
+    "updated": "2026-11-19"
    },
    {
     "market": "XINE",
     "scopes": null,
-    "tracked_through": "2026-11-02",
-    "basis": "INE notices and daily settlement-parameter / trade-argument files, every trading day from 2024-01-02 to 2026-11-02.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-18",
+    "basis": "INE daily settlement-parameter / trade-argument files, every trading day from 2024-01-02 to 2026-11-18. INE notices to 2026-11-02; from 2026-11-03 only those republished on shfe.com.cn were read, because the INE notice list refused automated access on 2026-11-19.",
+    "updated": "2026-11-19"
    },
    {
     "market": "XZCE",

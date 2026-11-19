@@ -9,6 +9,17 @@ from marina_rules import adapt
 from marina_rules.check import MAX_DECIMALS, check_rows, main as check_main
 from marina_rules.contract import resolve
 
+DIGEST_2026_11_16 = "80188ec249ce22ae0b4fd74f5acd8f420ac280846a5cf081dd6dcf091f102536"
+
+
+@pytest.fixture(autouse=True)
+def digest_of_2026_11_16(monkeypatch):
+    """A stamp is sha256(dataset digest, canonical log). The data is released weekly, so the golden stamps below are
+    taken with the digest of the release that issued them; what they pin is the canonical form of the log."""
+    import marina_rules.check as chk
+    monkeypatch.setattr(chk, "dataset_digest", lambda: DIGEST_2026_11_16)
+
+
 BASE = dict(date="2024-06-14", code="600001", side="sell", price="10.00", prev_close="10.00",
             scope="main_board", market="XSHG", fee="5.1", turnover="10000")
 

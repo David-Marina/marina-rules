@@ -13,7 +13,7 @@ records:
   effective_from: 2025-07-13
   published_at: '2025-07-13'
   recorded_at: '2026-11-08'
-  verification: single-source
+  verification: verified
   sources:
   - url: https://www.sse.com.cn/lawandrules/sselawsrules/bond/convertible/trading/c/c_20250711_10784585.shtml
     publisher: 上海证券交易所
@@ -41,8 +41,7 @@ records:
     membership from the exchange's markings: growth-tier names carry the suffix U, and quote and trading terminals
     label newly registered growth-tier stocks 成 and existing ones 成1. A stock leaves the tier once it meets the
     exit conditions; whether it is in the tier on a date is the caller's fact (context key star_growth_tier). The
-    notice is dated 2025-07-13 and takes effect on publication (the page URL carries 20250711). Both texts are from
-    one publisher, the SSE, hence single-source; the CSRC opinion the notice implements was not fetched. No record
+    notice is dated 2025-07-13 and takes effect on publication (the page URL carries 20250711). The notice is the rule text and states the requirement and its start in terms (re-read 2026-11-19); the CSRC opinion it implements was not fetched. No record
     before 2025-07-13: the growth tier did not exist.
 - id: cn.suitability.star_growth_legacy.2025-07-13
   scope: star_growth_legacy
@@ -51,7 +50,7 @@ records:
   effective_from: 2025-07-13
   published_at: '2025-07-13'
   recorded_at: '2026-11-08'
-  verification: single-source
+  verification: verified
   sources:
   - url: https://www.sse.com.cn/lawandrules/sselawsrules/bond/convertible/trading/c/c_20250711_10784585.shtml
     publisher: 上海证券交易所
@@ -77,6 +76,5 @@ records:
     apply. Callers can tell membership from the exchange's markings: growth-tier names carry the suffix U, and quote
     and trading terminals label these existing growth-tier stocks 成1. Such a stock leaves the tier once it first
     turns a profit after listing (the exit condition for existing members); whether it is in the tier on a date is
-    the caller's fact (context key star_growth_tier). Both texts are from one publisher, the SSE, hence
-    single-source; the CSRC opinion the notice implements was not fetched. No record before 2025-07-13: the growth
+    the caller's fact (context key star_growth_tier). The notice is the rule text and states the requirement and its start in terms (re-read 2026-11-19); the CSRC opinion it implements was not fetched. No record before 2025-07-13: the growth
     tier did not exist.

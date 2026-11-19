@@ -598,9 +598,12 @@ def test_shfe_energy_chem_futures_rules():
         mr.rule_at("margin_ratio", "2026-10-20", "shfe_bu", "XSGE")
     gap = next(g for g in mr.known_gaps("cn") if g["scope"] == "shfe_bu" and g["rule"] == "margin_ratio"
                and g["interval"]["from"] <= "2026-10-20" < (g["interval"]["to"] or "9999-12-31"))
-    assert gap["market"] == "XSGE" and gap["interval"] == {"from": "2026-10-12", "to": None}
+    assert gap["market"] == "XSGE" and gap["interval"] == {"from": "2026-10-12", "to": "2026-11-17"}
     d = resolve("margin_ratio", "2026-10-20", "shfe_bu", "XSGE")
     assert d["status"] == "OUT_OF_COVERAGE" and d["known_gap_ids"] == [gap["gap_id"]]
+    # the split ended when the raised contracts became the two nearest expiries: one value again from 2026-11-17
+    assert mr.rule_at("margin_ratio", "2026-11-17", "shfe_bu", "XSGE") == 0.12
+    assert resolve("margin_ratio", "2026-11-16", "shfe_bu", "XSGE")["status"] == "OUT_OF_COVERAGE"
     assert resolve("min_holding_days", "2024-06-14", "shfe_br", "XSGE",
                    min_verification="verified")["status"] == "UNVERIFIED"
 

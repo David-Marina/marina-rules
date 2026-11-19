@@ -422,13 +422,15 @@ Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持�
   exception for closing same-day new positions), so a `verified` threshold returns `UNVERIFIED`. A few margin / band records with no
   located notice (value and date from the daily files only) are also `single-source`. The fuel-oil margin from 2026-11-03
   (0.16) is daily-file only as well: that day's notice raised only the two nearest expiries, which the sample leaves out.
+  The bitumen margin from 2026-11-17 (0.12) is the same case: the split of gap G-0107 ended when the two raised contracts
+  (BU2612, BU2701) became the two nearest expiries; no notice states the general-month value.
 
 ### SHFE exchange fees (2026.11.02, first batch)
 
 Scopes `shfe_cu` `shfe_al` `shfe_zn` `shfe_pb` `shfe_ni` `shfe_sn` `shfe_ao` `shfe_ad` `shfe_au` `shfe_ag`, from
 2024-01-01 (cast aluminium alloy from its listing day 2025-06-10). Only the exchange fee for **speculative / general
 positions** is recorded: hedge-position fees, declaration fees (申报费) and broker commissions are not included. An open
-end (`effective_to: null`) means no later change was found up to 2026-11-02, not a forecast.
+end (`effective_to: null`) means no later change was found up to 2026-11-18, not a forecast.
 
 | rule | value | meaning |
 |---|---|---|
@@ -492,7 +494,7 @@ gap. Loading refuses a `trans_fee_rate` or `close_today_fee_rate` outside [0, 0.
 - **Gaps** (30: G-0352..G-0355 and G-0364..G-0389). Close-today fee: CU, AL, ZN, PB from 2024-01-01 (open) — no dated product-wide history
   was located; NI, AU, AG, SN and AO over the windows not priced by a notice, split around the named-contract records
   (14 of them carry a `none` selector: "every contract except the named ones"). No trading-fee gap remains for these ten
-  products: every contract-day 2024-01-02 → 2026-11-02 has a record.
+  products: every contract-day 2024-01-02 → 2026-11-18 has a record.
 
 ### SHFE exchange fees, second batch (2026.11.05): ferrous metals, energy and chemicals
 
@@ -1489,9 +1491,10 @@ and is `None` if any member is untracked; `scope=None` takes the earliest entry 
 records has no entry; `market=None` → `None`. In `resolve()` without a market the answering record's market is used, so
 an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry) but tracked for a query with market `XSHG` or `XSHE`.
 
-**Entries (2026-11-14).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
-rule keywords reviewed by title, not every notice read); `XSGE`, `XINE`, `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-03;
-`XNYS+XNAS` 2026-11-03. Untracked: `BJSE`, `CCFX`.
+**Entries (2026-11-19).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
+rule keywords reviewed by title, not every notice read); `XSGE` 2026-11-18; `XINE` 2026-11-18 (daily files; notices from
+2026-11-03 only as republished on shfe.com.cn); `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-18 (the SFC's own news list and
+HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-03. Untracked: `BJSE`, `CCFX`.
 
 **Where it shows** (all additive; default return values and exceptions are unchanged):
 

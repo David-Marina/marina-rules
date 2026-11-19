@@ -2064,7 +2064,7 @@ gaps:
   rule: margin_ratio
   interval:
     from: '2026-10-12'
-    to: null
+    to: '2026-11-17'
   severity: medium
   reason: General-month contracts carry different values after excluding the two nearest expiries (margin), one-sided markets
     and listing-day bands. A single product-level value cannot represent this interval. The groups below are observed file
@@ -2075,11 +2075,15 @@ gaps:
   evidence:
   - 'first day 2026-10-12: 0.12: bu2702, bu2703, bu2704, bu2705, bu2706, bu2707, bu2708, bu2709, bu2712, bu2803, bu2806, bu2809;
     0.14: bu2612, bu2701'
-  - 'last observed non-one-sided day 2026-11-02: 0.12: bu2702, bu2703, bu2704, bu2705, bu2706, bu2707, bu2708, bu2709, bu2710,
-    bu2712, bu2803, bu2806, bu2809; 0.14: bu2701; final covered trading day 2026-11-02 (carry the prior state if all contracts
-    are excluded)'
+  - 'last observed non-one-sided day 2026-11-16: 0.12: bu2702, bu2703, bu2704, bu2705, bu2706, bu2707, bu2708, bu2709, bu2710,
+    bu2712, bu2803, bu2806, bu2809; 0.16: bu2701; final covered trading day 2026-11-16. From 2026-11-17 the two raised
+    contracts (bu2612, bu2701) are the two nearest expiries and every general month carries 0.12
+    (cn.futures.margin_ratio.shfe_bu.2026-11-17)'
   - https://www.shfe.com.cn/data/tradedata/future/dailydata/js20261012.dat
   - https://www.shfe.com.cn/publicnotice/notice/202610/t20261009_833667.html
+  - https://www.shfe.com.cn/data/tradedata/future/dailydata/js20261116.dat
+  - https://www.shfe.com.cn/data/tradedata/future/dailydata/js20261117.dat
+  - https://www.shfe.com.cn/publicnotice/notice/202610/t20261030_833904.html
   status: open
 - gap_id: G-0108
   market: XSGE

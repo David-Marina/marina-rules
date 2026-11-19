@@ -7573,14 +7573,15 @@
    "min_verification": "verified"
   },
   "expect": {
-   "status": "UNVERIFIED"
+   "status": "DETERMINED",
+   "value": true
   },
-  "oracle": "通知与答记者问都出自上交所（一个发布方）→ single-source；min_verification=verified 时拒答",
+  "oracle": "上证函〔2025〕2218号是规则原文，取值与生效日都写在其中（自本通知发布之日起；落款 2025年7月13日）→ verified（一份写明取值和日期的官方原文即可）；min_verification=verified 时照答。2026.11.16 及之前该记录标为 single-source，此向量当时期望 UNVERIFIED",
   "tags": [
    "suitability",
    "star-growth",
    "verification-bar"
   ],
-  "ruleset_version_min": "2026.11.13"
+  "ruleset_version_min": "2026.11.23"
  }
 ]

@@ -25,18 +25,55 @@ How to read an entry:
 
 ## [2026.11.23] - 2026-11-23
 
-**In three lines.** *Rules:* none changed — the dataset is byte for byte that of 2026.11.16. *Packaging:* the code
+**In three lines.** *Rules:* no value in force on 2026.11.16 changed; one record was added (SHFE bitumen margin from
+2026-11-17, where 2026.11.16 had a gap) and two were raised to `verified`. *Packaging:* the code
 moved into its own package, `marina-rules-core` 1.0.0, which this release requires; `pip install -U marina-rules`
 installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* all in
 the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
 before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
 
-Dataset: `sha256:80188ec249ce22ae` · 2873 records (1421 `verified`, 1451 `single-source`, 1 `unverified`), the
-same records as 2026.11.16.
+Dataset: `sha256:42202950aae64e3b` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
 
 ### Corrected (re-run needed)
 No record was corrected. The corrections of this week are in the code: see
 [marina-rules-core 1.0.0](#marina-rules-core-100---2026-11-23).
+
+### Added
+- **SHFE bitumen margin from 2026-11-17** (`cn.futures.margin_ratio.shfe_bu.2026-11-17`, 0.12, `single-source`). The
+  general months had been split since 2026-10-12 (gap G-0107, where Marina does not answer) because BU2612 and BU2701
+  carried a raised level; BU2611 left the file after 2026-11-16, the two raised contracts became the two nearest
+  expiries, which the sample leaves out, and every general month carries 0.12. G-0107 now ends on 2026-11-17. A query
+  for `margin_ratio` / `shfe_bu` from that date gets 0.12 instead of `OUT_OF_COVERAGE`.
+
+### Re-verified
+- **STAR growth-tier risk disclosure** (`cn.suitability.star_growth_new.2025-07-13`,
+  `cn.suitability.star_growth_legacy.2025-07-13`): `single-source` → `verified`. The SSE notice (上证函〔2025〕2218号) is
+  the rule text and states the requirement, the exemption and the start date itself; it was re-read on 2026-11-19. The
+  records had been held at `single-source` because both texts came from one publisher, which is stricter than the
+  definition every other record is held to. A query with `--min verified` now gets these two.
+- **Sources added, level unchanged.** The BSE trading rules themselves (北证公告〔2021〕15号, articles 3.3.11 and
+  3.3.12) are now cited by the three BSE price-limit records that rested on the exchange's Q&A and drafting note. The
+  2013 SSE notices behind the bond-ETF and money-market-ETF same-day records (上证基字〔2013〕86号, 上证发〔2013〕9号)
+  are no longer on sse.com.cn; they are cited from archived copies of the SSE pages, so the two records stay
+  `single-source`. The note of `cn.limit.st_b_share.1998-04-22` now says which of the two start dates in its sources
+  is used.
+- **Checked, nothing to change.** The 30 China A-share records that were not `verified` were searched again for an
+  official text that would settle them. Two were raised (above), two were not reached, and for the other 26 no further
+  official text was found; nothing found contradicts a value or a date.
+
+### Tracked through
+- SHFE (XSGE) and INE (XINE): 2026-11-02 → 2026-11-18. Every trading day's settlement and trading parameters were
+  compared with the records: no difference outside the listed gaps. The INE notice list refused automated access, so
+  INE notices after 2026-11-02 were read only where shfe.com.cn republishes them.
+- Hong Kong (XHKG): 2026-11-03 → 2026-11-18. The only rule amendment in the window (uncertificated securities market,
+  2026-11-16) restates T+2. The SFC's own news list and HKEX circulars outside the CT series were not read.
+- Unchanged: CZCE and GFEX 2026-11-02 (their sites refuse scripts), US equities 2026-11-03 (sec.gov and finra.org
+  refused automated access on 2026-11-19), BJSE and CFFEX not tracked.
+- **Announced, not yet in the data — US, 2026-12-06.** Overnight ("23/5") trading is scheduled to start on
+  2026-12-06: LULD overnight price bands (static, 20%), the Level 3 market-wide halt resuming at 04:00 the next day,
+  and a Nasdaq night session 21:00–04:00 whose start depends on the consolidated feed being ready. Marina's
+  `luld_band` and `extended_hours` records describe the sessions that exist today and cannot yet express an overnight
+  session; until they can, an answer for a date from 2026-12-06 is a carry-forward of today's rules.
 
 ### Changed
 
@@ -46,7 +83,7 @@ No record was corrected. The corrections of this week are in the code: see
   in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
   marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
   now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
-- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:80188ec249ce22ae code:
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:42202950aae64e3b code:
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.
