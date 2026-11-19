@@ -36,6 +36,13 @@ A shared, cited, versioned table fixes this the way tzdata fixed time zones: not
 | Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
 | Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
 
+How often does it matter? [`examples/fixed_parameters.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/fixed_parameters.py)
+counts it on daily bars. On the sample shipped with this repository — two ChiNext stocks, 786 trading days before
+2020-08-24 — 7 closes were at limit-up and 2 at limit-down under the 10% band of the day; a band fixed at today's 20%
+sees all nine as ordinary prices and lets the order through. On costs: a backtest that uses today's stamp duty leaves
+out 0.05% of the portfolio a year for each time the portfolio is sold in a year, from 2008-09-19 to 2023-08-28.
+Point the script at your own bars for your own count.
+
 ## Use
 
 ```bash
