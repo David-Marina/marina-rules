@@ -8,9 +8,10 @@
 #                    sources said; after it, the record is a carry-forward, not a finding.
 #   basis            how it was checked.
 #   updated          the date this entry was last written (tracked_through <= updated).
-# A market or scope with no entry is NOT tracked: nothing is defaulted. Not tracked here: BJSE (its pages are not on the
-# watch list; a record whose market includes BJSE is untracked for a BJSE query or a query without a market) and CCFX
-# (CFFEX index and treasury bond futures). See docs/SCHEMA.md "Tracking registry".
+# A market or scope with no entry is NOT tracked: nothing is defaulted. BJSE is tracked for its own stock-trading scopes
+# only (the entry below); a record of scope `stock` whose market includes BJSE (stamp duty, transfer fee) is untracked
+# for a BJSE query or a query without a market. Not tracked: CCFX (CFFEX index and treasury bond futures). See
+# docs/SCHEMA.md "Tracking registry".
 schema: 1
 tracking:
 - market: XSHG+XSHE
@@ -19,6 +20,14 @@ tracking:
     announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by
     title. A title-keyword check, not a reading of every notice.
   updated: '2026-11-14'
+- market: BJSE
+  scopes: [bse, st_bse, delisting_bse, ipo_day1_bse, delisting_day1_bse, bse_stock]
+  tracked_through: '2026-11-18'
+  basis: The rules in force in BSE's trading-management column, read in full on 2026-11-19 by following the
+    previous / next links of the rule pages (25 documents, 2021-11-02 to 2026-10-16, none newer linked), and both
+    editions of the trading rules compared article by article. Not read - superseded editions other than the 2021
+    trial rules, BSE notices outside that column, and BSE fee notices.
+  updated: '2026-11-19'
 - market: XSGE
   tracked_through: '2026-11-18'
   basis: SHFE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18.

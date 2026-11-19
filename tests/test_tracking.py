@@ -76,13 +76,16 @@ def test_diff_digest_ignores_tracking_files():
 
 def test_registry_contents():
     reg = {e["market"]: e for e in mr.tracking_registry()}
-    assert set(reg) == {"XSHG+XSHE", "XSGE", "XINE", "XZCE", "GFEX", "XHKG", "XNYS+XNAS"}
+    assert set(reg) == {"XSHG+XSHE", "BJSE", "XSGE", "XINE", "XZCE", "GFEX", "XHKG", "XNYS+XNAS"}
     assert mr.tracked_through("XSHG") == mr.tracked_through("XSHE") == mr.tracked_through("XSHG+XSHE") \
         == reg["XSHG+XSHE"]["tracked_through"] >= "2026-11-13"
     assert all(e["tracked_through"] <= e["updated"] for e in reg.values())
     assert {e["market"] for e in mr.tracking_registry("hk")} == {"XHKG"}
-    for m in ("BJSE", "CCFX", "XSHG+XSHE+BJSE"):  # not on the watch list: untracked, never defaulted
+    for m in ("BJSE", "CCFX", "XSHG+XSHE+BJSE"):  # no entry for every scope of the market: untracked, never defaulted
         assert mr.tracked_through(m) is None
+    # BJSE is tracked for its own stock-trading scopes only; the mixed-market fee records under `stock` are not
+    assert mr.tracked_through("BJSE", "bse") == mr.tracked_through("BJSE", "bse_stock") == reg["BJSE"]["tracked_through"]
+    assert mr.tracked_through("BJSE", "stock") is None and mr.tracked_through("XSHG+XSHE+BJSE", "stock") is None
 
 
 def _write(tmp_path, body):
@@ -234,7 +237,7 @@ def test_schema_and_capabilities():
     assert "tracking" not in sch["required"] and "warnings" not in sch["required"]
     with open(os.path.join(ROOT, "docs", "decision.schema.json"), encoding="utf-8") as fh:
         assert json.load(fh) == json.loads(json.dumps(sch))
-    for pfx, markets in (("cn", {"XSHG+XSHE", "XSGE", "XINE", "XZCE", "GFEX"}), ("hk", {"XHKG"}), ("us", {"XNYS+XNAS"})):
+    for pfx, markets in (("cn", {"XSHG+XSHE", "BJSE", "XSGE", "XINE", "XZCE", "GFEX"}), ("hk", {"XHKG"}), ("us", {"XNYS+XNAS"})):
         c = capabilities(pfx)
         assert {e["market"] for e in c["tracking"]["entries"]} == markets
         assert "BEYOND_TRACKING" in c["entrypoints"]["statuses"]

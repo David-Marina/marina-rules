@@ -1489,12 +1489,14 @@ that directory's `scopes.yaml`; no two entries cover the same (market, scope).
 **Lookup.** `tracked_through(market, scope=None)` → ISO date or `None`. A '+' market takes the earliest of its members
 and is `None` if any member is untracked; `scope=None` takes the earliest entry of the market, or `None` if some scope with
 records has no entry; `market=None` → `None`. In `resolve()` without a market the answering record's market is used, so
-an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry) but tracked for a query with market `XSHG` or `XSHE`.
+an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry for scope `stock`) but tracked for a query with market `XSHG` or `XSHE`.
 
 **Entries (2026-11-19).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
 rule keywords reviewed by title, not every notice read); `XSGE` 2026-11-18; `XINE` 2026-11-18 (daily files; notices from
 2026-11-03 only as republished on shfe.com.cn); `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-18 (the SFC's own news list and
-HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-03. Untracked: `BJSE`, `CCFX`.
+HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-03; `BJSE` 2026-11-18 for its own stock-trading scopes only (`bse`, `st_bse`, `delisting_bse`,
+`ipo_day1_bse`, `delisting_day1_bse`, `bse_stock`: the rules in force in BSE's trading-management column read in full).
+Untracked: `BJSE` under scope `stock` (stamp duty, transfer fee) and `CCFX`.
 
 **Where it shows** (all additive; default return values and exceptions are unchanged):
 

@@ -32,10 +32,16 @@ installs both, and `import marina_rules`, the three commands and the MCP server 
 the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
 before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
 
-Dataset: `sha256:42202950aae64e3b` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
+Dataset: `sha256:ab65ab573bf6176d` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
 
 ### Corrected (re-run needed)
-No record was corrected. The corrections of this week are in the code: see
+- **`published_at` of three BSE price-limit records was one day early** (`cn.limit.st_bse.2021-11-15`,
+  `cn.limit.delisting_bse.2021-11-15`, `cn.limit.delisting_day1_bse.2021-11-15`): 2021-11-01 → 2021-11-02, the date
+  on the announcement (北证公告〔2021〕15号) and on its page. Values and the effective date (2021-11-15) are unchanged.
+  Re-run only a query that passes `as_of` 2021-11-01 for these scopes: it was answered as already published and is
+  now `NOT_YET_PUBLISHED`.
+
+The other corrections of this week are in the code: see
 [marina-rules-core 1.0.0](#marina-rules-core-100---2026-11-23).
 
 ### Added
@@ -52,7 +58,9 @@ No record was corrected. The corrections of this week are in the code: see
   records had been held at `single-source` because both texts came from one publisher, which is stricter than the
   definition every other record is held to. A query with `--min verified` now gets these two.
 - **Sources added, level unchanged.** The BSE trading rules themselves (北证公告〔2021〕15号, articles 3.3.11 and
-  3.3.12) are now cited by the three BSE price-limit records that rested on the exchange's Q&A and drafting note. The
+  3.3.12) are now cited by the two BSE price-limit records that rested on the exchange's Q&A and drafting note
+  (`cn.limit.bse`, `cn.limit.ipo_day1.bse`), and the notice that the risk-warning provisions took effect on
+  2026-08-31 (北证公告〔2026〕43号) by `cn.limit.st_bse`. The
   2013 SSE notices behind the bond-ETF and money-market-ETF same-day records (上证基字〔2013〕86号, 上证发〔2013〕9号)
   are no longer on sse.com.cn; they are cited from archived copies of the SSE pages, so the two records stay
   `single-source`. The note of `cn.limit.st_b_share.1998-04-22` now says which of the two start dates in its sources
@@ -67,8 +75,15 @@ No record was corrected. The corrections of this week are in the code: see
   INE notices after 2026-11-02 were read only where shfe.com.cn republishes them.
 - Hong Kong (XHKG): 2026-11-03 → 2026-11-18. The only rule amendment in the window (uncertificated securities market,
   2026-11-16) restates T+2. The SFC's own news list and HKEX circulars outside the CT series were not read.
+- **BSE (BJSE) is tracked for the first time, for its stock-trading scopes** (`bse`, `st_bse`, `delisting_bse`,
+  `ipo_day1_bse`, `delisting_day1_bse`, `bse_stock`), through 2026-11-18: the 25 rules in force in BSE's
+  trading-management column were read in full and both editions of the trading rules compared article by article;
+  no value in the data differs. An open-ended answer for these scopes on or before that date is no longer flagged
+  `CARRY_FORWARD_UNTRACKED`. Not covered: superseded editions other than the 2021 trial rules, BSE notices outside
+  that column and BSE fee notices; the stamp duty and transfer fee records (scope `stock`, market
+  `XSHG+XSHE+BJSE`) stay untracked for a BJSE query.
 - Unchanged: CZCE and GFEX 2026-11-02 (their sites refuse scripts), US equities 2026-11-03 (sec.gov and finra.org
-  refused automated access on 2026-11-19), BJSE and CFFEX not tracked.
+  refused automated access on 2026-11-19), CFFEX not tracked.
 - **Announced, not yet in the data — US, 2026-12-06.** Overnight ("23/5") trading is scheduled to start on
   2026-12-06: LULD overnight price bands (static, 20%), the Level 3 market-wide halt resuming at 04:00 the next day,
   and a Nasdaq night session 21:00–04:00 whose start depends on the consolidated feed being ready. Marina's
@@ -83,7 +98,7 @@ No record was corrected. The corrections of this week are in the code: see
   in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
   marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
   now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
-- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:42202950aae64e3b code:
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:ab65ab573bf6176d code:
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.

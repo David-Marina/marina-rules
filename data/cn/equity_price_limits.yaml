@@ -1889,14 +1889,14 @@ records:
   value: 0.3
   effective_from: '2021-11-15'
   effective_to: null
-  published_at: '2021-11-01'
+  published_at: '2021-11-02'
   recorded_at: '2026-10-25'
   verification: verified
   sources:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
@@ -1904,7 +1904,7 @@ records:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
@@ -1917,6 +1917,14 @@ records:
     quote: 股票交易价格日涨跌幅限制仍为30%。
     content_sha256: 9cd9a90c5022a27ee79dc0a6fc6c390864f33a796a42ae094c13c42015c21ed8
     hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200029608.html
+    publisher: 北交所
+    title: 关于实施《北京证券交易所交易规则》相关条款的公告（北证公告〔2026〕43号）
+    date: '2026-10-16'
+    kind: official
+    quote: '第4.5.1条至第4.5.4条关于风险警示股票及退市整理股票交易事项的规定，已于2026年8月31日起实施。'
+    content_sha256: a8a2cb33f2a4695592735fa74f3a348fbe388aad7aba6fa54f2db95fd47078b2
+    hash_kind: text
   notes: BSE risk-warned stocks keep ±30%. The 2021 trial rules set one band for all stocks (3.3.11) and list only IPO day
     1 and delisting day 1 as unlimited (3.3.12) — no ST exception. The 2026 revision (risk-warning provisions effective 2026-08-31)
     restates 30%. A 2026 company notice repost confirms '涨跌幅限制仍为30%'.
@@ -1927,14 +1935,14 @@ records:
   value: 0.3
   effective_from: '2021-11-15'
   effective_to: null
-  published_at: '2021-11-01'
+  published_at: '2021-11-02'
   recorded_at: '2026-10-25'
   verification: verified
   sources:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
@@ -1942,7 +1950,7 @@ records:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
@@ -1955,14 +1963,14 @@ records:
   value: unlimited
   effective_from: '2021-11-15'
   effective_to: null
-  published_at: '2021-11-01'
+  published_at: '2021-11-02'
   recorded_at: '2026-10-25'
   verification: verified
   sources:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
@@ -1970,27 +1978,11 @@ records:
   - url: https://www.bse.cn/jygl_list/200010919.html
     publisher: 北交所
     title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-01'
+    date: '2021-11-02'
     kind: official
     content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
     hash_kind: text
     quote: 经中国证监会批准，现予以发布，自2021年11月15日起施行。
-  - url: https://www.bse.cn/jygl_list/200010919.html
-    publisher: 北交所
-    title: 北京证券交易所交易规则（试行）第3.3.12条
-    date: '2021-11-02'
-    kind: official
-    quote: '（二）退市整理期首日；'
-    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
-    hash_kind: text
-  - url: https://www.bse.cn/jygl_list/200010919.html
-    publisher: 北交所
-    title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
-    date: '2021-11-02'
-    kind: official
-    quote: '经中国证监会批准，现予以发布，自2021年11月15日起施行。'
-    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
-    hash_kind: text
   notes: 'BSE trial rules 3.3.12(2): no band on the first day of the delisting period, from the exchange''s opening.'
 - id: cn.limit.delisting_day1_star.2019-07-22
   market: XSHG

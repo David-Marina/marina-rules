@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "42202950aae64e3b99776b6eaef94067e351c620c51a52a45c23495d7700e263",
+ "ruleset_hash": "ab65ab573bf6176dd361fe21934276f5ff86d92eaf781af27407e2087f5d5804",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -9712,6 +9712,20 @@
     "tracked_through": "2026-11-13",
     "basis": "Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.",
     "updated": "2026-11-14"
+   },
+   {
+    "market": "BJSE",
+    "scopes": [
+     "bse",
+     "st_bse",
+     "delisting_bse",
+     "ipo_day1_bse",
+     "delisting_day1_bse",
+     "bse_stock"
+    ],
+    "tracked_through": "2026-11-18",
+    "basis": "The rules in force in BSE's trading-management column, read in full on 2026-11-19 by following the previous / next links of the rule pages (25 documents, 2021-11-02 to 2026-10-16, none newer linked), and both editions of the trading rules compared article by article. Not read - superseded editions other than the 2021 trial rules, BSE notices outside that column, and BSE fee notices.",
+    "updated": "2026-11-19"
    },
    {
     "market": "XSGE",
