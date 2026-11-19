@@ -21,6 +21,7 @@
           "type": "named",
           "name": "--with",
           "value": "mcp>=2.3,<3",
+   "isRequired": true,
           "description": "the MCP Python SDK, which marina-rules declares as its optional extra [mcp]"
         }
       ],
@@ -28,6 +29,7 @@
         {
           "type": "positional",
           "value": "mcp",
+   "isRequired": true,
           "description": "the subcommand that runs the MCP server on stdio"
         }
       ],
