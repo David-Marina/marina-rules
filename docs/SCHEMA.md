@@ -1494,7 +1494,7 @@ an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry for scope `stoc
 **Entries (2026-11-19).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
 rule keywords reviewed by title, not every notice read); `XSGE` 2026-11-18; `XINE` 2026-11-18 (daily files; notices from
 2026-11-03 only as republished on shfe.com.cn); `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-18 (the SFC's own news list and
-HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-03; `BJSE` 2026-11-18 for its own stock-trading scopes only (`bse`, `st_bse`, `delisting_bse`,
+HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-17 (NYSE trader updates and FINRA regulatory notices not read); `BJSE` 2026-11-18 for its own stock-trading scopes only (`bse`, `st_bse`, `delisting_bse`,
 `ipo_day1_bse`, `delisting_day1_bse`, `bse_stock`: the rules in force in BSE's trading-management column read in full).
 Untracked: `BJSE` under scope `stock` (stamp duty, transfer fee) and `CCFX`.
 

@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "ab65ab573bf6176dd361fe21934276f5ff86d92eaf781af27407e2087f5d5804",
+ "ruleset_hash": "13dbfaec9a788776d9ae560089fd007ecfd7071e5419bf6314a96d3ec6a42d20",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -492,9 +492,9 @@
    {
     "market": "XNYS+XNAS",
     "scopes": null,
-    "tracked_through": "2026-11-03",
-    "basis": "SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT fee alerts; researched for a window ending before 2026-11-04.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-17",
+    "basis": "SEC fee-rate advisories, the FINRA trading-activity-fee page, CAT fee alerts and Nasdaq equity trader alerts (to no. 2026-71), read on 2026-11-19; SEC documents in the Federal Register published 2026-11-04 to 2026-11-19, read by title. Not read - NYSE trader updates and FINRA regulatory notices (their lists could not be read).",
+    "updated": "2026-11-19"
    }
   ],
   "untracked_markets": [],

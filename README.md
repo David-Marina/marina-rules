@@ -11,7 +11,7 @@ What a stamp certifies is deliberately narrow: the fills respected these rules. 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
 
 ```
-rules: marina-rules@2026.11.16 sha256:ab65ab573bf6176d code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.16 sha256:13dbfaec9a788776 code: marina-rules-core@1.0.0
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
@@ -165,7 +165,7 @@ calendar; a security's board, ST status and listing day are the caller's to supp
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes. For a reference list, [`CITATION.cff`](https://github.com/David-Marina/marina-rules/blob/main/CITATION.cff) names the project; the version and digest still come from `mr.citation()`.
 
 ```
-rules: marina-rules@2026.11.16 sha256:ab65ab573bf6176d code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.16 sha256:13dbfaec9a788776 code: marina-rules-core@1.0.0
 ```
 
 `marina-rules@…` is the data version (`mr.VERSION`, the version of the `marina-rules` package) and `sha256:…` the
@@ -314,7 +314,7 @@ each market's `known_gaps.yaml` are the statement.
 | INE (XINE) | 2026-11-18 | daily settlement and trading parameters, every trading day from 2024-01-02; notices from 2026-11-03 only as republished on shfe.com.cn |
 | CZCE (XZCE), GFEX | 2026-11-02 | notices and daily settlement parameters, every trading day from 2024-01-02 |
 | Hong Kong (XHKG) | 2026-11-18 | HKEX register of rule amendments, fee, trading-hours and minimum-spread pages; IRD stamp-duty pages; government press releases. The SFC's own news list and HKEX circulars outside the CT series were not read for 2026-11-04 onward |
-| US equities (XNYS, XNAS) | 2026-11-03 | SEC, FINRA, NYSE and Nasdaq rules, orders, notices and filings |
+| US equities (XNYS, XNAS) | 2026-11-17 | SEC fee-rate advisories, FINRA trading-activity-fee page, CAT fee alerts, Nasdaq equity trader alerts, SEC documents in the Federal Register; NYSE trader updates and FINRA regulatory notices not read for 2026-11-04 onward |
 | BSE (BJSE), stock-trading scopes | 2026-11-18 | the rules in force in BSE's trading-management column, read in full; superseded editions, other BSE notices and fee notices not read |
 | BJSE under scope `stock` (stamp duty, transfer fee), CFFEX (CCFX) | not tracked | every open-ended answer is a carry-forward |
 

@@ -131,12 +131,12 @@
   "expect": {
    "status": "DETERMINED",
    "tracking": {
-    "tracked_through": "2026-11-03",
+    "tracked_through": "2026-11-17",
     "beyond": true
    },
    "warnings": []
   },
-  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03 (SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT fee alerts; researched for a window ending before 2026-11-04.) 2026-12-01 is after it. || The FINRA TAF fee holiday record is closed: [2026-10-01, 2027-01-01) (SR-FINRA-2026-021: transactions from 2026-10-01 through 2026-12-31). A closed record's end is a sourced fact: no warning, whether or not the day is beyond tracking.",
+  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-17 (SEC fee-rate advisories, the FINRA trading-activity-fee page, CAT fee alerts and Nasdaq equity trader alerts (to no. 2026-71), read on 2026-11-19; SEC documents in the Federal Register published 2026-11-04 to 2026-11-19, read by title. Not read - NYSE trader updates and FINRA regulatory notices (their lists could not be read).) 2026-12-01 is after it. || The FINRA TAF fee holiday record is closed: [2026-10-01, 2027-01-01) (SR-FINRA-2026-021: transactions from 2026-10-01 through 2026-12-31). A closed record's end is a sourced fact: no warning, whether or not the day is beyond tracking.",
   "tags": [
    "tracking",
    "beyond",
@@ -157,7 +157,7 @@
    "status": "DETERMINED",
    "warnings": []
   },
-  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-03 (SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT fee alerts; researched for a window ending before 2026-11-04.) 2026-12-01 is after it. || Same as TRK-0006 with require_tracked=True: only open-ended records are refused; the closed fee-holiday record still answers.",
+  "oracle": "data/us/tracking.yaml: XNYS+XNAS tracked_through 2026-11-17 (SEC fee-rate advisories, the FINRA trading-activity-fee page, CAT fee alerts and Nasdaq equity trader alerts (to no. 2026-71), read on 2026-11-19; SEC documents in the Federal Register published 2026-11-04 to 2026-11-19, read by title. Not read - NYSE trader updates and FINRA regulatory notices (their lists could not be read).) 2026-12-01 is after it. || Same as TRK-0006 with require_tracked=True: only open-ended records are refused; the closed fee-holiday record still answers.",
   "tags": [
    "tracking",
    "beyond",

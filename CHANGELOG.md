@@ -32,7 +32,7 @@ installs both, and `import marina_rules`, the three commands and the MCP server 
 the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
 before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
 
-Dataset: `sha256:ab65ab573bf6176d` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
+Dataset: `sha256:13dbfaec9a788776` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
 
 ### Corrected (re-run needed)
 - **`published_at` of three BSE price-limit records was one day early** (`cn.limit.st_bse.2021-11-15`,
@@ -66,8 +66,10 @@ The other corrections of this week are in the code: see
   `single-source`. The note of `cn.limit.st_b_share.1998-04-22` now says which of the two start dates in its sources
   is used.
 - **Checked, nothing to change.** The 30 China A-share records that were not `verified` were searched again for an
-  official text that would settle them. Two were raised (above), two were not reached, and for the other 26 no further
-  official text was found; nothing found contradicts a value or a date.
+  official text that would settle them. Two were raised (above); for the other 28 no further official text was found,
+  and nothing found contradicts a value or a date. The SZSE convertible-bond tick of 2011-02-28 to 2012-12-10
+  (`cn.tick.convertible.szse.2011-02-28`) stays `unverified`: the 2011 trading rules (0.001 for bonds) and the 2008
+  convertible-bond rules (0.01) still disagree, and no text naming convertible bonds for that period was found.
 
 ### Tracked through
 - SHFE (XSGE) and INE (XINE): 2026-11-02 → 2026-11-18. Every trading day's settlement and trading parameters were
@@ -82,13 +84,20 @@ The other corrections of this week are in the code: see
   `CARRY_FORWARD_UNTRACKED`. Not covered: superseded editions other than the 2021 trial rules, BSE notices outside
   that column and BSE fee notices; the stamp duty and transfer fee records (scope `stock`, market
   `XSHG+XSHE+BJSE`) stay untracked for a BJSE query.
-- Unchanged: CZCE and GFEX 2026-11-02 (their sites refuse scripts), US equities 2026-11-03 (sec.gov and finra.org
-  refused automated access on 2026-11-19), CFFEX not tracked.
+- US equities (XNYS, XNAS): 2026-11-03 → 2026-11-17. Read: SEC fee-rate advisories (no Section 31 advisory since
+  2026-02-27), the FINRA trading-activity-fee page, CAT fee alerts, Nasdaq equity trader alerts and the SEC documents
+  in the Federal Register for the window. Not read: NYSE trader updates and FINRA regulatory notices.
+- Unchanged: CZCE and GFEX 2026-11-02 (their sites refuse scripts), CFFEX not tracked.
 - **Announced, not yet in the data — US, 2026-12-06.** Overnight ("23/5") trading is scheduled to start on
   2026-12-06: LULD overnight price bands (static, 20%), the Level 3 market-wide halt resuming at 04:00 the next day,
-  and a Nasdaq night session 21:00–04:00 whose start depends on the consolidated feed being ready. Marina's
+  and a Nasdaq night session 21:00–04:00 (Nasdaq Equity Trader Alert 2026-46 of 2026-08-17 gives 2026-12-06; the
+  rule makes the start depend on the consolidated feed being ready). Marina's
   `luld_band` and `extended_hours` records describe the sessions that exist today and cannot yet express an overnight
   session; until they can, an answer for a date from 2026-12-06 is a carry-forward of today's rules.
+- **Announced, not yet in the data — CAT fee, January 2027.** CAT Fee Alert 2026-3 (2026-11-12) announces CAT Fee
+  2027-1 at USD 0.000008 per executed equivalent share for transactions from January 2027 (today 0.000001), subject
+  to fee filings that had not been made on 2026-11-19. As with earlier CAT fees, the record is added when the filing
+  is published; until then `cat_fee_per_share` for a 2027 date is a carry-forward.
 
 ### Changed
 
@@ -98,7 +107,7 @@ The other corrections of this week are in the code: see
   in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
   marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
   now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
-- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:ab65ab573bf6176d code:
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:13dbfaec9a788776 code:
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.

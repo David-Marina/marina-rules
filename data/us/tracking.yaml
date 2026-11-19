@@ -3,7 +3,8 @@
 schema: 1
 tracking:
 - market: XNYS+XNAS
-  tracked_through: '2026-11-03'
-  basis: SEC orders and final rules, FINRA notices and filings, NYSE and Nasdaq rules, notices and trading pages, CAT
-    fee alerts; researched for a window ending before 2026-11-04.
-  updated: '2026-11-14'
+  tracked_through: '2026-11-17'
+  basis: SEC fee-rate advisories, the FINRA trading-activity-fee page, CAT fee alerts and Nasdaq equity trader alerts
+    (to no. 2026-71), read on 2026-11-19; SEC documents in the Federal Register published 2026-11-04 to 2026-11-19, read
+    by title. Not read - NYSE trader updates and FINRA regulatory notices (their lists could not be read).
+  updated: '2026-11-19'

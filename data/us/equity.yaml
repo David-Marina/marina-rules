@@ -4037,7 +4037,7 @@ records:
     Dates refer to charged transaction months, not invoice issue or payment due dates. No fees are imputed before the first
     actually billed transaction month. CAT Fee 2026-1 replaces the prior fee after the documented pause; its first June 2026
     invoice covers May transactions. The announced January 2027 last invoice is not an automatic sunset: the rule continues
-    until superseded. The supporting CAT announcement is an archive copy.'
+    until superseded. CAT Fee Alert 2026-3 (2026-11-12) announces CAT Fee 2027-1 at USD 0.000008 for transactions from January 2027, subject to fee filings that had not been made on 2026-11-19; it is recorded once filed. The supporting CAT announcement is an archive copy.'
   unit: USD
 - id: us.cat_fee_per_share.us_etf.2024-09-01
   scope: us_etf
@@ -4390,7 +4390,7 @@ records:
     Dates refer to charged transaction months, not invoice issue or payment due dates. No fees are imputed before the first
     actually billed transaction month. CAT Fee 2026-1 replaces the prior fee after the documented pause; its first June 2026
     invoice covers May transactions. The announced January 2027 last invoice is not an automatic sunset: the rule continues
-    until superseded. The supporting CAT announcement is an archive copy.'
+    until superseded. CAT Fee Alert 2026-3 (2026-11-12) announces CAT Fee 2027-1 at USD 0.000008 for transactions from January 2027, subject to fee filings that had not been made on 2026-11-19; it is recorded once filed. The supporting CAT announcement is an archive copy.'
   unit: USD
 - id: us.cat_historical_assessment_per_share.us_stock.2024-10-01
   scope: us_stock
