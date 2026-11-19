@@ -701,6 +701,8 @@ CZCE_FEE_KEYS = {
     ("czce_sh", "trans_fee_rate"): "2024-01-01",
     ("czce_sm", "close_today_fee_per_lot"): "2024-01-01",
     ("czce_sm", "trans_fee_per_lot"): "2024-01-01",
+    ("czce_so", "close_today_fee_rate"): ("2026-11-12", "2026-11-19"),   # listed 2026-11-12, after the default window
+    ("czce_so", "trans_fee_rate"): ("2026-11-12", "2026-11-19"),
     ("czce_sr", "close_today_fee_per_lot"): "2024-01-01",
     ("czce_sr", "trans_fee_per_lot"): "2024-01-01",
     ("czce_ta", "close_today_fee_per_lot"): "2024-01-01",
@@ -715,7 +717,7 @@ CZCE_FEE_KEYS = {
 
 
 def test_czce_fee_keys_covered_by_records_or_gaps():
-    _fee_keys_covered("XZCE", CZCE_FEE_KEYS, (182, 0, 90, 0))
+    _fee_keys_covered("XZCE", CZCE_FEE_KEYS, (184, 0, 90, 0))
 
 
 GFEX_FEE_KEYS = {
@@ -2288,3 +2290,31 @@ def test_limit_price_with_a_market_naming_several_exchanges():
     assert mr.limit_price(1.234, "b_share", "2024-06-14", "XSHE") == (1.36, 1.11)
     with pytest.raises(KeyError):                               # no record at all on that date: still a missing rule
         mr.limit_price(1.234, "b_share", "2005-06-01", "XSHG+XSHE")
+
+
+def test_czce_sunflower_oil_listed_2026_11_12():
+    """SO appears in the daily settlement table on 2026-11-12. The listing and fee notices could not be fetched in a
+    hashable form, so the records rest on the daily file alone, and what only a notice states is a declared gap."""
+    from marina_rules.contract import resolve
+    band = "price_limit_pct_of_prev_settlement"
+    assert not mr.scopes("cn")["czce_so"]["requires"]
+    for rule in ("trans_fee_rate", "close_today_fee_rate", band, "margin_ratio", "session_schedule", "min_holding_days"):
+        d = resolve(rule, "2026-11-11", "czce_so", "XZCE")
+        assert d["status"] == "OUT_OF_COVERAGE" and d["known_gap_ids"] == [], rule      # not listed yet: no record, no gap
+    assert mr.rule_at("trans_fee_rate", "2026-11-12", "czce_so", "XZCE") == 0.0001
+    assert mr.rule_at("close_today_fee_rate", "2026-11-18", "czce_so", "XZCE") == 0.0001   # not free on the same day
+    assert mr.rule_at("min_holding_days", "2026-11-12", "czce_so", "XZCE") == 0
+    # the table of day D carries the band of the next trading day: the listing day itself is a gap, 7% from 2026-11-13
+    d = resolve(band, "2026-11-12", "czce_so", "XZCE")
+    assert d["status"] == "OUT_OF_COVERAGE" and len(d["known_gap_ids"]) == 1
+    assert mr.rule_at(band, "2026-11-13", "czce_so", "XZCE") == 0.07
+    assert not [r for r in mr.records() if r.scope == "czce_so" and r.rule == band and r.value != 0.07]   # no 14% record
+    for rule in ("margin_ratio", "session_schedule"):     # the daily 8% is not a ladder boundary; hours need the notice
+        for day in ("2026-11-12", "2026-11-18"):
+            d = resolve(rule, day, "czce_so", "XZCE")
+            assert d["status"] == "OUT_OF_COVERAGE" and len(d["known_gap_ids"]) == 1, (rule, day)
+    recs = [r for r in mr.records() if r.scope == "czce_so"]
+    assert len(recs) == 4 and all(r.verification == "single-source" and r.published_at is None for r in recs)
+    assert resolve("trans_fee_rate", "2026-11-13", "czce_so", "XZCE", None, "verified")["status"] == "UNVERIFIED"
+    assert mr.rule_at("trans_fee_rate", "2026-11-13", "czce_so", "XZCE", contract="SO705") == 0.0001
+    assert mr.parse_contract("SO705", "2026-11-12") == ("so", 2027, 5)

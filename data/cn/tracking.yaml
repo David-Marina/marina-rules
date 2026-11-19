@@ -39,10 +39,13 @@ tracking:
     refused automated access on 2026-11-19.
   updated: '2026-11-19'
 - market: XZCE
-  tracked_through: '2026-11-02'
-  basis: CZCE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.
-  updated: '2026-11-14'
+  tracked_through: '2026-11-18'
+  basis: CZCE daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18; the notice list for
+    2026-10-23 to 2026-11-17 read by title on 2026-11-19 and the notices on margins, bands, fees and listings read. Not
+    read - the attachments of the business-rule amendments of 2026-11-06 and 2026-11-17.
+  updated: '2026-11-19'
 - market: GFEX
-  tracked_through: '2026-11-02'
-  basis: GFEX notices and daily settlement parameters, every trading day from 2024-01-02 to 2026-11-02.
-  updated: '2026-11-14'
+  tracked_through: '2026-11-18'
+  basis: GFEX daily settlement parameters, every trading day from 2024-01-02 to 2026-11-18, and the notice list for
+    2026-10-28 to 2026-11-18 read on 2026-11-19. Daily bands are not published; bands rest on notices.
+  updated: '2026-11-19'

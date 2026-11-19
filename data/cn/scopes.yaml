@@ -439,6 +439,9 @@ scopes:
   czce_pl:
     description: CZCE propylene futures (PL, first in the daily settlement-parameter file 2025-07-22), all contract months; Marina coverage from 2025-07-22. margin_ratio = speculative (non-hedge) position margin.
     requires: []
+  czce_so:
+    description: CZCE sunflower seed oil futures (SO, listed 2026-11-12), all contract months; Marina coverage from 2026-11-12. margin_ratio = speculative (non-hedge) position margin.
+    requires: []
   czce_wh:
     description: CZCE strong wheat futures (WH), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.
     requires: []

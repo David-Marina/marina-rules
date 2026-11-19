@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "13dbfaec9a788776d9ae560089fd007ecfd7071e5419bf6314a96d3ec6a42d20",
+ "ruleset_hash": "71e2df43098e2edea6709c2dd03890f0cdb1cb6be5beb93454e5d5e088d357c2",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -103,6 +103,7 @@
     "czce_px",
     "czce_sa",
     "czce_sh",
+    "czce_so",
     "czce_ur",
     "gfex_lc",
     "gfex_pd",
@@ -133,7 +134,7 @@
    "earliest_effective_from": "2015-08-26",
    "has_open_interval": true,
    "records_by_verification": {
-    "single-source": 175,
+    "single-source": 176,
     "verified": 7
    },
    "contract_keyed_scopes": [
@@ -369,6 +370,7 @@
     "czce_sf",
     "czce_sh",
     "czce_sm",
+    "czce_so",
     "czce_sr",
     "czce_ta",
     "czce_ur",
@@ -427,7 +429,7 @@
    "earliest_effective_from": "1995-01-01",
    "has_open_interval": true,
    "records_by_verification": {
-    "single-source": 72,
+    "single-source": 73,
     "verified": 18
    }
   },
@@ -518,6 +520,7 @@
     "czce_sf",
     "czce_sh",
     "czce_sm",
+    "czce_so",
     "czce_sr",
     "czce_ta",
     "czce_ur",
@@ -564,7 +567,7 @@
    "has_open_interval": true,
    "records_by_verification": {
     "verified": 548,
-    "single-source": 392
+    "single-source": 393
    }
   },
   "retail_risk_disclosure_required": {
@@ -761,6 +764,7 @@
     "czce_px",
     "czce_sa",
     "czce_sh",
+    "czce_so",
     "czce_ur",
     "gfex_lc",
     "gfex_pd",
@@ -795,7 +799,7 @@
    "earliest_effective_from": "2015-08-03",
    "has_open_interval": true,
    "records_by_verification": {
-    "single-source": 119,
+    "single-source": 120,
     "verified": 31
    },
    "contract_keyed_scopes": [
@@ -1162,6 +1166,13 @@
   },
   "czce_sm": {
    "description": "CZCE silicomanganese futures (SM), all contract months; Marina coverage from 2024-01-01. margin_ratio = speculative (non-hedge) position margin.",
+   "requires": [],
+   "excludes": [],
+   "asserts": {},
+   "rule_asserts": {}
+  },
+  "czce_so": {
+   "description": "CZCE sunflower seed oil futures (SO, listed 2026-11-12), all contract months; Marina coverage from 2026-11-12. margin_ratio = speculative (non-hedge) position margin.",
    "requires": [],
    "excludes": [],
    "asserts": {},
@@ -9702,6 +9713,42 @@
    },
    "severity": "medium",
    "status": "open"
+  },
+  {
+   "gap_id": "G-0513",
+   "market": "XZCE",
+   "scope": "czce_so",
+   "rule": "margin_ratio",
+   "interval": {
+    "from": "2026-11-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0514",
+   "market": "XZCE",
+   "scope": "czce_so",
+   "rule": "price_limit_pct_of_prev_settlement",
+   "interval": {
+    "from": "2026-11-12",
+    "to": "2026-11-13"
+   },
+   "severity": "medium",
+   "status": "open"
+  },
+  {
+   "gap_id": "G-0515",
+   "market": "XZCE",
+   "scope": "czce_so",
+   "rule": "session_schedule",
+   "interval": {
+    "from": "2026-11-12",
+    "to": null
+   },
+   "severity": "medium",
+   "status": "open"
   }
  ],
  "tracking": {
@@ -9744,16 +9791,16 @@
    {
     "market": "XZCE",
     "scopes": null,
-    "tracked_through": "2026-11-02",
-    "basis": "CZCE notices and daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-02.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-18",
+    "basis": "CZCE daily settlement-parameter files, every trading day from 2024-01-02 to 2026-11-18; the notice list for 2026-10-23 to 2026-11-17 read by title on 2026-11-19 and the notices on margins, bands, fees and listings read. Not read - the attachments of the business-rule amendments of 2026-11-06 and 2026-11-17.",
+    "updated": "2026-11-19"
    },
    {
     "market": "GFEX",
     "scopes": null,
-    "tracked_through": "2026-11-02",
-    "basis": "GFEX notices and daily settlement parameters, every trading day from 2024-01-02 to 2026-11-02.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-18",
+    "basis": "GFEX daily settlement parameters, every trading day from 2024-01-02 to 2026-11-18, and the notice list for 2026-10-28 to 2026-11-18 read on 2026-11-19. Daily bands are not published; bands rest on notices.",
+    "updated": "2026-11-19"
    }
   ],
   "untracked_markets": [

@@ -65,7 +65,7 @@ New rules are added by PR with a one-line definition appended to this table.
 
 ## Scope vocabulary · China A-share
 
-See `data/cn/scopes.yaml` — the registry is authoritative and declares, per scope, what context the caller must supply (`requires`) and which scopes are mutually exclusive (`excludes`). Current (A-share): `stock` `bse_stock` `main_board` `chinext` `star` `bse` `st_main` `st_chinext` `st_star` `ipo_day1_main` `ipo_day1_bse` `ipo_first5_main` `ipo_first5_chinext` `ipo_first5_star` `b_share` `st_b_share` `etf` `etf_20pct` `convertible` `convertible_day1` `delisting` `delisting_day1` `delisting_chinext` `delisting_chinext_pre0824` `delisting_chinext_post0824` `delisting_star` `delisting_day1_star` `reits` `reits_day1` `st_bse` `delisting_bse` `delisting_day1_bse` `etf_bond` `etf_money` `etf_gold` `etf_commodity` `etf_crossborder` `star_growth_new` `star_growth_legacy`. CFFEX index futures: `cffex_if` `cffex_ih` `cffex_ic` `cffex_im` `cffex_index_futures`. CFFEX treasury bond futures: `cffex_tf` `cffex_t` `cffex_ts` `cffex_tl`. SHFE futures: `shfe_cu` `shfe_al` `shfe_zn` `shfe_pb` `shfe_ni` `shfe_sn` `shfe_ao` `shfe_au` `shfe_ag` `shfe_rb` `shfe_wr` `shfe_hc` `shfe_ss` `shfe_fu` `shfe_bu` `shfe_ru` `shfe_sp` `shfe_br` `shfe_ad` `shfe_op`. INE futures: `ine_sc` `ine_lu` `ine_nr` `ine_bc` `ine_ec`. CZCE futures: `czce_ap` `czce_cf` `czce_cj` `czce_cy` `czce_pk` `czce_sr` `czce_oi` `czce_rm` `czce_ta` `czce_ma` `czce_sa` `czce_fg` `czce_ur` `czce_pf` `czce_px` `czce_sh` `czce_sf` `czce_sm` `czce_pr` `czce_pl` `czce_wh` `czce_rs` `czce_pm` `czce_ri` `czce_jr` `czce_lr` `czce_zc`. GFEX futures: `gfex_si` `gfex_lc` `gfex_ps` `gfex_pt` `gfex_pd`. Hong Kong (separate registry `data/hk/scopes.yaml`, market XHKG): `hk_stock` `hk_etf`. US equities (separate registry `data/us/scopes.yaml`, markets XNYS, XNAS): `us_stock` `us_etf`.
+See `data/cn/scopes.yaml` — the registry is authoritative and declares, per scope, what context the caller must supply (`requires`) and which scopes are mutually exclusive (`excludes`). Current (A-share): `stock` `bse_stock` `main_board` `chinext` `star` `bse` `st_main` `st_chinext` `st_star` `ipo_day1_main` `ipo_day1_bse` `ipo_first5_main` `ipo_first5_chinext` `ipo_first5_star` `b_share` `st_b_share` `etf` `etf_20pct` `convertible` `convertible_day1` `delisting` `delisting_day1` `delisting_chinext` `delisting_chinext_pre0824` `delisting_chinext_post0824` `delisting_star` `delisting_day1_star` `reits` `reits_day1` `st_bse` `delisting_bse` `delisting_day1_bse` `etf_bond` `etf_money` `etf_gold` `etf_commodity` `etf_crossborder` `star_growth_new` `star_growth_legacy`. CFFEX index futures: `cffex_if` `cffex_ih` `cffex_ic` `cffex_im` `cffex_index_futures`. CFFEX treasury bond futures: `cffex_tf` `cffex_t` `cffex_ts` `cffex_tl`. SHFE futures: `shfe_cu` `shfe_al` `shfe_zn` `shfe_pb` `shfe_ni` `shfe_sn` `shfe_ao` `shfe_au` `shfe_ag` `shfe_rb` `shfe_wr` `shfe_hc` `shfe_ss` `shfe_fu` `shfe_bu` `shfe_ru` `shfe_sp` `shfe_br` `shfe_ad` `shfe_op`. INE futures: `ine_sc` `ine_lu` `ine_nr` `ine_bc` `ine_ec`. CZCE futures: `czce_ap` `czce_cf` `czce_cj` `czce_cy` `czce_pk` `czce_sr` `czce_oi` `czce_rm` `czce_ta` `czce_ma` `czce_sa` `czce_fg` `czce_ur` `czce_pf` `czce_px` `czce_sh` `czce_sf` `czce_sm` `czce_pr` `czce_pl` `czce_so` `czce_wh` `czce_rs` `czce_pm` `czce_ri` `czce_jr` `czce_lr` `czce_zc`. GFEX futures: `gfex_si` `gfex_lc` `gfex_ps` `gfex_pt` `gfex_pd`. Hong Kong (separate registry `data/hk/scopes.yaml`, market XHKG): `hk_stock` `hk_etf`. US equities (separate registry `data/us/scopes.yaml`, markets XNYS, XNAS): `us_stock` `us_etf`.
 
 ## Id convention
 
@@ -601,33 +601,33 @@ Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持�
   2024-06-24, EC band 2024-01-05 and 2024-06-25, SC and LU band 2026-07-01 (a specially set July contract left the
   sample).
 
-## Rule names · CZCE commodity futures (2026.11.02)
+## Rule names · CZCE commodity futures (2026.11.02; SO added 2026.11.23)
 
 Data file: `data/cn/czce_futures.yaml`. Market `XZCE` (ISO 10383 MIC of the Zhengzhou Commodity Exchange), asset class
-`commodity_futures`; one scope per product (27), read from the contract code (CZCE codes carry a three-digit year-month,
+`commodity_futures`; one scope per product (28), read from the contract code (CZCE codes carry a three-digit year-month,
 `AP505` → AP). Agricultural: `czce_ap` (apple), `czce_cf` (cotton), `czce_cj` (dried jujube), `czce_cy` (cotton yarn),
-`czce_pk` (peanut kernel), `czce_sr` (white sugar), `czce_oi` (rapeseed oil), `czce_rm` (rapeseed meal). Chemicals and
+`czce_pk` (peanut kernel), `czce_sr` (white sugar), `czce_oi` (rapeseed oil), `czce_rm` (rapeseed meal), `czce_so` (sunflower seed oil, first in the daily file 2026-11-12). Chemicals and
 building materials: `czce_ta` (PTA), `czce_ma` (methanol), `czce_sa` (soda ash), `czce_fg` (flat glass), `czce_ur` (urea),
 `czce_pf` (polyester staple fiber), `czce_px` (paraxylene), `czce_sh` (caustic soda). Ferroalloys: `czce_sf`
 (ferrosilicon), `czce_sm` (silicomanganese). Added later in the same release: `czce_pr` (PET bottle chip, listed
 2024-08-30), `czce_pl` (propylene, first in the daily file 2025-07-22), and the thinly traded `czce_wh` (strong wheat),
 `czce_rs` (rapeseed), `czce_pm` (common wheat), `czce_ri` (early indica rice), `czce_jr` (japonica rice), `czce_lr` (late
 indica rice) and `czce_zc` (thermal coal). **Coverage starts 2024-01-01** (PET bottle chip from its listing day 2024-08-30,
-propylene from 2025-07-22; late indica rice ends 2026-01-19, the first daily file with no LR contract listed, which is
+propylene from 2025-07-22; sunflower seed oil from 2026-11-12, with its ordinary band from 2026-11-13; late indica rice ends 2026-01-19, the first daily file with no LR contract listed, which is
 not claimed as a delisting date): earlier queries find no record (`KeyError`, `OUT_OF_COVERAGE`). The margin and band records in force on 2024-01-01 start at the real change dates where one was
 observed in the daily files from 2023-01-03 (for example cotton yarn, peanut kernel, rapeseed oil, rapeseed meal, PTA and
 polyester staple fiber margin 2023-10-09 / band 2023-10-10; flat glass 2023-09-05 / 2023-09-06), not at the floor; where
 none was observed (ferrosilicon, silicomanganese, and strong wheat, rapeseed, common wheat, early indica rice, japonica
 rice, late indica rice and thermal coal) the record starts at 2024-01-01 and the notes say so. Several products
-start 2024 inside a gap (below). `session_schedule` and `min_holding_days` records start at the floor itself (2024-01-01; PET bottle chip and propylene at
-their first coverage day).
+start 2024 inside a gap (below). Where present, `session_schedule` and `min_holding_days` records start at the floor itself (2024-01-01; PET bottle chip, propylene and sunflower seed oil at
+their first coverage day). Propylene and sunflower seed oil sessions remain known gaps.
 
 Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持仓 position margin), `price_limit_pct_of_prev_settlement`,
 `session_schedule` (with the optional `night` and `day_call` keys above) and `min_holding_days`.
 
 - **The daily settlement-parameter file.** `http://www.czce.com.cn/cn/DFSStaticFiles/Future/YYYY/YYYYMMDD/FutureDataClearParams.txt`
   (`hash_kind: bytes`) lists, per contract, `交易保证金率(%)` and `涨跌停板(%)` (`9` → 0.09, `±8` → 0.08), the one-sided-market
-  flag and the fees. `quote` is the header line and one contract's row, joined by ` … `. The **margin** column applies
+  flag and the fees. `quote` in older records may join the header line and one contract's row with ` … `. SO candidates use contiguous quotations: a contract row, and for `min_holding_days` a separate header quotation from the same file. The **margin** column applies
   from that day's settlement, so a margin's `effective_from` is the file date. The **price-limit** column is the band for
   the **next** trading day: the settlement price is the basis of the next trading day's limit (期货交易管理办法, 2023
   revision, art. 32), so a band's `effective_from` is the trading day after the file date (and its night session belongs to
@@ -661,7 +661,7 @@ Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持�
   cancelling unfilled night-session orders, so `day_call` is `null`. No closing call. **Most CZCE `session_schedule`
   records are not yet present**: only polyester staple fiber and PET bottle chip have one (night 21:00–23:00 from their
   listing notices, `open_call` 20:55–21:00, `single-source`; PET bottle chip's listing day had a day session only, the night
-  session belonging to the next trading day); for the other 25 products no dated source giving the night-session product list and
+  session belonging to the next trading day); for the other 26 products no dated source giving the night-session product list and
   closing time for the coverage window was located, and each is a known gap rather than hours carried over from another
   exchange or product.
 - **Sources.** The daily files (2023-01-03 onward), the official attachment to the 2024 National Day notice (`.docx`,
@@ -670,7 +670,7 @@ Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持�
   block automated retrieval, so **most values are `single-source`** (value and date from the daily file only); the method
   articles support the sample selection, not an independent check of the numeric rate. The 27 `verified` records are the
   2024 National Day raises, where the attachment and the daily file agree.
-- **Gaps.** `known_gaps.yaml` declares 127 (G-0158..G-0284); queries inside them raise `KeyError` (`OUT_OF_COVERAGE` in
+- **Gaps.** `known_gaps.yaml` declares 130 (G-0158..G-0284 plus G-NEW-1..G-NEW-3; final IDs assigned on integration); queries inside them raise `KeyError` (`OUT_OF_COVERAGE` in
   `resolve()`). The band gap usually starts one trading day after the margin gap.
   - Agricultural (G-0158..G-0171, G-0178..G-0203): apple, cotton, dried jujube and cotton yarn carried contract-specific
     levels for months at a time (apple margin [2023-11-08, 2024-04-15), [2024-12-25, 2025-04-15) and [2026-02-24,
@@ -692,19 +692,23 @@ Existing definitions apply: `margin_ratio` (here the **speculative**, 一般持�
     propylene [2025-07-22, open)): no quotable source for their delivery-ladder boundary was obtained. Bands: PET bottle chip
     [2026-02-25, 2026-09-01), propylene [2026-03-11, 2026-09-01) and its first day [2025-07-22, 2025-07-23) (no listing notice
     giving the first-day ordinary band was obtained). Propylene session [2025-07-22, open).
+  - Sunflower seed oil (G-NEW-1..G-NEW-3): margin [2026-11-12, open), because no quotable delivery-ladder boundary was obtained;
+    ordinary band [2026-11-12, 2026-11-13), because the first daily file only establishes the next trading day;
+    session [2026-11-12, open), because no citable dated product-session notice was obtained.
+    Both URL spellings of all five supplied SO notice URLs returned empty CDX results on 2026-11-19; manual transcriptions are not sources.
   - Thinly traded products (G-0272..G-0284): bands for common wheat, early indica rice, japonica rice and thermal coal
     [2024-01-01, open) and late indica rice [2024-01-01, 2026-01-19) (rule above); late indica rice margin [2025-12-15,
     2026-01-19), when only the contract entering delivery remained; sessions for strong wheat, rapeseed, common wheat, early
     indica rice, japonica rice and thermal coal [2024-01-01, open) and late indica rice [2024-01-01, 2026-01-19). After
     2026-01-19 late indica rice has neither records nor gaps.
-- **Exchange fees (2026.11.05)**, 182 records (all `single-source`, 90 with a contract selector), from 2024-01-01 (PR
-  from 2024-08-30, PL from 2025-07-22, LR until 2026-01-19). The daily file carries both fees per contract —
+- **Exchange fees (2026.11.05; SO added 2026.11.23)**, 184 records (all `single-source`, 90 with a contract selector), from 2024-01-01 (PR
+  from 2024-08-30, PL from 2025-07-22, SO from 2026-11-12, LR until 2026-01-19). The daily file carries both fees per contract —
   `交易手续费` (opening and closing earlier positions) and `日内平今仓交易手续费` (close-today) — with `手续费收取方式`:
   `绝对值` = CNY per lot (`trans_fee_per_lot` / `close_today_fee_per_lot`), `比例值` = **1/10000 of turnover**
   (`trans_fee_rate` / `close_today_fee_rate` = value / 10000; basis: the 2024-08-16 PET bottle chip listing notice,
   "成交金额的万分之一", against 1.00 / 比例值 on 2024-08-30, cross-checked with the 2024-10-21 soda ash and 2025-03-12 bottle
   chip notices). Close-today values are therefore daily observations here, not notice-only as at SHFE and INE; no gap.
-  Rate products: MA, SA, UR, PX, SH, PR, and PL until 2026-06-08 (then CNY 3 / 0 per lot). Contract tiers (selectors)
+  Rate products: MA, SA, UR, PX, SH, PR, SO, and PL until 2026-06-08 (then CNY 3 / 0 per lot). Contract tiers (selectors)
   for CF, CJ, CY, OI, RM, SA, FG, UR, SF, SM and SH; the rest are uniform. Records stay `single-source`: the CZCE site
   answered the first request of the batch with HTTP 412, so its notices were read only as archived copies (Source
   policy above), which cannot raise a record to `verified`. Data uses four-digit codes (`sa2501`); callers may pass the
@@ -1493,7 +1497,7 @@ an `XSHG+XSHE+BJSE` record is untracked there (BJSE has no entry for scope `stoc
 
 **Entries (2026-11-19).** `XSHG+XSHE` 2026-11-13 (weekly diff of the SSE, SZSE, CSDC and MOF listing pages; titles matching
 rule keywords reviewed by title, not every notice read); `XSGE` 2026-11-18; `XINE` 2026-11-18 (daily files; notices from
-2026-11-03 only as republished on shfe.com.cn); `XZCE`, `GFEX` 2026-11-02; `XHKG` 2026-11-18 (the SFC's own news list and
+2026-11-03 only as republished on shfe.com.cn); `XZCE`, `GFEX` 2026-11-18; `XHKG` 2026-11-18 (the SFC's own news list and
 HKEX circulars outside the CT series not read); `XNYS+XNAS` 2026-11-17 (NYSE trader updates and FINRA regulatory notices not read); `BJSE` 2026-11-18 for its own stock-trading scopes only (`bse`, `st_bse`, `delisting_bse`,
 `ipo_day1_bse`, `delisting_day1_bse`, `bse_stock`: the rules in force in BSE's trading-management column read in full).
 Untracked: `BJSE` under scope `stock` (stamp duty, transfer fee) and `CCFX`.

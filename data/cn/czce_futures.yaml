@@ -1,7 +1,7 @@
 # CZCE commodity futures (MIC XZCE), per product scope: apple, cotton, dried jujube, cotton yarn, peanut kernel, white sugar,
 # rapeseed oil, rapeseed meal, PTA, methanol, soda ash, flat glass, urea, polyester staple fiber, paraxylene, caustic soda,
 # ferrosilicon, silicomanganese, PET bottle chip, propylene, strong wheat, rapeseed, common wheat, early indica rice,
-# japonica rice, late indica rice, thermal coal.
+# japonica rice, late indica rice, thermal coal, sunflower seed oil.
 # Rules: speculative margin, ordinary-day price limits, sessions (polyester staple fiber and PET bottle chip only), same-day
 # round trips, and exchange trading fees and close-today fees (speculative only; hedge and declaration fees not included).
 # Fees that differ between contracts of one product carry a `contracts` selector (schema 1.2, docs/SCHEMA.md).
@@ -35578,3 +35578,137 @@ records:
     The absolute daily value is CNY per lot. Observed through 2026-11-02; a null end means no later change is established,
     not a forecast.
   unit: CNY
+- id: cn.futures.min_holding_days.czce_so.2026-11-12
+  scope: czce_so
+  rule: min_holding_days
+  value: 0
+  effective_from: '2026-11-12'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-19'
+  verification: single-source
+  sources:
+  - url: http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+    publisher: 郑州商品交易所
+    title: 郑州商品交易所期货结算参数表（2026-11-12）
+    date: '2026-11-12'
+    kind: official
+    quote: 合约代码|当日结算价|是否单边市|连续单边市天数|交易保证金率(%)|涨跌停板(%)|交易手续费|手续费收取方式|交割手续费|日内平今仓交易手续费|日持仓限额|交易限额
+    content_sha256: 4017e2381c73b7bd2852e4fddc2b5fda0fadea74fe3036cb894da0f26b8828bb
+    hash_kind: bytes
+  - url: http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+    publisher: 郑州商品交易所
+    title: 郑州商品交易所期货结算参数表（2026-11-12）
+    date: '2026-11-12'
+    kind: official
+    quote: 'SO705    |10,151.00  |N          |0              |8               |±7         |1.00       |比例值           |0.00       |1.00       |1500       |           '
+    content_sha256: 4017e2381c73b7bd2852e4fddc2b5fda0fadea74fe3036cb894da0f26b8828bb
+    hash_kind: bytes
+  notes: Same-day closing is inferred from the exchange settlement table explicitly publishing a close-today fee.
+    This does not imply zero fees or unrestricted opening. Coverage begins at the first observed daily parameter
+    date; a citable listing-notice copy was not found. The header and contract row are separate contiguous quotations
+    of the same file, not independent sources. Verification remains single-source because this is an inference from
+    that file. Observed through 2026-11-18; a null end means no later change is established, not a forecast.
+- id: cn.futures.price_limit_pct_of_prev_settlement.czce_so.2026-11-13
+  scope: czce_so
+  rule: price_limit_pct_of_prev_settlement
+  value: 0.07
+  effective_from: '2026-11-13'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-19'
+  verification: single-source
+  sources:
+  - url: http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+    publisher: 郑州商品交易所
+    title: 郑州商品交易所期货结算参数表（2026-11-12）
+    date: '2026-11-12'
+    kind: official
+    quote: 'SO705    |10,151.00  |N          |0              |8               |±7         |1.00       |比例值           |0.00       |1.00       |1500       |           '
+    content_sha256: 4017e2381c73b7bd2852e4fddc2b5fda0fadea74fe3036cb894da0f26b8828bb
+    hash_kind: bytes
+  - url: https://web.archive.org/web/20251211002651id_/https://www.czce.com.cn/cn/flfg/zcjywgz/ywbf/webinfo/2023/04/1684183719758137.htm
+    publisher: 郑州商品交易所（存档）
+    title: 郑州商品交易所期货交易管理办法（2023年5月26日起施行；存档）
+    date: '2023-04-26'
+    kind: official
+    quote: （十一）结算价。结算价是指某一期货合约当日成交价格按成交量的加权平均价。当日无成交的，当日结算价按照《郑州商品交易所期货结算管理办法》相关规定执行。结算价是进行当日未平仓合约盈亏结算和确定下一交易日涨跌停板额的依据。
+    content_sha256: bcea7b068796a4876d1b29579151a44788d46200ffefa5a4186eadb65e99e080
+    hash_kind: text
+  notes: Ordinary general-month band as a fraction of previous settlement. The settlement table publishes the next
+    trading day band, including its night session. Exclude delivery-month contracts, one-sided markets and initial
+    listing double bands. All four SO contracts have the same ordinary band and none is flagged one-sided in the
+    supplied files. All remaining contracts must agree; divergent values are gaps. The first settlement observation
+    on 2026-11-12 establishes the band from 2026-11-13, not the listing-day band. No citable listing notice was
+    obtained, so the first coverage day is a known gap; the listing-day double band is not a separate record. The
+    cited historical trading rule supplies the next-trading-day method, not independent verification of the numerical
+    value. Verification remains single-source and published_at is null. Daily files observed through 2026-11-18
+    establish the next-day band through 2026-11-19; a null end means no later change is established, not a forecast.
+- id: cn.futures.trans_fee_rate.czce_so.2026-11-12
+  scope: czce_so
+  rule: trans_fee_rate
+  value: 0.0001
+  effective_from: '2026-11-12'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-19'
+  verification: single-source
+  sources:
+  - url: http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+    publisher: 郑州商品交易所
+    title: 郑州商品交易所期货结算参数表（2026-11-12）
+    date: '2026-11-12'
+    kind: official
+    quote: 'SO705    |10,151.00  |N          |0              |8               |±7         |1.00       |比例值           |0.00       |1.00       |1500       |           '
+    content_sha256: 4017e2381c73b7bd2852e4fddc2b5fda0fadea74fe3036cb894da0f26b8828bb
+    hash_kind: bytes
+  - url: https://web.archive.org/web/20251213093128id_/https://www.czce.com.cn/cn/ztlm/ppqhsszt/ggytz/webinfo/2024/08/1715239665634128.htm
+    publisher: 郑州商品交易所
+    title: 关于瓶片期货手续费收取标准的通知
+    date: '2024-08-16'
+    kind: official
+    quote: 瓶片 期货交易手续费收取标准为成交金额的万分之一，日内平今仓交易手续费收取标准为成交金额的万分之一。
+    content_sha256: a7610b9aa56d3ebe695163a6063cb78ce47f7a1d8639cfb48e79c35cb672ee1d
+    hash_kind: text
+  notes: Exchange speculative/general-position fee only; excludes hedge-position fees, declaration fees and broker
+    commissions. All listed contracts have the same fee throughout this interval. The first observation is the effective
+    date; the publication date of a citable SO fee-setting notice is unknown. The proportional daily value is in
+    ten-thousandths of turnover and is divided by 10000; the unit is supported by the cited PET bottle chip notice
+    already used for this purpose by the propylene records, not an independent verification of this interval. The
+    evening session belongs to the following trading day. Verification remains single-source because the SO rate
+    and date come only from the daily file. Observed through 2026-11-18; a null end means no later change is established,
+    not a forecast.
+- id: cn.futures.close_today_fee_rate.czce_so.2026-11-12
+  scope: czce_so
+  rule: close_today_fee_rate
+  value: 0.0001
+  effective_from: '2026-11-12'
+  effective_to: null
+  published_at: null
+  recorded_at: '2026-11-19'
+  verification: single-source
+  sources:
+  - url: http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+    publisher: 郑州商品交易所
+    title: 郑州商品交易所期货结算参数表（2026-11-12）
+    date: '2026-11-12'
+    kind: official
+    quote: 'SO705    |10,151.00  |N          |0              |8               |±7         |1.00       |比例值           |0.00       |1.00       |1500       |           '
+    content_sha256: 4017e2381c73b7bd2852e4fddc2b5fda0fadea74fe3036cb894da0f26b8828bb
+    hash_kind: bytes
+  - url: https://web.archive.org/web/20251213093128id_/https://www.czce.com.cn/cn/ztlm/ppqhsszt/ggytz/webinfo/2024/08/1715239665634128.htm
+    publisher: 郑州商品交易所
+    title: 关于瓶片期货手续费收取标准的通知
+    date: '2024-08-16'
+    kind: official
+    quote: 瓶片 期货交易手续费收取标准为成交金额的万分之一，日内平今仓交易手续费收取标准为成交金额的万分之一。
+    content_sha256: a7610b9aa56d3ebe695163a6063cb78ce47f7a1d8639cfb48e79c35cb672ee1d
+    hash_kind: text
+  notes: Exchange speculative/general-position fee only; excludes hedge-position fees, declaration fees and broker
+    commissions. All listed contracts have the same fee throughout this interval. The first observation is the effective
+    date; the publication date of a citable SO fee-setting notice is unknown. The proportional daily value is in
+    ten-thousandths of turnover and is divided by 10000; the unit is supported by the cited PET bottle chip notice
+    already used for this purpose by the propylene records, not an independent verification of this interval. The
+    evening session belongs to the following trading day. Verification remains single-source because the SO rate
+    and date come only from the daily file. Observed through 2026-11-18; a null end means no later change is established,
+    not a forecast.

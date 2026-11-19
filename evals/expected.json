@@ -1,8 +1,8 @@
 {
   "dataset": {
-    "citation": "rules: marina-rules@2026.11.16 sha256:13dbfaec9a788776d9ae560089fd007ecfd7071e5419bf6314a96d3ec6a42d20 code: marina-rules-core@1.0.0",
+    "citation": "rules: marina-rules@2026.11.16 sha256:71e2df43098e2edea6709c2dd03890f0cdb1cb6be5beb93454e5d5e088d357c2 code: marina-rules-core@1.0.0",
     "code_version": "1.0.0",
-    "digest": "13dbfaec9a788776d9ae560089fd007ecfd7071e5419bf6314a96d3ec6a42d20",
+    "digest": "71e2df43098e2edea6709c2dd03890f0cdb1cb6be5beb93454e5d5e088d357c2",
     "version": "2026.11.16"
   },
   "eval_version": 1,

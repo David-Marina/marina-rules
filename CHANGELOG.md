@@ -25,14 +25,15 @@ How to read an entry:
 
 ## [2026.11.23] - 2026-11-23
 
-**In three lines.** *Rules:* no value in force on 2026.11.16 changed; one record was added (SHFE bitumen margin from
-2026-11-17, where 2026.11.16 had a gap) and two were raised to `verified`. *Packaging:* the code
+**In three lines.** *Rules:* no value in force on 2026.11.16 changed; five records were added (SHFE bitumen margin
+from 2026-11-17, where 2026.11.16 had a gap, and CZCE sunflower seed oil futures, listed 2026-11-12) and two were
+raised to `verified`. *Packaging:* the code
 moved into its own package, `marina-rules-core` 1.0.0, which this release requires; `pip install -U marina-rules`
 installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* all in
 the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
 before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
 
-Dataset: `sha256:13dbfaec9a788776` · 2874 records (1423 `verified`, 1450 `single-source`, 1 `unverified`).
+Dataset: `sha256:71e2df43098e2ede` · 2878 records (1423 `verified`, 1454 `single-source`, 1 `unverified`).
 
 ### Corrected (re-run needed)
 - **`published_at` of three BSE price-limit records was one day early** (`cn.limit.st_bse.2021-11-15`,
@@ -50,6 +51,14 @@ The other corrections of this week are in the code: see
   carried a raised level; BU2611 left the file after 2026-11-16, the two raised contracts became the two nearest
   expiries, which the sample leaves out, and every general month carries 0.12. G-0107 now ends on 2026-11-17. A query
   for `margin_ratio` / `shfe_bu` from that date gets 0.12 instead of `OUT_OF_COVERAGE`.
+
+- **CZCE sunflower seed oil futures** (scope `czce_so`, listed 2026-11-12; 4 records, all `single-source`):
+  trading fee and close-today fee 0.01% of turnover and same-day closing from 2026-11-12, daily band 7% from
+  2026-11-13. The values and dates are those of the daily settlement table. CZCE's notice pages cannot be fetched in a
+  form that can be hashed and no archived copy exists yet, so what only the listing notice states is a declared gap
+  and not a record: the margin (the table shows 8% on every contract, but no citable text fixes where the delivery
+  ladder starts; G-0513), the band of the listing day (G-0514) and the session schedule, night session included
+  (G-0515).
 
 ### Re-verified
 - **STAR growth-tier risk disclosure** (`cn.suitability.star_growth_new.2025-07-13`,
@@ -87,13 +96,19 @@ The other corrections of this week are in the code: see
 - US equities (XNYS, XNAS): 2026-11-03 → 2026-11-17. Read: SEC fee-rate advisories (no Section 31 advisory since
   2026-02-27), the FINRA trading-activity-fee page, CAT fee alerts, Nasdaq equity trader alerts and the SEC documents
   in the Federal Register for the window. Not read: NYSE trader updates and FINRA regulatory notices.
-- Unchanged: CZCE and GFEX 2026-11-02 (their sites refuse scripts), CFFEX not tracked.
+- CZCE (XZCE) and GFEX: 2026-11-02 → 2026-11-18. Every trading day's settlement parameters were compared with the
+  records: the only changes are the temporary ones Marina does not encode (the day after a one-sided market, the
+  ladder before delivery, the doubled band of a newly listed contract). Their notice lists were read for the window.
+- Unchanged: CFFEX not tracked.
 - **Announced, not yet in the data — US, 2026-12-06.** Overnight ("23/5") trading is scheduled to start on
   2026-12-06: LULD overnight price bands (static, 20%), the Level 3 market-wide halt resuming at 04:00 the next day,
   and a Nasdaq night session 21:00–04:00 (Nasdaq Equity Trader Alert 2026-46 of 2026-08-17 gives 2026-12-06; the
   rule makes the start depend on the consolidated feed being ready). Marina's
   `luld_band` and `extended_hours` records describe the sessions that exist today and cannot yet express an overnight
   session; until they can, an answer for a date from 2026-12-06 is a carry-forward of today's rules.
+- **Announced, not yet in the data — GFEX lithium hydroxide futures, 2026-11-26.** Listing notice of 2026-11-13
+  (广期所公告〔2026〕71号): margin 11%, band 9% (18% of the benchmark price on the listing day), trading fee
+  0.01% of turnover, no close-today fee. No scope exists for it yet; a query is `unsupported`, not answered.
 - **Announced, not yet in the data — CAT fee, January 2027.** CAT Fee Alert 2026-3 (2026-11-12) announces CAT Fee
   2027-1 at USD 0.000008 per executed equivalent share for transactions from January 2027 (today 0.000001), subject
   to fee filings that had not been made on 2026-11-19. As with earlier CAT fees, the record is added when the filing
@@ -107,7 +122,7 @@ The other corrections of this week are in the code: see
   in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
   marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
   now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
-- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:13dbfaec9a788776 code:
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:71e2df43098e2ede code:
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.

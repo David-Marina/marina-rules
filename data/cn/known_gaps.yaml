@@ -10684,3 +10684,57 @@ gaps:
     April, May, June, August, September and October 2026; and the archived attachments of the July/September/November 2025
     and April/July 2026 fee notices.'
   status: open
+- gap_id: G-0513
+  market: XZCE
+  scope: czce_so
+  rule: margin_ratio
+  interval:
+    from: '2026-11-12'
+    to: null
+  severity: medium
+  reason: No quotable source for the product's delivery-ladder margin boundary has been obtained (no product rule
+    or listing material with a citable ladder clause); the 2018 risk-control rule predates this product. Without
+    that boundary the general-month sample cannot be fixed, so no product-level margin record is asserted. All four
+    SO contracts show 8% in the supplied daily files from 2026-11-12 through 2026-11-18, but an observed common
+    level does not establish the delivery-ladder boundary.
+  evidence:
+  - http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+  - https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2026/11/27dc59abeefa4756b4da28ea48a4d865.htm
+  - Both http and https spellings of the product-rule notice returned empty CDX results on 2026-11-19; URL is a
+    search lead, not a retrieved source.
+  status: open
+- gap_id: G-0514
+  market: XZCE
+  scope: czce_so
+  rule: price_limit_pct_of_prev_settlement
+  interval:
+    from: '2026-11-12'
+    to: '2026-11-13'
+  severity: medium
+  reason: No listing notice establishing the ordinary first-day band was obtained; the first settlement table only
+    establishes the next trading day band. The 2026-11-12 table shows 7% for 2026-11-13; the manually transcribed
+    listing notice is not a citable source. No listing-day double-band record is asserted.
+  evidence:
+  - http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+  - https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2026/11/ef50bda7a1f9417caf7ea222f40818f1.htm
+  - Both http and https spellings of the listing notice returned empty CDX results on 2026-11-19; URL is a search
+    lead, not a retrieved source.
+  status: open
+- gap_id: G-0515
+  market: XZCE
+  scope: czce_so
+  rule: session_schedule
+  interval:
+    from: '2026-11-12'
+    to: null
+  severity: medium
+  reason: No usable dated source confirming this product's night-session status and full regular schedule was located.
+    The 2023 trading rule alone does not establish product membership; no schedule is asserted.
+  evidence:
+  - http://www.czce.com.cn/cn/DFSStaticFiles/Future/2026/20261112/FutureDataClearParams.txt
+  - https://web.archive.org/web/20251211002651id_/https://www.czce.com.cn/cn/flfg/zcjywgz/ywbf/webinfo/2023/04/1684183719758137.htm
+  - https://www.czce.com.cn/cn/gyjys/jysdt/ggytz/webinfo/2026/11/ef50bda7a1f9417caf7ea222f40818f1.htm
+  - The manually transcribed listing notice suggests night trading from the evening of 2026-11-12, but neither URL
+    spelling has an archive capture as checked on 2026-11-19. The transcription cannot supply source bytes or a
+    source hash.
+  status: open
