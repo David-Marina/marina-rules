@@ -1,7 +1,7 @@
 {
  "capabilities_version": "1",
  "ruleset_version": "2026.11.16",
- "ruleset_hash": "71e2df43098e2edea6709c2dd03890f0cdb1cb6be5beb93454e5d5e088d357c2",
+ "ruleset_hash": "3e159d81e1175d71f66c51ce8973a265f9753fc025120ebac951d393787f29e7",
  "entrypoints": {
   "python": {
    "resolve": "marina_rules.contract.resolve(rule, trade_date, scope, market, context, min_verification, as_of=None, require_tracked=False)",
@@ -245,16 +245,19 @@
   },
   "limit_price_rounding": {
    "scopes": [
+    "bse_stock",
     "stock"
    ],
    "markets": [
+    "BJSE",
     "XSHE",
     "XSHG"
    ],
    "earliest_effective_from": "1996-12-16",
    "has_open_interval": true,
    "records_by_verification": {
-    "verified": 1
+    "verified": 1,
+    "single-source": 1
    }
   },
   "margin_ratio": {

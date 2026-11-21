@@ -25,15 +25,16 @@ How to read an entry:
 
 ## [2026.11.23] - 2026-11-23
 
-**In three lines.** *Rules:* no value in force on 2026.11.16 changed; five records were added (SHFE bitumen margin
-from 2026-11-17, where 2026.11.16 had a gap, and CZCE sunflower seed oil futures, listed 2026-11-12) and two were
+**In three lines.** *Rules:* no value in force on 2026.11.16 changed; six records were added (SHFE bitumen margin
+from 2026-11-17, where 2026.11.16 had a gap, CZCE sunflower seed oil futures, listed 2026-11-12, and how BSE
+rounds its limit prices) and two were
 raised to `verified`. *Packaging:* the code
 moved into its own package, `marina-rules-core` 1.0.0, which this release requires; `pip install -U marina-rules`
 installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* all in
 the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
 before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
 
-Dataset: `sha256:71e2df43098e2ede` · 2878 records (1423 `verified`, 1454 `single-source`, 1 `unverified`).
+Dataset: `sha256:3e159d81e1175d71` · 2879 records (1423 `verified`, 1455 `single-source`, 1 `unverified`).
 
 ### Corrected (re-run needed)
 - **`published_at` of three BSE price-limit records was one day early** (`cn.limit.st_bse.2021-11-15`,
@@ -52,6 +53,12 @@ The other corrections of this week are in the code: see
   expiries, which the sample leaves out, and every general month carries 0.12. G-0107 now ends on 2026-11-17. A query
   for `margin_ratio` / `shfe_bu` from that date gets 0.12 instead of `OUT_OF_COVERAGE`.
 
+- **How BSE rounds its limit prices** (`cn.limit.rounding.bse.2021-11-15`, `limit_price_rounding` =
+  `toward_prev_close`, `single-source`): limit-up rounded down and limit-down rounded up to CNY 0.01, so that neither
+  exceeds the 30% band. The BSE rules give the formula and make any order beyond the band invalid, and - unlike the SSE
+  and SZSE rules - say nothing about rounding; the value is read from that, which is why it is `single-source`. The
+  exchange's published daily limit prices from 2021-11-15 follow it. Until now Marina had no BSE rounding record and
+  `limit_price` rounded BSE prices half up anyway; see marina-rules-core 1.0.0.
 - **CZCE sunflower seed oil futures** (scope `czce_so`, listed 2026-11-12; 4 records, all `single-source`):
   trading fee and close-today fee 0.01% of turnover and same-day closing from 2026-11-12, daily band 7% from
   2026-11-13. The values and dates are those of the daily settlement table. CZCE's notice pages cannot be fetched in a
@@ -122,7 +129,7 @@ The other corrections of this week are in the code: see
   in your code: the import name, the commands `marina-rules`, `marina-check` and `marina-rules-mcp`, `python -m
   marina_rules`, the extra `marina-rules[mcp]` and the MCP registry entry are the same. `marina_rules.__version__` is
   now the code version (`1.0.0`); `marina_rules.VERSION` stays the data version.
-- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:71e2df43098e2ede code:
+- **The citation names both.** `mr.citation()` is `rules: marina-rules@2026.11.23 sha256:3e159d81e1175d71 code:
   marina-rules-core@1.0.0`. To reproduce a result, pin both (`pip install "marina-rules==2026.11.23"
   "marina-rules-core==1.0.0"`). A citation without `code:` comes from a release up to 2026.11.16, which carried its own
   code: `marina-rules==<version>` alone still installs and runs it, also next to a newer `marina-rules-core`.
@@ -160,6 +167,15 @@ What a user of this release should know, in one place.
 - Through `--format`, what the adapter reads rests on column names. Two columns it can read as the same field and
   that differ are refused, but a column it does not recognise is not read at all: check `adapter.columns_used` and
   `adapter.columns_not_used` in the output.
+- **Two kinds of A-share day have no scope yet**, found by comparing `limit_price` with the limit prices the
+  exchanges published from 2018 to 2026 (every other band agreed row for row):
+  - *Shares of a company that never completed the 2005–2006 split-share reform* (names prefixed S): SZSE set their
+    band at 5% from 2007-01-08 (深证会〔2007〕1号; repealed 2022-03-25, none being left), and the SSE still applies
+    5% to the last such stock. Marina answers them as ordinary main-board stocks (10%).
+  - *A first trading day that is not an IPO*: a listing by share-swap merger, a listing resumed after suspension, a
+    relisting. The trading rules list these among the days with no band, or leave them to the exchange; Marina's
+    `ipo_day1_main` (+44% / −36% of the offer price) is for IPOs only, and `listing_day_index` cannot tell them apart.
+  Both are planned for a coming release. Until then, do not pass such a row as `main_board` or `ipo_day1_main`.
 - Fees: only the statutory floor of A-share stocks (stamp duty and transfer fee) is checked; funds, convertible bonds
   and B shares are not fee-checked.
 - Coverage: the Dalian Commodity Exchange (DCE) is not covered; CZCE, GFEX, Hong Kong and US records are mostly
@@ -170,10 +186,11 @@ What a user of this release should know, in one place.
 **In three lines.** *Code:* the first release of the code as its own package — the functions, checker, adapters,
 command line and MCP server of marina-rules 2026.11.16, as the module `marina_rules_core` (and, through marina-rules,
 `marina_rules`). *Corrections:* `marina-check` withheld its stamp too rarely, and `limit_price` substituted a tick
-where it has none; **re-run** any log stamped by 2026.11.13 or 2026.11.16 that one of the items below touches.
+where it has none and rounded BSE prices the SSE way; **re-run** any log stamped by 2026.11.13 or 2026.11.16 that one of the items below touches.
 *Compatibility:* reads the dataset marina-rules 2026.11.23 or later (data schemas 1, 1.1 and 1.2; releases up to
 2026.11.16 carry their own code and are not read by this one); additive, except
-that the checker now refuses rows it used to stamp, `limit_price` raises for funds and B shares before 2006-07-01, and
+that the checker now refuses rows it used to stamp, `limit_price` raises for funds and B shares before 2006-07-01 and gives
+BSE limit prices rounded toward the previous close, and
 the fee of a fund, convertible bond or B-share row is no longer checked.
 
 ### Corrected (re-run needed)
@@ -183,6 +200,16 @@ reported by an outside tester; two independent reviews of the fix found more of 
 present in 2026.11.13 and 2026.11.16. The principle behind every item: a changed standard, inputs that contradict each
 other, and input that cannot be read never get the stamp a complete, valid check gets. **Re-run** any log those
 releases stamped; a stamp from them is not evidence of compliance where one of the cases below applies.
+
+*Limit prices*
+
+- **BSE limit prices were rounded half up, with no record behind it, and were wrong by CNY 0.01 on about half of
+  the trading days.** `limit_price` rounded every market half up; only SSE and SZSE have a rounding record. It now
+  reads `limit_price_rounding` for the market (BSE: toward the previous close, `cn.limit.rounding.bse.2021-11-15`)
+  and raises `KeyError` where none is in force. Example: previous close 12.86 gives 16.71 / 9.01 (was 16.72 / 9.00).
+  **Re-run** any BSE limit price taken from `limit_price`, and any `marina-check` run on BSE fills: a fill at the old
+  limit-up price was passed and is now flagged (`PRICE_OUTSIDE_BAND`; a buy also
+  `LIMIT_BUY_ABOVE_UP`).
 
 *The standard of the check*
 

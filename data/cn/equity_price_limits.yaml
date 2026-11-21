@@ -707,6 +707,58 @@ records:
     hash_kind: text
     fetched_sha256: 0da312ffc2524ea3798302043932bb6214b6eae8d8e4f340bcd05c8b505d7f16
   notes: 'limit = round_half_up(prev_close × (1 ± pct)) to the tick (SSE rules 3.3.13/3.3.17; same wording in the 2012-12-14 revision). 2026 rules add: if |limit − prev_close| < one tick, use prev_close ± one tick. Banker''s rounding differs by CNY 0.01 on ~0.6% of days (docs/audit-2026-10-24.md). ETFs and convertibles tick at 0.001. published_at: not located — the 1996 limit notices (dated 1996-12-13 in the SSE/SZSE repeal registers) are not online, so whether they contained the half-up rounding rule is unknown; the earliest official rounding text found is the 2006 trading rules (2006-05-15), after effective_from. Searched 2026-10-29: SSE/SZSE repeal registers, chronicles 1996–2006.'
+- id: cn.limit.rounding.bse.2021-11-15
+  market: BJSE
+  scope: bse_stock
+  rule: limit_price_rounding
+  value: toward_prev_close
+  effective_from: '2021-11-15'
+  effective_to: null
+  published_at: '2021-11-02'
+  recorded_at: '2026-11-21'
+  verification: single-source
+  sources:
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 北京证券交易所交易规则（试行）第3.3.11条
+    date: '2021-11-02'
+    kind: official
+    quote: 价格涨跌幅限制以内的申报为有效申报，超过价格涨跌幅限制的申报为无效申报。
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 北京证券交易所交易规则（试行）第3.3.11条
+    date: '2021-11-02'
+    kind: official
+    quote: 涨跌幅限制价格的计算公式为：涨跌幅限制价格=前收盘价×（1±涨跌幅限制比例）。
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bse.cn/jygl_list/200010919.html
+    publisher: 北交所
+    title: 关于发布《北京证券交易所交易规则（试行）》的公告（北证公告〔2021〕15号）
+    date: '2021-11-02'
+    kind: official
+    quote: 经中国证监会批准，现予以发布，自2021年11月15日起施行。
+    content_sha256: 483b43419288675b816574512827df9d426b787542ed7601b69e00fe570dd7e2
+    hash_kind: text
+  - url: https://www.bseinfo.net/jygl_list/200028217.html
+    publisher: 北交所
+    title: 关于发布《北京证券交易所交易规则》的公告（北证公告〔2026〕17号）第3.3.11条
+    date: '2026-04-24'
+    kind: official
+    quote: 价格涨跌幅限制以内的申报为有效申报，超过价格涨跌幅限制的申报为无效申报。
+    content_sha256: e8c813691f9d2e674ffa7db023dbad26dce564f8436cbd7c8e1c3f661a7b55c1
+    hash_kind: text
+  notes: 'BSE limit prices are the computed band rounded toward the previous close on the 0.01 grid: limit-up down,
+    limit-down up. The BSE trading rules (2021 trial edition and 2026 edition, article 3.3.11) give the formula
+    prev_close × (1 ± 30%) and say that an order beyond the band is invalid, but - unlike SSE and SZSE, whose rules
+    say the result is rounded half up to the tick - they say nothing about rounding. The highest price on the 0.01 grid
+    that does not exceed the band is therefore the computed value rounded down, the lowest is rounded up. single-source:
+    the value is read from the rules, not stated in them; no BSE text that states the rounding was found (searched
+    2026-11-21: both editions of the trading rules, the drafting note, the trading-rules Q&A, the opening test notices
+    and test plans; the NEEQ technical specifications they cite were not obtained). Exchange-published daily limit
+    prices from 2021-11-15 follow this rule, and on about half of the days differ by CNY 0.01 from half-up rounding.'
 - id: cn.limit.convertible.2022-08-01
   market: XSHG+XSHE
   scope: convertible

@@ -2318,3 +2318,19 @@ def test_czce_sunflower_oil_listed_2026_11_12():
     assert resolve("trans_fee_rate", "2026-11-13", "czce_so", "XZCE", None, "verified")["status"] == "UNVERIFIED"
     assert mr.rule_at("trans_fee_rate", "2026-11-13", "czce_so", "XZCE", contract="SO705") == 0.0001
     assert mr.parse_contract("SO705", "2026-11-12") == ("so", 2027, 5)
+
+
+def test_limit_price_rounding_is_a_record_per_exchange():
+    """SSE / SZSE round the band half up (their rules say so); BSE rounds toward the previous close (its rules make any
+    order beyond the band invalid and say nothing about rounding). Before marina-rules-core 1.0.0 every market was
+    rounded half up with no BSE record behind it."""
+    assert mr.limit_price(12.86, "bse", "2024-06-14", "BJSE") == (16.71, 9.01)          # 16.718 / 9.002
+    assert mr.limit_price(12.86, "bse", "2024-06-14") == (16.71, 9.01)                  # the scope says BSE
+    assert mr.limit_price(10.00, "bse", "2024-06-14", "BJSE") == (13.0, 7.0)            # exact values stay exact
+    assert mr.limit_price(12.86, "st_bse", "2026-09-01", "BJSE") == (16.71, 9.01)
+    assert mr.limit_price(12.86, "main_board", "2024-06-14", "XSHG") == (14.15, 11.57)  # 14.146 / 11.574: half up
+    rec = mr.record_at("limit_price_rounding", "2024-06-14", "bse_stock", "BJSE")
+    assert rec.value == "toward_prev_close" and rec.verification == "single-source"
+    assert mr.record_at("limit_price_rounding", "2024-06-14", "stock", "XSHG").value == "half_up_2dp"
+    with pytest.raises(KeyError, match="limit_price_rounding"):
+        mr._rounding_mode("bse", "2021-11-12", "BJSE", False, None)                     # before the BSE opened

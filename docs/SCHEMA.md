@@ -55,7 +55,7 @@ An official page that no longer exists on the live site may be cited through a *
 | rule | value | meaning |
 |---|---|---|
 | `price_limit_pct` | fraction, `unlimited`, or `{up, down}` | daily band vs previous close |
-| `limit_price_rounding` | `half_up_2dp` … | how the exchange computes the limit price |
+| `limit_price_rounding` | `half_up_2dp` \| `toward_prev_close` | how the band is put on the tick grid: half up (SSE, SZSE: their rules say so), or toward the previous close — limit-up rounded down, limit-down rounded up (BSE: its rules give the formula and make any order beyond the band invalid, and say nothing about rounding; `single-source`). `limit_price()` refuses a scope with no such record in force. |
 | `stamp_duty_sell` | fraction | tax on sell turnover |
 | `transfer_fee_each_side` | fraction | depository fee per side |
 | `commission_cap` | fraction | statutory maximum brokerage rate |

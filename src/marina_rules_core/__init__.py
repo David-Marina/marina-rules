@@ -1798,14 +1798,48 @@ def min_tick_band(scope: str, date: str, market: str | None = None, *, as_of: st
     return bool(_min_tick_value(scope, _check_date(date), market, _check_as_of(as_of)))
 
 
+_ROUNDING = ("half_up_2dp", "toward_prev_close")   # values of limit_price_rounding; the decimals come from the tick
+
+
+def _rounding_mode(scope: str, date: str, market: str | None, strict: bool, as_of: str | None) -> str:
+    """``limit_price_rounding`` in force for ``scope``: the scope's own record, then the BSE family ``bse_stock``
+    (a BSE scope, or market BJSE), then ``stock``. No record: ``KeyError`` - Marina has no rounding to substitute."""
+    order = [scope] + (["bse_stock"] if tick_family(scope, market) == "bse_stock" else []) + ["stock"]
+    for sc in dict.fromkeys(order):
+        try:
+            v = rule_at("limit_price_rounding", date, sc, market, strict, as_of=as_of)
+        except (NotYetPublished, PublicationUnknown):
+            raise   # the in-force record exists but is not knowable at as_of: never fall back
+        except KeyError:
+            continue
+        if v not in _ROUNDING:
+            raise ValueError(f"limit_price_rounding {v!r} is not one of {_ROUNDING}")
+        return v
+    raise KeyError(f"limit_price cannot round the band for scope {scope!r} on {date} (market {market!r}): no "
+                   "limit_price_rounding record is in force, and Marina does not substitute one")
+
+
+def _round_limits(prev_close: float, up: float, dn: float, decimals: int, mode: str) -> tuple[float, float]:
+    if mode == "toward_prev_close":
+        # the highest / lowest price on the grid that does not exceed the band
+        f = 10.0 ** decimals
+        return (math.floor(prev_close * (1 + up) * f + 1e-7) / f,
+                math.ceil(prev_close * (1 - dn) * f - 1e-7) / f)
+    return round_half_up(prev_close * (1 + up), decimals), round_half_up(prev_close * (1 - dn), decimals)
+
+
 def limit_price(prev_close: float, scope: str, date: str, market: str | None = None,
                 decimals: int | None = None, strict: bool = False,
                 *, as_of: str | None = None) -> tuple[float, float] | None:
     """(limit_up, limit_down) for ``scope`` on ``date``; ``None`` when the band is unlimited.
 
-    Three separately-sourced rules compose here:
+    Four separately-sourced rules compose here:
       price_limit_pct        the band
       tick_size              rounding unit (``decimals`` overrides it only if you pass one explicitly)
+      limit_price_rounding   how the band is put on that grid: ``half_up_2dp`` (SSE, SZSE: half up) or
+                             ``toward_prev_close`` (BSE: limit-up rounded down, limit-down rounded up). Looked up for
+                             ``scope``, then ``bse_stock`` (a BSE scope or market BJSE), then ``stock``; none in force:
+                             ``KeyError``. ``as_of`` does not apply to it (see the comment in the body).
       limit_price_min_tick   exchange floor: if |limit − prev_close| rounds below one tick, use ± one tick.
                              Looked up for ``scope`` first, then ``bse_stock`` (market BJSE), then ``stock``. A dict value
                              ``{prev_close_lt|prev_close_lte: x, band: b}`` is a board-specific absolute band
@@ -1831,8 +1865,9 @@ def limit_price(prev_close: float, scope: str, date: str, market: str | None = N
         decimals = max(0, -int(round(math.log10(tick))))
     else:
         tick = 10.0 ** -decimals
-    hi = round_half_up(prev_close * (1 + up), decimals)
-    lo = round_half_up(prev_close * (1 - dn), decimals)
+    # The rounding record is looked up without as_of: the 1996 SSE/SZSE record has no located publication date (its
+    # wording is restated in the 2012 and 2026 rules), and before 1.0.0 rounding was not a looked-up record at all.
+    hi, lo = _round_limits(prev_close, up, dn, decimals, _rounding_mode(scope, date, market, strict, None))
     floor_hit = (hi - prev_close < tick - 1e-12) or (prev_close - lo < tick - 1e-12)
     if floor_hit:
         # Only here does the one-tick floor matter, and only here is the exchange identity decisive.
