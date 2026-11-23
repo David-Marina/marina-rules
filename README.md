@@ -26,7 +26,7 @@ Every backtest engine, every trading agent, and every research notebook re-imple
 
 A shared, cited, versioned table fixes this the way tzdata fixed time zones: not by being authoritative, but by being **the same for everyone** and **traceable to the source**.
 
-[`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints six such fills side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
+[`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints these five fills and a sixth (a convertible bond) side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
 
 | fill | hard-coded with today's rule | rule of that day |
 |---|---|---|
@@ -64,7 +64,7 @@ package holding both; `pip install -U marina-rules` upgrades from them like from
 import marina_rules as mr
 
 mr.rule_at("stamp_duty_sell", "2023-08-28")           # 0.0005
-mr.rule_at("price_limit_pct", "2020-08-23", "chinext", "XSHE")   # 0.10
+mr.rule_at("price_limit_pct", "2020-08-21", "chinext", "XSHE")   # 0.10
 mr.limit_price(10.00, "chinext", "2021-03-01", "XSHE") # (12.0, 8.0)  — exchange rounding
 mr.limit_price(10.00, "ipo_first5_main", "2024-01-30", "XSHG+XSHE")  # None — unlimited band
 mr.rule_at("stamp_duty_sell", "2005-01-01")            # KeyError — no defaults, ever
