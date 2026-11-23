@@ -21,7 +21,7 @@
  "scope": {
   "b_share": "B 股",
   "bse": "北交所股票",
-  "bse_stock": "北交所股票（费用与交收）",
+  "bse_stock": "北交所全部股票",
   "cffex_ic": "中证 500 股指期货（IC）",
   "cffex_if": "沪深 300 股指期货（IF）",
   "cffex_ih": "上证 50 股指期货（IH）",

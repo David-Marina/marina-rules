@@ -184,7 +184,7 @@ def test_answers_match_faq_text_and_are_first_and_record_derived(text, manifest)
         assert text[p['md']].split('\n\n', 2)[1] == answer
         zh = site.zh_names()
         chinese = p['lang'] == 'zh-CN'
-        summarised = ('更早还有' if chinese else 'earlier values from') in answer
+        summarised = ('更早还有' if chinese else 'earlier values on record from') in answer
         for _, rs in site.question_series(questions[p['slug']], mr.records()):
             assert rs[0].effective_from in answer                       # where the history starts
             assert site.answer_value(rs[-1], zh, chinese) in answer      # the value in force
@@ -225,10 +225,11 @@ def test_hreflang_pairs_canonicals_languages_and_no_base_url_mode(built, manifes
 
 def test_chinese_landing_uses_verbatim_opening_and_both_lists_are_complete(text):
     readme = Path(ROOT, 'README.zh-CN.md').read_text()
-    opening = readme.split('\n## ', 1)[0].split('\n\n')[1:]
+    opening = site.readme_opening(readme)
+    assert opening and all(p in readme for p in opening)                 # verbatim
     for para in opening:
-        if para.strip():
-            assert '<p>' + site.md_inline(para.strip()) + '</p>' in text['zh/index.html']
+        assert '<p>' + site.md_inline(para) + '</p>' in text['zh/index.html']
+    assert '以英文版为准' in readme and '以英文版为准' not in text['zh/index.html']   # a relative link is GitHub-only
     for q in site.questions():
         assert f'href="q/{q["slug"]}.html">{html.escape(q["zh"])}</a>' in text['zh/index.html']
         assert f'href="{q["slug"]}.html">{html.escape(q["en"])}</a>' in text['q/index.html']

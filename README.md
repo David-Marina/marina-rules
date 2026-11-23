@@ -1,6 +1,6 @@
 # Marina — point-in-time trading rules (marina-rules)
 
-> **中文简介** · A 股、期货、港股、美股**交易制度的历史数据**：涨跌停（涨跌幅限制）、印花税和过户费的历次调整、最小报价单位、交易时段、T+N，每条都写明从哪天起生效、依据哪份官方文件。回测和 AI Agent 按成交日取当天的规则，查不到就报错、不猜。`pip install marina-rules` · 中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md) · 每条规则一页的网页版：[david-marina.github.io/marina-rules](https://david-marina.github.io/marina-rules/)
+> **中文简介** · A 股、期货、港股、美股**交易制度的历史数据**：涨跌停（涨跌幅限制）、印花税和过户费的历次调整、最小报价单位、交易时段、T+N（商品期货自 2024 年起，大商所未覆盖），每条都写明从哪天起生效、依据哪份官方文件。回测和 AI Agent 按成交日取当天的规则，查不到就报错、不猜。`pip install marina-rules` · 中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md) · 每条规则一页的网页版：[david-marina.github.io/marina-rules](https://david-marina.github.io/marina-rules/)
 
 **Auditable backtests: the exchange trading rules in force on each day, as data with sources.**
 
@@ -13,7 +13,7 @@ A backtest that hard-codes today's rules gets earlier trades wrong. [`examples/h
 | ChiNext, 2020-08-21, previous close 10.00: limit-up / limit-down | 12.00 / 8.00 | 11.00 / 9.00 |
 | ST main-board stock, 2024-06-14, previous close 10.00 | 11.00 / 9.00 | 10.50 / 9.50 |
 | Main-board IPO in its first five days, 2024-01-30 | 11.00 / 9.00 | no limit |
-| Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
+| Sell 100,000 on SZSE, 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
 | Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
 
 ```python
@@ -38,7 +38,7 @@ What changed in each release, and which backtests a release asks you to re-run: 
 
 ## Why
 
-Every backtest engine, every trading agent, and every research notebook re-implements the same handful of rules — "ChiNext limit is 20%" — and a large share of them get the *date* wrong (it was 10% before 2020-08-24), the *scope* wrong (ST stocks differ), or the *rounding* wrong (SSE and SZSE round half up, BSE toward the previous close; `round()` does neither). These errors used to live in one firm's code. Now that AI agents write backtests by the thousand, the same error gets copied by the thousand.
+Every backtest engine, every trading agent, and every research notebook re-implements the same handful of rules — "ChiNext limit is 20%" — and a large share of them get the *date* wrong (it was 10% before 2020-08-24), the *scope* wrong (main-board ST stocks were 5% until 2026-07-06), or the *rounding* wrong (SSE and SZSE round half up; BSE's rules state no rounding, and a price must stay inside the band, which means rounding toward the previous close; `round()` does neither). These errors used to live in one firm's code. Now that AI agents write backtests by the thousand, the same error gets copied by the thousand.
 
 A shared, cited, versioned table fixes this the way tzdata fixed time zones: not by being authoritative, but by being **the same for everyone** and **traceable to the source**.
 
@@ -437,7 +437,7 @@ are). Each page also has a Markdown twin, and the generated site carries its own
 byte-identical.
 
 Eighteen question pages, in English (`q/`) and Chinese (`zh/q/`) — "How has the ChiNext price limit changed?",
-"印花税历次调整" and the like — open with an answer composed from the records (the value in force, since when, and
+"A 股卖出印花税如何调整过？" and the like — open with an answer composed from the records (the value in force, since when, and
 the earlier values), followed by the full history with sources; only the question titles are written by hand.
 `zh/` is a Chinese landing page. `sitemap.xml` dates each page by the latest `recorded_at` of the records it shows.
 

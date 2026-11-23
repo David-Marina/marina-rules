@@ -345,7 +345,7 @@ with the context the row gives, and a row that gives none is taken at its word (
 
 - The MCP tools' titles name what they are about ("Trading rule in force on a date (A-share, futures, HK, US)",
   "A-share limit-up / limit-down price on a date" …), so that an assistant choosing among many tools finds them; the
-  registry description leads with backtest checks. Names, inputs and outputs are unchanged.
+  registry description says what it is for (backtests). Names, inputs and outputs are unchanged.
 - A trade dated on its `list_date` is listing day 1 (`listing_index_from_list_date` returns 1): with
   `issue_regime` given, such a row gets its listing-day scope instead of `SCOPE_UNDETERMINED`.
 - `fee_check` counts a row as checked only when the statutory floor for its date was found; `tracking` counts only

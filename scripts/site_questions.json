@@ -109,7 +109,7 @@
   },
   {
     "slug": "a-share-stamp-duty-sell",
-    "zh": "A 股卖出印花税历次如何调整？",
+    "zh": "A 股卖出印花税如何调整过？",
     "en": "How has A-share sell-side stamp duty changed?",
     "targets": [
       {
@@ -134,7 +134,7 @@
   },
   {
     "slug": "a-share-stamp-duty-buy",
-    "zh": "A 股买入印花税历次如何调整？",
+    "zh": "A 股买入印花税如何调整过？",
     "en": "How has A-share buy-side stamp duty changed?",
     "targets": [
       {
@@ -159,7 +159,7 @@
   },
   {
     "slug": "a-share-transfer-fee",
-    "zh": "A 股过户费历次如何调整？",
+    "zh": "A 股过户费如何调整过？",
     "en": "How have A-share transfer fees changed?",
     "targets": [
       {
@@ -257,6 +257,30 @@
     "targets": [
       {
         "prefix": "cn",
+        "scope": "etf",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_20pct",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_20pct",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
         "scope": "etf_bond",
         "rule": "min_holding_days",
         "market": "XSHG"
@@ -350,20 +374,26 @@
   },
   {
     "slug": "limit-price-rounding",
-    "zh": "北交所和上交所的涨跌停价格如何取整？",
-    "en": "How do BSE and SSE round limit prices?",
+    "zh": "沪深北交易所的涨跌停价格如何取整？",
+    "en": "How do the SSE, SZSE and BSE round limit prices?",
     "targets": [
-      {
-        "prefix": "cn",
-        "scope": "bse_stock",
-        "rule": "limit_price_rounding",
-        "market": "BJSE"
-      },
       {
         "prefix": "cn",
         "scope": "stock",
         "rule": "limit_price_rounding",
         "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "limit_price_rounding",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "bse_stock",
+        "rule": "limit_price_rounding",
+        "market": "BJSE"
       }
     ]
   },
@@ -394,7 +424,7 @@
   },
   {
     "slug": "hong-kong-stamp-duty",
-    "zh": "港股买卖印花税历次如何调整？",
+    "zh": "港股买卖印花税如何调整过？",
     "en": "How has Hong Kong stock stamp duty changed?",
     "targets": [
       {
@@ -413,8 +443,8 @@
   },
   {
     "slug": "us-sec-section-fee",
-    "zh": "美股 SEC 证券交易费费率历次如何调整？",
-    "en": "How has the US SEC Section thirty-one sell-side fee changed?",
+    "zh": "美股 SEC 卖出交易费费率如何调整？",
+    "en": "How has the US SEC sell-side transaction fee changed?",
     "targets": [
       {
         "prefix": "us",

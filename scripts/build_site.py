@@ -138,7 +138,8 @@ def readme_intro(text: str) -> list:
 def readme_opening(text: str) -> list:
     """Opening paragraphs after the title and before the first second-level heading, verbatim."""
     opening = re.split(r"^## ", text, maxsplit=1, flags=re.M)[0]
-    return [p.strip() for p in opening.split("\n\n")[1:] if p.strip()]
+    return [p.strip() for p in opening.split("\n\n")[1:]
+            if p.strip() and not re.search(r"\]\((?!https?://)", p)]    # a relative link leads nowhere off GitHub
 
 
 def verification_levels(text: str) -> list:
@@ -468,7 +469,7 @@ def question_series(q: dict, recs: list) -> list:
         seen.add(key)
         rs = sorted((r for r in recs if r.file.split("/", 1)[0] == t["prefix"]
                      and r.scope == t["scope"] and r.rule == t["rule"]
-                     and t["market"] in r.market.split("+")), key=lambda r: (r.effective_from, r.id))
+                     and t["market"] in (r.market or "").split("+")), key=lambda r: (r.effective_from, r.id))
         if (not rs or any(r.contracts for r in rs)
                 or any(a.effective_to != b.effective_from for a, b in zip(rs, rs[1:]))):
             raise ValueError(f"missing, conditional or broken question history: {q['slug']} {key}")
@@ -494,7 +495,7 @@ def question_series(q: dict, recs: list) -> list:
 def question_records(series: list) -> list:
     """A shared record appears once in the history table, even when it covers multiple exchanges."""
     unique = {r.id: r for _, rs in series for r in rs}
-    return sorted(unique.values(), key=lambda r: (r.scope, r.rule, r.market, r.effective_from, r.id))
+    return sorted(unique.values(), key=lambda r: (r.scope, r.rule, r.market or "", r.effective_from, r.id))
 
 
 def _pct_text(v) -> str:
@@ -530,7 +531,12 @@ def answer_value(r, zh: dict, chinese: bool) -> str:
     if isinstance(v, dict) and set(v) == {"up", "down"} and all(isinstance(x, (int, float)) and not isinstance(x, bool)
                                                               for x in v.values()) and r.unit is None:
         up, down = _pct_text(v["up"]), _pct_text(v["down"])
+        if r.rule.endswith("_of_issue_price") or r.scope.startswith("ipo_day1"):   # listing-day bands: vs issue price
+            return f"相对发行价上涨 {up}、下跌 {down}" if chinese else f"+{up} / −{down} of the issue price"
         return f"上涨 {up}、下跌 {down}" if chinese else f"+{up} / −{down}"
+    if r.rule == "transfer_fee_par_value" and isinstance(v, (int, float)) and not isinstance(v, bool) and r.unit is None:
+        p = _pct_text(v)       # docs/SCHEMA.md: a fraction of traded par value, the CSDC portion; never of turnover
+        return f"成交面额的 {p}（中国结算收取部分）" if chinese else f"{p} of traded par value (CSDC portion)"
     if isinstance(v, dict) and r.rule == "session_schedule":
         t = _session_text(v, chinese)
         if t is not None:
@@ -549,6 +555,14 @@ def answer_value(r, zh: dict, chinese: bool) -> str:
     if v == 0 and not isinstance(v, bool) and r.unit is None and percent(r.rule, 0.5, None):
         return "0%"                                       # a zero of a percentage rule (percent() leaves it out)
     return compact(v) + (f" {r.unit}" if r.unit else "")
+
+
+EN_MARKETS = {"XSHG": "SSE", "XSHE": "SZSE", "BJSE": "BSE", "CCFX": "CFFEX", "XSGE": "SHFE", "XINE": "INE",
+              "XZCE": "CZCE", "GFEX": "GFEX", "XHKG": "HKEX", "XNYS": "NYSE", "XNAS": "Nasdaq"}
+
+
+def en_markets(markets: str) -> str:
+    return ", ".join(EN_MARKETS.get(m, m) for m in markets.split("+"))
 
 
 ROUNDING_WORDS = {"half_up_2dp": ("rounded half up", "四舍五入"),
@@ -587,22 +601,39 @@ def answer_text(series: list, zh: dict, lang: str) -> str:
         cur, earlier = periods[-1], periods[:-1]
         dropped = earlier[:-MAX_EARLIER] if len(earlier) > MAX_EARLIER else []
         shown = earlier[len(dropped):]
-        head = zh_markets(zh, market) if chinese else market
+        first = periods[0]       # its start is where the records begin, not necessarily when the value began
+        head = zh_markets(zh, market) if chinese else en_markets(market)
         if several:
             head += ("·" + label(cur[5])) if chinese else f", {label(cur[5])}"
+
+        def zv(p):                                       # 起为 20% / 起不设涨跌幅限制 / 起为相对发行价…
+            v = val(p)
+            return v if v.startswith("不设") else "为" + ("" if re.match(r"[\u4e00-\u9fff]", v) else " ") + v
+
         if chinese:
-            s = f"{head}：{cur[3]} 起为 {val(cur)}"
-            if earlier:
-                s += "；此前：" + "；".join(f"{p[3]} 至 {p[4]} 前为 {val(p)}" for p in shown)
+            if cur is first:
+                s = f"{head}：记录自 {cur[3]} 起{zv(cur)}"
+            else:
+                s = f"{head}：{cur[3]} 起{zv(cur)}"
+                parts_zh = []
                 if dropped:
-                    s += f"；更早还有 {len(dropped)} 个取值，自 {dropped[0][3]} 起（见下表）"
+                    parts_zh.append(f"更早还有 {len(dropped)} 个取值（记录自 {first[3]} 起，见下表）")
+                for p in shown:
+                    lead = "记录自 " if p is first else ""
+                    parts_zh.append(f"{lead}{p[3]} 至 {p[4]} 前{zv(p)}")
+                s += "；此前：" + "；".join(parts_zh)
             s += "。"
         else:
-            s = f"{head}: {val(cur)} since {cur[3]}"
-            if earlier:
-                s += "; before that: " + "; ".join(f"{val(p)} from {p[3]} until {p[4]}" for p in shown)
+            if cur is first:
+                s = f"{head}: {val(cur)} (records begin {cur[3]})"
+            else:
+                s = f"{head}: {val(cur)} since {cur[3]}"
+                parts_en = []
                 if dropped:
-                    s += f"; {len(dropped)} earlier values from {dropped[0][3]} (see the table)"
+                    parts_en.append(f"{len(dropped)} earlier values on record from {first[3]} (see the table)")
+                for p in shown:
+                    parts_en.append(f"{val(p)} {'on record from' if p is first else 'from'} {p[3]} until {p[4]}")
+                s += "; before that: " + "; ".join(parts_en)
             s += "."
         parts.append(s)
     return " ".join(parts)
@@ -901,7 +932,7 @@ def build(base_url: str | None = None) -> dict:
                                  f'{esc(q["zh" if chinese else "en"])}</a></li>' for q in qs) + "</ul>"
 
     files["q/index.html"] = page("Questions — marina-rules", "Questions", question_list("q/index.html"),
-                                  path="q/index.html", description="Questions", nav=[("marina-rules", "index.html")],
+                                  path="q/index.html", description="Questions about China A-share, Hong Kong, US and futures trading rules, each answered from the records with sources", nav=[("marina-rules", "index.html")],
                                   base_url=base_url)
     manifest_pages.append({"path": "q/index.html", "kind": "questions_index"})
     zh_intro = readme_opening(_read("README.zh-CN.md"))
