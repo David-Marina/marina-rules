@@ -1,6 +1,6 @@
 ---
 name: marina-rules
-description: Look up point-in-time exchange trading rules (price limits, fees, ticks, sessions, margins) with citations before running or trusting a backtest. Use when writing a backtest, simulating fills, computing limit prices or statutory fees, or checking a fill log — China A-shares, China futures (CFFEX, SHFE, INE, CZCE, GFEX), Hong Kong and US equities — or when a result must be reproducible against a cited rule set.
+description: Look up point-in-time exchange trading rules (price limits, fees, ticks, sessions, margins) with citations before running or trusting a backtest. Use when writing a backtest, simulating fills, computing limit prices or statutory fees, or checking a fill log — China A-shares, China futures (CFFEX, SHFE, INE, CZCE, GFEX), Hong Kong and US equities — or when a result must be reproducible against a cited rule set. 中文：回测前查 A 股涨跌停（涨停板、跌停板、涨跌幅限制）、印花税、过户费、佣金、最小报价单位、交易时段、T+1，期货保证金和手续费的历史规则与出处。
 ---
 
 # Using Marina rules in a backtest or agent

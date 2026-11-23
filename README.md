@@ -1,10 +1,26 @@
 # Marina — point-in-time trading rules (marina-rules)
 
-> **中文简介** · A 股、期货、港股、美股**交易制度的历史数据**：涨跌停幅度（涨跌幅限制）、印花税和过户费的历次调整、最小报价单位、交易时段、T+N 交收——每条规则**从哪天起生效、依据哪份官方文件**，都有记录，附原文引文和内容哈希。回测按成交日取当天的规则，不把今天的规则写死；查不到就报错，不猜。给回测引擎和 AI Agent 用：`coverage()` 预检整段窗口，`resolve()` 返回统一判定，`marina-check` 逐笔核对成交，`diff_rules` 告诉你升级后哪些回测要重跑。目前覆盖 A 股、中金所股指期货与国债期货、上期所 / 上期能源 / 郑商所 / 广期所商品期货（自 2024 年起）、港股和美股；大商所尚未覆盖，各市场的具体范围见 [Coverage](#coverage)。CC0 数据 + MIT 代码。`pip install marina-rules` · 中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md) · 每条规则一页的网页版：[david-marina.github.io/marina-rules](https://david-marina.github.io/marina-rules/)
+> **中文简介** · A 股、期货、港股、美股**交易制度的历史数据**：涨跌停（涨跌幅限制）、印花税和过户费的历次调整、最小报价单位、交易时段、T+N，每条都写明从哪天起生效、依据哪份官方文件。回测和 AI Agent 按成交日取当天的规则，查不到就报错、不猜。`pip install marina-rules` · 中文入门：[README.zh-CN.md](https://github.com/David-Marina/marina-rules/blob/main/README.zh-CN.md) · 每条规则一页的网页版：[david-marina.github.io/marina-rules](https://david-marina.github.io/marina-rules/)
 
 **Auditable backtests: the exchange trading rules in force on each day, as data with sources.**
 
 Price limits, fees, trading sessions, ticks, settlement — every record says *when* a rule took effect and *where* it was published. A backtest asks for the rule of each trade date instead of hard-coding today's; `marina-check` then verifies every fill against the rules of its day and, when nothing was relaxed and nothing was found, emits a stamp that anyone holding the same fill log and the same rules version can recompute; `citation()` names the exact, byte-pinned rules a result ran under.
+
+A backtest that hard-codes today's rules gets earlier trades wrong. [`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints these five fills and a sixth (a convertible bond) side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
+
+| fill | hard-coded with today's rule | rule of that day |
+|---|---|---|
+| ChiNext, 2020-08-21, previous close 10.00: limit-up / limit-down | 12.00 / 8.00 | 11.00 / 9.00 |
+| ST main-board stock, 2024-06-14, previous close 10.00 | 11.00 / 9.00 | 10.50 / 9.50 |
+| Main-board IPO in its first five days, 2024-01-30 | 11.00 / 9.00 | no limit |
+| Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
+| Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
+
+```python
+import marina_rules as mr                                # pip install marina-rules
+mr.limit_price(10.00, "chinext", "2020-08-21", "XSHE")   # (11.0, 9.0): the 10% band of that day, not today's 20%
+mr.rule_at("stamp_duty_sell", "2023-08-25")              # 0.001: halved to 0.0005 from 2023-08-28
+```
 
 What a stamp certifies is deliberately narrow: the fills respected these rules. It says nothing about look-ahead in prices, survivorship or overfitting. `as_of` closes one more gap: it answers only from rules that had been published by a given date, so a backtest cannot use a rule change before it was announced (a rule whose publication date was not located is refused, not assumed).
 
@@ -22,19 +38,9 @@ What changed in each release, and which backtests a release asks you to re-run: 
 
 ## Why
 
-Every backtest engine, every trading agent, and every research notebook re-implements the same handful of rules — "ChiNext limit is 20%" — and a large share of them get the *date* wrong (it was 10% before 2020-08-24), the *scope* wrong (ST stocks differ), or the *rounding* wrong (exchanges round half-up; `round()` doesn't). These errors used to live in one firm's code. Now that AI agents write backtests by the thousand, the same error gets copied by the thousand.
+Every backtest engine, every trading agent, and every research notebook re-implements the same handful of rules — "ChiNext limit is 20%" — and a large share of them get the *date* wrong (it was 10% before 2020-08-24), the *scope* wrong (ST stocks differ), or the *rounding* wrong (SSE and SZSE round half up, BSE toward the previous close; `round()` does neither). These errors used to live in one firm's code. Now that AI agents write backtests by the thousand, the same error gets copied by the thousand.
 
 A shared, cited, versioned table fixes this the way tzdata fixed time zones: not by being authoritative, but by being **the same for everyone** and **traceable to the source**.
-
-[`examples/hardcoded_vs_marina.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/hardcoded_vs_marina.py) prints these five fills and a sixth (a convertible bond) side by side — the number a backtest gets from today's rule, and the number that applied on the trade date:
-
-| fill | hard-coded with today's rule | rule of that day |
-|---|---|---|
-| ChiNext, 2020-08-21, previous close 10.00: limit-up / limit-down | 12.00 / 8.00 | 11.00 / 9.00 |
-| ST main-board stock, 2024-06-14, previous close 10.00 | 11.00 / 9.00 | 10.50 / 9.50 |
-| Main-board IPO in its first five days, 2024-01-30 | 11.00 / 9.00 | no limit |
-| Sell 100,000 on 2008-04-23: stamp duty + transfer fee | 51.00 | 302.55 |
-| Sell 100,000 on 2023-08-25 | 51.00 | 101.00 |
 
 How often does it matter? [`examples/fixed_parameters.py`](https://github.com/David-Marina/marina-rules/blob/main/examples/fixed_parameters.py)
 counts it on daily bars. On the sample shipped with this repository — two ChiNext stocks, 786 trading days before
@@ -164,6 +170,14 @@ is filled in. The usage notes (SKILL.md) are offered as the resource `marina-rul
 What it does not do: it is read-only and deterministic, uses no network, and reads no file but the dataset shipped
 in the package. Like the package, it holds rules only — no prices, ST or suspension lists, constituents or trading
 calendar; a security's board, ST status and listing day are the caller's to supply.
+
+Without MCP, one line in your project's `AGENTS.md` or `CLAUDE.md` is enough for a coding assistant:
+
+```
+Exchange trading rules (A-share price limits 涨跌停, stamp duty 印花税, fees, ticks, sessions, futures margins): use the
+Python package marina-rules (pip install marina-rules); run `marina-rules skill` once for the usage notes; never
+hard-code a rule value; act only on status DETERMINED.
+```
 
 <!-- mcp-name: io.github.David-Marina/marina-rules -->
 

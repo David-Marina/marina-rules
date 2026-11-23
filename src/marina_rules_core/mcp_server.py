@@ -316,10 +316,14 @@ DESCRIPTIONS = {
 }
 
 TITLES = {
-    "resolve": "Rule in force on a date", "limit_price": "Limit-up / limit-down price",
-    "statutory_fees": "A-share statutory fees (stamp duty, transfer fee)", "coverage": "Coverage of a backtest window",
-    "list_scopes": "Scopes and required context", "list_rules": "Rules of a scope",
-    "check_fills": "Check a fill log", "citation": "Dataset citation",
+    "resolve": "Trading rule in force on a date (A-share, futures, HK, US)",
+    "limit_price": "A-share limit-up / limit-down price on a date",
+    "statutory_fees": "A-share statutory fees (stamp duty, transfer fee)",
+    "coverage": "Trading-rule coverage of a backtest window",
+    "list_scopes": "Trading-rule scopes (boards, products) and required context",
+    "list_rules": "Trading rules held for a scope",
+    "check_fills": "Check a backtest fill log against the rules of each day",
+    "citation": "Citation of the trading-rule dataset",
 }
 
 

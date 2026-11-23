@@ -23,7 +23,9 @@ keywords = ["trading", "trading-rules", "backtest", "backtesting", "exchange-rul
             "a-share", "china", "stock", "futures", "hong-kong", "quant", "agent", "mcp", "mcp-server", "price-limits", "limit-up",
             "limit-down", "stamp-duty", "transaction-fees", "tick-size", "trading-hours", "trading-sessions",
             "backtest-validation", "dataset", "china-stock", "sse", "szse", "bse", "cffex", "shfe", "hkex", "us-equities",
-            "涨跌停", "涨跌幅限制", "印花税", "交易规则", "交易制度", "回测", "A股"]
+            "chinext", "star-market", "daily-price-limit", "transaction-cost", "commission",
+            "涨跌停", "涨跌幅限制", "涨停板", "跌停板", "涨跌停价", "印花税", "过户费", "佣金", "手续费", "保证金",
+            "交易规则", "交易制度", "交易时段", "最小报价单位", "创业板", "科创板", "北交所", "回测", "A股"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
