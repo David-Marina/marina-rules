@@ -1,0 +1,446 @@
+[
+  {
+    "slug": "chinext-price-limit",
+    "zh": "创业板涨跌幅限制什么时候调整的？",
+    "en": "How has the ChiNext price limit changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "chinext",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "star-price-limit",
+    "zh": "科创板涨跌幅限制是多少，历史如何？",
+    "en": "What is the STAR Market price limit and its history?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "star",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      }
+    ]
+  },
+  {
+    "slug": "main-board-price-limit",
+    "zh": "沪深主板涨跌幅限制是多少，历史如何？",
+    "en": "What is the SSE and SZSE main-board price limit history?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "main_board",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "main_board",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "st-main-board-price-limit",
+    "zh": "主板 ST 股票涨跌幅限制什么时候调整的？",
+    "en": "How has the ST main-board stock price limit changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "st_main",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "st_main",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "bse-price-limit",
+    "zh": "北交所股票涨跌幅限制是多少，历史如何？",
+    "en": "What is the BSE stock price limit and its history?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "bse",
+        "rule": "price_limit_pct",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "main-board-ipo-price-limit",
+    "zh": "主板新股上市初期不设涨跌幅限制和首日限制如何变化？",
+    "en": "How have main-board IPO opening-day bands and initial unlimited trading changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "ipo_day1_main",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "ipo_day1_main",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "ipo_first5_main",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "ipo_first5_main",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-stamp-duty-sell",
+    "zh": "A 股卖出印花税历次如何调整？",
+    "en": "How has A-share sell-side stamp duty changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_sell",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_sell",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_sell",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-stamp-duty-buy",
+    "zh": "A 股买入印花税历次如何调整？",
+    "en": "How has A-share buy-side stamp duty changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_buy",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_buy",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "stamp_duty_buy",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-transfer-fee",
+    "zh": "A 股过户费历次如何调整？",
+    "en": "How have A-share transfer fees changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "transfer_fee_par_value",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "transfer_fee_each_side",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "transfer_fee_each_side",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "transfer_fee_each_side",
+        "market": "BJSE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "bse_stock",
+        "rule": "transfer_fee_each_side",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-commission",
+    "zh": "沪深 A 股佣金上限和每笔最低佣金是多少？",
+    "en": "What are the SSE and SZSE A-share commission cap and minimum?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "commission_cap",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "commission_cap",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "commission_min_per_order_cny",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "commission_min_per_order_cny",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-tick-size",
+    "zh": "A 股最小报价单位是多少，历史如何？",
+    "en": "What is the A-share tick size and its history?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "tick_size",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "tick_size",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "bse_stock",
+        "rule": "tick_size",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "etf-same-day-trading",
+    "zh": "哪些 ETF 可以当日买入后卖出，最短持有天数如何变化？",
+    "en": "Which ETFs allow same-day round trips, and how have minimum holding days changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "etf_bond",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_bond",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_money",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_money",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_gold",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_gold",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_commodity",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_commodity",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_crossborder",
+        "rule": "min_holding_days",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "etf_crossborder",
+        "rule": "min_holding_days",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "convertible-bond-price-limit",
+    "zh": "可转债上市首日和之后的涨跌幅限制如何变化？",
+    "en": "How have convertible bond price limits changed on and after the listing day?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "convertible",
+        "rule": "price_limit_pct",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "convertible",
+        "rule": "price_limit_pct",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "convertible_day1",
+        "rule": "price_limit_pct_of_issue_price",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "convertible_day1",
+        "rule": "price_limit_pct_of_issue_price",
+        "market": "XSHE"
+      }
+    ]
+  },
+  {
+    "slug": "limit-price-rounding",
+    "zh": "北交所和上交所的涨跌停价格如何取整？",
+    "en": "How do BSE and SSE round limit prices?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "bse_stock",
+        "rule": "limit_price_rounding",
+        "market": "BJSE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "limit_price_rounding",
+        "market": "XSHG"
+      }
+    ]
+  },
+  {
+    "slug": "a-share-trading-sessions",
+    "zh": "A 股交易时段如何变化？",
+    "en": "How have A-share trading sessions changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "session_schedule",
+        "market": "XSHG"
+      },
+      {
+        "prefix": "cn",
+        "scope": "stock",
+        "rule": "session_schedule",
+        "market": "XSHE"
+      },
+      {
+        "prefix": "cn",
+        "scope": "bse_stock",
+        "rule": "session_schedule",
+        "market": "BJSE"
+      }
+    ]
+  },
+  {
+    "slug": "hong-kong-stamp-duty",
+    "zh": "港股买卖印花税历次如何调整？",
+    "en": "How has Hong Kong stock stamp duty changed?",
+    "targets": [
+      {
+        "prefix": "hk",
+        "scope": "hk_stock",
+        "rule": "stamp_duty_buy",
+        "market": "XHKG"
+      },
+      {
+        "prefix": "hk",
+        "scope": "hk_stock",
+        "rule": "stamp_duty_sell",
+        "market": "XHKG"
+      }
+    ]
+  },
+  {
+    "slug": "us-sec-section-fee",
+    "zh": "美股 SEC 证券交易费费率历次如何调整？",
+    "en": "How has the US SEC Section thirty-one sell-side fee changed?",
+    "targets": [
+      {
+        "prefix": "us",
+        "scope": "us_stock",
+        "rule": "sec_fee_rate_sell",
+        "market": "XNYS"
+      },
+      {
+        "prefix": "us",
+        "scope": "us_stock",
+        "rule": "sec_fee_rate_sell",
+        "market": "XNAS"
+      }
+    ]
+  },
+  {
+    "slug": "cffex-im-margin",
+    "zh": "中金所 IM 股指期货非套保保证金比例如何变化？",
+    "en": "How has the CFFEX IM index futures non-hedge margin ratio changed?",
+    "targets": [
+      {
+        "prefix": "cn",
+        "scope": "cffex_im",
+        "rule": "margin_ratio",
+        "market": "CCFX"
+      }
+    ]
+  }
+]

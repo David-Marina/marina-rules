@@ -230,7 +230,8 @@ def test_html_pages_are_well_formed_and_links_resolve(built, text):
     for k, t in text.items():
         if not k.endswith(".html"):
             continue
-        assert t.startswith('<!doctype html>\n<html lang="en">'), k
+        lang = "zh-CN" if k.startswith("zh/") else "en"
+        assert t.startswith(f'<!doctype html>\n<html lang="{lang}">'), k
         p = _Page()
         p.feed(t)
         assert set(p.tags) <= ALLOWED_TAGS, (k, set(p.tags) - ALLOWED_TAGS)
@@ -251,7 +252,10 @@ def test_html_pages_are_well_formed_and_links_resolve(built, text):
                 assert frag in anchors, (k, href)
     for k, t in text.items():
         if k.endswith(".md") or k == "llms.txt":
-            for target in re.findall(r"\]\(([^)]+)\)", t):
+            for target in re.findall(r"\]\((<[^>]+>|[^)]+)\)", t):
+                target = target.removeprefix("<").removesuffix(">")
+                if target.startswith(("http://", "https://")):
+                    continue
                 dest = os.path.normpath(os.path.join(os.path.dirname(k), target)).replace(os.sep, "/")
                 assert dest in files, (k, target)
 
@@ -329,14 +333,15 @@ def test_every_family_market_scope_and_rule_has_a_chinese_name_and_no_name_is_le
     assert len(set(zh["scope"].values())) == len(zh["scope"])           # two scopes never share a name
 
 
-def test_every_page_has_a_chinese_line_and_a_share_card(text, manifest):
+def test_fact_and_original_index_pages_have_chinese_lines_and_all_pages_have_share_cards(text, manifest):
     for k, t in text.items():
         if not k.endswith(".html"):
             continue
-        line = ZH_LINE_RE.search(t)
-        assert line and site.CJK_RE.search(line.group(1)), k
         title = re.search(r"<title>([^<]*)</title>", t).group(1)
-        assert site.CJK_RE.search(title), k
+        if not k.startswith(("q/", "zh/")):
+            line = ZH_LINE_RE.search(t)
+            assert line and site.CJK_RE.search(line.group(1)), k
+            assert site.CJK_RE.search(title), k
         for prop in ("og:type", "og:site_name", "og:title", "og:description", "og:locale"):
             assert f'<meta property="{prop}" content="' in t, (k, prop)
         assert f'<meta property="og:title" content="{title}">' in t, k

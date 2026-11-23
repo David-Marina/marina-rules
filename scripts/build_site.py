@@ -1,21 +1,26 @@
-"""Write static rule fact pages: one page per (market family, scope, rule), generated from the data.
+"""Write static rule fact pages and bilingual question pages generated from the data.
 
     python scripts/build_site.py --out site [--base-url https://example.org/]
 
 Every statement about a rule on these pages is a record field, a source quote, a known gap, a tracking entry or a row
 of docs/SCHEMA.md, copied verbatim; the introduction on the index is taken from README.md (and README.zh-CN.md).
-Nothing is summarised and nothing depends on the date of the build: two builds of the same data are byte-identical.
+Question answers mechanically state the latest open-ended record and the earlier intervals, per exchange;
+scripts/site_questions.json contains only question titles and record selectors. Histories must be unbroken.
+Nothing depends on the date of the build: two builds of the same data are byte-identical.
 Without --base-url no absolute URL of the site is written anywhere (sitemap.xml needs one, so it is written only
 with --base-url).
 
-Chinese: each page carries a Chinese name in its title, description and a line under the heading, so that it can be
+Chinese: fact and original index pages carry a Chinese name in their title, description and a line under the heading, so they can be
 found by a Chinese query. The names come from scripts/site_zh.json (display names of families, markets, scopes and
 rules — never a value); the values in that line are record fields in their effective_from order, written only where
-the page has one unbroken series of plain values per market. Each page also carries Open Graph tags and a schema.org
-Dataset description (JSON-LD, a data block: the pages run no script).
+the page has one unbroken series of plain values per market. All pages carry Open Graph tags; fact pages and the root
+also carry a schema.org Dataset description (JSON-LD, a data block: the pages run no script).
 
-Output: index.html, <prefix>/index.html, <prefix>/<scope>/index.html, <prefix>/<scope>/<rule>.html and .md,
-llms.txt, site.json and, with --base-url, sitemap.xml and robots.txt. Known gaps whose (scope, rule) has records are on that fact
+Output: index.html, zh/index.html, q/index.html, q/<slug>.html and .md, zh/q/<slug>.html and .md,
+<prefix>/index.html, <prefix>/<scope>/index.html, <prefix>/<scope>/<rule>.html and .md,
+llms.txt, site.json and, with --base-url, sitemap.xml (lastmod from recorded_at) and robots.txt.
+Question pairs have FAQPage JSON-LD and, with --base-url, reciprocal hreflang links.
+Known gaps whose (scope, rule) has records are on that fact
 page; the others are on their scope page, or on the family index when the scope is not in the registry.
 """
 from __future__ import annotations
@@ -128,6 +133,12 @@ def readme_intro(text: str) -> list:
     i = next(k for k, p in enumerate(paras) if p.startswith("# "))
     body = [p for p in paras[i + 1:] if not p.startswith(">")]
     return [" ".join(body[0].split()), " ".join(body[1].split())]
+
+
+def readme_opening(text: str) -> list:
+    """Opening paragraphs after the title and before the first second-level heading, verbatim."""
+    opening = re.split(r"^## ", text, maxsplit=1, flags=re.M)[0]
+    return [p.strip() for p in opening.split("\n\n")[1:] if p.strip()]
 
 
 def verification_levels(text: str) -> list:
@@ -361,20 +372,25 @@ def dataset_ld(name: str, description: str, *, base_url: str | None, path: str, 
 
 
 def page(title: str, h1: str, body: str, *, path: str, description: str, nav: list, base_url: str | None,
-         zh_line: str | None = None, ld: dict | None = None) -> str:
+         zh_line: str | None = None, ld: dict | None = None, lang: str = "en",
+         alternates: dict | None = None) -> str:
     """nav: [(label, site-relative target path or None)]. zh_line: plain Chinese text shown under the heading.
     ld: a schema.org object written as a JSON-LD data block."""
     crumbs = " / ".join(f'<a href="{esc(rel(path, t))}">{esc(lab)}</a>' if t else esc(lab) for lab, t in nav)
     canon = f'<link rel="canonical" href="{esc(base_url + path)}">\n' if base_url else ""
+    if base_url:
+        canon += "".join(f'<link rel="alternate" hreflang="{esc(code)}" href="{esc(base_url + target)}">\n'
+                         for code, target in (alternates or {}).items())
     og = [("og:type", "website"), ("og:site_name", "marina-rules"), ("og:title", title),
-          ("og:description", description), ("og:locale", "en_US"), ("og:locale:alternate", "zh_CN")]
+          ("og:description", description), ("og:locale", "zh_CN" if lang == "zh-CN" else "en_US"),
+          ("og:locale:alternate", "en_US" if lang == "zh-CN" else "zh_CN")]
     if base_url:
         og.append(("og:url", base_url + path))
     card = "".join(f'<meta property="{k}" content="{esc(v)}">\n' for k, v in og)
     card += '<meta name="twitter:card" content="summary">\n'
     data = f'<script type="application/ld+json">{json_ld(ld)}</script>\n' if ld else ""
     zh_p = f'<p lang="zh">{esc(zh_line)}</p>\n' if zh_line else ""
-    return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+    return (f'<!doctype html>\n<html lang="{esc(lang)}">\n<head>\n<meta charset="utf-8">\n'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f"<title>{esc(title)}</title>\n<meta name=\"description\" content=\"{esc(description)}\">\n{canon}"
             f"{card}{data}"
@@ -414,6 +430,192 @@ def _contract_code(r) -> str | None:
 
 def latest(recs: list):
     return max(recs, key=lambda r: (r.effective_from, r.market or "", r.id))
+
+
+def questions() -> list:
+    """Titles and selectors only; no rule values, dates or sources may be supplied here."""
+    qs = json.loads(_read("scripts/site_questions.json"))
+    seen = set()
+    for q in qs:
+        if set(q) != {"slug", "zh", "en", "targets"}:
+            raise ValueError("question must contain only slug, zh, en, targets")
+        slug = q["slug"]
+        if not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", slug) or slug in seen:
+            raise ValueError(f"duplicate or unsafe question slug: {slug}")
+        seen.add(slug)
+        if any(not q[lang].strip() or any(c.isdigit() for c in q[lang]) for lang in ("zh", "en")):
+            raise ValueError(f"question titles must be nonempty and contain no digits: {slug}")
+        if not q["targets"]:
+            raise ValueError(f"question has no targets: {slug}")
+        for t in q["targets"]:
+            if set(t) != {"prefix", "scope", "rule", "market"}:
+                raise ValueError(f"invalid question target: {slug}")
+    return qs
+
+
+def question_series(q: dict, recs: list) -> list:
+    """[(exchange, records)] with continuous coverage through an open-ended record.
+
+    Targets name an individual exchange; a combined-market record applies to each named exchange.
+    Ended targets may join a unique successor with the same scope or rule at exactly the boundary
+    (e.g. IPO scope changes, or transfer fees changing their calculation basis). Never fill a hole.
+    """
+    streams, seen = [], set()
+    for t in q["targets"]:
+        key = tuple(t[k] for k in ("prefix", "scope", "rule", "market"))
+        if key in seen:
+            raise ValueError(f"duplicate target: {q['slug']} {key}")
+        seen.add(key)
+        rs = sorted((r for r in recs if r.file.split("/", 1)[0] == t["prefix"]
+                     and r.scope == t["scope"] and r.rule == t["rule"]
+                     and t["market"] in r.market.split("+")), key=lambda r: (r.effective_from, r.id))
+        if (not rs or any(r.contracts for r in rs)
+                or any(a.effective_to != b.effective_from for a, b in zip(rs, rs[1:]))):
+            raise ValueError(f"missing, conditional or broken question history: {q['slug']} {key}")
+        streams.append((t["market"], rs))
+    while any(rs[-1].effective_to is not None for _, rs in streams):
+        for i, (mk, rs) in enumerate(streams):
+            end = rs[-1]
+            if end.effective_to is None:
+                continue
+            successors = [j for j, (other_mk, other) in enumerate(streams)
+                          if i != j and mk == other_mk and end.effective_to == other[0].effective_from
+                          and end.file.split("/", 1)[0] == other[0].file.split("/", 1)[0]
+                          and (end.scope == other[0].scope or end.rule == other[0].rule)]
+            if len(successors) != 1:
+                raise ValueError(f"no unique open-ended continuation: {q['slug']} {mk} {end.id}")
+            j = successors[0]
+            streams[i] = (mk, rs + streams[j][1])
+            del streams[j]
+            break
+    return streams
+
+
+def question_records(series: list) -> list:
+    """A shared record appears once in the history table, even when it covers multiple exchanges."""
+    unique = {r.id: r for _, rs in series for r in rs}
+    return sorted(unique.values(), key=lambda r: (r.scope, r.rule, r.market, r.effective_from, r.id))
+
+
+def _pct_text(v) -> str:
+    return format((Decimal(repr(v)) * 100).normalize(), "f") + "%"
+
+
+def _session_text(v: dict, chinese: bool) -> str | None:
+    """A session_schedule value in words: opening call, continuous trading, closing call (the record's own times)."""
+    keys = {"open_call", "continuous", "close_call"}
+    if not set(v) <= keys or "continuous" not in v:
+        return None
+    try:
+        cont = ", ".join(f"{a}–{b}" for a, b in v["continuous"])
+        oc = v.get("open_call")
+        cc = v.get("close_call")
+        if chinese:
+            parts = ([f"开盘集合竞价 {oc[0]}–{oc[1]}"] if oc else []) + [f"连续竞价 {cont.replace(', ', '、')}"]
+            parts += [f"收盘集合竞价 {cc[0]}–{cc[1]}"] if cc else ["无收盘集合竞价"]
+            return "，".join(parts)
+        parts = ([f"opening call {oc[0]}–{oc[1]}"] if oc else []) + [f"continuous {cont}"]
+        parts += [f"closing call {cc[0]}–{cc[1]}"] if cc else ["no closing call"]
+        return ", ".join(parts)
+    except (TypeError, ValueError, IndexError):
+        return None
+
+
+def answer_value(r, zh: dict, chinese: bool) -> str:
+    """A record value in the words of an answer. Every number is the record's own; anything not recognised is the
+    one-line JSON of the value, as in the history table."""
+    v = r.value
+    if isinstance(v, str) and v == "unlimited" and r.rule.startswith("price_limit_pct"):
+        return "不设涨跌幅限制" if chinese else "no price limit"
+    if isinstance(v, dict) and set(v) == {"up", "down"} and all(isinstance(x, (int, float)) and not isinstance(x, bool)
+                                                              for x in v.values()) and r.unit is None:
+        up, down = _pct_text(v["up"]), _pct_text(v["down"])
+        return f"上涨 {up}、下跌 {down}" if chinese else f"+{up} / −{down}"
+    if isinstance(v, dict) and r.rule == "session_schedule":
+        t = _session_text(v, chinese)
+        if t is not None:
+            return t
+    if r.rule == "limit_price_rounding" and v in ROUNDING_WORDS:
+        return ROUNDING_WORDS[v][chinese]
+    if r.rule == "min_holding_days" and isinstance(v, int) and not isinstance(v, bool) and r.unit is None:
+        return f"T+{v}"
+    if chinese:
+        t = zh_value(zh, r.rule, v, r.unit)
+        if t is not None:
+            return t
+    p = percent(r.rule, v, r.unit)
+    if p:
+        return p
+    if v == 0 and not isinstance(v, bool) and r.unit is None and percent(r.rule, 0.5, None):
+        return "0%"                                       # a zero of a percentage rule (percent() leaves it out)
+    return compact(v) + (f" {r.unit}" if r.unit else "")
+
+
+ROUNDING_WORDS = {"half_up_2dp": ("rounded half up", "四舍五入"),
+                  "toward_prev_close": ("rounded toward the previous close", "向前收盘价方向取整")}
+MAX_EARLIER = 4      # an answer lists at most this many earlier values; the table below it has every record
+
+
+def answer_text(series: list, zh: dict, lang: str) -> str:
+    """Per exchange (and per rule, where a question has several): the value of the latest open-ended record and since
+    when, then the earlier values oldest first. Adjacent records with the same scope, rule and value are one period in
+    the answer (the table lists each record); beyond MAX_EARLIER earlier periods the oldest are summarised by their
+    count and start date. A scope / rule is named where a series changes it (e.g. IPO first day → first five days)."""
+    chinese = lang == "zh-CN"
+
+    def label(r):
+        return zh_join(zh["scope"][r.scope], zh["rule"][r.rule]) if chinese else f"{r.scope} / {r.rule}"
+
+    several = len({(rs[-1].scope, rs[-1].rule) for _, rs in series}) > 1
+    parts = []
+    for market, rs in series:
+        periods = []                                   # [scope, rule, value, from, to, record]
+        for r in rs:
+            p = periods[-1] if periods else None
+            if p and (p[0], p[1], p[5].unit) == (r.scope, r.rule, r.unit) and p[2] == r.value and p[4] == r.effective_from:
+                p[4] = r.effective_to
+            else:
+                periods.append([r.scope, r.rule, r.value, r.effective_from, r.effective_to, r])
+        named = len({(p[0], p[1]) for p in periods}) > 1
+
+        def val(p):
+            v = answer_value(p[5], zh, chinese)
+            if not named:
+                return v
+            return f"{v}（{label(p[5])}）" if chinese else f"{v} ({label(p[5])})"
+
+        cur, earlier = periods[-1], periods[:-1]
+        dropped = earlier[:-MAX_EARLIER] if len(earlier) > MAX_EARLIER else []
+        shown = earlier[len(dropped):]
+        head = zh_markets(zh, market) if chinese else market
+        if several:
+            head += ("·" + label(cur[5])) if chinese else f", {label(cur[5])}"
+        if chinese:
+            s = f"{head}：{cur[3]} 起为 {val(cur)}"
+            if earlier:
+                s += "；此前：" + "；".join(f"{p[3]} 至 {p[4]} 前为 {val(p)}" for p in shown)
+                if dropped:
+                    s += f"；更早还有 {len(dropped)} 个取值，自 {dropped[0][3]} 起（见下表）"
+            s += "。"
+        else:
+            s = f"{head}: {val(cur)} since {cur[3]}"
+            if earlier:
+                s += "; before that: " + "; ".join(f"{val(p)} from {p[3]} until {p[4]}" for p in shown)
+                if dropped:
+                    s += f"; {len(dropped)} earlier values from {dropped[0][3]} (see the table)"
+            s += "."
+        parts.append(s)
+    return " ".join(parts)
+
+
+def query_snippet(r) -> str:
+    code = _contract_code(r)
+    py = f'mr.rule_at("{r.rule}", "{r.effective_from}", "{r.scope}", "{r.market}"'
+    py += f', contract="{code}")' if code else ")"
+    cli = f"marina-rules query {r.rule} {r.effective_from} {r.scope} {r.market}"
+    if code:
+        cli += f" --context contract={code}"
+    return f"pip install marina-rules\n\nimport marina_rules as mr\n{py}\n\n{cli}"
 
 
 def build(base_url: str | None = None) -> dict:
@@ -583,16 +785,11 @@ def build(base_url: str | None = None) -> dict:
               meaning + " (docs/SCHEMA.md, “Tracking registry”)", ""]
 
         # ask it yourself
-        code = _contract_code(last)
-        py = f'mr.rule_at("{rule}", "{last.effective_from}", "{scope}", "{last.market}"'
-        py += f', contract="{code}")' if code else ")"
-        cli = f"marina-rules query {rule} {last.effective_from} {scope} {last.market}"
-        if code:
-            cli += f" --context contract={code}"
+        snippet = query_snippet(last)
         req = list(sc.get("requires") or ())
         b += ["<h2>Ask it yourself</h2>",
-              f"<pre><code>pip install marina-rules\n\nimport marina_rules as mr\n{esc(py)}\n\n{esc(cli)}</code></pre>"]
-        m += ["## Ask it yourself", "", "```", "pip install marina-rules", "", "import marina_rules as mr", py, "", cli, "```", ""]
+              f"<pre><code>{esc(snippet)}</code></pre>"]
+        m += ["## Ask it yourself", "", "```", snippet, "```", ""]
         if req:
             b.append("<p>The CLI answers through <code>resolve()</code>, which needs the scope's context: "
                      + ", ".join(f"<code>{esc(x)}</code>" for x in req) + " (<code>--context key=value,…</code>; "
@@ -621,6 +818,102 @@ def build(base_url: str | None = None) -> dict:
                                "title": title, "name_zh": zf["name"], "record_ids": [r.id for r in rs],
                                "gap_ids": [g["gap_id"] for g in gs]})
 
+    # ---- bilingual questions ----
+    qs = questions()
+    for q in qs:
+        series = question_series(q, recs)
+        rs = question_records(series)
+        triples = sorted({(r.file.split("/", 1)[0], r.scope, r.rule) for r in rs})
+        qgaps = [(p, g) for p, s, rule in triples for g in gaps[p] if g["scope"] == s and g["rule"] == rule]
+        enpath, zhpath = f"q/{q['slug']}.html", f"zh/q/{q['slug']}.html"
+        alternates = {"en": enpath, "zh-CN": zhpath, "x-default": enpath}
+        for lang, path in (("en", enpath), ("zh-CN", zhpath)):
+            chinese = lang == "zh-CN"
+            title = q["zh" if chinese else "en"]
+            answer = answer_text(series, zh, lang)
+            mdpath = path.removesuffix(".html") + ".md"
+            history, facts_label, ask, gap_label, context = (("历史记录", "规则详情", "安装和查询", "已知缺口", "适用范围和所需上下文")
+                                                          if chinese else
+                                                          ("History", "Fact pages", "Ask it yourself", "Known gaps", "Scope and required context"))
+            head = (["生效日期", "失效日期（不含）", "取值", "市场", "核验状态", "记录标识", "来源", "范围", "规则", "单位"]
+                    if chinese else ["effective_from", "effective_to (exclusive)", "value", "market", "verification",
+                                     "record id", "source", "scope", "rule", "unit"])
+            rows_h, rows_m = [], []
+            for r in rs:
+                fr, to = iv(r.effective_from, r.effective_to)
+                translated = zh_value(zh, r.rule, r.value, r.unit) if chinese else None
+                value = record_value_html(r) + (f" · {esc(translated)}" if translated is not None else "")
+                valuemd = record_value_md(r) + (f" · {translated}" if translated is not None else "")
+                market = zh_markets(zh, r.market) if chinese else r.market
+                scope_name = zh["scope"][r.scope] if chinese else r.scope
+                rule_name = zh["rule"][r.rule] if chinese else r.rule
+                src_h = "<br>".join(f'<a href="{esc(s["url"])}">{esc(s["title"])}</a>' for s in r.sources)
+                # Angle-delimited destinations accommodate source URLs containing parentheses.
+                src_m = "; ".join(f'[{s["title"]}](<{s["url"]}>)' for s in r.sources)
+                rows_h.append([esc(fr), esc(to), value, esc(market), esc(r.verification),
+                               f'<code>{esc(r.id)}</code>', src_h, esc(scope_name), esc(rule_name), esc(r.unit or "")])
+                rows_m.append([fr, to, valuemd, market, r.verification, f"`{r.id}`", src_m, scope_name, rule_name, r.unit or ""])
+            b = [f'<p class="answer">{esc(answer)}</p>', f"<h2>{history}</h2>", table_html(head, rows_h),
+                 f"<h2>{facts_label}</h2>"]
+            m = [f"# {title}", "", answer, "", f"## {history}", "", table_md(head, rows_m), "", f"## {facts_label}", ""]
+            links = []
+            for p, s, rule in triples:
+                label = zh_join(zh["scope"][s], zh["rule"][rule]) if chinese else f"{s} / {rule}"
+                links.append(f'<li><a href="{esc(rel(path, fact_path(p, s, rule)))}">{esc(label)}</a></li>')
+                m.append(f"- [{label}]({rel(mdpath, fact_path(p, s, rule, 'md'))})")
+            b.append("<ul>" + "".join(links) + "</ul>")
+            snippet = query_snippet(latest(rs))
+            b += [f"<h2>{ask}</h2>", f"<pre><code>{esc(snippet)}</code></pre>", f"<h2>{gap_label}</h2>"]
+            m += ["", f"## {ask}", "", "```", snippet, "```", "", f"## {gap_label}", ""]
+            if qgaps:
+                b.append(table_html(gap_head, gap_rows_html([g for _, g in qgaps])))
+                m += [table_md(gap_head, gap_rows_md([g for _, g in qgaps])), ""]
+            else:
+                no_gaps = "这些范围和规则暂无已记录的缺口。" if chinese else "None recorded for these scopes and rules."
+                b.append(f"<p>{no_gaps}</p>")
+                m += [no_gaps, ""]
+            b.append(f"<h2>{context}</h2>")
+            m += [f"## {context}", ""]
+            for p, s in sorted({(p, s) for p, s, _ in triples}):
+                sc = registries[p][s]
+                # Copy applicability constraints instead of inferring them from a question title.
+                b += [f"<h3>{esc(zh['scope'][s] if chinese else s)}</h3>", f"<p>{md_inline(sc['description'])}</p>",
+                      value_html({k: sc[k] for k in ("requires", "asserts", "rule_asserts") if k in sc})]
+                m += [f"### {s}", "", sc["description"], "", "```json",
+                      json.dumps({k: sc[k] for k in ("requires", "asserts", "rule_asserts") if k in sc},
+                                 ensure_ascii=False, sort_keys=True, indent=1), "```", ""]
+            b.append(f'<p><a href="{esc(rel(path, mdpath))}">Markdown</a> · '
+                     f'<a href="{esc(rel(path, enpath if chinese else zhpath))}">{"English" if chinese else "中文"}</a></p>')
+            ld = {"@context": "https://schema.org", "@type": "FAQPage", "inLanguage": lang,
+                  "mainEntity": [{"@type": "Question", "name": title,
+                                  "acceptedAnswer": {"@type": "Answer", "text": answer}}]}
+            files[path] = page(title, title, "\n".join(b), path=path, description=answer,
+                               nav=[("marina-rules", "zh/index.html" if chinese else "index.html"),
+                                    ("常见问题" if chinese else "Questions", "zh/index.html" if chinese else "q/index.html")],
+                               base_url=base_url, lang=lang, alternates=alternates, ld=ld)
+            files[mdpath] = "\n".join(m).rstrip() + "\n"
+            manifest_pages.append({"path": path, "md": mdpath, "kind": "question", "slug": q["slug"], "lang": lang,
+                                   "title": title, "record_ids": [r.id for r in rs],
+                                   "question_gaps": [{"prefix": p, "gap_id": g["gap_id"]} for p, g in qgaps]})
+
+    def question_list(path, chinese=False):
+        return "<ul>" + "".join(f'<li><a href="{esc(rel(path, ("zh/" if chinese else "") + "q/" + q["slug"] + ".html"))}">'
+                                 f'{esc(q["zh" if chinese else "en"])}</a></li>' for q in qs) + "</ul>"
+
+    files["q/index.html"] = page("Questions — marina-rules", "Questions", question_list("q/index.html"),
+                                  path="q/index.html", description="Questions", nav=[("marina-rules", "index.html")],
+                                  base_url=base_url)
+    manifest_pages.append({"path": "q/index.html", "kind": "questions_index"})
+    zh_intro = readme_opening(_read("README.zh-CN.md"))
+    zh_body = [f"<p>{md_inline(p)}</p>" for p in zh_intro]
+    zh_body += ["<h2>常见问题</h2>", question_list("zh/index.html", True), "<h2>市场</h2>",
+                "<ul>" + "".join(f'<li><a href="../{p}/index.html">{esc(zh["family"][p])}</a></li>' for p in PREFIXES) + "</ul>"]
+    home_alternates = {"en": "index.html", "zh-CN": "zh/index.html", "x-default": "index.html"}
+    files["zh/index.html"] = page(SITE_NAME_ZH, SITE_NAME_ZH, "\n".join(zh_body), path="zh/index.html",
+                                  description=intro_zh, nav=[("marina-rules", "index.html")], base_url=base_url,
+                                  lang="zh-CN", alternates=home_alternates)
+    manifest_pages.append({"path": "zh/index.html", "kind": "landing", "lang": "zh-CN"})
+
     # ---- scope pages ----
     scopes_by_pfx = {p: sorted(set(registries[p]) | {s for (q, s, _r) in groups if q == p}) for p in PREFIXES}
     for pfx in PREFIXES:
@@ -638,11 +931,12 @@ def build(base_url: str | None = None) -> dict:
                      + (", ".join((f'<a href="{esc(rel(path, scope_path(pfx, x)))}"><code>{esc(x)}</code></a>'
                                    if x in scopes_by_pfx[pfx] else f"<code>{esc(x)}</code>") for x in sc.get("excludes") or ())
                         or "none") + "</dd></dl>")
-            rows = []
+            rows, shown = [], []
             for rule in rules:
                 rs = groups[(pfx, scope, rule)]
                 for mk in sorted({r.market for r in rs}):
                     lr = latest([r for r in rs if r.market == mk])
+                    shown.append(lr.id)
                     fr, to = iv(lr.effective_from, lr.effective_to)
                     v = esc(compact(lr.value)) if not is_scalar(lr.value) else esc(scalar(lr.value))
                     p = percent(lr.rule, lr.value, lr.unit)
@@ -674,7 +968,7 @@ def build(base_url: str | None = None) -> dict:
                                description=f"{zline} Scope {scope} ({FAMILY[pfx]}): {len(rules)} rule(s) with "
                                            f"point-in-time records and sources. {citation}")
             manifest_pages.append({"path": path, "kind": "scope", "prefix": pfx, "scope": scope, "rules": rules,
-                                   "gap_ids": [g["gap_id"] for g in lone]})
+                                   "gap_ids": [g["gap_id"] for g in lone], "record_ids": shown})
 
     # ---- family indexes ----
     for pfx in PREFIXES:
@@ -717,6 +1011,8 @@ def build(base_url: str | None = None) -> dict:
     lvl = dict(levels)
     b = [f"<p><strong>{md_inline(intro[0].strip('*'))}</strong> {md_inline(intro[1])}</p>",
          f"<pre><code>{esc(citation)}</code></pre>",
+         '<h2>常见问题 / Questions</h2><p><a href="q/index.html">English questions</a> · '
+         '<a href="zh/index.html">中文问题与介绍</a></p>',
          "<h2>Market families</h2>",
          table_html(["family", "records", "rule pages", "scopes"],
                     [[f'<a href="{p}/index.html">{esc(FAMILY[p])} (<code>{p}</code>)</a> '
@@ -740,6 +1036,7 @@ def build(base_url: str | None = None) -> dict:
     files["index.html"] = page(f"marina-rules — point-in-time trading rules · {SITE_NAME_ZH}（涨跌停、印花税、最小报价单位）",
                                "marina-rules", "\n".join(x for x in b if x), path="index.html", base_url=base_url,
                                nav=[("marina-rules", None)], zh_line=intro_zh, description=root_desc,
+                               alternates=home_alternates,
                                ld=dataset_ld("marina-rules", root_desc, base_url=base_url, path="index.html",
                                              extra=root_extra))
     manifest_pages.append({"path": "index.html", "kind": "root"})
@@ -753,15 +1050,23 @@ def build(base_url: str | None = None) -> dict:
           "    marina-rules query <rule> <date> <scope> [market]", "",
           "## Market families", ""]
     lt += [f"- [{FAMILY[p]} ({p})]({url(p + '/index.html')})" for p in PREFIXES]
+    lt += [f"- [中文介绍与问题]({url('zh/index.html')})", f"- [English questions]({url('q/index.html')})",
+           "", "## Questions", ""]
+    lt += [f"- [{x['title']}]({url(x['md'])})" for x in manifest_pages if x["kind"] == "question"]
     lt += ["", "## Rule pages (Markdown)", ""]
     lt += [f"- [{x['rule']} · {x['scope']} · {x['prefix']}]({url(x['md'])}): {x['name_zh']}" for x in facts]
     files["llms.txt"] = "\n".join(lt) + "\n"
 
     if base_url:
+        by_id = {r.id: r for r in recs}
+        dataset_lastmod = max(r.recorded_at for r in recs)
+        lastmods = {p["path"]: max((by_id[rid].recorded_at for rid in p.get("record_ids", [])),
+                                   default=dataset_lastmod) for p in manifest_pages}
         locs = sorted(p for p in files if p.endswith(".html"))
         files["sitemap.xml"] = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                                + "".join(f"<url><loc>{esc(base_url + p)}</loc></url>\n" for p in locs) + "</urlset>\n")
+                                + "".join(f"<url><loc>{esc(base_url + p)}</loc><lastmod>{esc(lastmods[p])}</lastmod></url>\n"
+                                          for p in locs) + "</urlset>\n")
         files["robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {base_url}sitemap.xml\n"
 
     missing = [k for p in PREFIXES for k in ((p, g["gap_id"]) for g in gaps[p]) if k not in placed_gaps]
@@ -770,6 +1075,7 @@ def build(base_url: str | None = None) -> dict:
     manifest_pages.sort(key=lambda x: x["path"])
     counts = {"records": len(recs), "fact_pages": len(facts), "scope_pages": sum(1 for x in manifest_pages if x["kind"] == "scope"),
               "family_pages": len(PREFIXES), "known_gaps": sum(len(gaps[p]) for p in PREFIXES),
+              "questions": len(qs), "question_pages": len(qs) * 2,
               "by_family": fam_counts, "by_verification": ver_counts}
     files["site.json"] = json.dumps({"citation": citation, "version": mr.VERSION, "code_version": mr.__version__,
                                      "counts": counts,
@@ -793,7 +1099,7 @@ def main(argv=None) -> int:
     t0 = time.perf_counter()
     files = build(a.base_url)
     write(a.out, files)
-    n_fact = sum(1 for p in files if p.endswith(".html") and not p.endswith("index.html"))
+    n_fact = json.loads(files["site.json"])["counts"]["fact_pages"]
     print(f"{len(files)} files, {n_fact} rule pages, {sum(len(v) for v in files.values())} bytes "
           f"in {time.perf_counter() - t0:.1f} s")
     return 0

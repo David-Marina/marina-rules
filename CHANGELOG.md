@@ -146,6 +146,11 @@ The other corrections of this week are in the code: see
 - A stamp names the data version (`rules-verified@2026.11.23:…`). The hash after the colon covers the dataset digest,
   which changed with the six added records, so the same log gets a different hash than under 2026.11.16; a stamp is
   recomputed with the release it names.
+- **Finding it.** The README opens with the table of hard-coded versus rule-of-the-day values and three lines of code;
+  the Chinese README has the same table; more search words on PyPI (ChiNext, STAR Market, 涨停板, 跌停板, 过户费, 佣金,
+  创业板, 科创板, 北交所 …); a line to put in an `AGENTS.md` / `CLAUDE.md`. The rule pages gain eighteen question pages
+  in English and Chinese (`q/`, `zh/q/`), each opening with an answer composed from the records, a Chinese landing page
+  (`zh/`) and `lastmod` dates in `sitemap.xml`. No rule or value changed with any of this.
 
 ### Known issues
 
@@ -338,6 +343,9 @@ with the context the row gives, and a row that gives none is taken at its word (
 
 ### Changed
 
+- The MCP tools' titles name what they are about ("Trading rule in force on a date (A-share, futures, HK, US)",
+  "A-share limit-up / limit-down price on a date" …), so that an assistant choosing among many tools finds them; the
+  registry description leads with backtest checks. Names, inputs and outputs are unchanged.
 - A trade dated on its `list_date` is listing day 1 (`listing_index_from_list_date` returns 1): with
   `issue_regime` given, such a row gets its listing-day scope instead of `SCOPE_UNDETERMINED`.
 - `fee_check` counts a row as checked only when the statutory floor for its date was found; `tracking` counts only

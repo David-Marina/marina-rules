@@ -436,6 +436,11 @@ the tracked-through date and the exact call that answers it. Definitions are cop
 are). Each page also has a Markdown twin, and the generated site carries its own `llms.txt` index of them. Two builds of the same data are
 byte-identical.
 
+Eighteen question pages, in English (`q/`) and Chinese (`zh/q/`) — "How has the ChiNext price limit changed?",
+"印花税历次调整" and the like — open with an answer composed from the records (the value in force, since when, and
+the earlier values), followed by the full history with sources; only the question titles are written by hand.
+`zh/` is a Chinese landing page. `sitemap.xml` dates each page by the latest `recorded_at` of the records it shows.
+
 ```bash
 python scripts/build_site.py --out site
 ```
