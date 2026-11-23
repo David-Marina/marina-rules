@@ -25,14 +25,16 @@ How to read an entry:
 
 ## [2026.11.23] - 2026-11-23
 
-**In three lines.** *Rules:* no value in force on 2026.11.16 changed; six records were added (SHFE bitumen margin
+**In three lines.** *Rules:* no recorded value in force on 2026.11.16 changed; six records were added (SHFE bitumen margin
 from 2026-11-17, where 2026.11.16 had a gap, CZCE sunflower seed oil futures, listed 2026-11-12, and how BSE
 rounds its limit prices) and two were
 raised to `verified`. *Packaging:* the code
 moved into its own package, `marina-rules-core` 1.0.0, which this release requires; `pip install -U marina-rules`
-installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* all in
-the code — the fill checker issued its stamp in cases it should not have, and `limit_price` rounded funds and B shares
-before 2006-07-01 on a grid Marina has no record of; what to re-run is under marina-rules-core 1.0.0 below.
+installs both, and `import marina_rules`, the three commands and the MCP server work as before. *Corrections:* in the
+data, the publication date of three BSE records (one day early); in the code, the fill checker issued its stamp in
+cases it should not have, `limit_price` rounded funds and B shares before 2006-07-01 on a grid Marina has no record
+of, and **BSE limit prices were rounded half up and were CNY 0.01 off on about half of the days (re-run any BSE limit
+price)**; what to re-run is under marina-rules-core 1.0.0 below.
 
 Dataset: `sha256:3e159d81e1175d71` · 2879 records (1423 `verified`, 1455 `single-source`, 1 `unverified`).
 
@@ -141,8 +143,9 @@ The other corrections of this week are in the code: see
   Two things differ from 2026.11.16: writing into its `__dict__` directly (`vars(mr)[...] = …`) has no effect, and
   classes name their new module (`Record.__module__` is `marina_rules_core`), so objects pickled by this release load
   under an older one only where `marina-rules-core` is installed too. Objects pickled by an older release load here.
-- A stamp names the data version (`rules-verified@2026.11.23:…`). For a log that none of the corrections below touches,
-  the hash after the colon is the one 2026.11.16 issued, since the rules are the same.
+- A stamp names the data version (`rules-verified@2026.11.23:…`). The hash after the colon covers the dataset digest,
+  which changed with the six added records, so the same log gets a different hash than under 2026.11.16; a stamp is
+  recomputed with the release it names.
 
 ### Known issues
 
@@ -150,7 +153,7 @@ What a user of this release should know, in one place.
 
 - **Fixed here, present in 2026.11.13 and 2026.11.16** (neither release is withdrawn; see marina-rules-core 1.0.0):
   stamps issued for logs the checker had not fully checked or whose cells contradicted each other; `limit_price` for
-  funds and B shares before 2006-07-01.
+  funds and B shares before 2006-07-01; BSE limit prices CNY 0.01 off on about half of the days (rounded half up).
 - **Fixed in 2026.11.16, present in 2026.11.13:** a date not written `YYYY-MM-DD` selected the wrong rule (in
   practice the newest), and `tick_size` answered 0.01 for instruments without a tick record.
 - A-share stocks before 2006-07-01: the tick is not sourced and `limit_price` rounds at 0.01 (known gap G-0005) —
@@ -191,7 +194,7 @@ command line and MCP server of marina-rules 2026.11.16, as the module `marina_ru
 `marina_rules`). *Corrections:* `marina-check` withheld its stamp too rarely, and `limit_price` substituted a tick
 where it has none and rounded BSE prices the SSE way; **re-run** any log stamped by 2026.11.13 or 2026.11.16 that one of the items below touches.
 *Compatibility:* reads the dataset marina-rules 2026.11.23 or later (data schemas 1, 1.1 and 1.2; releases up to
-2026.11.16 carry their own code and are not read by this one); additive, except
+2026.11.16 carry their own code and are not read by this one; they also lack the BSE rounding record); additive, except
 that the checker now refuses rows it used to stamp, `limit_price` raises for funds and B shares before 2006-07-01 and gives
 BSE limit prices rounded toward the previous close, and
 the fee of a fund, convertible bond or B-share row is no longer checked.
@@ -212,7 +215,9 @@ releases stamped; a stamp from them is not evidence of compliance where one of t
   and raises `KeyError` where none is in force. Example: previous close 12.86 gives 16.71 / 9.01 (was 16.72 / 9.00).
   **Re-run** any BSE limit price taken from `limit_price`, and any `marina-check` run on BSE fills: a fill at the old
   limit-up price was passed and is now flagged (`PRICE_OUTSIDE_BAND`; a buy also
-  `LIMIT_BUY_ABOVE_UP`).
+  `LIMIT_BUY_ABOVE_UP`), and so is a fill at the old limit-down price (9.00 against 9.01; a sell also `LIMIT_SELL_BELOW_DOWN`). The MCP tool `limit_price`
+  now names the rounding it applied (`rounding`, `rounding_record_id`, `rounding_verification`); its note said
+  "half away from zero" for every market.
 
 *The standard of the check*
 

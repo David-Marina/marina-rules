@@ -1801,22 +1801,27 @@ def min_tick_band(scope: str, date: str, market: str | None = None, *, as_of: st
 _ROUNDING = ("half_up_2dp", "toward_prev_close")   # values of limit_price_rounding; the decimals come from the tick
 
 
-def _rounding_mode(scope: str, date: str, market: str | None, strict: bool, as_of: str | None) -> str:
-    """``limit_price_rounding`` in force for ``scope``: the scope's own record, then the BSE family ``bse_stock``
-    (a BSE scope, or market BJSE), then ``stock``. No record: ``KeyError`` - Marina has no rounding to substitute."""
+def _rounding_record(scope: str, date: str, market: str | None, strict: bool, as_of: str | None):
+    """The ``limit_price_rounding`` record in force for ``scope``: the scope's own record, then the BSE family
+    ``bse_stock`` (a BSE scope, or market BJSE), then ``stock``. No record: ``KeyError`` - Marina has no rounding to
+    substitute."""
     order = [scope] + (["bse_stock"] if tick_family(scope, market) == "bse_stock" else []) + ["stock"]
     for sc in dict.fromkeys(order):
         try:
-            v = rule_at("limit_price_rounding", date, sc, market, strict, as_of=as_of)
+            rec = record_at("limit_price_rounding", date, sc, market, strict, as_of=as_of)
         except (NotYetPublished, PublicationUnknown):
             raise   # the in-force record exists but is not knowable at as_of: never fall back
         except KeyError:
             continue
-        if v not in _ROUNDING:
-            raise ValueError(f"limit_price_rounding {v!r} is not one of {_ROUNDING}")
-        return v
+        if rec.value not in _ROUNDING:
+            raise ValueError(f"limit_price_rounding {rec.value!r} is not one of {_ROUNDING}")
+        return rec
     raise KeyError(f"limit_price cannot round the band for scope {scope!r} on {date} (market {market!r}): no "
                    "limit_price_rounding record is in force, and Marina does not substitute one")
+
+
+def _rounding_mode(scope: str, date: str, market: str | None, strict: bool, as_of: str | None) -> str:
+    return _rounding_record(scope, date, market, strict, as_of).value
 
 
 def _round_limits(prev_close: float, up: float, dn: float, decimals: int, mode: str) -> tuple[float, float]:

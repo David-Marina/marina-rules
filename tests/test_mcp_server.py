@@ -95,6 +95,19 @@ def test_limit_price_without_a_tick_to_round_at_is_not_answered():
     assert (got["limit_up"], got["limit_down"]) == (1.36, 1.11)     # A-share stock: 0.01, known gap G-0005
 
 
+def test_limit_price_names_the_rounding_record_it_used():
+    bse = ms.run_tool("limit_price", {"prev_close": 12.86, "scope": "bse", "date": "2024-06-14", "market": "BJSE"})
+    assert (bse["limit_up"], bse["limit_down"]) == mr.limit_price(12.86, "bse", "2024-06-14", "BJSE") == (16.71, 9.01)
+    rnd = mr.record_at("limit_price_rounding", "2024-06-14", "bse_stock", "BJSE")
+    assert (bse["rounding"], bse["rounding_record_id"], bse["rounding_verification"]) == \
+        ("toward_prev_close", rnd.id, rnd.verification)
+    assert "toward the previous close" in bse["note"] and "half away" not in bse["note"] and rnd.id in bse["note"]
+    sse = ms.run_tool("limit_price", {"prev_close": 12.86, "scope": "main_board", "date": "2024-06-14",
+                                      "market": "XSHG"})
+    assert (sse["limit_up"], sse["limit_down"], sse["rounding"]) == (14.15, 11.57, "half_up_2dp")
+    assert "half away from zero" in sse["note"]
+
+
 def test_statutory_fees_match_the_library():
     got = ms.run_tool("statutory_fees", {"turnover": 86420.0, "side": "sell", "date": "2023-08-28", "market": "XSHG"})
     assert got["status"] == "DETERMINED" and got["citation"] == CITE

@@ -185,8 +185,12 @@ def limit_price(prev_close: float, scope: str, date: str, market: Optional[str] 
                     "note": "unlimited: no daily price limit applied to this scope on this date (record "
                             f"{rec.id}); this is a finding, not a missing value"})
     else:
+        rnd = mr._rounding_record(scope, date, market, strict, None)   # the record limit_price rounded with
+        how = {"half_up_2dp": "half away from zero",
+               "toward_prev_close": "toward the previous close (limit-up down, limit-down up)"}[rnd.value]
         out.update({"unlimited": False, "limit_up": band[0], "limit_down": band[1],
-                    "note": "exchange rounding (half away from zero) on the tick in force; the scope must match the "
+                    "rounding": rnd.value, "rounding_record_id": rnd.id, "rounding_verification": rnd.verification,
+                    "note": f"rounded {how} on the tick in force (record {rnd.id}); the scope must match the "
                             "security on that day (board, ST status, listing day), which this tool does not check: "
                             "use resolve with context for that"})
     out.update({"price_limit_pct": rec.value, "record_id": rec.id, "verification": rec.verification,
