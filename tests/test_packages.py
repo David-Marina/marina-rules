@@ -3,6 +3,7 @@ generated from data/ and src/marina_rules/ by scripts/vendor_data.py) and marina
 ``marina_rules_core``, semantic versions). These tests pin how the code finds the data, how the two versions are
 named, how an incompatible pair is refused, that ``marina_rules`` is ``marina_rules_core`` under its usual name, and
 that the generated package is what data/ is."""
+import functools
 import importlib.util
 import json
 import os
@@ -10,6 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 import pytest
 import yaml
@@ -235,10 +237,23 @@ _PROBE = ("import json, marina_rules as mr; c = mr._compiled(); "
           "'core': mr.__version__}))")
 
 
+@functools.lru_cache(maxsize=None)
+def _deps() -> str:
+    """A directory holding only PyYAML, the one dependency of the code. The probe runs with -S (no site-packages):
+    where marina-rules and marina-rules-core are installed (as in CI), site-packages would otherwise supply the
+    half of the layout a test leaves out."""
+    import yaml
+    d = tempfile.mkdtemp(prefix="marina-deps-")
+    shutil.copytree(os.path.dirname(yaml.__file__), os.path.join(d, "yaml"),
+                    ignore=shutil.ignore_patterns("__pycache__"))
+    return d
+
+
 def _run(paths, code=_PROBE):
-    env = dict(os.environ, PYTHONPATH=os.pathsep.join(paths))
-    return subprocess.run([sys.executable, "-B", "-W", "error", "-c", code], capture_output=True, text=True, env=env,
-                          cwd=os.path.dirname(paths[0]), timeout=300)
+    env = dict(os.environ, PYTHONPATH=os.pathsep.join(list(paths) + [_deps()]))
+    env.pop("PYTHONHOME", None)
+    return subprocess.run([sys.executable, "-S", "-B", "-W", "error", "-c", code], capture_output=True, text=True,
+                          env=env, cwd=os.path.dirname(paths[0]), timeout=300)
 
 
 def test_generated_package_is_found_and_used_precompiled(layout):
