@@ -1,6 +1,6 @@
 {
  "capabilities_version": "1",
- "ruleset_version": "2026.11.16",
+ "ruleset_version": "2026.11.23",
  "ruleset_hash": "3e159d81e1175d71f66c51ce8973a265f9753fc025120ebac951d393787f29e7",
  "entrypoints": {
   "python": {
@@ -9759,9 +9759,9 @@
    {
     "market": "XSHG+XSHE",
     "scopes": null,
-    "tracked_through": "2026-11-13",
-    "basis": "Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.",
-    "updated": "2026-11-14"
+    "tracked_through": "2026-11-20",
+    "basis": "Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-23 against the 2026-11-16 snapshot; new titles matching rule keywords reviewed by title (2026-11-20 margin-financing ratio, 2026-11-13 and 2026-11-20 CSDC bond registration and settlement fee waivers; neither is a rule Marina records). A title-keyword check, not a reading of every notice.",
+    "updated": "2026-11-23"
    },
    {
     "market": "BJSE",

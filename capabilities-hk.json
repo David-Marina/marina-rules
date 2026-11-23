@@ -1,6 +1,6 @@
 {
  "capabilities_version": "1",
- "ruleset_version": "2026.11.16",
+ "ruleset_version": "2026.11.23",
  "ruleset_hash": "3e159d81e1175d71f66c51ce8973a265f9753fc025120ebac951d393787f29e7",
  "entrypoints": {
   "python": {

@@ -184,9 +184,9 @@ def test_data_newer_than_the_code_reads_says_upgrade_the_code(tmp_path):
 
 @pytest.mark.parametrize("version, schema, match", [
     (None, "1.2", "no VERSION file: it is a marina-rules release from before"),
-    ("2026.11.16", None, "no SCHEMA file"),
-    ("2026-11-16", "1.2", "not a dataset version"), ("2026.11.16", "0.5", "Reinstall the data"),
-    ("2026.11.16", "one", "Reinstall the data")])
+    ("2099.01.01", None, "no SCHEMA file"),     # a version the code accepts, so that the schema is what is refused
+    ("2026-11-16", "1.2", "not a dataset version"), ("2099.01.01", "0.5", "Reinstall the data"),
+    ("2099.01.01", "one", "Reinstall the data")])
 def test_unreadable_metadata_is_refused(tmp_path, version, schema, match):
     with pytest.raises(mr.IncompatibleData, match=match):
         mr._check_data(_meta_dir(tmp_path, version, schema))

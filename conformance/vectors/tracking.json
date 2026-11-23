@@ -21,7 +21,7 @@
    "within",
    "last-checked-day"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0002",
@@ -47,7 +47,7 @@
    "beyond",
    "open-ended"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0003",
@@ -67,7 +67,7 @@
    "beyond",
    "opt-in-refusal"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0004",
@@ -94,7 +94,7 @@
    "beyond",
    "first-day-beyond"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0005",
@@ -118,7 +118,7 @@
    "tracking",
    "within"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0006",
@@ -142,7 +142,7 @@
    "beyond",
    "closed-record"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0007",
@@ -164,7 +164,7 @@
    "closed-record",
    "opt-in"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0008",
@@ -244,7 +244,7 @@
   "id": "TRK-0011",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2026-11-10",
+   "trade_date": "2026-11-17",
    "scope": "stock",
    "market": "XSHE",
    "require_tracked": true
@@ -253,25 +253,25 @@
    "status": "DETERMINED",
    "value": 0.0005,
    "tracking": {
-    "tracked_through": "2026-11-13",
+    "tracked_through": "2026-11-20",
     "beyond": false
    },
    "warnings": []
   },
-  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-10 is on or before it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28 (XSHG+XSHE+BJSE, open-ended, 0.05% on sales): a query with market XSHE on a checked day is tracked and answers with require_tracked=True.",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-20 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-23 against the 2026-11-16 snapshot; new titles matching rule keywords reviewed by title (2026-11-20 margin-financing ratio, 2026-11-13 and 2026-11-20 CSDC bond registration and settlement fee waivers; neither is a rule Marina records). A title-keyword check, not a reading of every notice.) 2026-11-17 is on or before it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28 (XSHG+XSHE+BJSE, open-ended, 0.05% on sales): a query with market XSHE on a checked day is tracked and answers with require_tracked=True.",
   "tags": [
    "tracking",
    "within",
    "a-share",
    "opt-in"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0012",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2026-11-20",
+   "trade_date": "2026-11-27",
    "scope": "stock",
    "market": "XSHG"
   },
@@ -279,26 +279,26 @@
    "status": "DETERMINED",
    "value": 0.0005,
    "tracking": {
-    "tracked_through": "2026-11-13",
+    "tracked_through": "2026-11-20",
     "beyond": true
    },
    "warnings": [
     "CARRY_FORWARD_BEYOND_TRACKED"
    ]
   },
-  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-20 is after it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG, a day after the tracked-through date: a carry-forward, flagged.",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-20 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-23 against the 2026-11-16 snapshot; new titles matching rule keywords reviewed by title (2026-11-20 margin-financing ratio, 2026-11-13 and 2026-11-20 CSDC bond registration and settlement fee waivers; neither is a rule Marina records). A title-keyword check, not a reading of every notice.) 2026-11-27 is after it. || Stamp duty record cn.fee.stamp_duty_sell.2023-08-28, market XSHG, a day after the tracked-through date: a carry-forward, flagged.",
   "tags": [
    "tracking",
    "beyond",
    "a-share"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0013",
   "query": {
    "rule": "stamp_duty_sell",
-   "trade_date": "2026-11-20",
+   "trade_date": "2026-11-27",
    "scope": "stock",
    "market": "XSHG",
    "require_tracked": true
@@ -306,14 +306,14 @@
   "expect": {
    "status": "BEYOND_TRACKING"
   },
-  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-13 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by title. A title-keyword check, not a reading of every notice.) 2026-11-20 is after it. || Same as TRK-0012 with require_tracked=True: refused.",
+  "oracle": "data/cn/tracking.yaml: XSHG+XSHE tracked_through 2026-11-20 (Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF announcements, diffed on 2026-11-23 against the 2026-11-16 snapshot; new titles matching rule keywords reviewed by title (2026-11-20 margin-financing ratio, 2026-11-13 and 2026-11-20 CSDC bond registration and settlement fee waivers; neither is a rule Marina records). A title-keyword check, not a reading of every notice.) 2026-11-27 is after it. || Same as TRK-0012 with require_tracked=True: refused.",
   "tags": [
    "tracking",
    "beyond",
    "a-share",
    "opt-in-refusal"
   ],
-  "ruleset_version_min": "2026.11.16"
+  "ruleset_version_min": "2026.11.23"
  },
  {
   "id": "TRK-0014",

@@ -88,6 +88,9 @@ The other corrections of this week are in the code: see
   convertible-bond rules (0.01) still disagree, and no text naming convertible bonds for that period was found.
 
 ### Tracked through
+- China A-shares (XSHG, XSHE): 2026-11-13 → 2026-11-20. The weekly listing check of 2026-11-23 found three new
+  titles matching rule keywords — the exchanges' change to the margin-financing ratio (2026-11-20) and two CSDC waivers
+  of bond registration and settlement fees (2026-11-13, 2026-11-20); none is a rule Marina records.
 - SHFE (XSGE) and INE (XINE): 2026-11-02 → 2026-11-18. Every trading day's settlement and trading parameters were
   compared with the records: no difference outside the listed gaps. The INE notice list refused automated access, so
   INE notices after 2026-11-02 were read only where shfe.com.cn republishes them.

@@ -11,12 +11,12 @@ What a stamp certifies is deliberately narrow: the fills respected these rules. 
 Use it to check that a backtest applied the rules in force on each day — China A-share daily price limits (limit-up / limit-down), stamp duty and transfer fees, tick sizes and sessions; futures margins, limits and fees; Hong Kong and US equity rules — and to validate a fill log against them (`marina-check`). It holds rules only: no prices, index constituents, ST or suspension lists, adjustment factors or trading calendars.
 
 ```
-rules: marina-rules@2026.11.16 sha256:3e159d81e1175d71 code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.23 sha256:3e159d81e1175d71 code: marina-rules-core@1.0.0
 ```
 
 Marina is to trading rules what the [tz database](https://www.iana.org/time-zones) is to time zones and what [exchange_calendars](https://github.com/gerrymanoim/exchange_calendars) is to trading days: small, boring, free, and meant to be the one copy everyone imports instead of the thousand copies everyone gets slightly wrong.
 
-> **Status: 2026.11.16.** 2879 records — 1423 `verified`, 1455 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (28 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
+> **Status: 2026.11.23.** 2879 records — 1423 `verified`, 1455 `single-source`, 1 `unverified` — each traced to primary sources with quotes and content hashes. **Maturity differs by market:** China A-share, CFFEX, SHFE and INE records are mostly `verified`; CZCE, GFEX, Hong Kong and US records are mostly `single-source` — a first pass, to be read as such ([counts per market](#coverage), [what the levels mean](#verification-levels)). China A-shares: price limits, fees, sessions, ticks and holding periods, measured from 2006-07-01; CFFEX stock-index futures from 2010; CFFEX treasury bond futures from 2013; SHFE (20 products, incl. night sessions), INE (5 products), CZCE (28 products, mostly `single-source`) and GFEX (5 products, no sessions yet): margin, price limits, fees and same-day round trips from 2024-01-01; Hong Kong shares and ETFs from 2010; US stocks and ETFs from 2010. DCE, crypto and other markets are not covered. Details per market: [Coverage](#coverage). Treat the exchange's own notice as authoritative, always.
 
 What changed in each release, and which backtests a release asks you to re-run: [CHANGELOG.md](https://github.com/David-Marina/marina-rules/blob/main/CHANGELOG.md).
 
@@ -172,7 +172,7 @@ calendar; a security's board, ST status and listing day are the caller's to supp
 Put `mr.citation()` in every result you publish. A result without it cannot be reproduced; a result with it can be re-run by anyone against the same bytes. For a reference list, [`CITATION.cff`](https://github.com/David-Marina/marina-rules/blob/main/CITATION.cff) names the project; the version and digest still come from `mr.citation()`.
 
 ```
-rules: marina-rules@2026.11.16 sha256:3e159d81e1175d71 code: marina-rules-core@1.0.0
+rules: marina-rules@2026.11.23 sha256:3e159d81e1175d71 code: marina-rules-core@1.0.0
 ```
 
 `marina-rules@…` is the data version (`mr.VERSION`, the version of the `marina-rules` package) and `sha256:…` the
@@ -301,8 +301,8 @@ Blank cells are blank on purpose. A missing rule raises `KeyError`; it does not 
   futures coverage starts 2024-01-01.
 - **DCE is not covered**: no Dalian Commodity Exchange product has a record or a coverage target.
 
-**Coverage statement (2026.11.16).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
-(687,839 / 707,281 target-days to 2026-11-16; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
+**Coverage statement (2026.11.23).** China A-shares from 2006-07-01: **137 targets, 97.25% of target-days**
+(688,714 / 708,198 target-days to 2026-11-23; 130 targets complete; `python scripts/coverage_report.py`). Every gap that
 remains is listed as `unresolved` in [`coverage/cn_targets.yaml`](https://github.com/David-Marina/marina-rules/blob/main/coverage/cn_targets.yaml) and counts as **not covered**:
 convertible-bond commission cap — SZSE 2006-07-01 → 2006-12-30 and 2014-08-25 → open, SSE 2021-12-31 → open — and minimum —
 SZSE 2006-07-01 → open, SSE 2021-12-31 → open (no official text states a level, or says there is none, for those periods); BJSE
@@ -316,7 +316,7 @@ each market's `known_gaps.yaml` are the statement.
 
 | Market group | `tracked_through` | Checked against |
 |---|---|---|
-| China A-share (XSHG, XSHE) | 2026-11-13 | listing pages of SSE, SZSE, CSDC and MOF rules and notices, diffed weekly; new titles matching rule keywords reviewed by title |
+| China A-share (XSHG, XSHE) | 2026-11-20 | listing pages of SSE, SZSE, CSDC and MOF rules and notices, diffed weekly; new titles matching rule keywords reviewed by title |
 | SHFE (XSGE) | 2026-11-18 | notices and daily settlement parameters, every trading day from 2024-01-02 |
 | INE (XINE) | 2026-11-18 | daily settlement and trading parameters, every trading day from 2024-01-02; notices from 2026-11-03 only as republished on shfe.com.cn |
 | CZCE (XZCE), GFEX | 2026-11-18 | daily settlement parameters, every trading day from 2024-01-02; notice lists read for the window (attachments of two CZCE rule amendments not read) |

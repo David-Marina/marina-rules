@@ -53,7 +53,7 @@ __all__ = ["rule_at", "record_at", "records", "scopes", "known_gaps", "gaps_for"
            "statutory_fee_components", "skill_text", "markets_recorded"]
 
 __version__ = "1.0.0"            # this package, the code (marina-rules-core); semantic versioning
-MIN_DATA_VERSION = "2026.11.16"  # the oldest dataset (marina-rules data version, data/VERSION) this code reads
+MIN_DATA_VERSION = "2026.11.23"  # the oldest dataset (marina-rules data version, data/VERSION) this code reads
 DATA_SCHEMAS = (1, 1.1, 1.2)     # the data formats (``schema:`` of a data file, data/SCHEMA) this code reads
 
 

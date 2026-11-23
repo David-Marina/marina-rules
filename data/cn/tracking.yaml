@@ -15,11 +15,12 @@
 schema: 1
 tracking:
 - market: XSHG+XSHE
-  tracked_through: '2026-11-13'
+  tracked_through: '2026-11-20'
   basis: Listing pages of SSE trading rules and news, SZSE business rules and notices, CSDC notices and MOF
-    announcements, diffed on 2026-11-14 against the 2026-10-24 snapshot; new titles matching rule keywords reviewed by
-    title. A title-keyword check, not a reading of every notice.
-  updated: '2026-11-14'
+    announcements, diffed on 2026-11-23 against the 2026-11-16 snapshot; new titles matching rule keywords reviewed by
+    title (2026-11-20 margin-financing ratio, 2026-11-13 and 2026-11-20 CSDC bond registration and settlement fee
+    waivers; neither is a rule Marina records). A title-keyword check, not a reading of every notice.
+  updated: '2026-11-23'
 - market: BJSE
   scopes: [bse, st_bse, delisting_bse, ipo_day1_bse, delisting_day1_bse, bse_stock]
   tracked_through: '2026-11-18'
